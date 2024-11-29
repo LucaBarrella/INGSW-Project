@@ -1,0 +1,76 @@
+@startuml UseCase9
+
+left to right direction
+
+actor Amministratore as Admin
+actor Utente as Usr
+actor Acquirente as Acq
+actor "Agente Immobiliare" as AI
+actor "GitHub Provider" as Git
+actor "Facebook Provider" as Facebook
+actor "Google Provider" as Google
+actor "Geopify" as Geo
+actor "Google Maps" as GMaps
+
+' ADMINISTRATORE '
+usecase "Crea account di supporto per l'amministrazione" as CADSPA
+usecase "Modifica password d'amministrazione" as MPW
+usecase "Crea account per agente immobiliare" as CAAI
+
+Admin -- CADSPA
+Admin -- MPW
+Admin -- CAAI
+
+' UTENTE '
+usecase "Effettua registrazione" as ER
+usecase "Effettua login" as EL
+usecase "Visualizza dettagli immobile" as VDI
+
+Usr -- ER
+Usr -- EL
+Usr -- VDI
+
+' ACQUIRENTE '
+usecase "Usa GitHub" as UGH
+usecase "Usa Facebook" as UF
+usecase "Usa Google" as UGO
+usecase "Ricerca immobili" as RI
+usecase "Prenota visita immobile" as PVI
+usecase "Visualizza posizione geografica" as VPG
+
+RI --- GMaps
+Usr --- PVI
+
+' ' REGISTRAZIONE UTENTE '
+' ER <.... UGH
+' ER <.... UF
+' ER <.... UGO
+
+' ' LOGIN UTENTE '
+' EL <.... UGH
+' EL <.... UF
+' EL <.... UGO
+
+' UGH -- Git 
+' UF -- Facebook
+' UGO -- Google
+
+' AGENTE IMMOBILIARE '
+usecase "Visualizza dashboard immobili" as VDIM
+usecase "Carica nuovo immobile" as CNI
+usecase "Esporta resoconto in PDF" as EPDF
+usecase "Visualizza dettagli immobile" as VDI_AI
+
+AI -- VDIM
+AI -- CNI
+AI -- VDI_AI
+VDIM <.. EPDF
+VDI_AI <.. VPG
+
+'GOOGLE MAPS'
+VPG -- GMaps
+
+'GeoPify'
+VDI_AI -- Geo
+
+@enduml
