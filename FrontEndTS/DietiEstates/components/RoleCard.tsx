@@ -3,6 +3,7 @@ import { TouchableOpacity, StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { ThemedIcon } from './ThemedIcon';
+import * as Haptics from 'expo-haptics';
 
 interface RoleCardProps {
   title: string;
@@ -24,9 +25,14 @@ export const RoleCard: React.FC<RoleCardProps> = ({
   const backgroundColor = useThemeColor({ light: undefined, dark: undefined }, 'roleCardBackground');
   const textColor = useThemeColor({ light: undefined, dark: undefined }, 'roleCardText');
 
+  const handlePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
+    onSelect();
+  };
+
   return (
     <TouchableOpacity
-      onPress={onSelect}
+      onPress={handlePress}
       accessible={true}
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="button"
