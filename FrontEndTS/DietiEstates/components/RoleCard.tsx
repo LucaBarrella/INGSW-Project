@@ -25,8 +25,14 @@ export const RoleCard: React.FC<RoleCardProps> = ({
   const backgroundColor = useThemeColor({ light: undefined, dark: undefined }, 'roleCardBackground');
   const textColor = useThemeColor({ light: undefined, dark: undefined }, 'roleCardText');
 
-  const handlePress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
+  const handlePress = async () => {
+    if (Haptics.impactAsync) {
+      try {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
+      } catch (error) {
+        console.error('Haptics not supported on this device', error);
+      }
+    }
     onSelect();
   };
 
