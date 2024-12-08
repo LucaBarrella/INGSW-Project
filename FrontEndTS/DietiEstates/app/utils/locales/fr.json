@@ -1,0 +1,10 @@
+{
+  "welcome": "Bienvenue!",
+  "intro": "Nous vous aiderons à trouver le bon chemin pour vous",
+  "userTitle": "Chercher une maison",
+  "userDescription": "Explorez et trouvez votre maison idéale",
+  "agentTitle": "Agent immobilier",
+  "agentDescription": "Gérez les annonces et les clients",
+  "adminTitle": "Administrateur",
+  "adminDescription": "Gérez les agents immobiliers et configurez le système"
+}

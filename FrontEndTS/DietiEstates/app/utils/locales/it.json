@@ -1,0 +1,13 @@
+{
+  "welcome": "Benvenuto!",
+  "intro": "Ti aiuteremo a trovare il percorso giusto per te",
+  "userTitle": "Cerca Casa",
+  "userDescription": "Esplora e trova la tua casa ideale",
+  "agentTitle": "Agente Immobiliare",
+  "agentDescription": "Gestisci annunci e clienti",
+  "adminTitle": "Amministratore",
+  "adminDescription": "Gestisci agenti immobiliari e configura il sistema",
+  "selectUserRole": "Seleziona ruolo utente per cercare casa",
+  "selectAgentRole": "Seleziona ruolo agente immobiliare",
+  "selectAdminRole": "Seleziona ruolo amministratore"
+}

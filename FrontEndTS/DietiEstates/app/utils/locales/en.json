@@ -1,0 +1,13 @@
+{
+  "welcome": "Welcome!",
+  "intro": "We will help you find the right path for you",
+  "userTitle": "Search Home",
+  "userDescription": "Explore and find your ideal home",
+  "agentTitle": "Real Estate Agent",
+  "agentDescription": "Manage listings and clients",
+  "adminTitle": "Administrator",
+  "adminDescription": "Manage real estate agents and configure the system",
+  "selectUserRole": "Select user role to search for a home",
+  "selectAgentRole": "Select real estate agent role",
+  "selectAdminRole": "Select administrator role"
+}

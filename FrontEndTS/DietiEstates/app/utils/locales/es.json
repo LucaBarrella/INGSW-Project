@@ -1,0 +1,10 @@
+{
+  "welcome": "¡Bienvenido!",
+  "intro": "Te ayudaremos a encontrar el camino correcto para ti",
+  "userTitle": "Buscar Casa",
+  "userDescription": "Explora y encuentra tu casa ideal",
+  "agentTitle": "Agente Inmobiliario",
+  "agentDescription": "Gestiona anuncios y clientes",
+  "adminTitle": "Administrador",
+  "adminDescription": "Gestiona agentes inmobiliarios y configura el sistema"
+}
