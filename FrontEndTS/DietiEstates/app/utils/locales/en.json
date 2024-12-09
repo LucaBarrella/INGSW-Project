@@ -1,13 +1,13 @@
 {
   "welcome": "Welcome!",
-  "intro": "We will help you find the right path for you",
-  "userTitle": "Search Home",
-  "userDescription": "Explore and find your ideal home",
+  "intro": "We will assist you in finding the right path",
+  "userTitle": "Home Search",
+  "userDescription": "Explore and discover your ideal home",
   "agentTitle": "Real Estate Agent",
-  "agentDescription": "Manage listings and clients",
+  "agentDescription": "Manage property listings and clientele",
   "adminTitle": "Administrator",
-  "adminDescription": "Manage real estate agents and configure the system",
-  "selectUserRole": "Select user role to search for a home",
-  "selectAgentRole": "Select real estate agent role",
-  "selectAdminRole": "Select administrator role"
+  "adminDescription": "Oversee real estate agents and configure the system",
+  "selectUserRole": "Select the user role to search for homes",
+  "selectAgentRole": "Select the real estate agent role",
+  "selectAdminRole": "Select the administrator role"
 }

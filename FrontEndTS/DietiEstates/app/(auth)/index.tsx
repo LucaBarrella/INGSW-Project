@@ -20,7 +20,7 @@ const RoleSelection: React.FC = () => {
       id: 'user',
       title: t('userTitle'),
       description: t('userDescription'),
-      iconUrl: 'material-symbols:key-outline', // Nome dell'icona
+      iconUrl: 'material-symbols:house-outline', // Nome dell'icona
       route: '/(auth)/(user)/login',
       accessibilityLabel: t('selectUserRole')
     },

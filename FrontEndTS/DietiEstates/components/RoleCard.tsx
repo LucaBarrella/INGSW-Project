@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     padding: 8,
-    borderRadius: 8,
+    borderRadius: 25,
     borderWidth: 1,
     borderColor: 'transparent',
     transform: [{ translateY: 0 }],
