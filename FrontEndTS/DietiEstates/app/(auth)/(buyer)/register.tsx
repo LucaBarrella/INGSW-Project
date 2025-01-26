@@ -1,11 +1,19 @@
-import { View, Text } from 'react-native';
+import { SafeAreaView, ScrollView} from 'react-native';
 import React from 'react';
+import {ThemedView} from '@/components/ThemedView';
+import RegistrationForm from '@/components/RegistrationForm';
 
 const RegisterBuyer = () => {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Register as Buyer</Text>
-    </View>
+    <ThemedView className="flex-1">
+      <SafeAreaView/>
+        <ScrollView className="flex-1">
+          <ThemedView className="flex-1 justify-center items-center">
+            <RegistrationForm/>
+          </ThemedView>
+        </ScrollView>
+      <SafeAreaView/>
+    </ThemedView>
   );
 }
 

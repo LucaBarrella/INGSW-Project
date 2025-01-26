@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { ThemedIcon } from './ThemedIcon';
@@ -12,6 +12,8 @@ interface RoleCardProps {
   onSelect: () => void;
   accessibilityLabel: string;
   iconSize?: number;
+  lightColor?: string
+  darkColor?: string
 }
 
 export const RoleCard: React.FC<RoleCardProps> = ({
@@ -20,10 +22,12 @@ export const RoleCard: React.FC<RoleCardProps> = ({
   iconUrl,
   onSelect,
   accessibilityLabel,
-  iconSize = 48
+  iconSize = 48,
+  lightColor,
+  darkColor
 }) => {
-  const backgroundColor = useThemeColor({ light: undefined, dark: undefined }, 'roleCardBackground');
-  const textColor = useThemeColor({ light: undefined, dark: undefined }, 'roleCardText');
+  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'roleCardBackground');
+  const textColor = useThemeColor({ light: lightColor, dark: darkColor }, 'roleCardText');
 
   const handlePress = async () => {
     if (Haptics.impactAsync) {
@@ -42,7 +46,8 @@ export const RoleCard: React.FC<RoleCardProps> = ({
       accessible={true}
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="button"
-      style={[styles.container, { backgroundColor }]}
+      className={'flex flex-col items-center p-4 rounded-3xl shadow-md'}   
+      style={{ backgroundColor }}
     >
       <ThemedIcon
         icon={iconUrl}
@@ -59,17 +64,3 @@ export const RoleCard: React.FC<RoleCardProps> = ({
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: 8,
-    borderRadius: 25,
-    borderWidth: 1,
-    borderColor: 'transparent',
-    transform: [{ translateY: 0 }],
-    cursor: 'pointer',
-    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.8)',
-  },
-});

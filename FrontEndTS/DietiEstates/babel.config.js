@@ -20,9 +20,18 @@ module.exports = function(api) {
             'logos:meta-icon',
 
             // Icone Colorabili! 
-            'fa6-brands:google',
-            'fa6-brands:meta',
-            'fa6-brands:github',
+            // 'fa6-brands:google',
+            // 'fa6-brands:meta',
+            // 'fa6-brands:github',
+            // 'fa6-brand:apple',
+            'devicon:google',
+            
+            'lineicons:google',
+            'lineicons:meta-alt',
+            'lineicons:github',
+            'lineicons:apple-brand',
+            'lineicons:emoji-sad',
+
           ],
         },
       ],

@@ -20,34 +20,34 @@ const RoleSelection: React.FC = () => {
       id: 'user',
       title: t('userTitle'),
       description: t('userDescription'),
-      iconUrl: 'material-symbols:house-outline', // Nome dell'icona
-      route: '/(auth)/(user)/login',
+      iconUrl: 'material-symbols:house-outline',
+      route: '(buyer)/login',
       accessibilityLabel: t('selectUserRole')
     },
     {
       id: 'agent',
       title: t('agentTitle'),
       description: t('agentDescription'),
-      iconUrl: 'material-symbols:business-center-outline', // Nome dell'icona
-      route: '/(auth)/(agent)/login',
+      iconUrl: 'material-symbols:business-center-outline',
+      route: '(agent)/login',
       accessibilityLabel: t('selectAgentRole')
     },
     {
       id: 'admin',
       title: t('adminTitle'),
       description: t('adminDescription'),
-      iconUrl: 'material-symbols:admin-panel-settings-outline', // Nome dell'icona
-      route: '/(auth)/(admin)/login',
+      iconUrl: 'material-symbols:admin-panel-settings-outline',
+      route: '(admin)/login',
       accessibilityLabel: t('selectAdminRole')
     }
   ];
 
   return (
     <ThemedView className="flex-1 bg-indigo-50">
-      <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: 16 }}>
-        <ThemedView className="mb-8 w-full text-center max-w-[800px] max-sm:mb-6">
+      <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }} className="p-4">
+        <ThemedView className="flex justify-center items-center mb-8 w-full text-center max-w-[800px] max-sm:mb-6">
           <ThemedView className="relative mb-2">
-            <ThemedText type="title" className='text-6xl font-semibold tracking-normal leading-tight text-center pb-4'>
+            <ThemedText type="title" className='text-4xl font-semibold tracking-normal leading-tight text-center pb-4'>
               {t('welcome')}
             </ThemedText>
           </ThemedView>
