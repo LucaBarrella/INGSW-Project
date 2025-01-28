@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ViewProps, TouchableOpacity } from 'react-native';
+import { View, ViewProps, TouchableOpacity, Platform, Alert } from 'react-native';
 import { ThemedView } from './ThemedView';
 import { ThemedText } from './ThemedText';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -10,11 +10,10 @@ import { Provider } from '@/types/Provider';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
 
-
 interface RegistrationFormData {
   firstName: string;
   lastName: string;
-  dateOfBirth: Date;
+  birthdate: Date;
   email: string;
   password: string;
 }
@@ -28,7 +27,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
   const [formData, setFormData] = useState<RegistrationFormData>({
     firstName: '',
     lastName: '',
-    dateOfBirth: new Date(),
+    birthdate: new Date(),
     email: '',
     password: '',
   });
@@ -45,15 +44,39 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
   const handleDateChange = (event: any, selectedDate?: Date) => {
     const currentDate = selectedDate || tempDate;
     setTempDate(currentDate);
+
+    if (Platform.OS === 'android') {
+      setFormData(prev => ({ ...prev, birthdate: currentDate }));
+      setShowDatePicker(false);
+    }
   };
 
   const confirmDate = () => {
-    setFormData(prev => ({ ...prev, dateOfBirth: tempDate }));
+    setFormData(prev => ({ ...prev, birthdate: tempDate }));
     setShowDatePicker(false);
   };
 
-  const handleSubmit = () => {
-    console.log('Form submitted:', formData);
+  // Funzione per la registrazione
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch('https://dietiestates25backend-fzf2bzheedg9bydx.italynorth-01.azurewebsites.net/api/users/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        Alert.alert('Registration Successful');
+        navigation.navigate('(buyer)/login' as never);
+      } else {
+        Alert.alert('Registration Failed', 'Please check your input or try again later');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Something went wrong');
+    }
   };
 
   return (
@@ -86,25 +109,51 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
       />
       <View className="mb-6">
         <ThemedText className="mb-2" style={{ color: labelColor }}>Data di nascita</ThemedText>
-        <TouchableOpacity onPress={() => setShowDatePicker(true)} className="border p-2 rounded-md min-h-[40px] min-w-[200px] w-full" style={{ backgroundColor: background }}>
-          <ThemedText style={{ color: text }}>{formData.dateOfBirth.toLocaleDateString()}</ThemedText>
-        </TouchableOpacity>
-        {showDatePicker && (
-          <View className='flex-1 justify-center items-center'>
-            {/* //BUG DOES NOT WORK ON WEB! */}
-            <DateTimePicker
-              value={tempDate}
-              mode="date"
-              display="spinner"
-              onChange={handleDateChange}
-            />
-            <ThemedButton
-              title="Conferma"
-              onPress={confirmDate}
-              borderRadius={8}
-              className="w-full min-h-[40px] mt-4"
-            />
-          </View>
+        
+        {Platform.OS === 'web' ? (
+          <input
+            type="date"
+            value={formData.birthdate.toISOString().split('T')[0]}
+            onChange={(e) => {
+              const date = new Date(e.target.value);
+              setFormData(prev => ({ ...prev, birthdate: date }));
+            }}
+            style={{ 
+              backgroundColor: background,
+              color: text,
+              border: '1px solid #ccc',
+              borderRadius: 4,
+              padding: 8,
+              width: '100%'
+            }}
+          />
+        ) : (
+          <>
+            <TouchableOpacity 
+              onPress={() => setShowDatePicker(true)} 
+              className="border p-2 rounded-md min-h-[40px] min-w-[200px] w-full" 
+              style={{ backgroundColor: background }}
+            >
+              <ThemedText style={{ color: text }}>{formData.birthdate.toLocaleDateString()}</ThemedText>
+            </TouchableOpacity>
+
+            {showDatePicker && (
+              <View className='flex-1 justify-center items-center'>
+                <DateTimePicker
+                  value={tempDate}
+                  mode="date"
+                  display="spinner"
+                  onChange={handleDateChange}
+                />
+                <ThemedButton
+                  title="Conferma"
+                  onPress={confirmDate}
+                  borderRadius={8}
+                  className="w-full min-h-[40px] mt-4"
+                />
+              </View>
+            )}
+          </>
         )}
       </View>
       <LabelInput

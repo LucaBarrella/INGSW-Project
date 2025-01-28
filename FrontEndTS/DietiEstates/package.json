@@ -17,6 +17,7 @@
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
     "@iconify/json": "^2.2.295",
+    "@react-native-async-storage/async-storage": "^2.1.0",
     "@react-native-community/datetimepicker": "8.2.0",
     "@react-navigation/bottom-tabs": "^7.0.0",
     "@react-navigation/native": "^7.0.0",
@@ -24,7 +25,7 @@
     "@types/styled-components": "^5.1.34",
     "axios": "^1.7.9",
     "clsx": "^2.1.1",
-    "expo": "^52.0.25",
+    "expo": "^52.0.28",
     "expo-blur": "~14.0.2",
     "expo-constants": "~17.0.3",
     "expo-font": "~13.0.1",

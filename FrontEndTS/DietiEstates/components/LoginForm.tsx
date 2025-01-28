@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, View, type ViewProps } from 'react-native';
+import { TouchableOpacity, View, Alert, type ViewProps } from 'react-native';
 import { ThemedView } from './ThemedView';
 import { ThemedText } from './ThemedText';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -8,6 +8,7 @@ import { Provider } from '@/types/Provider';
 import ThemedButton from './ThemedButton';
 import { LabelInput } from './LabelInput';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export type LoginFormProps = ViewProps & {
   lightColor?: string;
@@ -21,6 +22,36 @@ const LoginForm: React.FC<LoginFormProps> = ({ lightColor, darkColor, ...props }
   const cardBackground = useThemeColor({ light: lightColor, dark: darkColor }, 'loginCardBackground');
   const labelColor = useThemeColor({ light: lightColor, dark: darkColor }, 'loginCardLabel');
 
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+
+  const handleLogin = async () => {
+    try {
+      const response = await fetch('https://dietiestates25backend-fzf2bzheedg9bydx.italynorth-01.azurewebsites.net/api/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        const jwtToken = data;  // Adjust according to your API response
+
+        // Salva il JWT in AsyncStorage
+        await AsyncStorage.setItem('jwtToken', jwtToken);
+
+        Alert.alert('Login Successful');
+        navigation.navigate('Home'); 
+      } else {
+        Alert.alert('Login Failed', 'Invalid credentials or server error');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Something went wrong');
+    }
+  };
+
   return (
     <ThemedView className="transform scale-90 md:scale-100 max-w-md p-8 rounded-2xl w-10/12 shadow-lg mt-[12%] mb-[10%]" style={{ backgroundColor: cardBackground }} {...props}>
       <ThemedText className="py-5 text-center" style={{ fontSize: 36, color: labelColor }}>Welcome Back</ThemedText>
@@ -32,6 +63,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ lightColor, darkColor, ...props }
         darkColor={cardBackground}
         inputBackgroundColor={background}
         className="mb-6"
+        value={email}
+        onChangeText={setEmail}
       />
       <LabelInput
         type="password"
@@ -40,10 +73,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ lightColor, darkColor, ...props }
         darkColor={cardBackground}
         inputBackgroundColor={background}
         className="mb-6"
+        value={password}
+        onChangeText={setPassword}
       />
       <ThemedButton
         title="Sign In"
-        onPress={() => console.log('Sign In pressed')}
+        onPress={handleLogin}
         borderRadius={8}
         className="min-h-[40px]"
       />
