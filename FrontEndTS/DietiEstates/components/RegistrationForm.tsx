@@ -59,7 +59,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
   // Funzione per la registrazione
   const handleSubmit = async () => {
     try {
-      const response = await fetch('https://dietiestates25backend-fzf2bzheedg9bydx.italynorth-01.azurewebsites.net/api/users/register', {
+      const response = await fetch('http://localhost:8080/api/users/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
       });
 
       if (response.ok) {
-        const data = await response.json();
+        await response.json();
         Alert.alert('Registration Successful');
         navigation.navigate('(buyer)/login' as never);
       } else {

@@ -1,5 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, View, Alert, type ViewProps } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemedView } from './ThemedView';
 import { ThemedText } from './ThemedText';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -8,7 +9,7 @@ import { Provider } from '@/types/Provider';
 import ThemedButton from './ThemedButton';
 import { LabelInput } from './LabelInput';
 import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export type LoginFormProps = ViewProps & {
   lightColor?: string;
@@ -25,10 +26,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ lightColor, darkColor, ...props }
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
 
+  // Login function
+
   const handleLogin = async () => {
     try {
-      const response = await fetch('https://dietiestates25backend-fzf2bzheedg9bydx.italynorth-01.azurewebsites.net/api/users/login', {
-        method: 'POST',
+      const response = await fetch('http://localhost:8080/api/users/me', {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -42,8 +45,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ lightColor, darkColor, ...props }
         // Salva il JWT in AsyncStorage
         await AsyncStorage.setItem('jwtToken', jwtToken);
 
-        Alert.alert('Login Successful');
-        navigation.navigate('Home'); 
+        // Naviga alla home page
+
+        navigation.navigate('(tabs)/index' as never);
       } else {
         Alert.alert('Login Failed', 'Invalid credentials or server error');
       }
