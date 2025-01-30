@@ -26,35 +26,50 @@ const LoginForm: React.FC<LoginFormProps> = ({ lightColor, darkColor, ...props }
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
 
-  // Login function
-
-  const handleLogin = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/api/users/me', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        const jwtToken = data;  // Adjust according to your API response
-
-        // Salva il JWT in AsyncStorage
-        await AsyncStorage.setItem('jwtToken', jwtToken);
-
-        // Naviga alla home page
-
-        navigation.navigate('(tabs)/index' as never);
-      } else {
-        Alert.alert('Login Failed', 'Invalid credentials or server error');
-      }
-    } catch (error) {
-      Alert.alert('Error', 'Something went wrong');
+const handleLogin = async () => {
+  try {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
     }
-  };
+
+    const response = await fetch('http://localhost:8080/api/users/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    });
+
+    const token = await response.text();
+
+    if (response.ok) {
+      if (!token) {
+        throw new Error('Token not found in response');
+      }
+
+      // Salva il JWT in AsyncStorage
+      await AsyncStorage.setItem('jwtToken', token);
+
+      // Naviga alla home page
+      navigation.navigate('(tabs)' as never);
+    } else {
+      // Mostra il messaggio di errore dal server se disponibile
+      Alert.alert(
+        'Login Failed',
+        'Invalid credentials or server error'
+      );
+    }
+  } catch (error) {
+    Alert.alert(
+      'Error',
+      'Unable to connect to the server. Please try again later.'
+    );
+  }
+};
 
   return (
     <ThemedView className="transform scale-90 md:scale-100 max-w-md p-8 rounded-2xl w-10/12 shadow-lg mt-[12%] mb-[10%]" style={{ backgroundColor: cardBackground }} {...props}>
