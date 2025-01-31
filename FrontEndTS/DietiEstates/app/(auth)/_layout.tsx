@@ -12,8 +12,8 @@ const AuthLayout = () => {
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(buyer)/login" options={{ headerShown: false }} />
         <Stack.Screen name="(buyer)/register" options={{ headerShown: false }} />
-        <Stack.Screen name="(agent)/login" options={{ headerShown: true }} />
-        <Stack.Screen name="(admin)/login" options={{ headerShown: true }} />
+        <Stack.Screen name="(agent)/login" options={{ headerShown: false }} />
+        <Stack.Screen name="(admin)/login" options={{ headerShown: false }} />
       </Stack>
     </ThemeProvider>
   );

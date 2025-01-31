@@ -1,11 +1,12 @@
-import { View, Text } from 'react-native';
 import React from 'react';
+import { ThemedView } from '@/components/ThemedView';
+import AdminLoginForm from '@/components/AdminLoginForm';
 
 const LoginAdmin = () => {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Login as Admin</Text>
-    </View>
+    <ThemedView className="flex-1 bg-indigo-50 justify-center items-center">
+      <AdminLoginForm/>
+    </ThemedView>
   );
 }
 
