@@ -9,5 +9,75 @@
   "adminDescription": "Gestisci agenti immobiliari e configura il sistema",
   "selectUserRole": "Seleziona ruolo utente per cercare casa",
   "selectAgentRole": "Seleziona ruolo agente immobiliare",
-  "selectAdminRole": "Seleziona ruolo amministratore"
+  "selectAdminRole": "Seleziona ruolo amministratore",
+
+  "admin": {
+    "welcome": "Benvenuto nell'Area Amministratore",
+    "changePassword": "Cambia Password",
+    "changePasswordDesc": "Modifica la password del tuo account",
+    "addAdmin": "Aggiungi Amministratore",
+    "addAdminDesc": "Crea un nuovo account amministratore",
+    "addAgent": "Aggiungi Agente",
+    "addAgentDesc": "Registra un nuovo agente immobiliare",
+    "tabs": {
+      "changePassword": "Cambia Password",
+      "newAdmin": "Nuovo Admin",
+      "newAgent": "Nuovo Agente"
+    },
+    "screens": {
+      "changePassword": {
+        "title": "Cambia Password",
+        "error": "Impossibile cambiare la password"
+      },
+      "addAdmin": {
+        "title": "Aggiungi Nuovo Amministratore",
+        "error": "Impossibile aggiungere l'amministratore"
+      },
+      "addAgent": {
+        "title": "Aggiungi Nuovo Agente",
+        "error": "Impossibile aggiungere l'agente"
+      }
+    }
+  },
+
+  "forms": {
+    "labels": {
+      "firstName": "Nome",
+      "lastName": "Cognome",
+      "email": "Email",
+      "birthDate": "Data di nascita",
+      "phone": "Numero di telefono",
+      "specialization": "Specializzazione",
+      "licenseNumber": "Numero licenza",
+      "atecoCode": "Codice ATECO",
+      "currentPassword": "Password Attuale",
+      "newPassword": "Nuova Password",
+      "confirmPassword": "Conferma Password"
+    },
+    "placeholders": {
+      "currentPassword": "Inserisci la password attuale",
+      "newPassword": "Inserisci la nuova password",
+      "confirmPassword": "Conferma la nuova password"
+    },
+    "buttons": {
+      "changePassword": "Cambia Password",
+      "createAdmin": "Crea amministratore",
+      "createAgent": "Crea agente immobiliare"
+    },
+    "messages": {
+      "creating": "Creazione in corso...",
+      "passwordChanged": "Password modificata con successo"
+    },
+    "errors": {
+      "fillRequired": "Compila tutti i campi obbligatori",
+      "invalidEmail": "Indirizzo email non valido",
+      "agentRequiredFields": "Telefono e numero di licenza sono obbligatori per gli agenti",
+      "errorCreatingAdmin": "Errore durante la creazione dell'amministratore",
+      "errorCreatingAgent": "Errore durante la creazione dell'agente",
+      "unknownError": "Si è verificato un errore sconosciuto",
+      "passwordsDontMatch": "Le password non coincidono",
+      "passwordSame": "La nuova password deve essere diversa da quella attuale",
+      "passwordTooShort": "La password deve essere di almeno 8 caratteri"
+    }
+  }
 }

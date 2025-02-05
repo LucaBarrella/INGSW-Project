@@ -9,5 +9,75 @@
   "adminDescription": "Oversee real estate agents and configure the system",
   "selectUserRole": "Select the user role to search for homes",
   "selectAgentRole": "Select the real estate agent role",
-  "selectAdminRole": "Select the administrator role"
+  "selectAdminRole": "Select the administrator role",
+
+  "admin": {
+    "welcome": "Welcome to Admin Dashboard",
+    "changePassword": "Change Password",
+    "changePasswordDesc": "Update your account password",
+    "addAdmin": "Add Administrator",
+    "addAdminDesc": "Create a new administrator account",
+    "addAgent": "Add Agent",
+    "addAgentDesc": "Register a new real estate agent",
+    "tabs": {
+      "changePassword": "Change Password",
+      "newAdmin": "New Admin",
+      "newAgent": "New Agent"
+    },
+    "screens": {
+      "changePassword": {
+        "title": "Change Password",
+        "error": "Failed to change password"
+      },
+      "addAdmin": {
+        "title": "Add New Administrator",
+        "error": "Failed to add administrator"
+      },
+      "addAgent": {
+        "title": "Add New Agent",
+        "error": "Failed to add agent"
+      }
+    }
+  },
+
+  "forms": {
+    "labels": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "birthDate": "Birth Date",
+      "phone": "Phone Number",
+      "specialization": "Specialization",
+      "licenseNumber": "License Number",
+      "atecoCode": "ATECO Code",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password"
+    },
+    "placeholders": {
+      "currentPassword": "Enter your current password",
+      "newPassword": "Enter your new password",
+      "confirmPassword": "Confirm your new password"
+    },
+    "buttons": {
+      "changePassword": "Change Password",
+      "createAdmin": "Create Administrator",
+      "createAgent": "Create Agent"
+    },
+    "messages": {
+      "creating": "Creating...",
+      "passwordChanged": "Password successfully changed"
+    },
+    "errors": {
+      "fillRequired": "Please fill in all required fields",
+      "invalidEmail": "Invalid email address",
+      "agentRequiredFields": "Phone and license number are required for agents",
+      "errorCreatingAdmin": "Error creating administrator",
+      "errorCreatingAgent": "Error creating agent",
+      "unknownError": "An unknown error occurred",
+      "passwordsDontMatch": "New passwords do not match",
+      "passwordSame": "New password must be different from current password",
+      "passwordTooShort": "Password must be at least 8 characters long"
+    }
+  }
 }

@@ -9,7 +9,7 @@ import { Provider } from '@/types/Provider';
 import ThemedButton from './ThemedButton';
 import { LabelInput } from './LabelInput';
 import { useNavigation } from '@react-navigation/native';
-
+import { ApiService } from '@/app/services/api.service';
 
 export type LoginFormProps = ViewProps & {
   lightColor?: string;
@@ -33,7 +33,7 @@ const handleLogin = async () => {
       return;
     }
 
-    const response = await fetch('http://localhost:8080/api/users/login', {
+    const response = await fetch(ApiService.getEndpoint('login'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

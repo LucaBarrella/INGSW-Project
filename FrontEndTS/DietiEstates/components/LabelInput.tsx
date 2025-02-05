@@ -15,7 +15,9 @@ export type LabelInputProps = {
   onChangeText?: (text: string) => void;
   className?: string;
   inputBackgroundColor?: string;
-  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters'; // Aggiungi questa linea
+  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
+  required?: boolean;
 };
 
 function capitalizeFirstLetter(string: string) {
@@ -33,7 +35,9 @@ export function LabelInput({
   onChangeText,
   className = '',
   inputBackgroundColor,
-  autoCapitalize = 'none', // Aggiungi questa linea
+  autoCapitalize = 'none',
+  keyboardType = 'default',
+  required = false,
   ...rest
 }: Readonly<LabelInputProps>) {
   
@@ -67,7 +71,7 @@ export function LabelInput({
   return (
     <ThemedView className={`mb-8 ${className}`} lightColor={backgroundColor} darkColor={backgroundColor}>
       <ThemedText lightColor={textColors} darkColor={textColors} className='mb-2'>
-        {finalLabel}
+        {finalLabel}{required ? ' *' : ''}
       </ThemedText>
       <TextInput
         className={`border p-2 rounded-md min-h-[40px] min-w-[200px] w-full`}
@@ -77,7 +81,7 @@ export function LabelInput({
         value={value}
         onChangeText={onChangeText}
         secureTextEntry={type === 'password'}
-        keyboardType={type === 'email' ? 'email-address' : 'default'}
+        keyboardType={keyboardType}
         autoCapitalize={autoCapitalize} // Aggiungi questa linea
         {...rest}
       />

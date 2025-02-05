@@ -6,5 +6,75 @@
   "agentTitle": "Agent immobilier",
   "agentDescription": "Gérez les annonces et les clients",
   "adminTitle": "Administrateur",
-  "adminDescription": "Gérez les agents immobiliers et configurez le système"
+  "adminDescription": "Gérez les agents immobiliers et configurez le système",
+
+  "admin": {
+    "welcome": "Bienvenue dans le Tableau de Bord Administrateur",
+    "changePassword": "Changer le Mot de Passe",
+    "changePasswordDesc": "Modifiez le mot de passe de votre compte",
+    "addAdmin": "Ajouter un Administrateur",
+    "addAdminDesc": "Créez un nouveau compte administrateur",
+    "addAgent": "Ajouter un Agent",
+    "addAgentDesc": "Enregistrez un nouvel agent immobilier",
+    "tabs": {
+      "changePassword": "Changer le Mot de Passe",
+      "newAdmin": "Nouvel Admin",
+      "newAgent": "Nouvel Agent"
+    },
+    "screens": {
+      "changePassword": {
+        "title": "Changer le Mot de Passe",
+        "error": "Échec du changement de mot de passe"
+      },
+      "addAdmin": {
+        "title": "Ajouter un Nouvel Administrateur",
+        "error": "Échec de l'ajout de l'administrateur"
+      },
+      "addAgent": {
+        "title": "Ajouter un Nouvel Agent",
+        "error": "Échec de l'ajout de l'agent"
+      }
+    }
+  },
+
+  "forms": {
+    "labels": {
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "E-mail",
+      "birthDate": "Date de Naissance",
+      "phone": "Numéro de Téléphone",
+      "specialization": "Spécialisation",
+      "licenseNumber": "Numéro de Licence",
+      "atecoCode": "Code ATECO",
+      "currentPassword": "Mot de Passe Actuel",
+      "newPassword": "Nouveau Mot de Passe",
+      "confirmPassword": "Confirmer le Mot de Passe"
+    },
+    "placeholders": {
+      "currentPassword": "Entrez votre mot de passe actuel",
+      "newPassword": "Entrez votre nouveau mot de passe",
+      "confirmPassword": "Confirmez votre nouveau mot de passe"
+    },
+    "buttons": {
+      "changePassword": "Changer le Mot de Passe",
+      "createAdmin": "Créer un Administrateur",
+      "createAgent": "Créer un Agent"
+    },
+    "messages": {
+      "creating": "Création en cours...",
+      "passwordChanged": "Mot de passe modifié avec succès"
+    },
+    "errors": {
+      "fillRequired": "Veuillez remplir tous les champs requis",
+      "invalidEmail": "Adresse e-mail invalide",
+      "agentRequiredFields": "Le téléphone et le numéro de licence sont obligatoires pour les agents",
+      "errorCreatingAdmin": "Erreur lors de la création de l'administrateur",
+      "errorCreatingAgent": "Erreur lors de la création de l'agent",
+      "unknownError": "Une erreur inconnue s'est produite",
+      "passwordsDontMatch": "Les mots de passe ne correspondent pas",
+      "passwordSame": "Le nouveau mot de passe doit être différent de l'actuel",
+      "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères"
+    }
+  }
 }

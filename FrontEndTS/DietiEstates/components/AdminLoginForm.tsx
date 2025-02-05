@@ -7,6 +7,7 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import ThemedButton from './ThemedButton';
 import { LabelInput } from './LabelInput';
 import { useNavigation } from '@react-navigation/native';
+import { ApiService } from '@/app/services/api.service';
 
 export type LoginAdminProps = ViewProps & {
   lightColor?: string;
@@ -24,6 +25,7 @@ const LoginAdmin: React.FC<LoginAdminProps> = ({ lightColor, darkColor, ...props
   const [password, setPassword] = React.useState('');
   const [authCode, setAuthCode] = React.useState('');
 
+  // Commenta per prova
   const handleLogin = async () => {
     try {
       if (!email || !password || !authCode) {
@@ -31,7 +33,7 @@ const LoginAdmin: React.FC<LoginAdminProps> = ({ lightColor, darkColor, ...props
         return;
       }
 
-      const response = await fetch('http://localhost:8080/api/admins/login', {
+      const response = await fetch(ApiService.getEndpoint('adminLogin'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -53,8 +55,8 @@ const LoginAdmin: React.FC<LoginAdminProps> = ({ lightColor, darkColor, ...props
         // Salva il JWT in AsyncStorage
         await AsyncStorage.setItem('jwtToken', token);
 
-        // Naviga alla dashboard dell'amministratore
-        navigation.navigate('(admin)/dashboard' as never);
+        // Naviga alla sezione amministratore
+        navigation.navigate('(admin)' as never);
       } else {
         Alert.alert('Access Failed', 'Invalid credentials or server error');
       }
@@ -105,7 +107,8 @@ const LoginAdmin: React.FC<LoginAdminProps> = ({ lightColor, darkColor, ...props
 
       <ThemedButton
         title="Enter"
-        onPress={handleLogin}
+        // onPress={handleLogin}
+        onPress={() => navigation.navigate('(admin)' as never)}
         borderRadius={8}
         className="min-h-[40px]"
       />

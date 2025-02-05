@@ -6,5 +6,75 @@
   "agentTitle": "Agente Inmobiliario",
   "agentDescription": "Gestiona anuncios y clientes",
   "adminTitle": "Administrador",
-  "adminDescription": "Gestiona agentes inmobiliarios y configura el sistema"
+  "adminDescription": "Gestiona agentes inmobiliarios y configura el sistema",
+
+  "admin": {
+    "welcome": "Bienvenido al Panel de Administrador",
+    "changePassword": "Cambiar Contraseña",
+    "changePasswordDesc": "Actualiza la contraseña de tu cuenta",
+    "addAdmin": "Agregar Administrador",
+    "addAdminDesc": "Crea una nueva cuenta de administrador",
+    "addAgent": "Agregar Agente",
+    "addAgentDesc": "Registra un nuevo agente inmobiliario",
+    "tabs": {
+      "changePassword": "Cambiar Contraseña",
+      "newAdmin": "Nuevo Admin",
+      "newAgent": "Nuevo Agente"
+    },
+    "screens": {
+      "changePassword": {
+        "title": "Cambiar Contraseña",
+        "error": "Error al cambiar la contraseña"
+      },
+      "addAdmin": {
+        "title": "Agregar Nuevo Administrador",
+        "error": "Error al agregar administrador"
+      },
+      "addAgent": {
+        "title": "Agregar Nuevo Agente",
+        "error": "Error al agregar agente"
+      }
+    }
+  },
+
+  "forms": {
+    "labels": {
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "email": "Correo Electrónico",
+      "birthDate": "Fecha de Nacimiento",
+      "phone": "Número de Teléfono",
+      "specialization": "Especialización",
+      "licenseNumber": "Número de Licencia",
+      "atecoCode": "Código ATECO",
+      "currentPassword": "Contraseña Actual",
+      "newPassword": "Nueva Contraseña",
+      "confirmPassword": "Confirmar Contraseña"
+    },
+    "placeholders": {
+      "currentPassword": "Ingresa tu contraseña actual",
+      "newPassword": "Ingresa tu nueva contraseña",
+      "confirmPassword": "Confirma tu nueva contraseña"
+    },
+    "buttons": {
+      "changePassword": "Cambiar Contraseña",
+      "createAdmin": "Crear Administrador",
+      "createAgent": "Crear Agente"
+    },
+    "messages": {
+      "creating": "Creando...",
+      "passwordChanged": "Contraseña cambiada exitosamente"
+    },
+    "errors": {
+      "fillRequired": "Por favor complete todos los campos requeridos",
+      "invalidEmail": "Correo electrónico inválido",
+      "agentRequiredFields": "El teléfono y el número de licencia son obligatorios para los agentes",
+      "errorCreatingAdmin": "Error al crear administrador",
+      "errorCreatingAgent": "Error al crear agente",
+      "unknownError": "Se produjo un error desconocido",
+      "passwordsDontMatch": "Las contraseñas no coinciden",
+      "passwordSame": "La nueva contraseña debe ser diferente de la actual",
+      "passwordTooShort": "La contraseña debe tener al menos 8 caracteres"
+    }
+  }
 }

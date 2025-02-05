@@ -9,6 +9,7 @@ import { SocialButton } from './SocialButton';
 import { Provider } from '@/types/Provider';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
+import { ApiService } from '@/app/services/api.service';
 
 interface RegistrationFormData {
   firstName: string;
@@ -59,7 +60,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
   // Funzione per la registrazione
   const handleSubmit = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/users/register', {
+      const response = await fetch(ApiService.getEndpoint('register'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -72,6 +73,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
         Alert.alert('Registration Successful');
         navigation.navigate('(buyer)/login' as never);
       } else {
+        console.log('Status:', response.status, 'Response:', await response.text());
         Alert.alert('Registration Failed', 'Please check your input or try again later');
       }
     } catch (error) {

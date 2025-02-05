@@ -32,6 +32,9 @@ module.exports = function(api) {
             'lineicons:apple-brand',
             'lineicons:emoji-sad',
 
+            'material-symbols:key-outline',
+            'material-symbols:person-add-outline',
+            'material-symbols:real-estate-agent-outline',
           ],
         },
       ],

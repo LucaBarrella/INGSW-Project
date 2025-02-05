@@ -13,7 +13,7 @@ export const Colors = {
     roleCardBackground: '#1e3a8a', // Tertiary color
     iconColor: '#EBF2FA', // Primary color
 
-    loginCardBackground: '#adcee6', // Secondary color
+    loginCardBackground: '#c1deff', // Secondary color
     loginCardTextField: '#1e3a8a', // Primary color
     loginCardLabel: '#1e3a8a', // Primary color
     buttonBackground: '#1e3a8a', // Tertiary color
