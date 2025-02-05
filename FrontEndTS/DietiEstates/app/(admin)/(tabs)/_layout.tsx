@@ -3,21 +3,21 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { HapticTab } from '../../../components/HapticTab';
-import { IconSymbol } from '../../../components/ui/IconSymbol';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import TabBarBackground from '../../../components/ui/TabBarBackground';
 import { Colors } from '../../../constants/Colors';
 import { useColorScheme } from '../../../hooks/useColorScheme';
 
 const PasswordIcon = ({ color }: { color: string }) => (
-  <IconSymbol size={28} name="key.fill" color={color} />
+  <MaterialIcons name="key" size={28} color={color} />
 );
 
 const AdminIcon = ({ color }: { color: string }) => (
-  <IconSymbol size={28} name="person.badge.plus.fill" color={color} />
+  <MaterialIcons name="person-add" size={28} color={color} />
 );
 
 const AgentIcon = ({ color }: { color: string }) => (
-  <IconSymbol size={28} name="person.2.fill" color={color} />
+  <MaterialIcons name="real-estate-agent" size={28} color={color} />
 );
 
 export default function AdminTabLayout() {

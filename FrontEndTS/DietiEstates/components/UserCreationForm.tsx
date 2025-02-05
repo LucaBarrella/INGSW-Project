@@ -5,6 +5,7 @@ import { LabelInput } from './LabelInput';
 import ThemedButton from './ThemedButton';
 import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
+import { ConfirmationDialog } from './ConfirmationDialog';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 type UserType = 'admin' | 'agent';
@@ -52,6 +53,7 @@ export default function UserCreationForm({
     atecoCode: ''
   });
   const [error, setError] = useState<string>('');
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const handleInputChange = (field: keyof UserFormData, value: string): void => {
     setFormData(prev => ({
@@ -61,29 +63,52 @@ export default function UserCreationForm({
     setError('');
   };
 
-  const handleSubmit = async () => {
+  const validateForm = () => {
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.birthDate) {
+      setError(t('forms.errors.fillRequired'));
+      return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError(t('forms.errors.invalidEmail'));
+      return false;
+    }
+
+    if (userType === 'agent') {
+      if (!formData.phone || !formData.licenseNumber) {
+        setError(t('forms.errors.agentRequiredFields'));
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  const handleConfirm = async () => {
     try {
-      if (!formData.firstName || !formData.lastName || !formData.email || !formData.birthDate) {
-        setError(t('forms.errors.fillRequired'));
-        return;
-      }
-
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(formData.email)) {
-        setError(t('forms.errors.invalidEmail'));
-        return;
-      }
-
-      if (userType === 'agent') {
-        if (!formData.phone || !formData.licenseNumber) {
-          setError(t('forms.errors.agentRequiredFields'));
-          return;
-        }
-      }
-
       await onSubmit(formData);
+      // Reset form on success
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        birthDate: '',
+        phone: '',
+        specialization: '',
+        licenseNumber: '',
+        atecoCode: ''
+      });
     } catch (error) {
       setError(error instanceof Error ? error.message : t('forms.errors.unknownError'));
+    } finally {
+      setShowConfirmation(false);
+    }
+  };
+
+  const handleSubmit = () => {
+    if (validateForm()) {
+      setShowConfirmation(true);
     }
   };
 
@@ -201,6 +226,13 @@ export default function UserCreationForm({
         borderRadius={8}
         className={`min-h-[40px] ${isLoading ? 'opacity-50' : ''}`}
         title={buttonTitleFinal}
+      />
+
+      <ConfirmationDialog
+        visible={showConfirmation}
+        onConfirm={handleConfirm}
+        onCancel={() => setShowConfirmation(false)}
+        messageKey={userType === 'admin' ? 'createAdmin' : 'createAgent'}
       />
     </ThemedView>
   );

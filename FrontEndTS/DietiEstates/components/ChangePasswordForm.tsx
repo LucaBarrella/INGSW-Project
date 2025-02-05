@@ -3,6 +3,7 @@ import { Alert, StyleSheet, type ViewProps } from 'react-native';
 import { ThemedView } from './ThemedView';
 import { LabelInput } from './LabelInput';
 import ThemedButton from './ThemedButton';
+import { ConfirmationDialog } from './ConfirmationDialog';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { useTranslation } from 'react-i18next';
 
@@ -29,31 +30,34 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
-  const handleSubmit = async () => {
+  const validateForm = () => {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      Alert.alert('Error', t('forms.errors.fillRequired'));
+      return false;
+    }
+
+    if (newPassword !== confirmPassword) {
+      Alert.alert('Error', t('forms.errors.passwordsDontMatch'));
+      return false;
+    }
+
+    if (newPassword === currentPassword) {
+      Alert.alert('Error', t('forms.errors.passwordSame'));
+      return false;
+    }
+
+    if (newPassword.length < 8) {
+      Alert.alert('Error', t('forms.errors.passwordTooShort'));
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleConfirm = async () => {
     try {
-      // Validation
-      if (!currentPassword || !newPassword || !confirmPassword) {
-        Alert.alert('Error', t('forms.errors.fillRequired'));
-        return;
-      }
-
-      if (newPassword !== confirmPassword) {
-        Alert.alert('Error', t('forms.errors.passwordsDontMatch'));
-        return;
-      }
-
-      if (newPassword === currentPassword) {
-        Alert.alert('Error', t('forms.errors.passwordSame'));
-        return;
-      }
-
-      // Password strength validation
-      if (newPassword.length < 8) {
-        Alert.alert('Error', t('forms.errors.passwordTooShort'));
-        return;
-      }
-
       setLoading(true);
       await onSubmit({
         oldPassword: currentPassword,
@@ -69,6 +73,13 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
       Alert.alert('Error', error instanceof Error ? error.message : t('admin.screens.changePassword.error'));
     } finally {
       setLoading(false);
+      setShowConfirmation(false);
+    }
+  };
+
+  const handleSubmit = () => {
+    if (validateForm()) {
+      setShowConfirmation(true);
     }
   };
 
@@ -123,6 +134,13 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
         disabled={loading}
         borderRadius={8}
         className={`min-h-[40px] ${loading ? 'opacity-50' : ''}`}
+      />
+
+      <ConfirmationDialog
+        visible={showConfirmation}
+        onConfirm={handleConfirm}
+        onCancel={() => setShowConfirmation(false)}
+        messageKey="changePassword"
       />
     </ThemedView>
   );

@@ -44,6 +44,18 @@
   },
 
   "forms": {
+    "confirmation": {
+      "title": "Confirm Action",
+      "messages": {
+        "changePassword": "Are you sure you want to change your password?",
+        "createAdmin": "Do you want to create a new administrator account?",
+        "createAgent": "Do you want to register a new real estate agent?"
+      },
+      "buttons": {
+        "confirm": "Confirm",
+        "cancel": "Cancel"
+      }
+    },
     "labels": {
       "firstName": "First Name",
       "lastName": "Last Name",

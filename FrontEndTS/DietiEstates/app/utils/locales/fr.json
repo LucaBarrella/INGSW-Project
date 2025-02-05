@@ -41,6 +41,18 @@
   },
 
   "forms": {
+    "confirmation": {
+      "title": "Confirmer l'Action",
+      "messages": {
+        "changePassword": "Êtes-vous sûr de vouloir changer votre mot de passe ?",
+        "createAdmin": "Voulez-vous créer un nouveau compte administrateur ?",
+        "createAgent": "Voulez-vous enregistrer un nouvel agent immobilier ?"
+      },
+      "buttons": {
+        "confirm": "Confirmer",
+        "cancel": "Annuler"
+      }
+    },
     "labels": {
       "firstName": "Prénom",
       "lastName": "Nom",
