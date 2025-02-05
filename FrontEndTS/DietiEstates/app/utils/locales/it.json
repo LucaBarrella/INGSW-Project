@@ -27,14 +27,17 @@
     "screens": {
       "changePassword": {
         "title": "Cambia Password",
+        "subtitle": "Aggiorna le credenziali del tuo account in modo sicuro",
         "error": "Impossibile cambiare la password"
       },
       "addAdmin": {
         "title": "Aggiungi Nuovo Amministratore",
+        "subtitle": "Crea un nuovo account amministratore con accesso completo al sistema",
         "error": "Impossibile aggiungere l'amministratore"
       },
       "addAgent": {
         "title": "Aggiungi Nuovo Agente",
+        "subtitle": "Registra un nuovo agente immobiliare nella piattaforma",
         "error": "Impossibile aggiungere l'agente"
       }
     }

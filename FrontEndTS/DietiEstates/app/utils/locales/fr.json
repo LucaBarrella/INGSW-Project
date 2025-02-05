@@ -24,14 +24,17 @@
     "screens": {
       "changePassword": {
         "title": "Changer le Mot de Passe",
+        "subtitle": "Mettez à jour les identifiants de votre compte en toute sécurité",
         "error": "Échec du changement de mot de passe"
       },
       "addAdmin": {
         "title": "Ajouter un Nouvel Administrateur",
+        "subtitle": "Créez un nouveau compte administrateur avec un accès complet au système",
         "error": "Échec de l'ajout de l'administrateur"
       },
       "addAgent": {
         "title": "Ajouter un Nouvel Agent",
+        "subtitle": "Inscrivez un nouvel agent immobilier sur la plateforme",
         "error": "Échec de l'ajout de l'agent"
       }
     }

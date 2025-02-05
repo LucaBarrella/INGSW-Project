@@ -1,8 +1,9 @@
-import { StyleSheet } from 'react-native';
+import { SafeAreaView, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { ThemedView } from '../../../components/ThemedView';
+import { ThemedView } from '@/components/ThemedView';
 import { ApiService } from '@/app/services/api.service';
-import ChangePasswordForm from '../../../components/ChangePasswordForm';
+import ChangePasswordForm from '@/components/ChangePasswordForm';
+import { TabHeader } from '@/components/TabHeader';
 
 export default function ChangePasswordScreen() {
   const { t } = useTranslation();
@@ -25,20 +26,21 @@ export default function ChangePasswordScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
-      <ChangePasswordForm 
-        userType="admin"
-        onSubmit={handleChangePassword}
+    <ThemedView className="flex-1">
+      <SafeAreaView />
+      <TabHeader 
+        title={t('admin.screens.changePassword.title')}
+        subtitle={t('admin.screens.changePassword.subtitle')}
       />
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="px-4">
+        <ThemedView className="flex-1 justify-center items-center py-6">
+          <ChangePasswordForm 
+            userType="admin"
+            onSubmit={handleChangePassword}
+          />
+        </ThemedView>
+      </ScrollView>
+      <SafeAreaView />
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

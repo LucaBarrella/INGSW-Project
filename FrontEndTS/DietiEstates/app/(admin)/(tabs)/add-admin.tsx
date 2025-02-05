@@ -6,6 +6,7 @@ import UserCreationForm from '@/components/UserCreationForm';
 import ApiService from '@/app/services/api.service';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { TabHeader } from '@/components/TabHeader';
 
 export default function AddAdminScreen() {
   const { t } = useTranslation();
@@ -42,20 +43,24 @@ export default function AddAdminScreen() {
 
   return (
     <ThemedView className="flex-1">
-      <SafeAreaView/>
-        <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
-          <ThemedView className="flex-1 justify-center items-center p-4">
-            {error ? (
-              <ThemedText className="text-red-500 mb-4">{error}</ThemedText>
-            ) : null}
-            <UserCreationForm
-              userType="admin"
-              onSubmit={handleCreateAdmin}
-              isLoading={isLoading}
-            />          
-          </ThemedView>
-        </ScrollView>
-      <SafeAreaView/>
+      <SafeAreaView />
+      <TabHeader 
+        title={t('admin.screens.addAdmin.title')}
+        subtitle={t('admin.screens.addAdmin.subtitle')}
+      />
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="px-4">
+        <ThemedView className="flex-1 justify-center items-center py-6">
+          {error ? (
+            <ThemedText className="text-red-500 mb-4">{error}</ThemedText>
+          ) : null}
+          <UserCreationForm
+            userType="admin"
+            onSubmit={handleCreateAdmin}
+            isLoading={isLoading}
+          />          
+        </ThemedView>
+      </ScrollView>
+      <SafeAreaView />
     </ThemedView>
   );
 }

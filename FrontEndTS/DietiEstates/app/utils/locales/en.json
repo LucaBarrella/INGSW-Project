@@ -27,14 +27,17 @@
     "screens": {
       "changePassword": {
         "title": "Change Password",
+        "subtitle": "Update your account credentials securely",
         "error": "Failed to change password"
       },
       "addAdmin": {
         "title": "Add New Administrator",
+        "subtitle": "Create a new administrator account with full system access",
         "error": "Failed to add administrator"
       },
       "addAgent": {
         "title": "Add New Agent",
+        "subtitle": "Register a new real estate agent to the platform",
         "error": "Failed to add agent"
       }
     }
