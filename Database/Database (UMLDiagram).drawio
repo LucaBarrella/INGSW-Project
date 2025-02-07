@@ -161,13 +161,16 @@
           <mxGeometry y="26" width="180" height="26" as="geometry" />
         </mxCell>
         <mxCell id="UJv71o3bR3QkaDZQn8Xq-7" value="&lt;b&gt;Agente_Immobiliare&lt;/b&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#dae8fc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;strokeColor=#6c8ebf;" parent="1" vertex="1">
-          <mxGeometry x="357" y="436" width="180" height="78" as="geometry" />
+          <mxGeometry x="357" y="436" width="180" height="104" as="geometry" />
         </mxCell>
         <mxCell id="UJv71o3bR3QkaDZQn8Xq-8" value="+ Data_di_Registrazione : Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="UJv71o3bR3QkaDZQn8Xq-7" vertex="1">
           <mxGeometry y="26" width="180" height="26" as="geometry" />
         </mxCell>
         <mxCell id="UJv71o3bR3QkaDZQn8Xq-9" value="+ Numero_di_telefono : String" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="UJv71o3bR3QkaDZQn8Xq-7" vertex="1">
           <mxGeometry y="52" width="180" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="AuE6XfU9nsKiRzeataOM-1" value="+ Numero_REA : String" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="UJv71o3bR3QkaDZQn8Xq-7" vertex="1">
+          <mxGeometry y="78" width="180" height="26" as="geometry" />
         </mxCell>
         <mxCell id="UJv71o3bR3QkaDZQn8Xq-13" value="" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="UJv71o3bR3QkaDZQn8Xq-6" target="DDnz-kFCZ5VNoQRXpzYX-17" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
