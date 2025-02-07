@@ -16,9 +16,7 @@ interface UserFormData {
   email: string;
   birthDate: string;
   phone?: string;
-  specialization?: string;
-  licenseNumber?: string;
-  atecoCode?: string;
+  REANumber?: string;
 }
 
 interface UserCreationFormProps extends ViewProps {
@@ -48,9 +46,7 @@ export default function UserCreationForm({
     email: '',
     birthDate: '',
     phone: '',
-    specialization: '',
-    licenseNumber: '',
-    atecoCode: ''
+    REANumber: '',
   });
   const [error, setError] = useState<string>('');
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -76,7 +72,7 @@ export default function UserCreationForm({
     }
 
     if (userType === 'agent') {
-      if (!formData.phone || !formData.licenseNumber) {
+      if (!formData.phone || !formData.REANumber) {
         setError(t('forms.errors.agentRequiredFields'));
         return false;
       }
@@ -95,9 +91,7 @@ export default function UserCreationForm({
         email: '',
         birthDate: '',
         phone: '',
-        specialization: '',
-        licenseNumber: '',
-        atecoCode: ''
+        REANumber: '',
       });
     } catch (error) {
       setError(error instanceof Error ? error.message : t('forms.errors.unknownError'));
@@ -188,30 +182,10 @@ export default function UserCreationForm({
             className="mb-6"
           />
           <LabelInput
-            label={t('forms.labels.specialization')}
-            value={formData.specialization}
-            onChangeText={(value: string) => handleInputChange('specialization', value)}
-            textColor={text}
-            lightColor={cardBackground}
-            darkColor={cardBackground}
-            inputBackgroundColor={background}
-            className="mb-6"
-          />
-          <LabelInput
-            label={t('forms.labels.licenseNumber')}
-            value={formData.licenseNumber}
-            onChangeText={(value: string) => handleInputChange('licenseNumber', value)}
+            label={t('forms.labels.REANumber')}
+            value={formData.REANumber}
+            onChangeText={(value: string) => handleInputChange('REANumber', value)}
             required
-            textColor={text}
-            lightColor={cardBackground}
-            darkColor={cardBackground}
-            inputBackgroundColor={background}
-            className="mb-6"
-          />
-          <LabelInput
-            label={t('forms.labels.atecoCode')}
-            value={formData.atecoCode}
-            onChangeText={(value: string) => handleInputChange('atecoCode', value)}
             textColor={text}
             lightColor={cardBackground}
             darkColor={cardBackground}

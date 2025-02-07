@@ -59,9 +59,8 @@
       "email": "E-mail",
       "birthDate": "Date de Naissance",
       "phone": "Numéro de Téléphone",
-      "specialization": "Spécialisation",
-      "licenseNumber": "Numéro de Licence",
-      "atecoCode": "Code ATECO",
+      "REANumber": "Numéro de Licence",
+
       "currentPassword": "Mot de Passe Actuel",
       "newPassword": "Nouveau Mot de Passe",
       "confirmPassword": "Confirmer le Mot de Passe"

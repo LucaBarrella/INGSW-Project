@@ -62,9 +62,7 @@
       "email": "Email",
       "birthDate": "Birth Date",
       "phone": "Phone Number",
-      "specialization": "Specialization",
-      "licenseNumber": "License Number",
-      "atecoCode": "ATECO Code",
+      "REANumber": "REA Number",
       "currentPassword": "Current Password",
       "newPassword": "New Password",
       "confirmPassword": "Confirm Password"
@@ -86,7 +84,7 @@
     "errors": {
       "fillRequired": "Please fill in all required fields",
       "invalidEmail": "Invalid email address",
-      "agentRequiredFields": "Phone and license number are required for agents",
+      "agentRequiredFields": "Phone and REA number are required for agents",
       "errorCreatingAdmin": "Error creating administrator",
       "errorCreatingAgent": "Error creating agent",
       "unknownError": "An unknown error occurred",

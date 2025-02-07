@@ -62,9 +62,7 @@
       "email": "Email",
       "birthDate": "Data di nascita",
       "phone": "Numero di telefono",
-      "specialization": "Specializzazione",
-      "licenseNumber": "Numero licenza",
-      "atecoCode": "Codice ATECO",
+      "REANumber": "REA Number",
       "currentPassword": "Password Attuale",
       "newPassword": "Nuova Password",
       "confirmPassword": "Conferma Password"
