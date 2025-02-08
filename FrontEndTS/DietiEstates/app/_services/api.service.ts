@@ -4,17 +4,20 @@ export class ApiService {
   static get endpoints() {
     return {
 
-      // Auth
+      //! Auth
 
-        // Buyer
-        buyerLogin: `${this.BASE_URL}/buyer/login`,
-        buyerRegister: `${this.BASE_URL}/buyer/register`,
+        //? Buyer
+        // buyerLogin: `${this.BASE_URL}/buyer/login`,
+        // buyerRegister: `${this.BASE_URL}/buyer/register`,
+        buyerLogin: `${this.BASE_URL}/users/login`,
 
-        // Admin
-        adminLogin: `${this.BASE_URL}/admin/login`,
+        //? Admin
+        // adminLogin: `${this.BASE_URL}/admin/login`,
+        adminLogin: `${this.BASE_URL}/users/login`,
 
-        // Agent
-        agentLogin: `${this.BASE_URL}/agent/login`,
+        //? Agent
+        // agentLogin: `${this.BASE_URL}/agent/login`,
+        agentLogin: `${this.BASE_URL}/users/login`,
 
 
       // After login

@@ -17,6 +17,13 @@ export default function AdminLayout() {
           headerBackVisible: false
         }}
       />
+      <Stack.Screen 
+        name="(tabs)"
+        options={{
+          title: 'Admin Tabs',
+          headerBackVisible: true
+        }}
+      />
     </Stack>
   );
 }

@@ -17,6 +17,18 @@ export type LoginFormProps = ViewProps & {
   darkColor?: string;
 };
 
+const getHeaderText = (userType: 'admin' | 'agent' | 'buyer'): string => {
+  if (userType === 'admin') return 'Admin Access';
+  if (userType === 'agent') return 'Agent Access';
+  return 'Welcome Back';
+};
+
+const getSubHeaderText = (userType: 'admin' | 'agent' | 'buyer'): string => {
+  if (userType === 'admin') return 'Authenticate to access the admin panel';
+  if (userType === 'agent') return 'Authenticate to access the agent panel';
+  return 'Sign in to continue';
+};
+
 const LoginForm: React.FC<LoginFormProps> = ({ userType, lightColor, darkColor, ...props }) => {
   const router = useRouter();
   const background = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
@@ -80,10 +92,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ userType, lightColor, darkColor, 
   return (
     <ThemedView className="transform scale-90 md:scale-100 max-w-md p-8 rounded-2xl w-10/12 shadow-lg mt-[12%] mb-[10%]" style={{ backgroundColor: cardBackground }} {...props}>
       <ThemedText className="py-5 text-center" style={{ fontSize: 36, color: labelColor }}>
-        {userType === 'admin' ? 'Admin Access' : userType === 'agent' ? 'Agent Access' : 'Welcome Back'}
+        {getHeaderText(userType)}
       </ThemedText>
       <ThemedText className="text-lg mb-6 text-center" style={{ color: labelColor }}>
-        {userType === 'admin' ? 'Authenticate to access the admin panel' : userType === 'agent' ? 'Authenticate to access the agent panel' : 'Sign in to continue'}
+        {getSubHeaderText(userType)}
       </ThemedText>
 
       <LabelInput
@@ -125,7 +137,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ userType, lightColor, darkColor, 
 
       <ThemedButton
         title="Enter"
-        onPress={handleLogin}
+        //TODO DISABLED FOR TESTING
+        //! Either works!
+        // onPress={handleLogin} 
+        onPress={() => router.push(`/(protected)/(${userType})/home` as any)} // Naviga direttamente alla pagina home
         borderRadius={8}
         className="min-h-[40px]"
       />
