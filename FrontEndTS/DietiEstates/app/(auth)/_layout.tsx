@@ -8,12 +8,21 @@ const AuthLayout = () => {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(buyer)/login" options={{ headerShown: false }} />
-        <Stack.Screen name="(buyer)/register" options={{ headerShown: false }} />
-        <Stack.Screen name="(agent)/login" options={{ headerShown: false }} />
-        <Stack.Screen name="(admin)/login" options={{ headerShown: false }} />
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          animation: 'slide_from_right'
+        }}
+      >
+        <Stack.Screen 
+          name="index" 
+          options={{
+            title: 'Role Selection'
+          }}
+        />
+        <Stack.Screen name="(buyer)" />
+        <Stack.Screen name="(agent)" />
+        <Stack.Screen name="(admin)" />
       </Stack>
     </ThemeProvider>
   );

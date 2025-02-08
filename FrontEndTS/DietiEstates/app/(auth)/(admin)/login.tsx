@@ -1,13 +1,16 @@
 import React from 'react';
+import { ScrollView } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
-import AdminLoginForm from '@/components/AdminLoginForm';
+import LoginForm from '@/components/LoginForm';
 
-const LoginAdmin = () => {
+export default function AdminLogin() {
   return (
-    <ThemedView className="flex-1 bg-indigo-50 justify-center items-center">
-      <AdminLoginForm/>
+    <ThemedView className="flex-1 bg-indigo-50">
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="flex-1">
+        <ThemedView className="flex-1 justify-center items-center">
+          <LoginForm userType="admin" />
+        </ThemedView>
+      </ScrollView>
     </ThemedView>
   );
 }
-
-export default LoginAdmin;

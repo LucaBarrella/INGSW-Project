@@ -8,8 +8,8 @@ import ThemedButton from './ThemedButton';
 import { SocialButton } from './SocialButton';
 import { Provider } from '@/types/Provider';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useNavigation } from '@react-navigation/native';
-import { ApiService } from '@/app/services/api.service';
+import { useRouter } from 'expo-router';
+import { ApiService } from '@/app/_services/api.service';
 
 interface RegistrationFormData {
   firstName: string;
@@ -35,7 +35,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
 
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [tempDate, setTempDate] = useState(new Date());
-  const navigation = useNavigation();
+  const router = useRouter();
 
   const background = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
   const text = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
@@ -60,7 +60,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
   // Funzione per la registrazione
   const handleSubmit = async () => {
     try {
-      const response = await fetch(ApiService.getEndpoint('register'), {
+      const response = await fetch(ApiService.getEndpoint('buyerRegister'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -71,7 +71,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
       if (response.ok) {
         await response.json();
         Alert.alert('Registration Successful');
-        navigation.navigate('(buyer)/login' as never);
+        router.push('/(auth)/(buyer)/login');
       } else {
         console.log('Status:', response.status, 'Response:', await response.text());
         Alert.alert('Registration Failed', 'Please check your input or try again later');
@@ -202,7 +202,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
         <View className="flex-row justify-center mt-3">
           <ThemedText style={{ color: labelColor }}>Have an account already? </ThemedText>
               {/* //TODO fix this! */}
-            <TouchableOpacity onPress={() => navigation.navigate('(buyer)/login' as never)}> 
+            <TouchableOpacity onPress={() => router.push('/(auth)/(buyer)/login')}> 
               <ThemedText className="text-blue-500 underline font-bold" style={{ color: labelColor }}>
                 Sign in
               </ThemedText>

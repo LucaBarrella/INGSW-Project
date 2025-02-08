@@ -14,6 +14,12 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
+const STACK_SCREENS = [
+  { name: "(auth)" },
+  { name: "(protected)", options: { gestureEnabled: false } },
+  { name: "+not-found", options: { presentation: 'modal' as const } }
+];
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
@@ -32,10 +38,17 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(admin)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
+      <Stack screenOptions={{ headerShown: false }} initialRouteName="(auth)">
+        {STACK_SCREENS.map(screen => (
+          <Stack.Screen 
+            key={screen.name}
+            name={screen.name} 
+            options={{
+              headerShown: false,
+              ...screen.options
+            }}
+          />
+        ))}
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

@@ -17,11 +17,11 @@ const RoleSelection: React.FC = () => {
 
   const roleData: RoleData[] = [
     {
-      id: 'user',
+      id: 'buyer',
       title: t('userTitle'),
       description: t('userDescription'),
       iconUrl: 'material-symbols:house-outline',
-      route: '(buyer)/login',
+      route: '/(auth)/(buyer)/login',
       accessibilityLabel: t('selectUserRole')
     },
     {
@@ -29,7 +29,7 @@ const RoleSelection: React.FC = () => {
       title: t('agentTitle'),
       description: t('agentDescription'),
       iconUrl: 'material-symbols:business-center-outline',
-      route: '(agent)/login',
+      route: '/(auth)/(agent)/login',
       accessibilityLabel: t('selectAgentRole')
     },
     {
@@ -37,7 +37,7 @@ const RoleSelection: React.FC = () => {
       title: t('adminTitle'),
       description: t('adminDescription'),
       iconUrl: 'material-symbols:admin-panel-settings-outline',
-      route: '(admin)/login',
+      route: '/(auth)/(admin)/login',
       accessibilityLabel: t('selectAdminRole')
     }
   ];

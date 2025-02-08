@@ -1,12 +1,16 @@
-import { View, Text } from 'react-native';
 import React from 'react';
+import { ScrollView } from 'react-native';
+import { ThemedView } from '@/components/ThemedView';
+import LoginForm from '@/components/LoginForm';
 
-const LoginAgent = () => {
+export default function AgentLogin() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Login as Agent</Text>
-    </View>
+    <ThemedView className="flex-1 bg-indigo-50">
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="flex-1">
+        <ThemedView className="flex-1 justify-center items-center">
+          <LoginForm userType="agent" />
+        </ThemedView>
+      </ScrollView>
+    </ThemedView>
   );
 }
-
-export default LoginAgent;
