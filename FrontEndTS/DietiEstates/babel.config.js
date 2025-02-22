@@ -35,6 +35,14 @@ module.exports = function(api) {
             'material-symbols:key-outline',
             'material-symbols:person-add-outline',
             'material-symbols:real-estate-agent-outline',
+            'material-symbols:sim-card-download-outline',
+
+            'material-symbols:push-pin',
+            'material-symbols:push-pin-outline',
+            'material-symbols:home-outline',
+            'material-symbols:visibility-outline-rounded',
+            'material-symbols:calendar-month-outline',
+            'material-symbols:attach-money'
           ],
         },
       ],

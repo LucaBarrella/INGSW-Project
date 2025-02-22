@@ -1,33 +1,36 @@
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
-import { ThemedText } from '@/components/ThemedText';
-import { useThemeColor } from '@/hooks/useThemeColor';
+import { TouchableOpacity, View } from 'react-native';
 import { ThemedIcon } from './ThemedIcon';
+import { ThemedText } from './ThemedText';
+import { useThemeColor } from '@/hooks/useThemeColor';
 import * as Haptics from 'expo-haptics';
 
-interface RoleCardProps {
+interface IconButtonCardProps {
   title: string;
-  description: string;
   iconUrl: string;
   onSelect: () => void;
   accessibilityLabel: string;
   iconSize?: number;
   lightColor?: string;
   darkColor?: string;
+  className?: string;
+  textDimensions?: number;
 }
 
-export const RoleCard: React.FC<RoleCardProps> = ({
+export const IconButtonCard: React.FC<IconButtonCardProps> = ({
   title,
-  description,
   iconUrl,
   onSelect,
   accessibilityLabel,
-  iconSize = 48,
+  iconSize = 24,
   lightColor,
-  darkColor
+  darkColor,
+  className,
+  textDimensions = 14
 }) => {
-  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'roleCardBackground');
+
   const textColor = useThemeColor({ light: lightColor, dark: darkColor }, 'roleCardText');
+  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'roleCardBackground');
 
   const handlePress = async () => {
     if (Haptics.impactAsync) {
@@ -46,21 +49,21 @@ export const RoleCard: React.FC<RoleCardProps> = ({
       accessible={true}
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="button"
-      className="flex flex-col items-center p-4 rounded-3xl shadow-md"   
+      className={`flex flex-col items-center p-4 rounded-3xl shadow-md ${className}`}
       style={{ backgroundColor }}
     >
-      <ThemedIcon
-        icon={iconUrl}
-        size={iconSize}
-        accessibilityLabel={`Icon for ${title}`}
-      />
-      
-      <ThemedText type='subtitle' className="text-4xl font-bold" lightColor={textColor} darkColor={textColor}>
-        {title}
-      </ThemedText>
-      <ThemedText type='description' className="text-sm font-light text-opacity-80 pb-2" lightColor={textColor} darkColor={textColor}>
-        {description}
-      </ThemedText>
+      <View className="flex-row items-center gap-2">
+        <ThemedIcon
+          icon={iconUrl}
+          size={iconSize}
+          accessibilityLabel={`Icon for ${title}`}
+          lightColor={textColor}
+          darkColor={textColor}
+        />
+        <ThemedText style={{ fontSize: textDimensions, color: textColor }}>
+          {title}
+        </ThemedText>
+      </View>
     </TouchableOpacity>
   );
 };

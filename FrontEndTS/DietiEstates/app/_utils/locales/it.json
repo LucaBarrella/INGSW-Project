@@ -43,6 +43,26 @@
     }
   },
 
+  "agent": {
+    "tabs": {
+      "home": "Home",
+      "profile": "Profilo",
+      "dashboard": "Dashboard",
+      "visits": "Visite"
+    },
+    "profile": {
+      "title": "Profilo Agente",
+      "subtitle": "Gestisci le tue informazioni personali",
+      "fullName": "Nome Completo",
+      "email": "Email",
+      "license": "Numero Licenza",
+      "specialization": "Specializzazione",
+      "experience": "Esperienza",
+      "years": "anni",
+      "office": "Ufficio"
+    }
+  },
+
   "forms": {
     "confirmation": {
       "title": "Conferma Azione",

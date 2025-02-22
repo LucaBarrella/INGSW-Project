@@ -32,7 +32,7 @@ export class ApiService {
         agentCreate: `${this.BASE_URL}/agent/create`,
 
         // Agent
-        //TODO: Add agent endpoints
+        agentProfile: `${this.BASE_URL}/agent/profile`,
 
     } as const;
   }

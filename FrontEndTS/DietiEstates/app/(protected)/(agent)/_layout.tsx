@@ -5,16 +5,14 @@ export default function AgentLayout() {
   return (
     <Stack 
       screenOptions={{ 
-        headerShown: true,
+        headerShown: false,
         animation: 'slide_from_right',
         headerTitleStyle: { fontFamily: 'SpaceMono' }
       }}
     >
       <Stack.Screen 
-        name="home" 
+        name="(tabs)"
         options={{
-          title: 'Agent Dashboard',
-          headerBackVisible: false
         }}
       />
     </Stack>

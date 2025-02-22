@@ -140,7 +140,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ userType, lightColor, darkColor, 
         //TODO DISABLED FOR TESTING
         //! Either works!
         // onPress={handleLogin} 
-        onPress={() => router.push(`/(protected)/(${userType})/home` as any)} // Naviga direttamente alla pagina home
+        onPress={() => router.push(`/(protected)/(${userType})` as any)} // Naviga direttamente alla pagina home
         borderRadius={8}
         className="min-h-[40px]"
       />
