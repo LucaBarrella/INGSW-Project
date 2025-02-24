@@ -41,11 +41,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ userType, lightColor, darkColor, 
   const [authCode, setAuthCode] = React.useState('');
 
   const handleLogin = async () => {
-    try {
-      if (!email || !password || (userType !== 'buyer' && !authCode)) {
-        Alert.alert('Error', 'Please fill in all fields');
-        return;
-      }
+    // try {
+    //   if (!email || !password || (userType !== 'buyer' && !authCode)) {
+    //     Alert.alert('Error', 'Please fill in all fields');
+    //     return;
+    //   }
 
       let endpoint: keyof typeof ApiService.endpoints;
       switch (userType) {
@@ -59,34 +59,40 @@ const LoginForm: React.FC<LoginFormProps> = ({ userType, lightColor, darkColor, 
           endpoint = 'buyerLogin';
       }
       
-      const body = userType === 'buyer' ? { email, password } : { email, password, authCode };
+      // const body = userType === 'buyer' ? { email, password } : { email, password, authCode };
 
-      const response = await fetch(ApiService.getEndpoint(endpoint), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      });
+      // const response = await fetch(ApiService.getEndpoint(endpoint), {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify(body),
+      // });
 
-      const token = await response.text();
+      // const token = await response.text();
 
-      if (response.ok) {
-        if (!token) {
-          throw new Error('Token not found in response');
-        }
+      // if (response.ok) {
+      //   if (!token) {
+      //     throw new Error('Token not found in response');
+      //   }
 
-        // Salva il JWT in AsyncStorage
-        await AsyncStorage.setItem('jwtToken', token);
+      //   // Salva il JWT in AsyncStorage
+      //   await AsyncStorage.setItem('jwtToken', token);
 
-        // Naviga alla sezione appropriata
-        router.push(`/(protected)/(${userType})/home` as any);
+
+      if (userType === 'admin') {
+        router.push('/(protected)/(admin)/home' as any);
       } else {
-        Alert.alert('Access Failed', 'Invalid credentials or server error');
+        router.push(`/(protected)/(${userType})/(tabs)` as any);
       }
-    } catch (error) {
-      Alert.alert('Error', 'Unable to connect to the server. Please try again later.');
-    }
+
+      
+    //   } else {
+    //     Alert.alert('Access Failed', 'Invalid credentials or server error');
+    //   }
+    // } catch (error) {
+    //   Alert.alert('Error', 'Unable to connect to the server. Please try again later.');
+    // }
   };
 
   return (
@@ -137,10 +143,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ userType, lightColor, darkColor, 
 
       <ThemedButton
         title="Enter"
-        //TODO DISABLED FOR TESTING
-        //! Either works!
-        // onPress={handleLogin} 
-        onPress={() => router.push(`/(protected)/(${userType})` as any)} // Naviga direttamente alla pagina home
+        onPress={handleLogin} 
         borderRadius={8}
         className="min-h-[40px]"
       />
