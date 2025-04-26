@@ -1,4 +1,5 @@
 import React from 'react';
+import { StyleProp, ViewStyle } from 'react-native';
 import { Iconify } from 'react-native-iconify';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
@@ -9,6 +10,7 @@ interface ThemedIconProps {
   darkColor?: string;
   accessibilityLabel: string;
   className?: string;
+  style?: StyleProp<ViewStyle>;
 }
 
 export const ThemedIcon: React.FC<ThemedIconProps> = ({
@@ -17,7 +19,8 @@ export const ThemedIcon: React.FC<ThemedIconProps> = ({
   lightColor,
   darkColor,
   accessibilityLabel,
-  className
+  className,
+  style
 }) => {
   const color = useThemeColor({ light: lightColor, dark: darkColor }, 'iconColor');
 
@@ -28,6 +31,7 @@ export const ThemedIcon: React.FC<ThemedIconProps> = ({
       color={color}
       accessibilityLabel={accessibilityLabel}
       className={className}
+      style={style}
     />
   );
 };

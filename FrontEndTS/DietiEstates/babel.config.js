@@ -42,7 +42,26 @@ module.exports = function(api) {
             'material-symbols:home-outline',
             'material-symbols:visibility-outline-rounded',
             'material-symbols:calendar-month-outline',
-            'material-symbols:attach-money'
+            'material-symbols:attach-money',
+
+            'material-symbols:favorite-rounded',
+            'material-symbols:favorite-outline-rounded',
+
+
+            //! DELETE ALL ICONS BELOW:
+            'mdi:account-edit',
+            'mdi:cog',
+            'mdi:help-circle',
+            'mdi:logout',
+            'mdi:account-circle',
+            'mdi:chevron-right',
+
+
+            //!
+            'mdi:home',
+            'mdi:land-fields',
+            'mdi:office-building',
+            'mdi:factory'
           ],
         },
       ],

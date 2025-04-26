@@ -1,5 +1,8 @@
 export class ApiService {
-  private static readonly BASE_URL = 'https://dieti-esates-backend-scalable.grayfield-620e8113.italynorth.azurecontainerapps.io/api';
+  // private static readonly BASE_URL = 'https://dieti-esates-backend-scalable.grayfield-620e8113.italynorth.azurecontainerapps.io/api';
+  
+  // Localhost, for testing
+  private static readonly BASE_URL = 'http://localhost:8080/api';
 
   static get endpoints() {
     return {
@@ -13,11 +16,12 @@ export class ApiService {
 
         //? Admin
         // adminLogin: `${this.BASE_URL}/admin/login`,
-        adminLogin: `${this.BASE_URL}/users/login`,
+        adminLogin: `${this.BASE_URL}/admins/login`,
 
         //? Agent
+        //TODO CHECK!!!!
         // agentLogin: `${this.BASE_URL}/agent/login`,
-        agentLogin: `${this.BASE_URL}/users/login`,
+        agentLogin: `${this.BASE_URL}/estates_agents/login`,
 
 
       // After login
@@ -26,10 +30,11 @@ export class ApiService {
         //TODO: Add buyer endpoints
 
         // Admin
-        adminPanel: `${this.BASE_URL}/admin/panel`,
-        adminChangePassword: `${this.BASE_URL}/admin/change-password`,
-        adminCreate: `${this.BASE_URL}/admin/create`,
-        agentCreate: `${this.BASE_URL}/agent/create`,
+        adminPanel: `${this.BASE_URL}/admins/panel`, //! Remove, not needed
+
+        adminChangePassword: `${this.BASE_URL}/admins/change-amministration-password`,
+        adminCreate: `${this.BASE_URL}/admins/create-admin`,
+        agentCreate: `${this.BASE_URL}/agent/create-estate-agent-account`,
 
         // Agent
         agentProfile: `${this.BASE_URL}/agent/profile`,

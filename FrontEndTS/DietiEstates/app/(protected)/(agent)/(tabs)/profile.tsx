@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, ScrollView } from 'react-native';
+import { ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
@@ -104,7 +104,6 @@ export default function ProfileScreen() {
 
   return (
     <ThemedView className="flex-1">
-      <SafeAreaView />
       <TabHeader 
         title={t('agent.profile.title')}
         subtitle={t('agent.profile.subtitle')}
@@ -126,7 +125,6 @@ export default function ProfileScreen() {
           <InfoRow label={t('agent.profile.office')} value={profile.officeAddress} />
         </ScrollView>
       )}
-      <SafeAreaView />
     </ThemedView>
   );
 }

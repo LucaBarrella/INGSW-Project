@@ -1,0 +1,66 @@
+import { Tabs } from 'expo-router';
+import React from 'react';
+import { Platform } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import {HapticTab} from '@/components/HapticTab';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import TabBarBackground from '@/components/ui/TabBarBackground';
+import { Colors } from '@/constants/Colors';
+import { useColorScheme } from '@/hooks/useColorScheme';
+
+
+const HomeIcon = ({ color }: { color: string }) => <MaterialIcons name="home" size={24} color={color} />;
+const VisitsIcon = ({ color }: { color: string }) => <MaterialIcons name="calendar-today" size={24} color={color} />;
+const FavoriteIcon = ({ color }: { color: string }) => <MaterialIcons name="favorite" size={24} color={color} />;
+const ProfileIcon = ({ color }: { color: string }) => <MaterialIcons name="person" size={24} color={color} />;
+
+
+export default function BuyerTabLayout() {
+  const colorScheme = useColorScheme();
+  const { t } = useTranslation();
+
+  return (
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        headerShown: false,
+        tabBarButton: HapticTab,
+        tabBarBackground: TabBarBackground,
+        tabBarStyle: Platform.select({
+          ios: {
+            position: 'absolute',
+          },
+          default: {},
+        }),
+      }}>
+      <Tabs.Screen
+        name="home"
+        options={{
+          title: t('buyer.tabs.home'),
+          tabBarIcon: HomeIcon
+        }}
+      />
+      <Tabs.Screen
+        name="visits"
+        options={{
+          title: t('buyer.tabs.visits'),
+          tabBarIcon: VisitsIcon
+        }}
+      />
+      <Tabs.Screen
+        name="favorites"
+        options={{
+          title: t('buyer.tabs.dashboard'),
+          tabBarIcon: FavoriteIcon
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: t('buyer.tabs.profile'),
+          tabBarIcon: ProfileIcon
+        }}
+      />
+    </Tabs>
+  );
+}

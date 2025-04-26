@@ -47,17 +47,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ userType, lightColor, darkColor, 
     //     return;
     //   }
 
-      let endpoint: keyof typeof ApiService.endpoints;
-      switch (userType) {
-        case 'admin':
-          endpoint = 'adminLogin';
-          break;
-        case 'agent':
-          endpoint = 'agentLogin';
-          break;
-        default:
-          endpoint = 'buyerLogin';
-      }
+      // let endpoint: keyof typeof ApiService.endpoints;
+      // switch (userType) {
+      //   case 'admin':
+      //     endpoint = 'adminLogin';
+      //     break;
+      //   case 'agent':
+      //     endpoint = 'agentLogin';
+      //     break;
+      //   default:
+      //     endpoint = 'buyerLogin';
+      // }
       
       // const body = userType === 'buyer' ? { email, password } : { email, password, authCode };
 

@@ -57,7 +57,6 @@ export const PropertyTable: React.FC<PropertyTableProps> = ({
 
   return (
     <ThemedView className="flex-1 mb-4">
-      <SafeAreaView style={{ flex: 1 }}>
         <FlatList
           data={sortedProperties}
           renderItem={renderPropertyRow}
@@ -73,7 +72,6 @@ export const PropertyTable: React.FC<PropertyTableProps> = ({
           onEndReachedThreshold={0.5}
           getItemLayout={getItemLayout}
         />
-      </SafeAreaView>
     </ThemedView>
   );
 };

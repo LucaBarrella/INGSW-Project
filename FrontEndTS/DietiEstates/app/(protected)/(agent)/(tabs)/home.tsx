@@ -44,7 +44,6 @@ export default function Properties() {
 
   return (
       <ThemedView className="flex-1">
-        <SafeAreaView>
           <ScrollView contentContainerStyle={{}} className="flex-grow p-6 pb-20">
             <ThemedView className="flex-row justify-between items-center mb-10">
               <ThemedText type="title" className="text-2xl leading-none">
@@ -68,7 +67,6 @@ export default function Properties() {
             </ThemedView>
             <SafeAreaView />
           </ScrollView>
-        </SafeAreaView>
       </ThemedView>
   );
 }
