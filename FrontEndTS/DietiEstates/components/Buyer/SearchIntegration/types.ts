@@ -37,6 +37,7 @@ type CommercialCategory = typeof COMMERCIAL_CATEGORIES[number];
 type IndustrialCategory = typeof INDUSTRIAL_CATEGORIES[number];
 type LandCategory = typeof LAND_CATEGORIES[number];
 
+// Define the main filters interface
 export interface PropertyFilters {
   general: {
     transactionType: "rent" | "sale";

@@ -1,6 +1,7 @@
 import React from 'react';
-import { ScrollView, TouchableOpacity } from 'react-native';
+import { ScrollView, TouchableOpacity, Alert } from 'react-native'; // Aggiunto Alert
 import { useRouter } from 'expo-router';
+import * as SecureStore from 'expo-secure-store'; // Import SecureStore
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedIcon } from '@/components/ThemedIcon';
@@ -17,6 +18,9 @@ export default function ProfileTab() {
   const router = useRouter();
   const backgroundColor = useThemeColor({}, 'background');
   const borderColor = useThemeColor({}, 'border');
+
+  // Chiave per recuperare/rimuovere il token JWT da SecureStore
+  const TOKEN_KEY = 'user_auth_token';
 
   // TODO: Replace with real user data
   const mockUser = {
@@ -47,9 +51,17 @@ export default function ProfileTab() {
       id: 'logout',
       title: 'Esci',
       icon: 'mdi:logout',
-      onPress: () => {
-        // TODO: Implement proper logout
-        router.replace('/(auth)');
+      onPress: async () => { // Trasformato in async
+        try {
+          // Rimuovi il token da SecureStore
+          await SecureStore.deleteItemAsync(TOKEN_KEY);
+          console.log('Token rimosso con successo!'); // Log per debug
+          // Reindirizza alla schermata di autenticazione principale
+          router.replace('/(auth)');
+        } catch (error) {
+          console.error('Errore durante il logout:', error);
+          Alert.alert('Errore Logout', 'Impossibile completare il logout. Riprova.');
+        }
       }
     }
   ];

@@ -2,13 +2,13 @@ import * as React from 'react';
 import { TouchableOpacity, Image } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { Property } from "./types";
+import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types'; // Importa il tipo unificato
 import { useThemeColor } from '@/hooks/useThemeColor';
 import * as Haptics from 'expo-haptics';
 import ThemedButton from '@/components/ThemedButton';
 
 interface PropertyCardProps {
-  property: Property;
+  property: PropertyDetail; // Usa il tipo unificato
   onPress: () => void;
   lightColor?: string;
   darkColor?: string;
@@ -51,9 +51,10 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
       accessibilityRole="button"
       accessibilityLabel={`Visualizza dettagli per ${property.title}`}
     >
-      <Image 
-        source={{ uri: property.imageUrl }} 
-        className="w-full h-48" 
+      <Image
+        // Usa un placeholder se imageUrl non è definito
+        source={{ uri: property.imageUrl || 'https://picsum.photos/seed/placeholder/800/600' }}
+        className="w-full h-48"
         resizeMode="cover"
       />
       
@@ -82,7 +83,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             className="text-xl"
             style={{ color: textColor }}
           >
-            €{property.price.toLocaleString()}
+            €{property.price} {/* Visualizza direttamente la stringa del prezzo */}
           </ThemedText>
           <ThemedButton
             title="Dettagli"

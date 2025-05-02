@@ -1,11 +1,11 @@
 import { useState, useCallback, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Property } from '@/components/Agent/PropertyListing/types';
+import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types'; // Importa il tipo unificato
 
 const FAVORITES_STORAGE_KEY = '@dieti-estates:favorites';
 
 export function useFavorites() {
-  const [favorites, setFavorites] = useState<Record<string, Property>>({});
+  const [favorites, setFavorites] = useState<Record<string, PropertyDetail>>({}); // Usa il tipo unificato
   const [isLoading, setIsLoading] = useState(true);
 
   // Load favorites from storage on mount
@@ -26,7 +26,7 @@ export function useFavorites() {
     }
   };
 
-  const saveFavorites = async (newFavorites: Record<string, Property>) => {
+  const saveFavorites = async (newFavorites: Record<string, PropertyDetail>) => { // Usa il tipo unificato
     try {
       await AsyncStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(newFavorites));
     } catch (error) {
@@ -38,13 +38,14 @@ export function useFavorites() {
     return propertyId in favorites;
   }, [favorites]);
 
-  const toggleFavorite = useCallback((property: Property) => {
+  const toggleFavorite = useCallback((property: PropertyDetail) => { // Usa il tipo unificato
     setFavorites(prev => {
       const newFavorites = { ...prev };
-      if (property.id in newFavorites) {
-        delete newFavorites[property.id];
+      const propertyIdString = String(property.id); // Converte ID numerico in stringa per la chiave
+      if (propertyIdString in newFavorites) {
+        delete newFavorites[propertyIdString];
       } else {
-        newFavorites[property.id] = property;
+        newFavorites[propertyIdString] = property;
       }
       saveFavorites(newFavorites);
       return newFavorites;

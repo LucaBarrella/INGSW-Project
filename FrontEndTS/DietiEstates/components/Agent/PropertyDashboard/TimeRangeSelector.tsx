@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { TouchableOpacity, Platform, View, Modal, Pressable } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
@@ -23,13 +23,13 @@ export const TimeRangeSelector: React.FC<TimeRangeSelectorProps> = ({
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  
+
   const [startDate, setStartDate] = useState(() => {
     const date = defaultStartDate || new Date(2024, 0, 1);
     console.log('Initial start date:', date.toISOString());
     return date;
   });
-  
+
   const [endDate, setEndDate] = useState(() => {
     const date = defaultEndDate || new Date(2024, 11, 31);
     console.log('Initial end date:', date.toISOString());
@@ -45,14 +45,6 @@ export const TimeRangeSelector: React.FC<TimeRangeSelectorProps> = ({
   const detailColor = useThemeColor({}, 'propertyCardDetail');
   const modalBg = useThemeColor({}, 'background');
 
-  useEffect(() => {
-    console.log('Initial TimeRangeSelector mount, calling onDateChange with:', {
-      startDate: startDate.toISOString(),
-      endDate: endDate.toISOString()
-    });
-    onDateChange(startDate, endDate);
-  }, []); 
-
   const triggerHaptic = useCallback(async () => {
     try {
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -64,14 +56,16 @@ export const TimeRangeSelector: React.FC<TimeRangeSelectorProps> = ({
   const openPicker = useCallback(async (isStart: boolean) => {
     await triggerHaptic();
     if (isStart) {
+      setTempStartDate(startDate);
       setShowEndPicker(false);
       setShowStartPicker(true);
     } else {
+      setTempEndDate(endDate);
       setShowStartPicker(false);
       setShowEndPicker(true);
     }
     setIsClosing(false);
-  }, [triggerHaptic]);
+  }, [triggerHaptic, startDate, endDate]);
 
   const closePicker = useCallback(async () => {
     await triggerHaptic();
@@ -84,7 +78,7 @@ export const TimeRangeSelector: React.FC<TimeRangeSelectorProps> = ({
   }, [triggerHaptic]);
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString(undefined, { 
+    return date.toLocaleDateString(undefined, {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit'
@@ -96,45 +90,71 @@ export const TimeRangeSelector: React.FC<TimeRangeSelectorProps> = ({
       console.log('Invalid date detected:', { newStart, newEnd });
       return false;
     }
-    if (newStart > newEnd) {
-      console.log('Start date is after end date:', { newStart, newEnd });
-      return false;
-    }
     return true;
   };
 
   const handleStartDateChange = (event: any, selectedDate?: Date) => {
     console.log('handleStartDateChange:', { event: event?.type, selectedDate });
-    
-    if (!selectedDate || event?.type === 'dismissed') {
-      if (Platform.OS === 'ios') closePicker();
+
+    if (!selectedDate || (event?.type === 'dismissed' && Platform.OS === 'ios')) {
       return;
     }
-    
-    if (validateDateRange(selectedDate, endDate)) {
+    if (!selectedDate || (event?.type === 'dismissed' && Platform.OS === 'android')) {
+      setShowStartPicker(false);
+      return;
+    }
+
+    const needsEndDateUpdate = selectedDate > endDate;
+    const newEndDate = needsEndDateUpdate ? new Date(selectedDate.getTime() + 86400000) : endDate;
+
+    if (validateDateRange(selectedDate, needsEndDateUpdate ? newEndDate : endDate)) {
       setTempStartDate(selectedDate);
+      if (needsEndDateUpdate) {
+        setTempEndDate(newEndDate);
+      }
+
       if (Platform.OS === 'android') {
-        closePicker();
         setStartDate(selectedDate);
-        onDateChange(selectedDate, endDate);
+        if (needsEndDateUpdate) {
+          setEndDate(newEndDate);
+          onDateChange(selectedDate, newEndDate);
+        } else {
+          onDateChange(selectedDate, endDate);
+        }
+        setShowStartPicker(false);
       }
     }
   };
 
   const handleEndDateChange = (event: any, selectedDate?: Date) => {
     console.log('handleEndDateChange:', { event: event?.type, selectedDate });
-    
-    if (!selectedDate || event?.type === 'dismissed') {
-      if (Platform.OS === 'ios') closePicker();
+
+    if (!selectedDate || (event?.type === 'dismissed' && Platform.OS === 'ios')) {
+      return;
+    }
+    if (!selectedDate || (event?.type === 'dismissed' && Platform.OS === 'android')) {
+      setShowEndPicker(false);
       return;
     }
 
-    if (validateDateRange(startDate, selectedDate)) {
+    const needsStartDateUpdate = selectedDate < startDate;
+    const newStartDate = needsStartDateUpdate ? new Date(selectedDate.getTime() - 86400000) : startDate;
+
+    if (validateDateRange(needsStartDateUpdate ? newStartDate : startDate, selectedDate)) {
       setTempEndDate(selectedDate);
+      if (needsStartDateUpdate) {
+        setTempStartDate(newStartDate);
+      }
+
       if (Platform.OS === 'android') {
-        closePicker();
         setEndDate(selectedDate);
-        onDateChange(startDate, selectedDate);
+        if (needsStartDateUpdate) {
+          setStartDate(newStartDate);
+          onDateChange(newStartDate, selectedDate);
+        } else {
+          onDateChange(startDate, selectedDate);
+        }
+        setShowEndPicker(false);
       }
     }
   };
@@ -142,19 +162,35 @@ export const TimeRangeSelector: React.FC<TimeRangeSelectorProps> = ({
   const confirmStartDate = () => {
     console.log('Confirming start date:', tempStartDate.toISOString());
     closePicker();
-    setStartDate(tempStartDate);
-    onDateChange(tempStartDate, endDate);
+
+    if (tempStartDate > endDate) {
+      const newEndDate = new Date(tempStartDate.getTime() + 86400000);
+      setStartDate(tempStartDate);
+      setEndDate(newEndDate);
+      onDateChange(tempStartDate, newEndDate);
+    } else {
+      setStartDate(tempStartDate);
+      onDateChange(tempStartDate, endDate);
+    }
   };
 
   const confirmEndDate = () => {
     console.log('Confirming end date:', tempEndDate.toISOString());
     closePicker();
-    setEndDate(tempEndDate);
-    onDateChange(startDate, tempEndDate);
+
+    if (tempEndDate < startDate) {
+      const newStartDate = new Date(tempEndDate.getTime() - 86400000);
+      setEndDate(tempEndDate);
+      setStartDate(newStartDate);
+      onDateChange(newStartDate, tempEndDate);
+    } else {
+      setEndDate(tempEndDate);
+      onDateChange(startDate, tempEndDate);
+    }
   };
 
   return (
-    <ThemedView 
+    <ThemedView
       className="rounded-md p-2"
       style={{
         backgroundColor: background,
@@ -174,10 +210,10 @@ export const TimeRangeSelector: React.FC<TimeRangeSelectorProps> = ({
             accessibilityLabel={t("selectStartDate")}
             accessibilityHint={t("tapToSelectStartDate")}
             className="rounded-md px-3 py-1.5 w-[140px] active:opacity-70"
-            style={{ 
+            style={{
               backgroundColor: background,
               borderWidth: 1,
-              borderColor: borderColor 
+              borderColor: borderColor
             }}
           >
             <ThemedText className="text-sm" style={{ color: text }}>
@@ -197,10 +233,10 @@ export const TimeRangeSelector: React.FC<TimeRangeSelectorProps> = ({
             accessibilityLabel={t("selectEndDate")}
             accessibilityHint={t("tapToSelectEndDate")}
             className="rounded-md px-3 py-1.5 w-[140px] active:opacity-70"
-            style={{ 
+            style={{
               backgroundColor: background,
               borderWidth: 1,
-              borderColor: borderColor 
+              borderColor: borderColor
             }}
           >
             <ThemedText className="text-sm" style={{ color: text }}>
@@ -210,36 +246,6 @@ export const TimeRangeSelector: React.FC<TimeRangeSelectorProps> = ({
         </View>
       </View>
 
-      {(showStartPicker || showEndPicker) && Platform.OS === 'web' && (
-        <View className="mt-3 pt-3" style={{ borderTopWidth: 1, borderColor: borderColor }}>
-          <input
-            type="date"
-            value={(showStartPicker ? tempStartDate : tempEndDate).toISOString().split('T')[0]}
-            onChange={(e) => {
-              const date = new Date(e.target.value);
-              console.log('Web date changed:', date.toISOString());
-              if (showStartPicker) {
-                handleStartDateChange(null, date);
-                closePicker();
-              } else {
-                handleEndDateChange(null, date);
-                closePicker();
-              }
-            }}
-            className="w-full p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            style={{
-              borderWidth: 1,
-              borderColor: borderColor,
-              backgroundColor: background,
-              color: text
-            }}
-            aria-label={t(showStartPicker ? "selectStartDate" : "selectEndDate")}
-            min="2024-01-01"
-            max="2024-12-31"
-          />
-        </View>
-      )}
-      
       {(showStartPicker || showEndPicker) && Platform.OS !== 'web' && (
         <Modal
           transparent={true}
@@ -247,12 +253,12 @@ export const TimeRangeSelector: React.FC<TimeRangeSelectorProps> = ({
           animationType={isClosing ? "none" : "fade"}
           onRequestClose={closePicker}
         >
-          <Pressable 
+          <Pressable
             className="flex-1 items-center justify-center"
             style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
             onPress={closePicker}
           >
-            <Pressable 
+            <Pressable
               className="rounded-lg p-3 w-96 items-center shadow-xl"
               style={{
                 backgroundColor: modalBg,
@@ -275,8 +281,8 @@ export const TimeRangeSelector: React.FC<TimeRangeSelectorProps> = ({
                     default: 'spinner'
                   })}
                   onChange={showStartPicker ? handleStartDateChange : handleEndDateChange}
-                  maximumDate={showStartPicker ? endDate : new Date(2024, 11, 31)}
-                  minimumDate={showStartPicker ? new Date(2024, 0, 1) : startDate}
+                  maximumDate={new Date(2024, 11, 31)}
+                  minimumDate={new Date(2024, 0, 1)}
                   textColor={text}
                   style={Platform.select({
                     ios: {

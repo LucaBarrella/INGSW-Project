@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, TouchableOpacity, Alert } from 'react-native'; // Aggiunto TouchableOpacity, Alert
 import { useTranslation } from 'react-i18next';
+import { useRouter } from 'expo-router'; // Aggiunto useRouter
+import * as SecureStore from 'expo-secure-store'; // Aggiunto SecureStore
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { TabHeader } from '@/components/TabHeader';
-import ApiService from '@/app/_services/api.service';
+import ApiService from '@/app/_services/api.service'; // Già presente
+import ThemedButton from '@/components/ThemedButton'; // Aggiunto ThemedButton
 import { useThemeColor } from '@/hooks/useThemeColor';
+
+// Chiave per recuperare/rimuovere il token JWT da SecureStore
+const TOKEN_KEY = 'user_auth_token';
 
 type AgentProfile = {
   fullName: string;
@@ -52,6 +58,7 @@ function InfoRow({ label, value }: InfoRowProps) {
 
 export default function ProfileScreen() {
   const { t } = useTranslation();
+  const router = useRouter(); // Inizializza router
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [profile, setProfile] = useState<AgentProfile | null>(null);
@@ -61,28 +68,32 @@ export default function ProfileScreen() {
   }, []);
 
   const fetchProfile = async () => {
+    setIsLoading(true); // Assicura che isLoading sia true all'inizio
+    setError(null); // Resetta errori precedenti
     try {
-      const response = await fetch(ApiService.endpoints.agentProfile);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch profile');
-      }
-
-      const data = await response.json();
+      // Usa la nuova funzione da ApiService
+      const data = await ApiService.getAgentProfile();
       setProfile(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error occurred');
-      // Using mock data for development
-      setProfile({
-        fullName: 'Mario Rossi',
-        email: 'mario.rossi@dietiestates.com',
-        licenseNumber: 'AG12345',
-        specialization: 'Luxury Properties',
-        experienceYears: 8,
-        officeAddress: 'Via Roma 123, Milano'
-      });
+    } catch (err: any) {
+      console.error('Errore fetch profilo agente:', err);
+      const errorMessage = err.response?.data?.message || err.message || t('agent.profile.fetchError'); // Usa traduzione per errore generico
+      setError(errorMessage);
+      // Considera se mostrare dati mock in caso di errore o solo il messaggio
+      // setProfile({ ... }); // Rimuovi o commenta se non vuoi mock in caso di errore reale
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Funzione per il logout
+  const handleLogout = async () => {
+    try {
+      await SecureStore.deleteItemAsync(TOKEN_KEY);
+      console.log('Token agente rimosso con successo!');
+      router.replace('/(auth)'); // Torna alla schermata di selezione ruolo/login
+    } catch (error) {
+      console.error('Errore durante il logout agente:', error);
+      Alert.alert(t('common.error'), t('logout.error')); // Assumendo traduzioni esistenti
     }
   };
 
@@ -123,6 +134,15 @@ export default function ProfileScreen() {
             value={`${profile.experienceYears} ${t('agent.profile.years')}`} 
           />
           <InfoRow label={t('agent.profile.office')} value={profile.officeAddress} />
+
+          {/* Pulsante Logout */}
+          <ThemedButton
+            title={t('logout.buttonTitle')}
+            onPress={handleLogout}
+            lightColor="#DC2626" // Rosso per "danger"
+            darkColor="#F87171"
+            className="mt-8 mb-4 mx-4" // Aggiungi margini
+          />
         </ScrollView>
       )}
     </ThemedView>

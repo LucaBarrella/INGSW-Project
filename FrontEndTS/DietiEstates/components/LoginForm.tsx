@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, View, Alert, type ViewProps } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store'; // Import SecureStore
 import { ThemedView } from './ThemedView';
 import { ThemedText } from './ThemedText';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -9,7 +9,10 @@ import { Provider } from '@/types/Provider';
 import ThemedButton from './ThemedButton';
 import { LabelInput } from './LabelInput';
 import { useRouter } from 'expo-router';
-import { ApiService } from '@/app/_services/api.service';
+import ApiService from '@/app/_services/api.service'; // Import default export
+
+// Chiave per salvare/recuperare il token JWT da SecureStore (deve corrispondere a quella in httpClient.ts)
+const TOKEN_KEY = 'user_auth_token';
 
 export type LoginFormProps = ViewProps & {
   userType: 'admin' | 'agent' | 'buyer';
@@ -41,58 +44,68 @@ const LoginForm: React.FC<LoginFormProps> = ({ userType, lightColor, darkColor, 
   const [authCode, setAuthCode] = React.useState('');
 
   const handleLogin = async () => {
-    // try {
-    //   if (!email || !password || (userType !== 'buyer' && !authCode)) {
-    //     Alert.alert('Error', 'Please fill in all fields');
-    //     return;
-    //   }
+    // Validazione input base
+    if (!email || !password || (userType !== 'buyer' && !authCode)) {
+      Alert.alert('Errore', 'Per favore, compila tutti i campi richiesti.');
+      return;
+    }
 
-      // let endpoint: keyof typeof ApiService.endpoints;
-      // switch (userType) {
-      //   case 'admin':
-      //     endpoint = 'adminLogin';
-      //     break;
-      //   case 'agent':
-      //     endpoint = 'agentLogin';
-      //     break;
-      //   default:
-      //     endpoint = 'buyerLogin';
-      // }
-      
-      // const body = userType === 'buyer' ? { email, password } : { email, password, authCode };
+    try {
+      let responseData: any; // Tipo da definire in base alla risposta API
+      const credentials = { email, password };
 
-      // const response = await fetch(ApiService.getEndpoint(endpoint), {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(body),
-      // });
-
-      // const token = await response.text();
-
-      // if (response.ok) {
-      //   if (!token) {
-      //     throw new Error('Token not found in response');
-      //   }
-
-      //   // Salva il JWT in AsyncStorage
-      //   await AsyncStorage.setItem('jwtToken', token);
-
-
-      if (userType === 'admin') {
-        router.push('/(protected)/(admin)/home' as any);
-      } else {
-        router.push(`/(protected)/(${userType})/(tabs)` as any);
+      switch (userType) {
+        case 'admin':
+          // TODO: Verificare se l'API adminLogin richiede anche authCode
+          responseData = await ApiService.loginAdmin(credentials);
+          break;
+        case 'agent':
+          // TODO: Verificare se l'API agentLogin richiede anche authCode (REA Number?)
+          // Se sì, passare { ...credentials, reaNumber: authCode } o simile
+          responseData = await ApiService.loginAgent(credentials);
+          break;
+        default: // buyer
+          responseData = await ApiService.loginUser(credentials);
       }
 
-      
-    //   } else {
-    //     Alert.alert('Access Failed', 'Invalid credentials or server error');
-    //   }
-    // } catch (error) {
-    //   Alert.alert('Error', 'Unable to connect to the server. Please try again later.');
-    // }
+      // Assumendo che la risposta contenga un token JWT nella proprietà 'token'
+      const token = responseData?.token;
+
+      if (token) {
+        // Salva il token JWT in SecureStore
+        await SecureStore.setItemAsync(TOKEN_KEY, token);
+        console.log('Token salvato con successo!'); // Log per debug
+
+        // Naviga alla sezione protetta appropriata
+        if (userType === 'admin') {
+          router.push('/(protected)/(admin)/home');
+        } else {
+          // Assicurati che i nomi delle cartelle corrispondano (es. 'buyer', 'agent')
+          // Naviga alla home della tab bar specifica per il ruolo
+          router.push(`/(protected)/(${userType})/(tabs)/home`);
+        }
+      } else {
+        // Token non trovato nella risposta
+        console.error('Token non trovato nella risposta API:', responseData);
+        Alert.alert('Errore Login', 'Token di autenticazione non ricevuto dal server.');
+      }
+
+    } catch (error: any) {
+      console.error('Errore durante il login:', error);
+      // Gestione più specifica degli errori Axios
+      if (error.response) {
+        // Errore restituito dal backend (es. 401, 400)
+        const status = error.response.status;
+        const message = error.response.data?.message || 'Credenziali non valide o errore del server.';
+        Alert.alert(`Errore ${status}`, message);
+      } else if (error.request) {
+        // Errore di rete o nessuna risposta
+        Alert.alert('Errore di Rete', 'Impossibile connettersi al server. Controlla la tua connessione e riprova.');
+      } else {
+        // Altro errore (es. configurazione Axios)
+        Alert.alert('Errore', 'Si è verificato un errore imprevisto durante il login.');
+      }
+    }
   };
 
   return (

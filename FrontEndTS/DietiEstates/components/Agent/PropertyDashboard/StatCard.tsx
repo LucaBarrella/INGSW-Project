@@ -20,9 +20,10 @@ export const StatCard: React.FC<StatCardProps> = ({
   colors = {}
 }) => {
   return (
-    <ThemedView 
+    <ThemedView
+      testID="stat-card"
       className="flex flex-col gap-2 p-6 rounded-xl shadow-[0_2px_4px_rgba(0,0,0,0.05)]"
-      style={{ 
+      style={{
         backgroundColor: useThemeColor(colors, 'propertyCardBackground')
       }}
     >

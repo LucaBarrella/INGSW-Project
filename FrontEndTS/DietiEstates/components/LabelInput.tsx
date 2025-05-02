@@ -1,9 +1,11 @@
 import React from 'react';
-import { TextInput } from 'react-native';
+import { TextInput, NativeSyntheticEvent, TextInputFocusEventData, TextInputProps, StyleProp, ViewStyle, TextStyle } from 'react-native'; // Import necessary types
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
+// Define LabelInputProps based on the read file structure
+// Rimuoviamo onBlur che causava problemi
 export type LabelInputProps = {
   type?: 'default' | 'email' | 'password';
   label?: string;
@@ -13,19 +15,24 @@ export type LabelInputProps = {
   textColor?: string;
   value?: string;
   onChangeText?: (text: string) => void;
+  onBlur?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void; // Reintrodotto onBlur
   className?: string;
   inputBackgroundColor?: string;
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
-  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
+  keyboardType?: TextInputProps['keyboardType']; // Use TextInputProps['keyboardType'] for better type safety
   required?: boolean;
-};
+  multiline?: boolean;
+  numberOfLines?: number;
+  style?: StyleProp<ViewStyle>; // Use StyleProp<ViewStyle> for the container
+  inputStyle?: StyleProp<TextStyle>;
+  error?: boolean; // Indica se c'è un errore
+  errorMessage?: string; // Messaggio di errore da visualizzare
+} & Omit<TextInputProps, 'style' | 'onChangeText' | 'value' | 'placeholder' | 'keyboardType' | 'autoCapitalize' | 'multiline' | 'numberOfLines' | 'secureTextEntry' | 'onBlur'>;
 
-function capitalizeFirstLetter(string: string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
+// Removed capitalizeFirstLetter function as it wasn't used in the return statement
 
-export function LabelInput({ 
-  type = 'default', 
+export function LabelInput({
+  type = 'default',
   label,
   placeholder,
   lightColor,
@@ -33,19 +40,29 @@ export function LabelInput({
   textColor,
   value,
   onChangeText,
+  onBlur, // Reintrodotto onBlur
   className = '',
   inputBackgroundColor,
   autoCapitalize = 'none',
   keyboardType = 'default',
   required = false,
+  multiline = false,
+  numberOfLines,
+  style, // Destructure container style
+  inputStyle,
+  error,
+  errorMessage, // Destructure errorMessage
   ...rest
-}: Readonly<LabelInputProps>) {
-  
+}: LabelInputProps) {
+
   const themeTextColor = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
   const textColors = textColor ?? themeTextColor;
-  const borderColor = textColors;
+  const themeBorderColor = useThemeColor({}, 'border');
+  const themeErrorColor = useThemeColor({}, 'error'); // Usa il colore di errore dal tema
+  const borderColor = error ? themeErrorColor : themeBorderColor; // Usa colore errore dal tema
   const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
   const inputBackground = inputBackgroundColor ?? backgroundColor;
+  const placeholderColor = '#888888'; // Use a standard grey for placeholder text for now
 
   let defaultLabel = '';
   let defaultPlaceholder = '';
@@ -58,6 +75,7 @@ export function LabelInput({
     case 'email':
       defaultLabel = 'Email';
       defaultPlaceholder = 'Enter your email';
+      keyboardType = 'email-address'; // Set keyboardType for email
       break;
     default:
       defaultLabel = 'Input';
@@ -69,22 +87,42 @@ export function LabelInput({
   const finalPlaceholder = placeholder ?? defaultPlaceholder;
 
   return (
-    <ThemedView className={`mb-8 ${className}`} lightColor={backgroundColor} darkColor={backgroundColor}>
-      <ThemedText lightColor={textColors} darkColor={textColors} className='mb-2'>
-        {finalLabel}{required ? ' *' : ''}
-      </ThemedText>
-      <TextInput
-        className={`border p-2 rounded-md min-h-[40px] min-w-[200px] w-full`}
-        style={{ color: textColors, borderColor, backgroundColor: inputBackground }}
-        placeholder={finalPlaceholder}
-        placeholderTextColor={textColors + '80'}
-        value={value}
-        onChangeText={onChangeText}
-        secureTextEntry={type === 'password'}
-        keyboardType={keyboardType}
-        autoCapitalize={autoCapitalize} // Aggiungi questa linea
-        {...rest}
-      />
-    </ThemedView>
-  );
+    // Ripristinato ThemedView e className come nella versione funzionante
+    <ThemedView className={`mb-8 ${className}`} style={style} lightColor={backgroundColor} darkColor={backgroundColor}>
+       <ThemedText lightColor={textColors} darkColor={textColors} className='mb-2'>
+         {/* Usiamo il template literal che dovrebbe essere sicuro */}
+         {`${finalLabel}${required ? ' *' : ''}`}
+       </ThemedText>
+       <TextInput
+         // Ripristinato className e stile combinato
+         className={`border p-2 rounded-md min-h-[40px] w-full`}
+         style={[
+           {
+             color: textColors,
+             borderColor: borderColor, // Applica bordo dinamico
+             backgroundColor: inputBackground
+           },
+           multiline && { textAlignVertical: 'top', height: numberOfLines ? undefined : 80 }, // Stili multiline
+           inputStyle // Applica inputStyle custom
+         ]}
+         placeholder={finalPlaceholder}
+         placeholderTextColor={placeholderColor}
+         value={value}
+         onChangeText={onChangeText}
+         onBlur={onBlur} // Reintrodotto onBlur
+         secureTextEntry={type === 'password'}
+         keyboardType={keyboardType}
+         autoCapitalize={autoCapitalize}
+         multiline={multiline}
+         numberOfLines={numberOfLines}
+         {...rest}
+       />
+       {/* Visualizza il messaggio di errore se presente */}
+       {error && errorMessage && (
+         <ThemedText style={{ color: themeErrorColor, marginTop: 4, fontSize: 12 }}>
+           {errorMessage}
+         </ThemedText>
+       )}
+     </ThemedView>
+ );
 }

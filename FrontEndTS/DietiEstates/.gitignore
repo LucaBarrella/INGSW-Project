@@ -40,3 +40,4 @@ app-example
 # cline's stuff
 .clinerules
 context.md
+.env

@@ -10,10 +10,16 @@ module.exports = function(api) {
         'react-native-iconify/babel',
         {
           icons: [
+            // Icone Material Symbols usate in Step1 e Step5
+            'material-symbols:factory-outline',
+            'material-symbols:landscape-outline',
+            'material-symbols:close-rounded',
+            'material-symbols:add-photo-alternate-outline-rounded',
+            // Icone esistenti (alcune già usate in Step1)
             'material-symbols:house-outline',
             'material-symbols:business-center-outline',
             'material-symbols:admin-panel-settings-outline',
-            
+
             'octicon:mark-github-16',
             'octicon:mark-github-24',
             'logos:google-icon',
@@ -36,6 +42,7 @@ module.exports = function(api) {
             'material-symbols:person-add-outline',
             'material-symbols:real-estate-agent-outline',
             'material-symbols:sim-card-download-outline',
+            'material-symbols:check-circle-outline', // Aggiunta icona mancante
 
             'material-symbols:push-pin',
             'material-symbols:push-pin-outline',

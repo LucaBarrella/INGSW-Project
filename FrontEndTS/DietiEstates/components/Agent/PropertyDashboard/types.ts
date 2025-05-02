@@ -18,11 +18,12 @@ export interface PropertyDetail {
   id: number;
   title: string;
   address: string;
-  type: string;
-  price: string;
-  views: number;
-  bookings: number;
-  status: "available" | "sold" | "rented";
-  createdAt: string;
-  updatedAt: string;
+  type: string; // Tipo di proprietà (Villa, Appartamento, etc.)
+  price: string; // Prezzo come stringa
+  views: number; // Numero di visualizzazioni
+  bookings: number; // Numero di prenotazioni/visite
+  status: "available" | "sold" | "rented"; // Stato dell'immobile
+  createdAt: string; // Data di creazione (ISO string)
+  updatedAt: string; // Data ultimo aggiornamento (ISO string)
+  imageUrl?: string; // URL dell'immagine principale (opzionale)
 }

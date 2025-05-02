@@ -7,9 +7,9 @@ import { LabelInput } from './LabelInput';
 import ThemedButton from './ThemedButton';
 import { SocialButton } from './SocialButton';
 import { Provider } from '@/types/Provider';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from '@react-native-community/datetimepicker'; // Aggiunto import
 import { useRouter } from 'expo-router';
-import { ApiService } from '@/app/_services/api.service';
+import ApiService from '@/app/_services/api.service'; // Corretto import default
 
 interface RegistrationFormData {
   firstName: string;
@@ -60,24 +60,21 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
   // Funzione per la registrazione
   const handleSubmit = async () => {
     try {
-      const response = await fetch(ApiService.getEndpoint('buyerRegister'), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      // Usa la funzione ApiService.registerUser che gestisce il mock
+      const response = await ApiService.registerUser(formData);
 
-      if (response.ok) {
-        await response.json();
+      // La funzione mock restituisce direttamente l'oggetto di successo/errore
+      if (response.success) {
         Alert.alert('Registration Successful');
         router.push('/(auth)/(buyer)/login');
       } else {
-        console.log('Status:', response.status, 'Response:', await response.text());
-        Alert.alert('Registration Failed', 'Please check your input or try again later');
+        // Se la funzione mock restituisce un errore (o l'API reale fallisce)
+        console.log('Registration failed:', response.message);
+        Alert.alert('Registration Failed', response.message || 'Please check your input or try again later');
       }
-    } catch (error) {
-      Alert.alert('Error', 'Something went wrong');
+    } catch (error: any) { // Tipizza l'errore per accedere a 'message'
+      console.error('Registration error:', error);
+      Alert.alert('Error', error.message || 'Something went wrong');
     }
   };
 
@@ -111,7 +108,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
       />
       <View className="mb-6">
         <ThemedText className="mb-2" style={{ color: labelColor }}>Data di nascita</ThemedText>
-        
+
+        {/* Ripristino logica condizionale per web/mobile */}
         {Platform.OS === 'web' ? (
           <input
             type="date"
@@ -120,7 +118,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
               const date = new Date(e.target.value);
               setFormData(prev => ({ ...prev, birthdate: date }));
             }}
-            style={{ 
+            style={{
               backgroundColor: background,
               color: text,
               border: '1px solid #ccc',
@@ -131,28 +129,33 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
           />
         ) : (
           <>
-            <TouchableOpacity 
-              onPress={() => setShowDatePicker(true)} 
-              className="border p-2 rounded-md min-h-[40px] min-w-[200px] w-full" 
+            {/* Ripristino TouchableOpacity per mostrare data */}
+            <TouchableOpacity
+              onPress={() => setShowDatePicker(true)}
+              className="border p-2 rounded-md min-h-[40px] min-w-[200px] w-full"
               style={{ backgroundColor: background }}
             >
               <ThemedText style={{ color: text }}>{formData.birthdate.toLocaleDateString()}</ThemedText>
             </TouchableOpacity>
 
+            {/* Ripristino DateTimePicker */}
             {showDatePicker && (
               <View className='flex-1 justify-center items-center'>
                 <DateTimePicker
                   value={tempDate}
                   mode="date"
-                  display="spinner"
+                  display="spinner" // O 'default' se preferito
                   onChange={handleDateChange}
                 />
-                <ThemedButton
-                  title="Conferma"
-                  onPress={confirmDate}
-                  borderRadius={8}
-                  className="w-full min-h-[40px] mt-4"
-                />
+                {/* Bottone conferma per iOS */}
+                {Platform.OS === 'ios' && (
+                   <ThemedButton
+                     title="Conferma"
+                     onPress={confirmDate}
+                     borderRadius={8}
+                     className="w-full min-h-[40px] mt-4"
+                   />
+                )}
               </View>
             )}
           </>

@@ -11,6 +11,9 @@ export const Colors = {
   light: {
     text: lightTertiary,
     background: lightPrimary,
+    error : '#D32F2F', // Darker red for better contrast on light bg
+    success: '#2E7D32', // Standard green
+    info: '#0288D1',    // Standard blue
     tint: lightTertiary,
     tabIconDefault: lightSecondary,
     tabIconSelected: lightTertiary,
@@ -40,6 +43,9 @@ export const Colors = {
   dark: {
     text: darkTertiary,
     background: darkPrimary,
+    error : '#EF5350', // Lighter red for dark bg
+    success: '#66BB6A', // Lighter green for dark bg
+    info: '#4FC3F7',    // Lighter blue for dark bg
     tint: darkTertiary,
     tabIconDefault: darkSecondary,
     tabIconSelected: darkTertiary,

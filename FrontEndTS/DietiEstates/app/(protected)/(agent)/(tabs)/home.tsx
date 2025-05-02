@@ -1,45 +1,68 @@
 import React from "react";
 import { ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router"; // Import useRouter
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { PropertyCard } from "@/components/Agent/PropertyListing/PropertyCard";
 import ThemedButton from "@/components/ThemedButton";
-import { Property } from "@/components/Agent/PropertyListing/types";
+import { PropertyDetail } from "@/components/Agent/PropertyDashboard/types"; // Importa il tipo unificato
 
-const properties: Property[] = [
+// Dati mock conformi a PropertyDetail
+const properties: PropertyDetail[] = [
   {
-    id: "1",
+    id: 1, // ID numerico
     title: "Luxury Downtown Apartment",
     address: "123 Premium Street",
-    price: 2500000,
-    imageUrl:
-      "https://www.luxurychicagoapartments.com/wp-content/uploads/2023/03/DSC_5600-HDR-PRINT.jpg",
+    price: "2500000", // Prezzo come stringa
+    imageUrl: "https://www.luxurychicagoapartments.com/wp-content/uploads/2023/03/DSC_5600-HDR-PRINT.jpg",
+    type: "Apartment",
+    views: 450,
+    bookings: 30,
+    status: "available",
+    createdAt: new Date(2024, 2, 1).toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
-    id: "2",
+    id: 2, // ID numerico
     title: "Modern Villa with Pool",
     address: "456 Luxury Avenue",
-    price: 3800000,
+    price: "3800000", // Prezzo come stringa
     imageUrl: "https://pictures.escapia.com/E2768/221984/4550040204.jpg",
+    type: "Villa",
+    views: 200,
+    bookings: 15,
+    status: "available",
+    createdAt: new Date(2024, 1, 15).toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
-    id: "3",
+    id: 3, // ID numerico
     title: "City View Apartment",
     address: "789 Urban Street",
-    price: 1200000,
-    imageUrl:
-      "https://one11residences.com/wp-content/themes/one11/dist/images/living/penthouses-living.jpg",
+    price: "1200000", // Prezzo come stringa
+    imageUrl: "https://one11residences.com/wp-content/themes/one11/dist/images/living/penthouses-living.jpg",
+    type: "Apartment",
+    views: 600,
+    bookings: 40,
+    status: "rented",
+    createdAt: new Date(2023, 10, 10).toISOString(),
+    updatedAt: new Date().toISOString(),
   },
 ];
 
 export default function Properties() {
-  const handlePropertyClick = (propertyId: string) => {
+  const router = useRouter(); // Initialize router
+
+  const handlePropertyClick = (propertyId: number) => { // Accetta ID numerico
     // Handle property click
+    console.log("Property clicked:", propertyId);
+    // TODO: Navigare alla schermata di dettaglio dell'immobile per l'agente
   };
 
   const handleAddProperty = () => {
-    // Handle add property
+    // Navigate to the add property screen
+    router.push('/add-property'); // Corrected route path without layout segments
   };
 
   return (
@@ -61,7 +84,7 @@ export default function Properties() {
                 <PropertyCard
                   key={property.id}
                   property={property}
-                  onPress={() => handlePropertyClick(property.id)}
+                  onPress={() => handlePropertyClick(property.id)} // Passa ID numerico
                 />
               ))}
             </ThemedView>

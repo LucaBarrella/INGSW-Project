@@ -3,10 +3,10 @@ import { TouchableOpacity, View } from 'react-native';
 import { PropertyCard } from '@/components/Agent/PropertyListing/PropertyCard';
 import { ThemedIcon } from '@/components/ThemedIcon';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { Property } from '@/components/Agent/PropertyListing/types';
+import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types'; // Importa il tipo unificato
 
 interface BuyerPropertyCardProps {
-  property: Property;
+  property: PropertyDetail; // Usa il tipo unificato
   onPress: () => void;
   isFavorite?: boolean;
   onToggleFavorite?: () => void;

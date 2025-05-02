@@ -10,6 +10,7 @@ import 'react-native-reanimated';
 import "../global.css";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -38,7 +39,8 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <ActionSheetProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }} initialRouteName="(auth)">
         {STACK_SCREENS.map(screen => (
           <Stack.Screen 
@@ -52,7 +54,8 @@ export default function RootLayout() {
         ))}
       </Stack>
       <StatusBar style="auto" />
-      </ThemeProvider>
+        </ThemeProvider>
+      </ActionSheetProvider>
     </GestureHandlerRootView>
   );
 }

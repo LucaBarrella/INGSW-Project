@@ -15,27 +15,21 @@ export default function AddAdminScreen() {
   const router = useRouter();
 
   const handleCreateAdmin = async (data: any) => {
+    // TODO: Definire un tipo specifico per i dati dell'admin (es. AdminCreationData)
+    setIsLoading(true);
+    setError('');
     try {
-      setIsLoading(true);
-      setError('');
+      console.log('Creating admin with data:', data); // Log per debug
+      // Utilizza la funzione del servizio API
+      await ApiService.createAdmin(data);
 
-      const response = await fetch(ApiService.endpoints.adminCreate, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || t('admin.screens.addAdmin.error'));
-      }
-
-      // Success
-      router.back(); // Return to previous screen after successful creation
-    } catch (error) {
-      setError(error instanceof Error ? error.message : t('unknownError'));
+      // Successo: torna indietro
+      console.log('Admin created successfully');
+      router.back();
+    } catch (err) {
+      console.error('Error creating admin:', err);
+      // Mostra l'errore restituito da httpClient/ApiService o un messaggio generico
+      setError(err instanceof Error ? err.message : t('admin.screens.addAdmin.error'));
     } finally {
       setIsLoading(false);
     }
