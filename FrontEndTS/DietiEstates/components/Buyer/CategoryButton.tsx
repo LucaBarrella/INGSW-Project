@@ -18,10 +18,10 @@ export const CategoryButton: React.FC<CategoryButtonProps> = ({
   isSelected = false // Default a false
 }) => {
   // Colori per stato non selezionato
-  const unselectedBackgroundColor = useThemeColor({}, 'buttonBackground');
-  const unselectedBorderColor = useThemeColor({}, 'border');
-  const unselectedIconColor = useThemeColor({}, 'buttonTextColor');
-  const unselectedTextColor = useThemeColor({}, 'buttonTextColor');
+  const unselectedBackgroundColor = useThemeColor({}, 'tabBarBackground');
+  const unselectedBorderColor = useThemeColor({}, 'tabBarBackground');
+  const unselectedIconColor = useThemeColor({}, 'text');
+  const unselectedTextColor = useThemeColor({}, 'text');
 
   // Colori per stato selezionato (ispirati da Step1_PropertyType)
   const selectedBackgroundColor = useThemeColor({ light: '#E8F0FE', dark: '#1A365D' }, 'tint');

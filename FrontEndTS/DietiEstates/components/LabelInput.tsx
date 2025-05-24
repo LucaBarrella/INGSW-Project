@@ -62,7 +62,7 @@ export function LabelInput({
   const borderColor = error ? themeErrorColor : themeBorderColor; // Usa colore errore dal tema
   const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
   const inputBackground = inputBackgroundColor ?? backgroundColor;
-  const placeholderColor = '#888888'; // Use a standard grey for placeholder text for now
+  const placeholderColor = textColors + '80'; // Usa il colore del testo con opacità 50%
 
   let defaultLabel = '';
   let defaultPlaceholder = '';

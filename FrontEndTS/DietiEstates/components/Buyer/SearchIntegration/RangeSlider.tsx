@@ -28,8 +28,8 @@ const RangeSliderComponent: React.FC<RangeSliderProps> = ({
 }) => {
   const textColor = useThemeColor({}, "text");
   const tintColor = useThemeColor({}, "buttonBackground");
-  const backgroundColor = useThemeColor({}, "loginCardBackground");
-  const tabIconDefault = useThemeColor({}, "tabIconDefault");
+  const backgroundColor = useThemeColor({}, "tabIconDefault");
+  const tabIconDefault = useThemeColor({}, "text");
 
   // Assicuriamoci che displayValue sia sempre all'interno del range
   const ensureInRange = (val: number): number => {

@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router"; // Import useRouter
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
-import { PropertyCard } from "@/components/Agent/PropertyListing/PropertyCard";
+import { AgentPropertyCard } from "@/components/Agent/PropertyListing/AgentPropertyCard";
 import ThemedButton from "@/components/ThemedButton";
 import { PropertyDetail } from "@/components/Agent/PropertyDashboard/types"; // Importa il tipo unificato
 
@@ -14,12 +14,14 @@ const properties: PropertyDetail[] = [
     id: 1, // ID numerico
     title: "Luxury Downtown Apartment",
     address: "123 Premium Street",
-    price: "2500000", // Prezzo come stringa
+    price: 2500000, // Prezzo come numero
     imageUrl: "https://www.luxurychicagoapartments.com/wp-content/uploads/2023/03/DSC_5600-HDR-PRINT.jpg",
-    type: "Apartment",
+    type: "residential",
     views: 450,
     bookings: 30,
     status: "available",
+    transactionType: 'sale',
+    squareMeters: 120,
     createdAt: new Date(2024, 2, 1).toISOString(),
     updatedAt: new Date().toISOString(),
   },
@@ -27,12 +29,14 @@ const properties: PropertyDetail[] = [
     id: 2, // ID numerico
     title: "Modern Villa with Pool",
     address: "456 Luxury Avenue",
-    price: "3800000", // Prezzo come stringa
+    price: 3800000, // Prezzo come numero
     imageUrl: "https://pictures.escapia.com/E2768/221984/4550040204.jpg",
-    type: "Villa",
+    type: "residential",
     views: 200,
     bookings: 15,
     status: "available",
+    transactionType: 'sale',
+    squareMeters: 180,
     createdAt: new Date(2024, 1, 15).toISOString(),
     updatedAt: new Date().toISOString(),
   },
@@ -40,12 +44,14 @@ const properties: PropertyDetail[] = [
     id: 3, // ID numerico
     title: "City View Apartment",
     address: "789 Urban Street",
-    price: "1200000", // Prezzo come stringa
+    price: 1200000, // Prezzo come numero
     imageUrl: "https://one11residences.com/wp-content/themes/one11/dist/images/living/penthouses-living.jpg",
-    type: "Apartment",
+    type: "residential",
     views: 600,
     bookings: 40,
     status: "rented",
+    transactionType: 'rent',
+    squareMeters: 90,
     createdAt: new Date(2023, 10, 10).toISOString(),
     updatedAt: new Date().toISOString(),
   },
@@ -81,11 +87,13 @@ export default function Properties() {
             </ThemedView>
             <ThemedView className="flex flex-col gap-8">
               {properties.map((property) => (
-                <PropertyCard
-                  key={property.id}
-                  property={property}
-                  onPress={() => handlePropertyClick(property.id)} // Passa ID numerico
-                />
+                <AgentPropertyCard
+                 key={property.id}
+                 property={property}
+                 onPress={() => handlePropertyClick(property.id)}
+                 onEdit={() => console.log("Edit property:", property.id)}
+                 onDelete={() => console.log("Delete property:", property.id)}
+               />
               ))}
             </ThemedView>
             <SafeAreaView />

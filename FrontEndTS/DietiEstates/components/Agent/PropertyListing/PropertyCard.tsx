@@ -2,7 +2,8 @@ import * as React from 'react';
 import { TouchableOpacity, Image } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types'; // Importa il tipo unificato
+import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
+import { PropertyCharacteristicsDisplay, mapPropertyDetailToCharacteristics } from '@/components/Property/PropertyCharacteristicsDisplay';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import * as Haptics from 'expo-haptics';
 import ThemedButton from '@/components/ThemedButton';
@@ -44,6 +45,9 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
     onPress();
   };
 
+const placeholderImageUrl = 'https://placehold.co/600x400/000000/FFFFFF.webp?text=Image+Not+Found&font=Poppins';
+
+
   return (
     <TouchableOpacity
       onPress={handlePress}
@@ -53,7 +57,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
     >
       <Image
         // Usa un placeholder se imageUrl non è definito
-        source={{ uri: property.imageUrl || 'https://picsum.photos/seed/placeholder/800/600' }}
+        source={{ uri: property.imageUrl || placeholderImageUrl }}
         className="w-full h-48"
         resizeMode="cover"
       />
@@ -77,13 +81,17 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           {property.address}
         </ThemedText>
 
+        {/* >>> INIZIO INTEGRAZIONE CARATTERISTICHE <<< */}
+        <PropertyCharacteristicsDisplay property={mapPropertyDetailToCharacteristics(property)} />
+        {/* >>> FINE INTEGRAZIONE CARATTERISTICHE <<< */}
+
         <ThemedView className="flex-row justify-between items-center" style={{ backgroundColor }}>
-          <ThemedText 
-            type="defaultSemiBold" 
+          <ThemedText
+            type="defaultSemiBold"
             className="text-xl"
             style={{ color: textColor }}
           >
-            €{property.price} {/* Visualizza direttamente la stringa del prezzo */}
+            €{property.price}
           </ThemedText>
           <ThemedButton
             title="Dettagli"

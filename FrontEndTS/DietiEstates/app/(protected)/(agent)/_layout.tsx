@@ -34,7 +34,7 @@ export default function AgentLayout() {
         options={{
           headerShown: true,
           title: 'Nuova Proprietà',
-          headerBackTitle: 'Indietro'
+          headerBackTitle: 'Annulla',
           // Le opzioni headerStyle, headerTitleStyle, headerTintColor ereditate da screenOptions
           // verranno applicate automaticamente qui, usando i colori del tema.
         }}

@@ -1,23 +1,19 @@
 import React from 'react';
-import { ScrollView, TouchableOpacity, Alert } from 'react-native'; // Aggiunto Alert
+import { ScrollView, Alert } from 'react-native'; // Rimosso TouchableOpacity se non più usato direttamente
 import { useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store'; // Import SecureStore
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
-import { ThemedIcon } from '@/components/ThemedIcon';
+// ThemedIcon potrebbe non essere più usata direttamente se ProfileOptionRow la gestisce
 import { useThemeColor } from '@/hooks/useThemeColor';
-
-interface ProfileOption {
-  id: string;
-  title: string;
-  icon: string;
-  onPress: () => void;
-}
+import { UserInfoCard } from '@/components/Profile/UserInfoCard';
+import { ProfileOptionsGroup } from '@/components/Profile/ProfileOptionsGroup';
+import { ProfileOptionRowProps } from '@/components/Profile/ProfileOptionRow'; // Per il tipo delle opzioni
 
 export default function ProfileTab() {
   const router = useRouter();
   const backgroundColor = useThemeColor({}, 'background');
-  const borderColor = useThemeColor({}, 'border');
+  // borderColor non è più usato direttamente qui se ProfileOptionsGroup e UserInfoCard lo gestiscono internamente
 
   // Chiave per recuperare/rimuovere il token JWT da SecureStore
   const TOKEN_KEY = 'user_auth_token';
@@ -28,7 +24,8 @@ export default function ProfileTab() {
     email: 'mario.rossi@example.com',
   };
 
-  const profileOptions: ProfileOption[] = [
+  // Adattato il tipo per ProfileOptionsGroup
+  const profileOptions: Array<Omit<ProfileOptionRowProps, 'isFirst'>> = [
     {
       id: 'edit-profile',
       title: 'Modifica Profilo',
@@ -68,67 +65,25 @@ export default function ProfileTab() {
 
   return (
     <ThemedView style={{ flex: 1, backgroundColor }}>
-      <ThemedView className="p-4 bg-white">
+      <ThemedView className="p-4">
+        {/* Se si vuole mantenere lo sfondo bianco per l'header, ripristinare bg-white qui o gestire tramite tema */}
         <ThemedText className="text-xl font-semibold">
           Profilo
         </ThemedText>
       </ThemedView>
 
-      <ScrollView 
+      <ScrollView
         className="flex-1 px-4"
         contentContainerStyle={{ paddingVertical: 20 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* User Info Card */}
-        <ThemedView 
-          className="p-4 mb-6 rounded-lg bg-white"
-          style={{ borderWidth: 1, borderColor }}
-        >
-          <ThemedIcon 
-            icon="mdi:account-circle"
-            size={60}
-            accessibilityLabel="Profile picture"
-          />
-          <ThemedText className="text-xl font-semibold mt-2">
-            {mockUser.name}
-          </ThemedText>
-          <ThemedText className="text-gray-600">
-            {mockUser.email}
-          </ThemedText>
-        </ThemedView>
+        <UserInfoCard
+          name={mockUser.name}
+          email={mockUser.email}
+          // iconName e iconLabel usano i default di UserInfoCard
+        />
 
-        {/* Options */}
-        <ThemedView 
-          className="rounded-lg bg-white overflow-hidden"
-          style={{ borderWidth: 1, borderColor }}
-        >
-          {profileOptions.map((option, index) => (
-            <TouchableOpacity
-              key={option.id}
-              onPress={option.onPress}
-              className="flex-row items-center p-4"
-              style={{
-                borderTopWidth: index > 0 ? 1 : 0,
-                borderTopColor: borderColor
-              }}
-            >
-              <ThemedIcon 
-                icon={option.icon}
-                size={24}
-                accessibilityLabel={option.title}
-                className="mr-3"
-              />
-              <ThemedText className="flex-1">
-                {option.title}
-              </ThemedText>
-              <ThemedIcon 
-                icon="mdi:chevron-right"
-                size={24}
-                accessibilityLabel="Vai"
-              />
-            </TouchableOpacity>
-          ))}
-        </ThemedView>
+        <ProfileOptionsGroup options={profileOptions} />
       </ScrollView>
     </ThemedView>
   );

@@ -278,23 +278,31 @@ export default function AddPropertyScreen() {
         </View>
         {renderStepContent()}
 
-        <ThemedView className="flex-row justify-between mt-5">
+        <ThemedView className="flex-row justify-between items-center mt-5 gap-x-6">
           {currentStep > 1 && (
-            <ThemedButton title="Indietro" onPress={prevStep} disabled={isSubmitting} /> // Rimosso type="secondary"
+            <ThemedButton
+              title="Indietro"
+              onPress={prevStep}
+              disabled={isSubmitting}
+              className="py-3 px-4" // Padding e nessuna flessibilità specifica qui
+            />
           )}
-          {/* Assicurati che ci sia spazio per il pulsante Indietro */}
-          <View style={{ flex: currentStep === 1 ? 1 : 0 }} />
 
           {currentStep < 5 && (
-            <ThemedButton title="Avanti" onPress={nextStep} disabled={isSubmitting} />
+            <ThemedButton
+              title="Avanti"
+              onPress={nextStep}
+              disabled={isSubmitting}
+              className={`py-3 px-4 flex-grow ${currentStep === 1 ? 'ml-auto' : ''}`} // flex-grow sempre, ml-auto per step 1
+            />
           )}
           {currentStep === 5 && (
             <ThemedButton
               title={isSubmitting ? "Salvataggio..." : "Salva Immobile"}
               onPress={handleSubmit(onSubmit)}
               disabled={isSubmitting}
+              className="py-3 px-4 flex-grow" // Padding e flex-grow per il pulsante finale
             >
-              {/* Usa la variabile definita sopra */}
               {isSubmitting && <ActivityIndicator color={buttonTextColor} style={{ marginLeft: 8 }} />}
             </ThemedButton>
           )}

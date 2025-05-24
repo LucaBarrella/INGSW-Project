@@ -17,10 +17,10 @@ import { QuickNumericSelector } from './QuickNumericSelector';
 const STRUCTURE_TYPES = ["Cemento Armato", "Acciaio", "Mista"] as const;
 type StructureType = typeof STRUCTURE_TYPES[number];
 
-export const CategorySpecificFilters: React.FC<CategorySpecificFiltersProps & { onBackToCategories?: () => void }> = ({
-  category,
+export const CategorySpecificFilters: React.FC<CategorySpecificFiltersProps> = ({
+  category, // Ora è keyof Omit<PropertyFilters, "general">
   filters,
-  onUpdateFilters,
+  onUpdateFilters, // Ora si aspetta { category: keyof Omit<PropertyFilters, "general">; newFilters: Partial<PropertyFilters[keyof Omit<PropertyFilters, "general">]>; }
   onBackToCategories,
 }) => {
   const textColor = useThemeColor({}, "text");
@@ -71,8 +71,8 @@ export const CategorySpecificFilters: React.FC<CategorySpecificFiltersProps & { 
               type,
               filters.residential.category === type,
               () => onUpdateFilters({
-                ...filters,
-                residential: { ...filters.residential, category: type },
+                category: 'residential',
+                newFilters: { category: type },
               })
             )
           )}
@@ -84,8 +84,8 @@ export const CategorySpecificFilters: React.FC<CategorySpecificFiltersProps & { 
         value={filters.residential.rooms}
         onValueChange={(value: string) =>
           onUpdateFilters({
-            ...filters,
-            residential: { ...filters.residential, rooms: value },
+            category: 'residential',
+            newFilters: { rooms: value },
           })
         }
         maxValue={10}
@@ -97,8 +97,8 @@ export const CategorySpecificFilters: React.FC<CategorySpecificFiltersProps & { 
         value={filters.residential.bathrooms}
         onValueChange={(value: string) =>
           onUpdateFilters({
-            ...filters,
-            residential: { ...filters.residential, bathrooms: value },
+            category: 'residential',
+            newFilters: { bathrooms: value },
           })
         }
         maxValue={6}
@@ -110,8 +110,8 @@ export const CategorySpecificFilters: React.FC<CategorySpecificFiltersProps & { 
         value={filters.residential.floor}
         onValueChange={(value: string) =>
           onUpdateFilters({
-            ...filters,
-            residential: { ...filters.residential, floor: value },
+            category: 'residential',
+            newFilters: { floor: value },
           })
         }
         maxValue={50}
@@ -124,8 +124,8 @@ export const CategorySpecificFilters: React.FC<CategorySpecificFiltersProps & { 
           value={filters.residential.elevator}
           onValueChange={(value: boolean) =>
             onUpdateFilters({
-              ...filters,
-              residential: { ...filters.residential, elevator: value },
+              category: 'residential',
+              newFilters: { elevator: value },
             })
           }
         />
@@ -137,8 +137,8 @@ export const CategorySpecificFilters: React.FC<CategorySpecificFiltersProps & { 
           value={filters.residential.pool}
           onValueChange={(value: boolean) =>
             onUpdateFilters({
-              ...filters,
-              residential: { ...filters.residential, pool: value },
+              category: 'residential',
+              newFilters: { pool: value },
             })
           }
         />
@@ -169,8 +169,8 @@ export const CategorySpecificFilters: React.FC<CategorySpecificFiltersProps & { 
               type,
               filters.commercial.category === type,
               () => onUpdateFilters({
-                ...filters,
-                commercial: { ...filters.commercial, category: type },
+                category: 'commercial',
+                newFilters: { category: type },
               })
             )
           )}
@@ -182,8 +182,8 @@ export const CategorySpecificFilters: React.FC<CategorySpecificFiltersProps & { 
         value={filters.commercial.bathrooms}
         onValueChange={(value: string) =>
           onUpdateFilters({
-            ...filters,
-            commercial: { ...filters.commercial, bathrooms: value },
+            category: 'commercial',
+            newFilters: { bathrooms: value },
           })
         }
         maxValue={6}
@@ -199,8 +199,8 @@ export const CategorySpecificFilters: React.FC<CategorySpecificFiltersProps & { 
           value={filters.commercial.constructionDate}
           onValueChange={(value: string) =>
             onUpdateFilters({
-              ...filters,
-              commercial: { ...filters.commercial, constructionDate: value },
+              category: 'commercial',
+              newFilters: { constructionDate: value },
             })
           }
           maxValue={new Date().getFullYear()}
@@ -214,8 +214,8 @@ export const CategorySpecificFilters: React.FC<CategorySpecificFiltersProps & { 
           value={filters.commercial.emergencyExit}
           onValueChange={(value: boolean) =>
             onUpdateFilters({
-              ...filters,
-              commercial: { ...filters.commercial, emergencyExit: value },
+              category: 'commercial',
+              newFilters: { emergencyExit: value },
             })
           }
         />
@@ -246,8 +246,8 @@ export const CategorySpecificFilters: React.FC<CategorySpecificFiltersProps & { 
               type,
               filters.industrial.category === type,
               () => onUpdateFilters({
-                ...filters,
-                industrial: { ...filters.industrial, category: type },
+                category: 'industrial',
+                newFilters: { category: type },
               })
             )
           )}
@@ -266,8 +266,8 @@ export const CategorySpecificFilters: React.FC<CategorySpecificFiltersProps & { 
           value={filters.industrial.ceilingHeight}
           onValueChange={(value: string) =>
             onUpdateFilters({
-              ...filters,
-              industrial: { ...filters.industrial, ceilingHeight: value },
+              category: 'industrial',
+              newFilters: { ceilingHeight: value },
             })
           }
           maxValue={20}
@@ -279,8 +279,8 @@ export const CategorySpecificFilters: React.FC<CategorySpecificFiltersProps & { 
           value={filters.industrial.floorLoad}
           onValueChange={(value: string) =>
             onUpdateFilters({
-              ...filters,
-              industrial: { ...filters.industrial, floorLoad: value },
+              category: 'industrial',
+              newFilters: { floorLoad: value },
             })
           }
           maxValue={5000}
@@ -299,8 +299,8 @@ export const CategorySpecificFilters: React.FC<CategorySpecificFiltersProps & { 
         value={filters.industrial.offices}
         onValueChange={(value: string) =>
           onUpdateFilters({
-            ...filters,
-            industrial: { ...filters.industrial, offices: value },
+            category: 'industrial',
+            newFilters: { offices: value },
           })
         }
         maxValue={50}
@@ -317,8 +317,8 @@ export const CategorySpecificFilters: React.FC<CategorySpecificFiltersProps & { 
               type,
               filters.industrial.structure === type,
               () => onUpdateFilters({
-                ...filters,
-                industrial: { ...filters.industrial, structure: type },
+                category: 'industrial',
+                newFilters: { structure: type },
               })
             )
           )}
@@ -331,8 +331,8 @@ export const CategorySpecificFilters: React.FC<CategorySpecificFiltersProps & { 
           value={filters.industrial.fireSystem}
           onValueChange={(value: boolean) =>
             onUpdateFilters({
-              ...filters,
-              industrial: { ...filters.industrial, fireSystem: value },
+              category: 'industrial',
+              newFilters: { fireSystem: value },
             })
           }
         />
@@ -363,8 +363,8 @@ export const CategorySpecificFilters: React.FC<CategorySpecificFiltersProps & { 
               type,
               filters.land.category === type,
               () => onUpdateFilters({
-                ...filters,
-                land: { ...filters.land, category: type },
+                category: 'land',
+                newFilters: { category: type },
               })
             )
           )}
@@ -376,8 +376,8 @@ export const CategorySpecificFilters: React.FC<CategorySpecificFiltersProps & { 
         value={filters.land.slope}
         onValueChange={(value: string) =>
           onUpdateFilters({
-            ...filters,
-            land: { ...filters.land, slope: value },
+            category: 'land',
+            newFilters: { slope: value },
           })
         }
         maxValue={45}
@@ -388,7 +388,9 @@ export const CategorySpecificFilters: React.FC<CategorySpecificFiltersProps & { 
   );
 
   const renderFilters = () => {
-    switch (category.toLowerCase()) {
+    // La prop 'category' è ora keyof Omit<PropertyFilters, "general">
+    // quindi non serve toLowerCase() e il controllo è più stretto.
+    switch (category) {
       case "residential":
         return renderResidentialFilters();
       case "commercial":
@@ -398,6 +400,8 @@ export const CategorySpecificFilters: React.FC<CategorySpecificFiltersProps & { 
       case "land":
         return renderLandFilters();
       default:
+        // Questo caso non dovrebbe essere raggiunto se 'category' è sempre valida
+        const _exhaustiveCheck: never = category;
         return null;
     }
   };

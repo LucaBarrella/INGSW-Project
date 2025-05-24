@@ -7,9 +7,9 @@ import { LabelInput } from './LabelInput';
 import ThemedButton from './ThemedButton';
 import { SocialButton } from './SocialButton';
 import { Provider } from '@/types/Provider';
-import DateTimePicker from '@react-native-community/datetimepicker'; // Aggiunto import
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { useRouter } from 'expo-router';
-import ApiService from '@/app/_services/api.service'; // Corretto import default
+import ApiService from '@/app/_services/api.service';
 
 interface RegistrationFormData {
   firstName: string;
@@ -17,6 +17,13 @@ interface RegistrationFormData {
   birthdate: Date;
   email: string;
   password: string;
+}
+
+interface ValidationErrors {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  password?: string;
 }
 
 export type RegistrationFormProps = ViewProps & {
@@ -33,6 +40,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
     password: '',
   });
 
+  const [errors, setErrors] = useState<ValidationErrors>({});
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [tempDate, setTempDate] = useState(new Date());
   const router = useRouter();
@@ -42,7 +50,41 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
   const cardBackground = useThemeColor({ light: lightColor, dark: darkColor }, 'loginCardBackground');
   const labelColor = useThemeColor({ light: lightColor, dark: darkColor }, 'loginCardLabel');
 
-  const handleDateChange = (event: any, selectedDate?: Date) => {
+  const validateForm = (): boolean => {
+    const newErrors: ValidationErrors = {};
+    let isValid = true;
+
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = 'Il nome è obbligatorio';
+      isValid = false;
+    }
+
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = 'Il cognome è obbligatorio';
+      isValid = false;
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = 'L\'email è obbligatoria';
+      isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Inserisci un indirizzo email valido';
+      isValid = false;
+    }
+
+    if (!formData.password) {
+      newErrors.password = 'La password è obbligatoria';
+      isValid = false;
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'La password deve essere di almeno 8 caratteri';
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const handleDateChange = (_event: any, selectedDate?: Date) => {
     const currentDate = selectedDate || tempDate;
     setTempDate(currentDate);
 
@@ -57,24 +99,24 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
     setShowDatePicker(false);
   };
 
-  // Funzione per la registrazione
   const handleSubmit = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
     try {
-      // Usa la funzione ApiService.registerUser che gestisce il mock
       const response = await ApiService.registerUser(formData);
 
-      // La funzione mock restituisce direttamente l'oggetto di successo/errore
       if (response.success) {
-        Alert.alert('Registration Successful');
-        router.push('/(auth)/(buyer)/login');
+        Alert.alert('Registrazione Completata', 'La registrazione è avvenuta con successo!', [
+          { text: 'OK', onPress: () => router.push('/(auth)/(buyer)/login') }
+        ]);
       } else {
-        // Se la funzione mock restituisce un errore (o l'API reale fallisce)
-        console.log('Registration failed:', response.message);
-        Alert.alert('Registration Failed', response.message || 'Please check your input or try again later');
+        Alert.alert('Registrazione Fallita', response.message || 'Controlla i dati inseriti e riprova');
       }
-    } catch (error: any) { // Tipizza l'errore per accedere a 'message'
+    } catch (error: any) {
       console.error('Registration error:', error);
-      Alert.alert('Error', error.message || 'Something went wrong');
+      Alert.alert('Errore', error.message || 'Si è verificato un errore');
     }
   };
 
@@ -82,6 +124,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
     <ThemedView className="mt-[10%] mb-[10%] max-w-md p-8 rounded-2xl w-10/12 shadow-lg" style={{ backgroundColor: cardBackground }} {...props}>
       <ThemedText className="py-5 text-center" style={{ fontSize: 36, color: labelColor }}>Benvenuto</ThemedText>
       <ThemedText className="text-lg mb-6 text-center" style={{ color: labelColor }}>Registrati</ThemedText>
+      
       <LabelInput
         type="default"
         label="Nome"
@@ -91,9 +134,16 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
         darkColor={cardBackground}
         inputBackgroundColor={background}
         value={formData.firstName}
-        onChangeText={(text) => setFormData(prev => ({ ...prev, firstName: text }))}
+        onChangeText={(text) => {
+          setFormData(prev => ({ ...prev, firstName: text }));
+          if (errors.firstName) {
+            setErrors(prev => ({ ...prev, firstName: undefined }));
+          }
+        }}
+        error={!!errors.firstName}
         className="mb-6"
       />
+
       <LabelInput
         type="default"
         label="Cognome"
@@ -103,13 +153,19 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
         darkColor={cardBackground}
         inputBackgroundColor={background}
         value={formData.lastName}
-        onChangeText={(text) => setFormData(prev => ({ ...prev, lastName: text }))}
+        onChangeText={(text) => {
+          setFormData(prev => ({ ...prev, lastName: text }));
+          if (errors.lastName) {
+            setErrors(prev => ({ ...prev, lastName: undefined }));
+          }
+        }}
+        error={!!errors.lastName}
         className="mb-6"
       />
+
       <View className="mb-6">
         <ThemedText className="mb-2" style={{ color: labelColor }}>Data di nascita</ThemedText>
 
-        {/* Ripristino logica condizionale per web/mobile */}
         {Platform.OS === 'web' ? (
           <input
             type="date"
@@ -129,7 +185,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
           />
         ) : (
           <>
-            {/* Ripristino TouchableOpacity per mostrare data */}
             <TouchableOpacity
               onPress={() => setShowDatePicker(true)}
               className="border p-2 rounded-md min-h-[40px] min-w-[200px] w-full"
@@ -138,29 +193,29 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
               <ThemedText style={{ color: text }}>{formData.birthdate.toLocaleDateString()}</ThemedText>
             </TouchableOpacity>
 
-            {/* Ripristino DateTimePicker */}
             {showDatePicker && (
               <View className='flex-1 justify-center items-center'>
                 <DateTimePicker
                   value={tempDate}
                   mode="date"
-                  display="spinner" // O 'default' se preferito
+                  display="spinner"
                   onChange={handleDateChange}
+                  maximumDate={new Date()} // Impedisce la selezione di date future
                 />
-                {/* Bottone conferma per iOS */}
                 {Platform.OS === 'ios' && (
-                   <ThemedButton
-                     title="Conferma"
-                     onPress={confirmDate}
-                     borderRadius={8}
-                     className="w-full min-h-[40px] mt-4"
-                   />
+                  <ThemedButton
+                    title="Conferma"
+                    onPress={confirmDate}
+                    borderRadius={8}
+                    className="w-full min-h-[40px] mt-4"
+                  />
                 )}
               </View>
             )}
           </>
         )}
       </View>
+
       <LabelInput
         type="email"
         label="Email"
@@ -170,10 +225,17 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
         darkColor={cardBackground}
         inputBackgroundColor={background}
         value={formData.email}
-        onChangeText={(text) => setFormData(prev => ({ ...prev, email: text }))}
+        onChangeText={(text) => {
+          setFormData(prev => ({ ...prev, email: text }));
+          if (errors.email) {
+            setErrors(prev => ({ ...prev, email: undefined }));
+          }
+        }}
+        error={!!errors.email}
         className="mb-6"
         autoCapitalize="none"
       />
+
       <LabelInput
         type="password"
         label="Password"
@@ -183,16 +245,25 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
         darkColor={cardBackground}
         inputBackgroundColor={background}
         value={formData.password}
-        onChangeText={(text) => setFormData(prev => ({ ...prev, password: text }))}
+        onChangeText={(text) => {
+          setFormData(prev => ({ ...prev, password: text }));
+          if (errors.password) {
+            setErrors(prev => ({ ...prev, password: undefined }));
+          }
+        }}
+        error={!!errors.password}
         className="mb-6"
       />
+
       <ThemedButton
         title="Registrati"
         onPress={handleSubmit}
         borderRadius={8}
         className="min-h-[40px]"
       />
+
       <ThemedText className="text-base mt-3 mb-3 text-center" style={{ color: labelColor }}>or continue with:</ThemedText>
+      
       <View className="items-center mb-3">
         <SocialButton provider={Provider.Google} onPress={() => console.log('Login con Google')} lightColor='#FFFFFF' darkColor='#FFFFFF' />
       </View>
@@ -202,15 +273,15 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
       <View className="items-center mb-3">
         <SocialButton provider={Provider.GitHub} onPress={() => console.log('Login con GitHub')} lightColor='#FFFFFF' darkColor='#333333' />
       </View>
-        <View className="flex-row justify-center mt-3">
-          <ThemedText style={{ color: labelColor }}>Have an account already? </ThemedText>
-              {/* //TODO fix this! */}
-            <TouchableOpacity onPress={() => router.push('/(auth)/(buyer)/login')}> 
-              <ThemedText className="text-blue-500 underline font-bold" style={{ color: labelColor }}>
-                Sign in
-              </ThemedText>
-            </TouchableOpacity>
-        </View>
+
+      <View className="flex-row justify-center mt-3">
+        <ThemedText style={{ color: labelColor }}>Have an account already? </ThemedText>
+        <TouchableOpacity onPress={() => router.push('/(auth)/(buyer)/login')}> 
+          <ThemedText className="text-blue-500 underline font-bold" style={{ color: labelColor }}>
+            Sign in
+          </ThemedText>
+        </TouchableOpacity>
+      </View>
     </ThemedView>
   );
 };

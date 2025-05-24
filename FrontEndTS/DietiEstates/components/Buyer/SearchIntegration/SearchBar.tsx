@@ -1,5 +1,6 @@
 import React from 'react';
 import { TextInput, TouchableOpacity, View } from 'react-native';
+// useSearch and dispatch are no longer needed here
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { SearchBarProps } from './types';
@@ -10,7 +11,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   value,
   onChangeText,
   onFilterPress,
-  onSearchPress,
+  onSearchPress, // Added this prop
   placeholder = 'Search properties...',
   activeFiltersCount = 0,
 }) => {
@@ -18,8 +19,14 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const backgroundColor = useThemeColor({}, 'propertyCardBackground');
   const accentColor = useThemeColor({}, 'buttonBackground');
 
+  // Removed useSearch hook
+
   const handleSubmit = () => {
-    if (value.trim() && onSearchPress) {
+    console.log('[SearchBar] handleSubmit called. Query:', value);
+    // The query is already updated in the context by SearchAndFilter via onChangeText.
+    // This handler is now primarily for triggering navigation or other actions on explicit search submission.
+    if (onSearchPress) {
+      console.log('[SearchBar] Calling onSearchPress');
       onSearchPress();
     }
   };
@@ -30,14 +37,14 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         {/* Search section with subtle background */}
         <View className="flex-1 flex-row items-center justify-between">
           <ThemedView className="flex-row items-center flex-1 rounded-2xl bg-gray-100">
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={handleSubmit}
               disabled={!value.trim()}
               className="pl-5 pr-3 py-3"
             >
-              <Ionicons 
-                name="search" 
-                size={20} 
+              <Ionicons
+                name="search"
+                size={20}
                 color={value.trim() ? accentColor : textColor}
               />
             </TouchableOpacity>
@@ -46,7 +53,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
               value={value}
               onChangeText={onChangeText}
               placeholder={placeholder}
-              className="flex-1 h-11 text-base"
+              className="flex-1 text-base leading-5 h-5 p-0"
               style={{ color: textColor }}
               placeholderTextColor={textColor}
               returnKeyType="search"
@@ -76,14 +83,13 @@ export const SearchBar: React.FC<SearchBarProps> = ({
               
               {/* Badge */}
               {activeFiltersCount > 0 && (
-                <View className="absolute -top-2 -right-2 min-w-[18px] h-5 bg-white rounded-full border border-gray-200 items-center justify-center px-1">
+                <ThemedView className="absolute -top-2 -right-2 min-w-[18px] h-5 bg-white rounded-full border border-gray-200 items-center justify-center px-1">
                   <ThemedText 
-                    className="text-xs font-bold"
-                    style={{ color: textColor }}
+                    className="text-xs font-bold leading-tight"
                   >
                     {activeFiltersCount}
                   </ThemedText>
-                </View>
+                </ThemedView>
               )}
             </TouchableOpacity>
           </View>
@@ -92,3 +98,4 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     </ThemedView>
   );
 };
+

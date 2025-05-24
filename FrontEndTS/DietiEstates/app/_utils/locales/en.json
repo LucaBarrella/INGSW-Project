@@ -40,6 +40,25 @@
         "subtitle": "Register a new real estate agent to the platform",
         "error": "Failed to add agent"
       }
+    },
+    "profile": {
+      "title": "Profile",
+      "description": "Manage your profile and settings",
+      "settings": "Settings",
+      "changePassword": "Change Password",
+      "logout": "Logout",
+      "logoutError": "Logout Error",
+      "logoutErrorMessage": "Unable to complete logout. Please try again."
+    },
+    "settings": {
+      "title": "Settings",
+      "language": "Language",
+      "theme": {
+        "title": "Theme",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+      }
     }
   },
 

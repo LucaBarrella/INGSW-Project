@@ -1,5 +1,4 @@
 import axios, { AxiosError, InternalAxiosRequestConfig, AxiosInstance } from 'axios';
-import Constants from 'expo-constants';
 import * as SecureStore from 'expo-secure-store';
 // Importa il flag MOCK (potrebbe causare dipendenza circolare, vedi nota sotto)
 // import { USE_MOCK_API } from './api.service'; // <-- ATTENZIONE: Possibile dipendenza circolare
@@ -44,28 +43,28 @@ if (!baseURL && !USE_MOCK_API_HTTP) { // Controlla baseURL solo se non siamo in 
   );
 }
 
-let httpClient: AxiosInstance;
-
-if (USE_MOCK_API_HTTP) {
-  // Se MOCK è attivo, crea un oggetto mock che simula Axios
-  console.log('[httpClient] Modalità MOCK ATTIVA. Nessuna chiamata di rete verrà effettuata da httpClient.');
-  httpClient = {
+const httpClient: AxiosInstance = (() => {
+  if (USE_MOCK_API_HTTP) {
+    // Se MOCK è attivo, crea un oggetto mock che simula Axios
+    console.log('[httpClient] Modalità MOCK ATTIVA. Nessuna chiamata di rete verrà effettuata da httpClient.');
+    return {
+    // Simula i metodi Axios usati (get, post, etc.)
     // Simula i metodi Axios usati (get, post, etc.)
     // Queste funzioni mock non verranno MAI chiamate se api.service.ts funziona correttamente,
     // ma servono come fallback e per evitare errori di tipo.
-    get: (url: string, config?: any) => {
+    get: (url: string, _config?: any) => {
       console.warn(`[httpClient MOCK] Tentativo di GET a ${url} bloccato.`);
       return Promise.reject(new Error(`[httpClient MOCK] Chiamata GET a ${url} bloccata in modalità mock.`));
     },
-    post: (url: string, data?: any, config?: any) => {
+    post: (url: string, _data?: any, _config?: any) => {
       console.warn(`[httpClient MOCK] Tentativo di POST a ${url} bloccato.`);
       return Promise.reject(new Error(`[httpClient MOCK] Chiamata POST a ${url} bloccata in modalità mock.`));
     },
-    put: (url: string, data?: any, config?: any) => {
+    put: (url: string, _data?: any, _config?: any) => {
       console.warn(`[httpClient MOCK] Tentativo di PUT a ${url} bloccato.`);
       return Promise.reject(new Error(`[httpClient MOCK] Chiamata PUT a ${url} bloccata in modalità mock.`));
     },
-    delete: (url: string, config?: any) => {
+    delete: (url: string, _config?: any) => {
       console.warn(`[httpClient MOCK] Tentativo di DELETE a ${url} bloccato.`);
       return Promise.reject(new Error(`[httpClient MOCK] Chiamata DELETE a ${url} bloccata in modalità mock.`));
     },
@@ -76,27 +75,26 @@ if (USE_MOCK_API_HTTP) {
       request: { use: () => {}, eject: () => {} } as any, // Usa funzioni vuote
       response: { use: () => {}, eject: () => {} } as any,
     },
-    getUri: (config?: any) => '', // Funzione mock
-    request: (config: any) => Promise.reject(new Error('[httpClient MOCK] request bloccato')), // Funzione mock
-    head: (url: string, config?: any) => Promise.reject(new Error('[httpClient MOCK] head bloccato')), // Funzione mock
-    options: (url: string, config?: any) => Promise.reject(new Error('[httpClient MOCK] options bloccato')), // Funzione mock
-    patch: (url: string, data?: any, config?: any) => Promise.reject(new Error('[httpClient MOCK] patch bloccato')), // Funzione mock
+    getUri: (_config?: any) => '', // Funzione mock
+    request: (_config: any) => Promise.reject(new Error('[httpClient MOCK] request bloccato')), // Funzione mock
+    head: (_url: string, _config?: any) => Promise.reject(new Error('[httpClient MOCK] head bloccato')), // Funzione mock
+    options: (_url: string, _config?: any) => Promise.reject(new Error('[httpClient MOCK] options bloccato')), // Funzione mock
+    patch: (_url: string, _data?: any, _config?: any) => Promise.reject(new Error('[httpClient MOCK] patch bloccato')), // Funzione mock
 
   } as AxiosInstance; // Forza il tipo a AxiosInstance
-
 } else {
   // Se MOCK è disattivo, crea l'istanza Axios reale
   console.log(`[httpClient] Modalità API Reale. Connessione a: ${baseURL}`);
-  httpClient = axios.create({
+  const instance = axios.create({
     baseURL: baseURL,
     timeout: 10000,
     headers: {
       'Content-Type': 'application/json',
     },
-  });
+    });
 
-  // Interceptor di Richiesta (solo per istanza reale)
-  httpClient.interceptors.request.use(
+    // Interceptor di Richiesta (solo per istanza reale)
+    instance.interceptors.request.use(
     async (config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> => {
       try {
         const token = await SecureStore.getItemAsync(TOKEN_KEY);
@@ -112,10 +110,10 @@ if (USE_MOCK_API_HTTP) {
       console.error("Errore nell'interceptor di richiesta:", error);
       return Promise.reject(error);
     }
-  );
+    );
 
-  // Interceptor di Risposta (solo per istanza reale)
-  httpClient.interceptors.response.use(
+    // Interceptor di Risposta (solo per istanza reale)
+    instance.interceptors.response.use(
     (response) => response,
     (error: AxiosError) => {
       console.error('Errore API:', error.response?.status, error.message);
@@ -138,7 +136,9 @@ if (USE_MOCK_API_HTTP) {
        }
       return Promise.reject(error);
     }
-  );
-}
+    );
+    return instance;
+  }
+})(); // Immediately Invoked Function Expression (IIFE)
 
 export default httpClient;

@@ -11,6 +11,7 @@ import "../global.css";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
+import { SearchProvider } from '../context/SearchContext'; // Importa il SearchProvider
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -41,19 +42,21 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ActionSheetProvider>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack screenOptions={{ headerShown: false }} initialRouteName="(auth)">
-        {STACK_SCREENS.map(screen => (
-          <Stack.Screen 
-            key={screen.name}
-            name={screen.name} 
-            options={{
-              headerShown: false,
-              ...screen.options
-            }}
-          />
-        ))}
-      </Stack>
-      <StatusBar style="auto" />
+          <SearchProvider>
+            <Stack screenOptions={{ headerShown: false }} initialRouteName="(auth)">
+              {STACK_SCREENS.map(screen => (
+                <Stack.Screen
+                  key={screen.name}
+                  name={screen.name}
+                  options={{
+                    headerShown: false,
+                    ...screen.options
+                  }}
+                />
+              ))}
+            </Stack>
+            <StatusBar style="auto" />
+          </SearchProvider>
         </ThemeProvider>
       </ActionSheetProvider>
     </GestureHandlerRootView>

@@ -40,7 +40,24 @@
         "subtitle": "Registra un nuovo agente immobiliare nella piattaforma",
         "error": "Impossibile aggiungere l'agente"
       }
-    }
+    },
+    "profile": {
+      "title": "Profilo",
+      "description": "Gestisci il tuo profilo e le impostazioni"
+    },
+    "settings": {
+      "title": "Impostazioni",
+      "language": "Lingua",
+      "theme": {
+        "title": "Tema",
+        "light": "Chiaro",
+        "dark": "Scuro",
+        "system": "Sistema"
+      }
+    },
+    "logout": "Esci",
+    "logoutError": "Errore Logout",
+    "logoutErrorMessage": "Impossibile completare il logout. Riprova."
   },
 
   "agent": {

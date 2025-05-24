@@ -24,11 +24,15 @@ interface FilterPanelProps {
   onClose: () => void;
   filters: PropertyFilters;
   categories: Categories;
-  selectedMainCategory: string;
-  onSelectMainCategory: (category: string) => void;
-  onUpdateFilters: (filters: PropertyFilters) => void;
-  onResetFilters: () => void;
-  onApplyFilters: () => void;
+  selectedMainCategory: keyof Omit<PropertyFilters, "general"> | null;
+  onSelectMainCategory: (category: keyof Omit<PropertyFilters, "general"> | null) => void;
+  onUpdateFilters: (
+    updatedPart: Partial<PropertyFilters> |
+                 { category: keyof Omit<PropertyFilters, 'general'>; newFilters: Partial<PropertyFilters[keyof Omit<PropertyFilters, 'general'>]> } |
+                 { subCategory: 'general'; newFilters: Partial<PropertyFilters['general']> }
+  ) => void;
+  onResetFilters: (keepTransactionType?: boolean) => void;
+  onApplyAndNavigate?: () => void; // Added new prop
 }
 
 const FilterPanelComponent: React.FC<FilterPanelProps> = ({
@@ -40,7 +44,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
   onSelectMainCategory,
   onUpdateFilters,
   onResetFilters,
-  onApplyFilters,
+  onApplyAndNavigate, // Destructure the new prop
 }) => {
   const translateY = useRef(new Animated.Value(2000)).current;
   const [panelHeight, setPanelHeight] = useState(Dimensions.get('window').height * 0.8);
@@ -50,8 +54,8 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
 
   const textColor = useThemeColor({}, "text");
   const tintColor = useThemeColor({}, "tint");
-  const tabIconDefault = useThemeColor({}, "tabIconDefault");
-  const backgroundPrimary = useThemeColor({}, "propertyCardBackground");
+  const tabIconDefault = useThemeColor({}, "tabBarBackground");
+  const backgroundPrimary = useThemeColor({}, "background");
   const loginCardBackground = useThemeColor({}, "loginCardBackground");
   const buttonBackground = useThemeColor({}, "buttonBackground");
   const buttonTextColor = useThemeColor({}, "buttonTextColor");
@@ -102,12 +106,12 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
   const currentPriceRange = DEFAULT_PRICE_RANGES[filters.general.transactionType];
 
   const handleReset = () => {
-    onResetFilters();
-    onUpdateFilters(filters);
+    // Mantiene il tipo di transazione corrente per impostazione predefinita durante il reset
+    onResetFilters(true);
   };
 
-  const getDefaultCategoryValue = (category: string) => {
-    switch (category.toLowerCase()) {
+  const getDefaultCategoryValue = (categoryKey: keyof Omit<PropertyFilters, "general">) => {
+    switch (categoryKey) {
       case 'residential':
         return RESIDENTIAL_CATEGORIES[0];
       case 'commercial':
@@ -117,26 +121,26 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
       case 'land':
         return LAND_CATEGORIES[0];
       default:
+        // Questo non dovrebbe accadere con i tipi corretti, ma per sicurezza:
+        const exhaustiveCheck: never = categoryKey;
         return '';
     }
   };
 
   const handleBackToCategories = () => {
-    onSelectMainCategory("");
+    onSelectMainCategory(null);
   };
 
-  const handleSelectCategory = (category: string) => {
-    // Set default category value when switching categories
-    const defaultCategory = getDefaultCategoryValue(category);
-    const updatedFilters = {
-      ...filters,
-      [category.toLowerCase()]: {
-        ...filters[category.toLowerCase() as keyof PropertyFilters],
-        category: defaultCategory
-      }
-    };
-    onUpdateFilters(updatedFilters);
-    onSelectMainCategory(category);
+  const handleSelectCategory = (categoryKey: keyof Omit<PropertyFilters, "general">) => {
+    onSelectMainCategory(categoryKey); // Dispatcha SET_SELECTED_MAIN_CATEGORY_IN_PANEL
+
+    // Dispatcha UPDATE_FILTER per impostare la sottocategoria di default
+    const defaultSubCategoryValue = getDefaultCategoryValue(categoryKey);
+    onUpdateFilters({
+      category: categoryKey,
+      newFilters: { category: defaultSubCategoryValue } as any // Cast as any per superare il controllo di tipo stretto momentaneamente
+                                                              // Idealmente, il tipo di newFilters dovrebbe essere più specifico
+    });
   };
 
   return (
@@ -199,19 +203,20 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
                 }),
               }]}
             >
-              <ThemedView className="items-center pt-2 rounded-t-2xl">
+              <ThemedView className="items-center pt-2 rounded-t-2xl" style={{ backgroundColor: tabIconDefault }}>
                 <ThemedView 
                   className="w-12 h-1 rounded-full mb-2"
-                  style={{ backgroundColor: tabIconDefault }}
+                  style={{ backgroundColor: textColor }}
                 />
               </ThemedView>
               
               <ThemedView
-                className="flex-row justify-between items-center px-4 pb-4 border-b border-gray-200 dark:border-gray-700"
+                className="flex-row justify-between items-center px-4 pb-4" // Rimosse classi border-b, border-gray-200, dark:border-gray-700
+                style={{ backgroundColor: tabIconDefault }}
               >
-                <ThemedView className="flex-row items-center">
+                <ThemedView className="flex-row items-center" style={{ backgroundColor: tabIconDefault }}> 
                   <Ionicons name="funnel" size={24} color={tintColor} />
-                  <ThemedView className="ml-3">
+                  <ThemedView className="ml-3" style={{ backgroundColor: tabIconDefault }}>
                     <ThemedText
                       className="text-lg font-semibold"
                       style={{ color: textColor }}
@@ -220,25 +225,27 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
                     </ThemedText>
                     <ThemedText
                       className="text-sm"
-                      style={{ color: tabIconDefault }}
+                      style={{ color: textColor }}
                     >
-                      {selectedMainCategory
-                        ? categories[selectedMainCategory.toLowerCase()]?.name ?? selectedMainCategory
+                      {selectedMainCategory && categories[selectedMainCategory]
+                        ? categories[selectedMainCategory]?.name ?? selectedMainCategory
                         : "Seleziona una categoria"}
                     </ThemedText>
                   </ThemedView>
                 </ThemedView>
                 
-                <ThemedView className="flex-row items-center">
+                <ThemedView className="flex-row items-center" style={{ backgroundColor: tabIconDefault }}>
                   <TouchableOpacity 
                     onPress={handleReset} 
                     className="mr-4 py-2 px-3"
+                    //TODO add something to the button
                   >
                     <ThemedText style={{ color: tintColor }}>Reset</ThemedText>
                   </TouchableOpacity>
                   <TouchableOpacity 
                     onPress={hidePanel}
                     className="p-1"
+                    //TODO add something to the button
                   >
                     <Ionicons name="close" size={24} color={textColor} />
                   </TouchableOpacity>
@@ -267,16 +274,17 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
                         { label: "Vendita", value: "sale" }
                       ]}
                       value={filters.general.transactionType}
-                      onChange={(value) =>
+                      onChange={(value) => {
+                        const transactionType = value as "rent" | "sale";
                         onUpdateFilters({
-                          ...filters,
-                          general: { 
-                            ...filters.general, 
-                            transactionType: value as "rent" | "sale",
-                            priceRange: DEFAULT_PRICE_RANGES[value as "rent" | "sale"].defaultRange
+                          subCategory: 'general',
+                          newFilters: {
+                            transactionType: transactionType,
+                            // Resetta priceRange al default per il nuovo tipo di transazione
+                            priceRange: DEFAULT_PRICE_RANGES[transactionType].defaultRange
                           },
-                        })
-                      }
+                        });
+                      }}
                     />
                   </ThemedView>
 
@@ -286,12 +294,12 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
                     max={currentPriceRange.max}
                     step={currentPriceRange.step}
                     value={filters.general.priceRange}
-                    onChange={(value) =>
+                    onChange={(value) => {
                       onUpdateFilters({
-                        ...filters,
-                        general: { ...filters.general, priceRange: value },
-                      })
-                    }
+                        subCategory: 'general',
+                        newFilters: { priceRange: value },
+                      });
+                    }}
                     formatValue={(value) => 
                       `€${value.toLocaleString('it-IT')}`
                     }
@@ -303,12 +311,12 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
                     max={1000}
                     step={10}
                     value={filters.general.size}
-                    onChange={(value) =>
+                    onChange={(value) => {
                       onUpdateFilters({
-                        ...filters,
-                        general: { ...filters.general, size: value },
-                      })
-                    }
+                        subCategory: 'general',
+                        newFilters: { size: value },
+                      });
+                    }}
                     formatValue={(value) => `${value}m²`}
                   />
                 </ThemedView>
@@ -318,7 +326,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
                     {Object.entries(categories).map(([key, category]) => (
                       <TouchableOpacity
                         key={key}
-                        onPress={() => handleSelectCategory(key)}
+                        onPress={() => handleSelectCategory(key as keyof Omit<PropertyFilters, "general">)}
                         className="p-4 rounded-lg"
                         style={{ backgroundColor: loginCardBackground }}
                       >
@@ -335,6 +343,12 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
                   <CategorySpecificFilters
                     category={selectedMainCategory}
                     filters={filters}
+                    // CategorySpecificFilters potrebbe aver bisogno di un onUpdateFilters adattato
+                    // se non invia già un payload compatibile con UPDATE_FILTER del context.
+                    // Per ora, passiamo onUpdateFilters direttamente.
+                    // Se CategorySpecificFilters invia l'intero oggetto filters,
+                    // onUpdateFilters in FilterPanel dovrebbe gestirlo o CategorySpecificFilters
+                    // dovrebbe essere modificato per inviare solo la parte modificata.
                     onUpdateFilters={onUpdateFilters}
                     onBackToCategories={handleBackToCategories}
                   />
@@ -345,10 +359,16 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
                 className="px-4 pt-4 pb-8 border-t border-gray-200 dark:border-gray-700"
                 style={{ backgroundColor: backgroundPrimary }}
               >
-                <TouchableOpacity 
+                <TouchableOpacity
                   onPress={() => {
-                    onApplyFilters();
+                    // Filters are already applied to the context via onUpdateFilters calls
+                    // First, close the panel
                     hidePanel();
+                    // Then, if the navigation callback is provided, call it
+                    if (onApplyAndNavigate) {
+                      console.log('[FilterPanel] Calling onApplyAndNavigate');
+                      onApplyAndNavigate();
+                    }
                   }}
                   className="p-4 rounded-lg items-center flex-row justify-center"
                   style={{ backgroundColor: buttonBackground }}

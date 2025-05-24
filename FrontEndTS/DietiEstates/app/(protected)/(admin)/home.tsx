@@ -17,12 +17,12 @@ export default function AdminDashboard() {
 
   const actionData: RoleData[] = [
     {
-      id: 'change-password',
-      title: t('admin.changePassword'),
-      description: t('admin.changePasswordDesc'),
-      iconUrl: 'material-symbols:key-outline',
-      route: '/(admin)/(tabs)/change-password',
-      accessibilityLabel: t('admin.changePassword')
+      id: 'profile',
+      title: t('admin.profile.title'),
+      description: t('admin.profile.description'),
+      iconUrl: 'material-symbols:account-circle',
+      route: '/(admin)/(tabs)/profile',
+      accessibilityLabel: t('admin.profile.title')
     },
     {
       id: 'add-admin',

@@ -4,12 +4,11 @@ import { Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import {HapticTab} from '@/components/HapticTab';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
-const PasswordIcon = ({ color }: { color: string }) => (
-  <MaterialIcons name="key" size={28} color={color} />
+const ProfileIcon = ({ color }: { color: string }) => (
+  <MaterialIcons name="account-circle" size={28} color={color} />
 );
 
 const AdminIcon = ({ color }: { color: string }) => (
@@ -27,22 +26,21 @@ export default function AdminTabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tabIconSelected, // Icone selezionate
+        tabBarInactiveTintColor: `${Colors[colorScheme ?? 'light'].tabIconDefault}80`, // Icone non selezionate con opacità 60%
         headerShown: false,
         tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            position: 'absolute',
-          },
-          default: {},
-        }),
+        tabBarStyle: {
+          backgroundColor: Colors[colorScheme ?? 'light'].tabBarBackground, // Sfondo TabBar
+          borderTopWidth: 0,
+          ...(Platform.OS === 'ios' ? { position: 'absolute' } : {}),
+        },
       }}>
       <Tabs.Screen
-        name="change-password"
+        name="profile"
         options={{
-          title: t('admin.tabs.changePassword'),
-          tabBarIcon: PasswordIcon,
+          title: t('admin.profile.title'),
+          tabBarIcon: ProfileIcon,
         }}
       />
       <Tabs.Screen

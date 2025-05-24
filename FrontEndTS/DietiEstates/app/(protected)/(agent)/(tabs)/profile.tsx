@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, TouchableOpacity, Alert } from 'react-native'; // Aggiunto TouchableOpacity, Alert
+import { ScrollView, Alert } from 'react-native'; // Rimosso TouchableOpacity, ThemedButton
 import { useTranslation } from 'react-i18next';
-import { useRouter } from 'expo-router'; // Aggiunto useRouter
-import * as SecureStore from 'expo-secure-store'; // Aggiunto SecureStore
+import { useRouter } from 'expo-router';
+import * as SecureStore from 'expo-secure-store';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { TabHeader } from '@/components/TabHeader';
-import ApiService from '@/app/_services/api.service'; // Già presente
-import ThemedButton from '@/components/ThemedButton'; // Aggiunto ThemedButton
-import { useThemeColor } from '@/hooks/useThemeColor';
+import ApiService from '@/app/_services/api.service';
+// useThemeColor è importato ma potrebbe non essere più usato direttamente qui se i componenti figli lo gestiscono
+// import { useThemeColor } from '@/hooks/useThemeColor';
+import { UserInfoCard } from '@/components/Profile/UserInfoCard';
+import { ProfileOptionsGroup } from '@/components/Profile/ProfileOptionsGroup';
+import { ProfileOptionRowProps } from '@/components/Profile/ProfileOptionRow';
 
 // Chiave per recuperare/rimuovere il token JWT da SecureStore
 const TOKEN_KEY = 'user_auth_token';
@@ -22,39 +25,7 @@ type AgentProfile = {
   officeAddress: string;
 };
 
-type InfoRowProps = {
-  readonly label: string;
-  readonly value: string | number;
-};
-
-function InfoRow({ label, value }: InfoRowProps) {
-  return (
-    <ThemedView 
-      className="flex flex-col gap-2 p-6 rounded-xl shadow-[0_2px_4px_rgba(0,0,0,0.05)] mb-4"
-      style={{ 
-        backgroundColor: useThemeColor({}, 'propertyCardBackground')
-      }}
-    >
-      <ThemedText 
-        className="text-sm"
-        style={{ 
-          color: useThemeColor({}, 'propertyCardDetail'),
-          opacity: 0.8
-        }}
-      >
-        {label}
-      </ThemedText>
-      <ThemedText 
-        className="text-lg font-bold"
-        style={{ 
-          color: useThemeColor({}, 'text')
-        }}
-      >
-        {value}
-      </ThemedText>
-    </ThemedView>
-  );
-}
+// InfoRow non è più necessaria
 
 export default function ProfileScreen() {
   const { t } = useTranslation();
@@ -113,36 +84,57 @@ export default function ProfileScreen() {
     );
   }
 
+  const agentProfileOptions: Array<Omit<ProfileOptionRowProps, 'isFirst'>> = profile ? [
+    {
+      id: 'licenseNumber',
+      title: `${t('agent.profile.license')}: ${profile.licenseNumber}`,
+      icon: 'mdi:card-account-details-outline',
+      onPress: () => {}, // Riga informativa
+    },
+    {
+      id: 'specialization',
+      title: `${t('agent.profile.specialization')}: ${profile.specialization}`,
+      icon: 'mdi:star-box-outline',
+      onPress: () => {}, // Riga informativa
+    },
+    {
+      id: 'experienceYears',
+      title: `${t('agent.profile.experience')}: ${profile.experienceYears} ${t('agent.profile.years')}`,
+      icon: 'mdi:calendar-clock-outline',
+      onPress: () => {}, // Riga informativa
+    },
+    {
+      id: 'officeAddress',
+      title: `${t('agent.profile.office')}: ${profile.officeAddress}`,
+      icon: 'mdi:office-building-outline',
+      onPress: () => {}, // Riga informativa
+    },
+    {
+      id: 'logout',
+      title: t('logout.buttonTitle'),
+      icon: 'mdi:logout',
+      onPress: handleLogout,
+    },
+  ] : [];
+
   return (
     <ThemedView className="flex-1">
-      <TabHeader 
+      <TabHeader
         title={t('agent.profile.title')}
         subtitle={t('agent.profile.subtitle')}
       />
       {profile && (
-        <ScrollView 
+        <ScrollView
           className="flex-1 px-4"
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingVertical: 20 }}
         >
-          <InfoRow label={t('agent.profile.fullName')} value={profile.fullName} />
-          <InfoRow label={t('agent.profile.email')} value={profile.email} />
-          <InfoRow label={t('agent.profile.license')} value={profile.licenseNumber} />
-          <InfoRow label={t('agent.profile.specialization')} value={profile.specialization} />
-          <InfoRow 
-            label={t('agent.profile.experience')} 
-            value={`${profile.experienceYears} ${t('agent.profile.years')}`} 
+          <UserInfoCard
+            name={profile.fullName}
+            email={profile.email}
+            role={t('roles.agent')} // Aggiungiamo il ruolo se appropriato
           />
-          <InfoRow label={t('agent.profile.office')} value={profile.officeAddress} />
-
-          {/* Pulsante Logout */}
-          <ThemedButton
-            title={t('logout.buttonTitle')}
-            onPress={handleLogout}
-            lightColor="#DC2626" // Rosso per "danger"
-            darkColor="#F87171"
-            className="mt-8 mb-4 mx-4" // Aggiungi margini
-          />
+          <ProfileOptionsGroup options={agentProfileOptions} />
         </ScrollView>
       )}
     </ThemedView>

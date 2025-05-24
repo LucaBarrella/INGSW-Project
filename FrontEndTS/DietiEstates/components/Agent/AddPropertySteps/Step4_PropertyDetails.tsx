@@ -1,12 +1,12 @@
 import React from 'react';
-import { View, Switch } from 'react-native';
+import { View, Switch, Pressable } from 'react-native'; // Aggiunto Pressable
 import { Controller, Control, FieldErrors } from 'react-hook-form';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { LabelInput } from '@/components/LabelInput';
-import { Picker } from '@react-native-picker/picker';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { PropertyType } from './Step1_PropertyType';
+import { useActionSheet } from '@expo/react-native-action-sheet'; // Importato useActionSheet
 
 // Define props for react-hook-form integration
 interface Step4PropertyDetailsProps {
@@ -38,22 +38,45 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
         control={control}
         name="residentialCategory"
         // rules rimosse
-        render={({ field: { onChange, value } }) => (
-          <View className="mb-1.5">
-            <ThemedText className="mb-2 text-base">Categoria Residenziale</ThemedText>
-            <View
-              className="border rounded min-h-[40px] justify-center"
-              style={{ borderColor: errors.residentialCategory ? themeErrorColor : borderColor, backgroundColor: backgroundColor }} // Usa themeErrorColor
-            >
-              <Picker selectedValue={value || ''} onValueChange={onChange} style={{ color: textColor, width: '100%', height: 50 }} dropdownIconColor={textColor}>
-                <Picker.Item label="Seleziona categoria..." value="" enabled={false} />
-                {residentialCategories.map((cat) => <Picker.Item key={cat} label={cat} value={cat} />)}
-              </Picker>
+        render={({ field: { onChange, value } }) => {
+          const { showActionSheetWithOptions } = useActionSheet();
+
+          const showResidentialCategoryOptions = () => {
+            const options = ['Seleziona categoria...', ...residentialCategories, 'Annulla'];
+            const cancelButtonIndex = options.length - 1;
+
+            showActionSheetWithOptions(
+              {
+                options,
+                cancelButtonIndex,
+                title: 'Seleziona Categoria Residenziale',
+              },
+              (selectedIndex?: number) => {
+                if (selectedIndex !== undefined && selectedIndex !== cancelButtonIndex && selectedIndex !== 0) {
+                  onChange(options[selectedIndex]);
+                } else if (selectedIndex === 0) {
+                  onChange('');
+                }
+              }
+            );
+          };
+
+          return (
+            <View className="mb-1.5">
+              <ThemedText className="mb-2 text-base">Categoria Residenziale</ThemedText>
+              <Pressable
+                className="border rounded min-h-[40px] h-[50px] justify-center px-3"
+                style={{ borderColor: errors.residentialCategory ? themeErrorColor : borderColor, backgroundColor: backgroundColor }}
+                onPress={showResidentialCategoryOptions}
+              >
+                <ThemedText style={{ color: value ? textColor : textColor + '80' }}> {/* Cambia colore testo se selezionato, placeholder opacizzato */}
+                  {value || 'Seleziona categoria...'}
+                </ThemedText>
+              </Pressable>
+              {errors.residentialCategory && <ThemedText className="mt-1 mb-2.5 text-xs" style={{ color: themeErrorColor }}>{errors.residentialCategory.message as string}</ThemedText>}
             </View>
-            {/* Visualizza errore sotto il Picker */}
-            {errors.residentialCategory && <ThemedText className="mt-1 mb-2.5 text-xs" style={{ color: themeErrorColor }}>{errors.residentialCategory.message as string}</ThemedText>}
-          </View>
-        )}
+          );
+        }}
       />
       <Controller control={control} name="rooms" /* rules rimosse */ render={({ field: { onChange, onBlur, value } }) => (
         <LabelInput
@@ -92,10 +115,10 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
          />
       )} />
       <Controller control={control} name="elevator" render={({ field: { onChange, value } }) => (
-        <View className="mb-1.5 flex-row justify-between items-center py-2 mt-2.5"><ThemedText className="text-base">Ascensore</ThemedText><Switch trackColor={{ false: "#767577", true: tint + '80' }} thumbColor={value ? tint : "#f4f3f4"} ios_backgroundColor="#3e3e3e" onValueChange={onChange} value={!!value} /></View>
+        <View className="mb-1.5 flex-row justify-between items-center py-2 mt-2.5"><ThemedText className="text-base">Ascensore</ThemedText><Switch trackColor={{ false: borderColor, true: tint }} thumbColor={backgroundColor} ios_backgroundColor={borderColor} onValueChange={onChange} value={!!value} /></View>
       )} />
       <Controller control={control} name="pool" render={({ field: { onChange, value } }) => (
-        <View className="mb-1.5 flex-row justify-between items-center py-2 mt-2.5"><ThemedText className="text-base">Piscina</ThemedText><Switch trackColor={{ false: "#767577", true: tint + '80' }} thumbColor={value ? tint : "#f4f3f4"} ios_backgroundColor="#3e3e3e" onValueChange={onChange} value={!!value} /></View>
+        <View className="mb-1.5 flex-row justify-between items-center py-2 mt-2.5"><ThemedText className="text-base">Piscina</ThemedText><Switch trackColor={{ false: borderColor, true: tint }} thumbColor={backgroundColor} ios_backgroundColor={borderColor} onValueChange={onChange} value={!!value} /></View>
       )} />
     </>
   );
@@ -106,22 +129,45 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
         control={control}
         name="commercialCategory"
         // rules rimosse
-        render={({ field: { onChange, value } }) => (
-          <View className="mb-1.5">
-            <ThemedText className="mb-2 text-base">Categoria Commerciale</ThemedText>
-            <View
-              className="border rounded min-h-[40px] justify-center"
-              style={{ borderColor: errors.commercialCategory ? themeErrorColor : borderColor, backgroundColor: backgroundColor }} // Usa themeErrorColor
-            >
-              <Picker selectedValue={value || ''} onValueChange={onChange} style={{ color: textColor, width: '100%', height: 50 }} dropdownIconColor={textColor}>
-                <Picker.Item label="Seleziona categoria..." value="" enabled={false} />
-                {commercialCategories.map((cat) => <Picker.Item key={cat} label={cat} value={cat} />)}
-              </Picker>
+        render={({ field: { onChange, value } }) => {
+          const { showActionSheetWithOptions } = useActionSheet();
+
+          const showCommercialCategoryOptions = () => {
+            const options = ['Seleziona categoria...', ...commercialCategories, 'Annulla'];
+            const cancelButtonIndex = options.length - 1;
+
+            showActionSheetWithOptions(
+              {
+                options,
+                cancelButtonIndex,
+                title: 'Seleziona Categoria Commerciale',
+              },
+              (selectedIndex?: number) => {
+                if (selectedIndex !== undefined && selectedIndex !== cancelButtonIndex && selectedIndex !== 0) {
+                  onChange(options[selectedIndex]);
+                } else if (selectedIndex === 0) {
+                  onChange('');
+                }
+              }
+            );
+          };
+
+          return (
+            <View className="mb-1.5">
+              <ThemedText className="mb-2 text-base">Categoria Commerciale</ThemedText>
+              <Pressable
+                className="border rounded min-h-[40px] h-[50px] justify-center px-3"
+                style={{ borderColor: errors.commercialCategory ? themeErrorColor : borderColor, backgroundColor: backgroundColor }}
+                onPress={showCommercialCategoryOptions}
+              >
+                <ThemedText style={{ color: value ? textColor : textColor + '80' }}> {/* Cambia colore testo se selezionato, placeholder opacizzato */}
+                  {value || 'Seleziona categoria...'}
+                </ThemedText>
+              </Pressable>
+              {errors.commercialCategory && <ThemedText className="mt-1 mb-2.5 text-xs" style={{ color: themeErrorColor }}>{errors.commercialCategory.message as string}</ThemedText>}
             </View>
-            {/* Visualizza errore sotto il Picker */}
-            {errors.commercialCategory && <ThemedText className="mt-1 mb-2.5 text-xs" style={{ color: themeErrorColor }}>{errors.commercialCategory.message as string}</ThemedText>}
-          </View>
-        )}
+          );
+        }}
       />
        <Controller control={control} name="commercialBathrooms" /* rules rimosse */ render={({ field: { onChange, onBlur, value } }) => ( // Optional?
          <LabelInput
@@ -136,7 +182,7 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
          />
       )} />
        <Controller control={control} name="emergencyExit" render={({ field: { onChange, value } }) => (
-        <View className="mb-1.5 flex-row justify-between items-center py-2 mt-2.5"><ThemedText className="text-base">Uscita di Sicurezza</ThemedText><Switch trackColor={{ false: "#767577", true: tint + '80' }} thumbColor={value ? tint : "#f4f3f4"} ios_backgroundColor="#3e3e3e" onValueChange={onChange} value={!!value} /></View>
+        <View className="mb-1.5 flex-row justify-between items-center py-2 mt-2.5"><ThemedText className="text-base">Uscita di Sicurezza</ThemedText><Switch trackColor={{ false: borderColor, true: tint }} thumbColor={backgroundColor} ios_backgroundColor={borderColor} onValueChange={onChange} value={!!value} /></View>
       )} />
        <Controller control={control} name="constructionDate" render={({ field: { onChange, onBlur, value } }) => ( // Optional? Zod gestisce la validazione dell'anno
          <LabelInput
@@ -159,22 +205,45 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
         control={control}
         name="industrialCategory"
         // rules rimosse
-        render={({ field: { onChange, value } }) => (
-          <View className="mb-1.5">
-            <ThemedText className="mb-2 text-base">Categoria Industriale</ThemedText>
-            <View
-              className="border rounded min-h-[40px] justify-center"
-              style={{ borderColor: errors.industrialCategory ? themeErrorColor : borderColor, backgroundColor: backgroundColor }} // Usa themeErrorColor
-            >
-              <Picker selectedValue={value || ''} onValueChange={onChange} style={{ color: textColor, width: '100%', height: 50 }} dropdownIconColor={textColor}>
-                <Picker.Item label="Seleziona categoria..." value="" enabled={false} />
-                {industrialCategories.map((cat) => <Picker.Item key={cat} label={cat} value={cat} />)}
-              </Picker>
+        render={({ field: { onChange, value } }) => {
+          const { showActionSheetWithOptions } = useActionSheet();
+
+          const showIndustrialCategoryOptions = () => {
+            const options = ['Seleziona categoria...', ...industrialCategories, 'Annulla'];
+            const cancelButtonIndex = options.length - 1;
+
+            showActionSheetWithOptions(
+              {
+                options,
+                cancelButtonIndex,
+                title: 'Seleziona Categoria Industriale',
+              },
+              (selectedIndex?: number) => {
+                if (selectedIndex !== undefined && selectedIndex !== cancelButtonIndex && selectedIndex !== 0) {
+                  onChange(options[selectedIndex]);
+                } else if (selectedIndex === 0) {
+                  onChange('');
+                }
+              }
+            );
+          };
+
+          return (
+            <View className="mb-1.5">
+              <ThemedText className="mb-2 text-base">Categoria Industriale</ThemedText>
+              <Pressable
+                className="border rounded min-h-[40px] h-[50px] justify-center px-3"
+                style={{ borderColor: errors.industrialCategory ? themeErrorColor : borderColor, backgroundColor: backgroundColor }}
+                onPress={showIndustrialCategoryOptions}
+              >
+                <ThemedText style={{ color: value ? textColor : textColor + '80' }}> {/* Cambia colore testo se selezionato, placeholder opacizzato */}
+                  {value || 'Seleziona categoria...'}
+                </ThemedText>
+              </Pressable>
+              {errors.industrialCategory && <ThemedText className="mt-1 mb-2.5 text-xs" style={{ color: themeErrorColor }}>{errors.industrialCategory.message as string}</ThemedText>}
             </View>
-            {/* Visualizza errore sotto il Picker */}
-            {errors.industrialCategory && <ThemedText className="mt-1 mb-2.5 text-xs" style={{ color: themeErrorColor }}>{errors.industrialCategory.message as string}</ThemedText>}
-          </View>
-        )}
+          );
+        }}
       />
       <Controller control={control} name="ceilingHeight" /* rules rimosse */ render={({ field: { onChange, onBlur, value } }) => ( // Optional?
         <LabelInput
@@ -213,28 +282,51 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
          />
       )} />
       <Controller control={control} name="fireSystem" render={({ field: { onChange, value } }) => (
-         <View className="mb-1.5 flex-row justify-between items-center py-2 mt-2.5"><ThemedText className="text-base">Impianto Antincendio</ThemedText><Switch trackColor={{ false: "#767577", true: tint + '80' }} thumbColor={value ? tint : "#f4f3f4"} ios_backgroundColor="#3e3e3e" onValueChange={onChange} value={!!value} /></View>
-      )} />
+         <View className="mb-1.5 flex-row justify-between items-center py-2 mt-2.5"><ThemedText className="text-base">Impianto Antincendio</ThemedText><Switch trackColor={{ false: borderColor, true: tint }} thumbColor={backgroundColor} ios_backgroundColor={borderColor} onValueChange={onChange} value={!!value} /></View>
+       )} />
        <Controller
-        control={control}
-        name="structure"
-        render={({ field: { onChange, value } }) => ( // Optional?
-          <View className="mb-1.5">
-            <ThemedText className="mb-2 text-base">Tipo Struttura</ThemedText>
-            <View
-              className="border rounded min-h-[40px] justify-center"
-              style={{ borderColor: errors.structure ? themeErrorColor : borderColor, backgroundColor: backgroundColor }} // Usa themeErrorColor
-            >
-              <Picker selectedValue={value || ''} onValueChange={onChange} style={{ color: textColor, width: '100%', height: 50 }} dropdownIconColor={textColor}>
-                <Picker.Item label="Seleziona struttura..." value="" enabled={false} />
-                {structureTypes.map((type) => <Picker.Item key={type} label={type} value={type} />)}
-              </Picker>
-            </View>
-            {/* Visualizza errore sotto il Picker */}
-            {errors.structure && <ThemedText className="mt-1 mb-2.5 text-xs" style={{ color: themeErrorColor }}>{errors.structure.message as string}</ThemedText>}
-          </View>
-        )}
-      />
+         control={control}
+         name="structure"
+         render={({ field: { onChange, value } }) => { // Optional?
+           const { showActionSheetWithOptions } = useActionSheet();
+
+           const showStructureTypeOptions = () => {
+             const options = ['Seleziona struttura...', ...structureTypes, 'Annulla'];
+             const cancelButtonIndex = options.length - 1;
+
+             showActionSheetWithOptions(
+               {
+                 options,
+                 cancelButtonIndex,
+                 title: 'Seleziona Tipo Struttura',
+               },
+               (selectedIndex?: number) => {
+                 if (selectedIndex !== undefined && selectedIndex !== cancelButtonIndex && selectedIndex !== 0) {
+                   onChange(options[selectedIndex]);
+                 } else if (selectedIndex === 0) {
+                   onChange('');
+                 }
+               }
+             );
+           };
+
+           return (
+             <View className="mb-1.5">
+               <ThemedText className="mb-2 text-base">Tipo Struttura</ThemedText>
+               <Pressable
+                 className="border rounded min-h-[40px] h-[50px] justify-center px-3"
+                 style={{ borderColor: errors.structure ? themeErrorColor : borderColor, backgroundColor: backgroundColor }}
+                 onPress={showStructureTypeOptions}
+               >
+                 <ThemedText style={{ color: value ? textColor : textColor + '80' }}> {/* Cambia colore testo se selezionato, placeholder opacizzato */}
+                   {value || 'Seleziona struttura...'}
+                 </ThemedText>
+               </Pressable>
+               {errors.structure && <ThemedText className="mt-1 mb-2.5 text-xs" style={{ color: themeErrorColor }}>{errors.structure.message as string}</ThemedText>}
+             </View>
+           );
+         }}
+       />
     </>
   );
 
@@ -244,42 +336,88 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
         control={control}
         name="landCategory"
         // rules rimosse
-        render={({ field: { onChange, value } }) => (
-          <View className="mb-1.5">
-            <ThemedText className="mb-2 text-base">Categoria Terreno</ThemedText>
-            <View
-              className="border rounded min-h-[40px] justify-center"
-              style={{ borderColor: errors.landCategory ? themeErrorColor : borderColor, backgroundColor: backgroundColor }} // Usa themeErrorColor
-            >
-              <Picker selectedValue={value || ''} onValueChange={onChange} style={{ color: textColor, width: '100%', height: 50 }} dropdownIconColor={textColor}>
-                <Picker.Item label="Seleziona categoria..." value="" enabled={false} />
-                {landCategories.map((cat) => <Picker.Item key={cat} label={cat} value={cat} />)}
-              </Picker>
+        render={({ field: { onChange, value } }) => {
+          const { showActionSheetWithOptions } = useActionSheet();
+
+          const showLandCategoryOptions = () => {
+            const options = ['Seleziona categoria...', ...landCategories, 'Annulla'];
+            const cancelButtonIndex = options.length - 1;
+
+            showActionSheetWithOptions(
+              {
+                options,
+                cancelButtonIndex,
+                title: 'Seleziona Categoria Terreno',
+              },
+              (selectedIndex?: number) => {
+                if (selectedIndex !== undefined && selectedIndex !== cancelButtonIndex && selectedIndex !== 0) {
+                  onChange(options[selectedIndex]);
+                } else if (selectedIndex === 0) {
+                  onChange('');
+                }
+              }
+            );
+          };
+
+          return (
+            <View className="mb-1.5">
+              <ThemedText className="mb-2 text-base">Categoria Terreno</ThemedText>
+              <Pressable
+                className="border rounded min-h-[40px] h-[50px] justify-center px-3"
+                style={{ borderColor: errors.landCategory ? themeErrorColor : borderColor, backgroundColor: backgroundColor }}
+                onPress={showLandCategoryOptions}
+              >
+                <ThemedText style={{ color: value ? textColor : textColor + '80' }}> {/* Cambia colore testo se selezionato, placeholder opacizzato */}
+                  {value || 'Seleziona categoria...'}
+                </ThemedText>
+              </Pressable>
+              {errors.landCategory && <ThemedText className="mt-1 mb-2.5 text-xs" style={{ color: themeErrorColor }}>{errors.landCategory.message as string}</ThemedText>}
             </View>
-            {/* Visualizza errore sotto il Picker */}
-            {errors.landCategory && <ThemedText className="mt-1 mb-2.5 text-xs" style={{ color: themeErrorColor }}>{errors.landCategory.message as string}</ThemedText>}
-          </View>
-        )}
+          );
+        }}
       />
       <Controller
         control={control}
         name="soilType"
-        render={({ field: { onChange, value } }) => ( // Optional?
-          <View className="mb-1.5">
-            <ThemedText className="mb-2 text-base">Tipo di Suolo</ThemedText>
-            <View
-              className="border rounded min-h-[40px] justify-center"
-              style={{ borderColor: errors.soilType ? themeErrorColor : borderColor, backgroundColor: backgroundColor }} // Usa themeErrorColor
-            >
-              <Picker selectedValue={value || ''} onValueChange={onChange} style={{ color: textColor, width: '100%', height: 50 }} dropdownIconColor={textColor}>
-                <Picker.Item label="Seleziona tipo..." value="" enabled={false} />
-                {soilTypes.map((type) => <Picker.Item key={type} label={type} value={type} />)}
-              </Picker>
+        render={({ field: { onChange, value } }) => { // Optional?
+          const { showActionSheetWithOptions } = useActionSheet();
+
+          const showSoilTypeOptions = () => {
+            const options = ['Seleziona tipo...', ...soilTypes, 'Annulla'];
+            const cancelButtonIndex = options.length - 1;
+
+            showActionSheetWithOptions(
+              {
+                options,
+                cancelButtonIndex,
+                title: 'Seleziona Tipo di Suolo',
+              },
+              (selectedIndex?: number) => {
+                if (selectedIndex !== undefined && selectedIndex !== cancelButtonIndex && selectedIndex !== 0) {
+                  onChange(options[selectedIndex]);
+                } else if (selectedIndex === 0) {
+                  onChange('');
+                }
+              }
+            );
+          };
+
+          return (
+            <View className="mb-1.5">
+              <ThemedText className="mb-2 text-base">Tipo di Suolo</ThemedText>
+              <Pressable
+                className="border rounded min-h-[40px] h-[50px] justify-center px-3"
+                style={{ borderColor: errors.soilType ? themeErrorColor : borderColor, backgroundColor: backgroundColor }}
+                onPress={showSoilTypeOptions}
+              >
+                <ThemedText style={{ color: value ? textColor : textColor + '80' }}> {/* Cambia colore testo se selezionato, placeholder opacizzato */}
+                  {value || 'Seleziona tipo...'}
+                </ThemedText>
+              </Pressable>
+              {errors.soilType && <ThemedText className="mt-1 mb-2.5 text-xs" style={{ color: themeErrorColor }}>{errors.soilType.message as string}</ThemedText>}
             </View>
-            {/* Visualizza errore sotto il Picker */}
-            {errors.soilType && <ThemedText className="mt-1 mb-2.5 text-xs" style={{ color: themeErrorColor }}>{errors.soilType.message as string}</ThemedText>}
-          </View>
-        )}
+          );
+        }}
       />
       <Controller control={control} name="slope" /* rules rimosse */ render={({ field: { onChange, onBlur, value } }) => ( // Optional?
         <LabelInput

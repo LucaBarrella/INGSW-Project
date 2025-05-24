@@ -1,6 +1,7 @@
 import httpClient from './httpClient';
 // Importa i tipi necessari per i dati
 import { PropertyDetail, DashboardStats } from '@/components/Agent/PropertyDashboard/types'; // Importa tipi corretti
+import { PropertyFilters } from '@/components/Buyer/SearchIntegration/types'; // Importa PropertyFilters
 
 // --- Tipi Base ---
 // TODO: Espandere e dettagliare questi tipi man mano che le API vengono definite meglio
@@ -69,7 +70,7 @@ export const apiEndpoints = {
 export const loginUser = async (credentials: LoginCredentials): Promise<ApiResponseToken> => {
   if (USE_MOCK_API) {
     console.log('[MOCK API] loginUser:', credentials);
-    return mockDelay({ ...MOCK_TOKEN_RESPONSE, userType: 'buyer' }) as any; // Cast a any
+    return mockDelay({ ...MOCK_TOKEN_RESPONSE, userType: 'buyer' });
   }
   const response = await httpClient.post(apiEndpoints.buyerLogin, credentials);
   return response.data;
@@ -83,7 +84,7 @@ export const loginUser = async (credentials: LoginCredentials): Promise<ApiRespo
 export const registerUser = async (userData: UserCreationData): Promise<ApiResponseSuccess> => {
   if (USE_MOCK_API) {
     console.log('[MOCK API] registerUser:', userData);
-    return mockDelay(MOCK_SUCCESS_RESPONSE) as any; // Cast a any
+    return mockDelay(MOCK_SUCCESS_RESPONSE);
   }
   const response = await httpClient.post(apiEndpoints.buyerRegister, userData);
   return response.data;
@@ -97,7 +98,7 @@ export const registerUser = async (userData: UserCreationData): Promise<ApiRespo
 export const loginAdmin = async (credentials: LoginCredentials): Promise<ApiResponseToken> => {
   if (USE_MOCK_API) {
     console.log('[MOCK API] loginAdmin:', credentials);
-    return mockDelay({ ...MOCK_TOKEN_RESPONSE, userType: 'admin' }) as any; // Cast a any
+    return mockDelay({ ...MOCK_TOKEN_RESPONSE, userType: 'admin' });
   }
   const response = await httpClient.post(apiEndpoints.adminLogin, credentials);
   return response.data;
@@ -111,7 +112,7 @@ export const loginAdmin = async (credentials: LoginCredentials): Promise<ApiResp
 export const loginAgent = async (credentials: LoginCredentials): Promise<ApiResponseToken> => {
   if (USE_MOCK_API) {
     console.log('[MOCK API] loginAgent:', credentials);
-    return mockDelay({ ...MOCK_TOKEN_RESPONSE, userType: 'agent' }) as any; // Cast a any
+    return mockDelay({ ...MOCK_TOKEN_RESPONSE, userType: 'agent' });
   }
   const response = await httpClient.post(apiEndpoints.agentLogin, credentials);
   return response.data;
@@ -125,7 +126,7 @@ export const loginAgent = async (credentials: LoginCredentials): Promise<ApiResp
 export const changeAdminPassword = async (passwordData: PasswordChangeData): Promise<ApiResponseSuccess> => {
   if (USE_MOCK_API) {
     console.log('[MOCK API] changeAdminPassword:', passwordData);
-    return mockDelay(MOCK_SUCCESS_RESPONSE) as any; // Cast a any
+    return mockDelay(MOCK_SUCCESS_RESPONSE);
   }
   const response = await httpClient.post(apiEndpoints.adminChangePassword, passwordData);
   return response.data;
@@ -139,7 +140,7 @@ export const changeAdminPassword = async (passwordData: PasswordChangeData): Pro
 export const createAdmin = async (adminData: UserCreationData): Promise<ApiResponseSuccess> => {
   if (USE_MOCK_API) {
     console.log('[MOCK API] createAdmin:', adminData);
-    return mockDelay({ ...MOCK_SUCCESS_RESPONSE, id: `admin-mock-${Date.now()}` }) as any; // Cast a any
+    return mockDelay({ ...MOCK_SUCCESS_RESPONSE, id: `admin-mock-${Date.now()}` });
   }
   const response = await httpClient.post(apiEndpoints.adminCreate, adminData);
   return response.data;
@@ -153,7 +154,7 @@ export const createAdmin = async (adminData: UserCreationData): Promise<ApiRespo
 export const createAgent = async (agentData: UserCreationData): Promise<ApiResponseSuccess> => {
   if (USE_MOCK_API) {
     console.log('[MOCK API] createAgent:', agentData);
-    return mockDelay({ ...MOCK_SUCCESS_RESPONSE, id: `agent-mock-${Date.now()}` }) as any; // Cast a any
+    return mockDelay({ ...MOCK_SUCCESS_RESPONSE, id: `agent-mock-${Date.now()}` });
   }
   const response = await httpClient.post(apiEndpoints.agentCreate, agentData);
   return response.data;
@@ -179,7 +180,7 @@ export const getAgentProfile = async () => {
 export const getAgentStats = async (/* params?: { startDate: string; endDate: string } */): Promise<DashboardStats> => {
   if (USE_MOCK_API) {
     console.log('[MOCK API] getAgentStats');
-    return mockDelay(MOCK_AGENT_STATS) as any; // Cast a any
+    return mockDelay(MOCK_AGENT_STATS);
   }
   // TODO: Verificare se l'API reale supporta startDate/endDate ed eventualmente passarli
   const response = await httpClient.get(apiEndpoints.agentStats /*, { params } */);
@@ -200,7 +201,7 @@ export const getAgentProperties = async (params?: any): Promise<PropertyDetail[]
     const limit = params?.limit || 10;
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
-    return mockDelay(MOCK_PROPERTIES.slice(startIndex, endIndex)) as any; // Cast a any
+    return mockDelay(MOCK_PROPERTIES.slice(startIndex, endIndex));
   }
   const response = await httpClient.get(apiEndpoints.agentProperties, { params });
   // Assumiamo che l'API restituisca direttamente PropertyDetail[] o che l'adattamento avvenga nel componente
@@ -212,20 +213,142 @@ export const getAgentProperties = async (params?: any): Promise<PropertyDetail[]
  * @param searchParams - Oggetto con i parametri di ricerca (query, filtri, etc.).
  * @returns La risposta dell'API con i risultati della ricerca.
  */
-export const searchProperties = async (searchParams: any): Promise<PropertyDetail[]> => {
+export const searchProperties = async (
+  params: { query?: string; filters?: PropertyFilters }
+): Promise<PropertyDetail[]> => {
   if (USE_MOCK_API) {
-    console.log('[MOCK API] searchProperties:', searchParams);
-    // Simula una ricerca semplice basata sul titolo, indirizzo o tipo nei mock
-    const query = searchParams?.query?.toLowerCase() || '';
-    const category = searchParams?.category?.toLowerCase() || ''; // Usa 'category' come parametro per il tipo
-    const filtered = MOCK_PROPERTIES.filter(p =>
-      (p.title.toLowerCase().includes(query) || p.address.toLowerCase().includes(query)) &&
-      (category === '' || p.type.toLowerCase() === category) // Filtra per tipo se 'category' è fornito
-    );
-    return mockDelay(filtered) as any; // Cast a any
+    console.log(`[ApiService] searchProperties (MOCK) called with:`, {
+      query: params.query,
+      filters: JSON.stringify(params.filters, null, 2),
+      mockDataCount: MOCK_PROPERTIES.length
+    });
+    const { query, filters } = params;
+    let results = [...MOCK_PROPERTIES];
+    console.log(`[ApiService] Initial MOCK_PROPERTIES:`, MOCK_PROPERTIES.map(p => ({id: p.id, title: p.title})));
+
+    // 1. Filtro per query testuale
+    if (query) {
+      const lowerQuery = query.toLowerCase();
+      results = results.filter(p =>
+        (p.title?.toLowerCase() || '').includes(lowerQuery) ||
+        (p.address?.toLowerCase() || '').includes(lowerQuery) ||
+        (p.description?.toLowerCase() || '').includes(lowerQuery)
+      );
+      console.log(`[ApiService] After text query filter ("${query}"): ${results.length} results`);
+    }
+
+    if (filters) {
+      // 2. Filtri Generali
+      const general = filters.general;
+      if (general) {
+        console.log('[ApiService] Applying general filters:', JSON.stringify(general));
+        // Transaction Type
+        if (general.transactionType) {
+          results = results.filter(p => p.transactionType === general.transactionType);
+          console.log(`[ApiService] After transactionType ("${general.transactionType}"): ${results.length} results`);
+        }
+        // Price Range
+        if (general.priceRange && general.priceRange.min !== undefined && general.priceRange.max !== undefined) {
+          results = results.filter(p =>
+            p.price >= general.priceRange!.min && p.price <= general.priceRange!.max
+          );
+          console.log(`[ApiService] After priceRange (${general.priceRange.min}-${general.priceRange.max}): ${results.length} results`);
+        }
+        // Size Range
+        if (general.size && general.size.min !== undefined && general.size.max !== undefined) {
+          results = results.filter(p =>
+            p.squareMeters >= general.size!.min && p.squareMeters <= general.size!.max
+          );
+          console.log(`[ApiService] After sizeRange (${general.size.min}-${general.size.max}): ${results.length} results`);
+        }
+      }
+
+      // 3. Filtri Specifici per Categoria
+      console.log('[ApiService] Applying category specific filters. Current results count:', results.length);
+      results = results.filter(p => {
+        const propertyType = p.type as keyof Omit<PropertyFilters, 'general'>;
+        const specificFiltersForType = filters[propertyType];
+        
+        console.log(`[ApiService] Checking property ID ${p.id} (type ${propertyType}) against filters:`, specificFiltersForType);
+        
+        if (!specificFiltersForType) {
+          console.log(`[ApiService] Property ID ${p.id}: No specific filters for type ${propertyType}. Passing.`);
+          return true;
+        }
+        // console.log(`[ApiService] Property ID ${p.id} (type ${propertyType}): Applying specific filters:`, JSON.stringify(specificFiltersForType));
+
+        // Filtro per sottocategoria (es. 'Villa', 'Appartamento')
+        if (specificFiltersForType.category) {
+          if (!p.propertyDetails?.[propertyType]?.category || p.propertyDetails[propertyType]!.category !== specificFiltersForType.category) {
+            // console.log(`[ApiService] Property ID ${p.id}: Failed subCategory. Expected ${specificFiltersForType.category}, got ${p.propertyDetails?.[propertyType]?.category}`);
+            return false;
+          }
+        }
+        
+        // Filtri specifici per 'residential'
+        if (propertyType === 'residential' && filters.residential && p.propertyDetails?.residential) {
+          const resFilters = filters.residential;
+          const propDetailsRes = p.propertyDetails.residential;
+          if (resFilters.rooms && p.bedrooms !== parseInt(resFilters.rooms, 10)) { /*console.log(`[ApiService] Prop ID ${p.id} failed rooms`);*/ return false; }
+          if (resFilters.bathrooms && p.bathrooms !== parseInt(resFilters.bathrooms, 10)) { /*console.log(`[ApiService] Prop ID ${p.id} failed bathrooms`);*/ return false; }
+          if (resFilters.floor && propDetailsRes.floor !== resFilters.floor) { /*console.log(`[ApiService] Prop ID ${p.id} failed floor`);*/ return false; }
+          if (resFilters.elevator !== undefined && propDetailsRes.elevator !== resFilters.elevator) { /*console.log(`[ApiService] Prop ID ${p.id} failed elevator`);*/ return false; }
+          if (resFilters.pool !== undefined && propDetailsRes.pool !== resFilters.pool) { /*console.log(`[ApiService] Prop ID ${p.id} failed pool`);*/ return false; }
+        }
+        // Filtri specifici per 'commercial'
+        else if (propertyType === 'commercial' && filters.commercial && p.propertyDetails?.commercial) {
+          const comFilters = filters.commercial;
+          const propDetailsCom = p.propertyDetails.commercial;
+          if (comFilters.bathrooms && propDetailsCom.bathrooms !== comFilters.bathrooms) { /*console.log(`[ApiService] Prop ID ${p.id} failed com_bathrooms`);*/ return false; }
+          if (comFilters.emergencyExit !== undefined && propDetailsCom.emergencyExit !== comFilters.emergencyExit) { /*console.log(`[ApiService] Prop ID ${p.id} failed emergencyExit`);*/ return false; }
+          if (comFilters.constructionDate && propDetailsCom.constructionDate !== comFilters.constructionDate) { /*console.log(`[ApiService] Prop ID ${p.id} failed constructionDate`);*/ return false; }
+        }
+        // Filtri specifici per 'industrial'
+        else if (propertyType === 'industrial' && filters.industrial && p.propertyDetails?.industrial) {
+          const indFilters = filters.industrial;
+          const propDetailsInd = p.propertyDetails.industrial;
+          if (indFilters.ceilingHeight && propDetailsInd.ceilingHeight !== indFilters.ceilingHeight) { /*console.log(`[ApiService] Prop ID ${p.id} failed ceilingHeight`);*/ return false; }
+          if (indFilters.fireSystem !== undefined && propDetailsInd.fireSystem !== indFilters.fireSystem) { /*console.log(`[ApiService] Prop ID ${p.id} failed fireSystem`);*/ return false; }
+          if (indFilters.floorLoad && propDetailsInd.floorLoad !== indFilters.floorLoad) { /*console.log(`[ApiService] Prop ID ${p.id} failed floorLoad`);*/ return false; }
+          if (indFilters.offices && propDetailsInd.offices !== indFilters.offices) { /*console.log(`[ApiService] Prop ID ${p.id} failed offices`);*/ return false; }
+          if (indFilters.structure && propDetailsInd.structure !== indFilters.structure) { /*console.log(`[ApiService] Prop ID ${p.id} failed structure`);*/ return false; }
+        }
+        // Filtri specifici per 'land'
+        else if (propertyType === 'land' && filters.land && p.propertyDetails?.land) {
+          const landFilters = filters.land;
+          const propDetailsLand = p.propertyDetails.land;
+          if (landFilters.soilType && propDetailsLand.soilType !== landFilters.soilType) { /*console.log(`[ApiService] Prop ID ${p.id} failed soilType`);*/ return false; }
+          if (landFilters.slope && propDetailsLand.slope !== landFilters.slope) { /*console.log(`[ApiService] Prop ID ${p.id} failed slope`);*/ return false; }
+        }
+        // console.log(`[ApiService] Property ID ${p.id} (type ${propertyType}): Passed all specific filters for its type.`);
+        return true; // Passa tutti i filtri specifici applicabili
+      });
+      console.log(`[ApiService] After category specific filters: ${results.length} results`);
+    }
+    console.log(`[ApiService] searchProperties (MOCK) final results (${results.length}):`, results.map(r => ({id: r.id, title: r.title })));
+    return mockDelay(results);
   }
-  const response = await httpClient.get(apiEndpoints.searchProperties, { params: searchParams });
-  // Assumiamo che l'API restituisca direttamente PropertyDetail[] o che l'adattamento avvenga nel componente
+
+  // Logica API Reale (da implementare o adattare)
+  // Qui dovresti mappare params.query e params.filters ai parametri attesi dal tuo backend
+  const backendParams: any = {};
+  if (params.query) backendParams.q = params.query;
+  if (params.filters) {
+    // Esempio di "flattening" o trasformazione dei filtri se il backend non accetta l'oggetto complesso
+    // Questo dipenderà fortemente da come è strutturata la tua API backend
+    Object.assign(backendParams, params.filters.general); // Copia i filtri generali
+    // Potresti dover gestire le categorie specifiche in modo diverso
+    // es. backendParams.residential_rooms = params.filters.residential.rooms;
+    // Per ora, passiamo l'intero oggetto filters se il backend lo supporta,
+    // altrimenti dovrai implementare una mappatura dettagliata.
+    // backendParams.filters = JSON.stringify(params.filters); // Se il backend si aspetta una stringa JSON
+  }
+
+  // const response = await httpClient.get(apiEndpoints.searchProperties, { params: backendParams });
+  // return response.data;
+  console.warn("searchProperties: La logica API reale non è completamente implementata per i filtri complessi.");
+  // Fallback a una chiamata semplice per ora se non si usa il mock
+  const response = await httpClient.get(apiEndpoints.searchProperties, { params: { query: params.query } });
   return response.data;
 };
 
@@ -236,7 +359,7 @@ export const searchProperties = async (searchParams: any): Promise<PropertyDetai
 export const getFeaturedProperties = async (): Promise<PropertyDetail[]> => {
   if (USE_MOCK_API) {
     console.log('[MOCK API] getFeaturedProperties');
-    return mockDelay(MOCK_FEATURED_PROPERTIES) as any; // Cast a any
+    return mockDelay(MOCK_FEATURED_PROPERTIES);
   }
   const response = await httpClient.get(apiEndpoints.featuredProperties);
   // Assumiamo che l'API restituisca direttamente PropertyDetail[] o che l'adattamento avvenga nel componente
@@ -255,8 +378,11 @@ export const getPropertyDetails = async (propertyId: string | number): Promise<P
     // Converte propertyId a numero per confronto con id mock
     const numericId = typeof propertyId === 'string' ? parseInt(propertyId, 10) : propertyId;
     const foundProperty = MOCK_PROPERTIES.find(p => p.id === numericId);
-    // Restituisce dettagli mock o un errore simulato se non trovato
-    return mockDelay(foundProperty ? { ...foundProperty } : Promise.reject(new Error('Immobile mock non trovato'))) as any; // Cast a any
+    if (foundProperty) {
+      return mockDelay({ ...foundProperty });
+    } else {
+      return Promise.reject(new Error('Immobile mock non trovato'));
+    }
   }
   // Costruisce l'URL completo per l'endpoint specifico dell'immobile
   const url = `${apiEndpoints.propertyDetails}/${propertyId}`;
@@ -273,7 +399,7 @@ export const createProperty = async (propertyData: any): Promise<ApiResponseSucc
   if (USE_MOCK_API) {
     console.log('[MOCK API] createProperty:', propertyData);
     // Simula successo e restituisce un ID fittizio
-    return mockDelay({ ...MOCK_SUCCESS_RESPONSE, id: `prop-mock-${Date.now()}` }) as any;
+    return mockDelay({ ...MOCK_SUCCESS_RESPONSE, id: `prop-mock-${Date.now()}` });
   }
   // La chiamata reale userà POST sull'endpoint base delle proprietà
   const response = await httpClient.post(apiEndpoints.createProperty, propertyData);

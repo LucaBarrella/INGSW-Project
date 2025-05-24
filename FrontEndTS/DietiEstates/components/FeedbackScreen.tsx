@@ -59,7 +59,7 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({
         accessibilityLabel={title} // Add accessibility label
       />
       {/* Title */}
-      <ThemedText type="title" className="text-center mb-2">
+      <ThemedText type="title" className="text-center mb-2 p-1">
         {title}
       </ThemedText>
 

@@ -5,7 +5,7 @@ export default function AdminAuthLayout() {
   return (
     <Stack 
       screenOptions={{ 
-        headerShown: true,
+        headerShown: false,
         animation: 'slide_from_right',
         headerTitleStyle: { fontFamily: 'SpaceMono' }
       }}

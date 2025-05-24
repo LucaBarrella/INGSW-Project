@@ -5,7 +5,7 @@ export default function AgentAuthLayout() {
   return (
     <Stack 
       screenOptions={{ 
-        headerShown: true,
+        headerShown: false,
         animation: 'slide_from_right',
         headerTitleStyle: { fontFamily: 'SpaceMono' }
       }}
@@ -18,6 +18,7 @@ export default function AgentAuthLayout() {
           headerTintColor: '#4F46E5'
         }}
       />
-    </Stack>
+    </Stack> 
   );
 }
+ 

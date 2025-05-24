@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ScrollView, View, ActivityIndicator } from 'react-native';
+import { ScrollView, View, ActivityIndicator, SafeAreaView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
@@ -7,7 +7,7 @@ import { BuyerPropertyCard } from '@/components/Buyer/BuyerPropertyCard';
 import { CategoryButton } from '@/components/Buyer/CategoryButton';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { useFavorites } from '@/hooks/useFavorites';
-import { SearchAndFilter, Categories, PropertyFilters } from '@/components/Buyer/SearchIntegration';
+import { SearchAndFilter, Categories } from '@/components/Buyer/SearchIntegration';
 import ApiService from '@/app/_services/api.service'; // Importa ApiService
 import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types'; // Usa il tipo unificato
 
@@ -45,24 +45,21 @@ export default function HomeTab() {
   const handleCategoryPress = (category: string) => {
     router.push({
       pathname: '/(protected)/(buyer)/search',
-      params: { category }
+      params: { category, triggerSearch: 'true' }
     });
   };
 
-  const handleSearch = (query: string) => {
-    router.push({
-      pathname: '/(protected)/(buyer)/search',
-      params: { query }
-    });
-  };
+  // handleSearch is no longer needed here as SearchAndFilter updates the context directly.
+  // Navigation will be triggered by onSearchSubmitNavigate.
 
-  const handleFiltersChange = (filters: PropertyFilters) => {
-    console.log('Filters updated:', filters);
+  // handleFiltersChange is no longer needed here as FilterPanel updates the context directly.
+  // The search results page will react to context changes.
+
+  const handleSearchSubmitNavigate = () => {
+    console.log('[HomeTab] Navigating to search results page with triggerSearch=true.');
     router.push({
       pathname: '/(protected)/(buyer)/search',
-      params: { 
-        filters: JSON.stringify(filters)
-      }
+      params: { triggerSearch: 'true' }
     });
   };
 
@@ -98,12 +95,11 @@ export default function HomeTab() {
   return (
     <ThemedView style={{ flex: 1, backgroundColor }}>
       <SearchAndFilter
-        onSearch={handleSearch}
-        onFiltersChange={handleFiltersChange}
         placeholder="Cerca immobili..."
         categories={CATEGORIES}
+        onSearchSubmitNavigate={handleSearchSubmitNavigate} // Added this prop
       />
-      <ScrollView 
+      <ScrollView
         className="flex-1"
         contentContainerStyle={{ padding: 16 }}
         showsVerticalScrollIndicator={false}
@@ -148,6 +144,7 @@ export default function HomeTab() {
           )}
         </View>
       </ScrollView>
+      <SafeAreaView className='m-10'/>
     </ThemedView>
   );
 }

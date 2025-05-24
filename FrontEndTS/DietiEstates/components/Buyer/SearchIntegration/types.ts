@@ -114,9 +114,14 @@ export interface QuickNumericSelectorProps {
 }
 
 export interface CategorySpecificFiltersProps {
-  category: string;
-  filters: PropertyFilters;
-  onUpdateFilters: (filters: PropertyFilters) => void;
+  category: keyof Omit<PropertyFilters, "general">; // Più specifico
+  filters: PropertyFilters; // L'intero oggetto filters per riferimento e lettura
+  onUpdateFilters: (
+    update: {
+      category: keyof Omit<PropertyFilters, "general">;
+      newFilters: Partial<PropertyFilters[keyof Omit<PropertyFilters, "general">]>;
+    }
+  ) => void; // Payload specifico per l'aggiornamento di una categoria
   onBackToCategories?: () => void;
 }
 
@@ -155,16 +160,20 @@ export interface FilterPanelProps {
   onClose: () => void;
   filters: PropertyFilters;
   categories: Categories;
-  selectedMainCategory: string;
-  onSelectMainCategory: (category: string) => void;
-  onUpdateFilters: (filters: PropertyFilters) => void;
-  onResetFilters: () => void;
-  onApplyFilters: () => void;
+  selectedMainCategory: keyof Omit<PropertyFilters, "general"> | null;
+  onSelectMainCategory: (category: keyof Omit<PropertyFilters, "general"> | null) => void;
+  onUpdateFilters: (
+    updatedPart: Partial<PropertyFilters> |
+                 { category: keyof Omit<PropertyFilters, 'general'>; newFilters: Partial<PropertyFilters[keyof Omit<PropertyFilters, 'general'>]> } |
+                 { subCategory: 'general'; newFilters: Partial<PropertyFilters['general']> }
+  ) => void;
+  onResetFilters: (keepTransactionType?: boolean) => void; // Aggiunto keepTransactionType opzionale
+  onApplyAndNavigate?: () => void; // New prop for applying filters and navigating
 }
 
 export interface SearchAndFilterProps {
-  onSearch: (query: string) => void;
-  onFiltersChange: (filters: PropertyFilters) => void;
+  // onSearch and onFiltersChange are no longer needed as SearchAndFilter uses the context
   placeholder?: string;
-  categories: Categories;
+  categories: Categories; // Still needed for FilterPanel setup if not from context
+  onSearchSubmitNavigate?: () => void; // New prop for navigation
 }

@@ -44,13 +44,13 @@ export default function Step5_Photos({ selectedImages, onImagesChange }: Step5Ph
 
       // @ts-ignore // - Ignoriamo l'avviso di deprecazione per manipulateAsync (Ripristinato)
       const manipResult = await ImageManipulator.manipulateAsync(
-        originalUri, // Ripristinato: Passa la stringa URI direttamente
-        // Azioni: ridimensiona per far stare l'immagine in un box 2048x2048 mantenendo le proporzioni
+        originalUri,
+        // Manteniamo il ridimensionamento a 2048x2048 per preservare una buona qualità
         [{ resize: { width: 2048, height: 2048 } }],
         {
-          compress: 0.7, // Qualità 70%
-          format: ImageManipulator.SaveFormat.JPEG, // Formato JPEG
-          base64: false, // Non ci serve la base64
+          compress: 0.8, // Aumentiamo leggermente la qualità per WebP che ha una migliore compressione
+          format: ImageManipulator.SaveFormat.WEBP, // Usiamo il formato WebP
+          base64: false,
         }
       );
       return manipResult.uri;
@@ -201,27 +201,29 @@ export default function Step5_Photos({ selectedImages, onImagesChange }: Step5Ph
     <ThemedView className="p-2.5 gap-4">
       <ThemedText type="subtitle" className="mb-2.5 text-center">Foto dell'Immobile</ThemedText>
 
-      <ScrollView horizontal className="mb-4">
+      <ScrollView horizontal className="mb-4 p-2" >
         {selectedImages.map((uri) => (
           <View key={uri} className="relative mr-2.5">
             <Image source={{ uri }} className="w-24 h-24 rounded-lg border" style={{ borderColor: borderColor }} />
             <Pressable
-              className="absolute -top-1 -right-1 rounded-full w-6 h-6 justify-center items-center shadow-md"
+              className="absolute -top-1 -right-1 rounded-full w-6 h-6 justify-center items-center p-1"
               style={{ backgroundColor: tint }}
               onPress={() => removeImage(uri)}
             >
-              <ThemedIcon icon="material-symbols:close-rounded" size={18} lightColor={iconColor} darkColor={iconColor} accessibilityLabel="Rimuovi immagine" />
+              <ThemedIcon icon="material-symbols:close-rounded" size={16} lightColor={iconColor} darkColor={iconColor} accessibilityLabel="Rimuovi immagine" />
             </Pressable>
           </View>
         ))}
         {/* Bottone Aggiungi Foto ora chiama showImageSourceOptions */}
         <Pressable
-          className="w-24 h-24 rounded-lg border-2 border-dashed justify-center items-center"
+          className="w-24 h-24 rounded-lg border-2 border-dashed justify-center items-center p-2"
           style={{ borderColor: borderColor, backgroundColor: backgroundColor }}
-          onPress={showImageSourceOptions} // Modificato qui
+          onPress={showImageSourceOptions}
         >
-          <ThemedIcon icon="material-symbols:add-photo-alternate-outline-rounded" size={40} lightColor={tint} darkColor={tint} accessibilityLabel="Aggiungi foto" />
-          <ThemedText style={{ color: tint }}>Aggiungi Foto</ThemedText>
+          <View className="flex-1 justify-center items-center">
+            <ThemedIcon icon="material-symbols:add-photo-alternate-outline-rounded" size={30} lightColor={tint} darkColor={tint} accessibilityLabel="Aggiungi foto" />
+            <ThemedText style={{ color: tint }} className="mt-1">Aggiungi Foto</ThemedText>
+          </View>
         </Pressable>
       </ScrollView>
 

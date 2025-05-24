@@ -9,11 +9,35 @@ interface ConfirmationDialogProps {
   visible: boolean;
   onConfirm: () => void;
   onCancel: () => void;
-  messageKey: 'changePassword' | 'createAdmin' | 'createAgent';
+  messageKey?: 'changePassword' | 'createAdmin' | 'createAgent'; // Made optional
+  customMessage?: string; // Added custom message prop
+  customTitle?: string; // Added custom title prop
+  confirmText?: string; // Added custom confirm button text
+  showCancelButton?: boolean; // Added prop to hide cancel button
 }
 
-export function ConfirmationDialog({ visible, onConfirm, onCancel, messageKey }: ConfirmationDialogProps) {
+export function ConfirmationDialog({
+  visible,
+  onConfirm,
+  onCancel,
+  messageKey,
+  customMessage,
+  customTitle,
+  confirmText,
+  showCancelButton = true // Default to true
+}: ConfirmationDialogProps) {
   const { t } = useTranslation();
+
+  const title = customTitle ?? t('forms.confirmation.title');
+  const message = customMessage ?? (messageKey ? t(`forms.confirmation.messages.${messageKey}`) : '');
+  const confirmButtonText = confirmText ?? t('forms.confirmation.buttons.confirm');
+  const cancelButtonText = t('forms.confirmation.buttons.cancel');
+
+  // Ensure either messageKey or customMessage is provided
+  if (!messageKey && !customMessage) {
+    console.warn("ConfirmationDialog requires either 'messageKey' or 'customMessage'.");
+    return null; // Or render an error state
+  }
 
   return (
     <Modal
@@ -23,28 +47,30 @@ export function ConfirmationDialog({ visible, onConfirm, onCancel, messageKey }:
       onRequestClose={onCancel}>
       <View style={styles.centeredView}>
         <ThemedView style={styles.modalView}>
-          <ThemedText style={styles.modalTitle}>{t('forms.confirmation.title')}</ThemedText>
+          <ThemedText style={styles.modalTitle}>{title}</ThemedText>
           <ThemedText style={styles.modalText}>
-            {t(`forms.confirmation.messages.${messageKey}`)}
+            {message}
           </ThemedText>
           <View style={styles.buttonsContainer}>
-            <ThemedButton
-              onPress={onCancel}
-              style={[styles.button, styles.cancelButton]}
-              className="py-2"
-              fontSize={16}
-              lightColor="#6c757d"
-              darkColor="#6c757d"
-              title={t('forms.confirmation.buttons.cancel')}
-            />
+            {showCancelButton && (
+              <ThemedButton
+                onPress={onCancel}
+                style={[styles.button, styles.cancelButton]}
+                className="py-2"
+                fontSize={16}
+                lightColor="#6c757d"
+                darkColor="#6c757d"
+                title={cancelButtonText}
+              />
+            )}
             <ThemedButton
               onPress={onConfirm}
-              style={[styles.button, styles.confirmButton]}
+              style={[styles.button, styles.confirmButton, !showCancelButton && styles.fullWidthButton]} // Adjust style if only one button
               className="py-2"
               fontSize={16}
               lightColor="#007bff"
               darkColor="#007bff"
-              title={t('forms.confirmation.buttons.confirm')}
+              title={confirmButtonText}
             />
           </View>
         </ThemedView>
@@ -109,4 +135,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  fullWidthButton: { // Style for confirm button when cancel is hidden
+    flex: 0, // Reset flex
+    width: '80%', // Make it wider but not full width
+  }
 });

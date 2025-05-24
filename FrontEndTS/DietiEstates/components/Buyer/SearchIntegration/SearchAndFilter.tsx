@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSearch } from "@/context/SearchContext";
 import { ThemedView } from "@/components/ThemedView";
 import { SearchBar } from "./SearchBar";
 import { FilterPanel } from "./FilterPanel";
@@ -13,160 +14,128 @@ import {
 } from "./types";
 
 interface SearchAndFilterProps {
-  onSearch: (query: string) => void;
-  onFiltersChange: (filters: PropertyFilters) => void;
   placeholder?: string;
   categories: Categories;
+  onSearchSubmitNavigate?: () => void; // Added new prop
 }
 
 export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
-  onSearch,
-  onFiltersChange,
   placeholder,
   categories,
+  onSearchSubmitNavigate, // Destructure the new prop
 }) => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const { state, dispatch } = useSearch();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [selectedMainCategory, setSelectedMainCategory] = useState("");
-  const [activeFilters, setActiveFilters] = useState<PropertyFilters>({
-    general: {
-      transactionType: "sale",
-      priceRange: DEFAULT_PRICE_RANGES.sale.defaultRange,
-      size: { min: 50, max: 500 },
-    },
-    residential: {
-      category: RESIDENTIAL_CATEGORIES[0],
-      rooms: "",
-      bathrooms: "",
-      floor: "",
-      elevator: false,
-      pool: false,
-    },
-    commercial: {
-      category: COMMERCIAL_CATEGORIES[0],
-      bathrooms: "",
-      emergencyExit: false,
-      constructionDate: "",
-    },
-    industrial: {
-      category: INDUSTRIAL_CATEGORIES[0],
-      ceilingHeight: "",
-      fireSystem: false,
-      floorLoad: "",
-      offices: "",
-      structure: "",
-    },
-    land: {
-      category: LAND_CATEGORIES[0],
-      soilType: "",
-      slope: "",
-    },
-  });
 
   const handleSearchChange = (text: string) => {
-    setSearchQuery(text);
+    dispatch({ type: 'SET_QUERY', payload: text });
   };
 
-  const handleSearch = () => {
-    onSearch(searchQuery);
+  // onSearchPress non è più gestito qui, la pagina dei risultati reagirà al context
+
+  const handleUpdateFilters = (
+    updatedPart: Partial<PropertyFilters> |
+                 { category: keyof Omit<PropertyFilters, 'general'>; newFilters: Partial<PropertyFilters[keyof Omit<PropertyFilters, 'general'>]> } |
+                 { subCategory: 'general'; newFilters: Partial<PropertyFilters['general']> }
+  ) => {
+    dispatch({ type: 'UPDATE_FILTER', payload: updatedPart });
+  };
+  
+  const handleResetFilters = (keepTransactionType?: boolean) => {
+    // Il dispatch di RESET_FILTERS ora gestisce anche il reset di selectedMainCategoryInPanel nel reducer
+    dispatch({ type: 'RESET_FILTERS', payload: { keepTransactionType } });
   };
 
-  const [tempFilters, setTempFilters] = useState<PropertyFilters>(activeFilters);
-
-  const handleUpdateFilters = (newFilters: PropertyFilters) => {
-    setTempFilters(newFilters);
+  const handleSelectMainCategory = (categoryKey: keyof Omit<PropertyFilters, 'general'> | null) => {
+    dispatch({ type: 'SET_SELECTED_MAIN_CATEGORY_IN_PANEL', payload: categoryKey });
   };
-
-  const handleApplyFilters = () => {
-    setActiveFilters(tempFilters);
-    onFiltersChange(tempFilters);
-  };
-
-  const handleResetFilters = () => {
-    const currentTransactionType = tempFilters.general.transactionType;
-    const resetFilters: PropertyFilters = {
-      general: {
-        transactionType: currentTransactionType,
-        priceRange: DEFAULT_PRICE_RANGES[currentTransactionType].defaultRange,
-        size: { min: 50, max: 500 },
-      },
-      residential: {
-        category: RESIDENTIAL_CATEGORIES[0],
-        rooms: "",
-        bathrooms: "",
-        floor: "",
-        elevator: false,
-        pool: false,
-      },
-      commercial: {
-        category: COMMERCIAL_CATEGORIES[0],
-        bathrooms: "",
-        emergencyExit: false,
-        constructionDate: "",
-      },
-      industrial: {
-        category: INDUSTRIAL_CATEGORIES[0],
-        ceilingHeight: "",
-        fireSystem: false,
-        floorLoad: "",
-        offices: "",
-        structure: "",
-      },
-      land: {
-        category: LAND_CATEGORIES[0],
-        soilType: "",
-        slope: "",
-      },
-    };
-    setTempFilters(resetFilters);
-    setActiveFilters(resetFilters);
-    setSelectedMainCategory("");
+  
+  const handleClosePanel = () => {
+    setIsFilterOpen(false);
+    // Non c'è più tempFilters da ripristinare
   };
 
   // Calculate the number of active filters
   const getActiveFiltersCount = () => {
     let count = 0;
-    const general = activeFilters.general;
-    const currentRange = DEFAULT_PRICE_RANGES[general.transactionType];
+    // Aggiungi un controllo per assicurarti che state e state.filters esistano
+    if (!state || !state.filters) {
+      return 0;
+    }
+    const { general, residential, commercial, industrial, land } = state.filters;
+    
+    // Utilizza i valori di default da initialSearchState per il confronto
+    // Questo richiede l'accesso a initialSearchState o a una sua copia/logica simile qui.
+    // Per semplicità, assumiamo che initialSearchState sia accessibile o che i valori di default siano noti.
+    // Idealmente, initialSearchState dovrebbe essere importato o i suoi valori di default definiti come costanti.
+    // Per ora, useremo valori hardcoded rappresentativi dei default per il conteggio.
+    // NOTA: Questo dovrebbe essere allineato con initialSearchState in SearchContext.tsx
+    const defaultSalePriceRange = DEFAULT_PRICE_RANGES.sale.defaultRange;
+    const defaultRentPriceRange = DEFAULT_PRICE_RANGES.rent.defaultRange;
+    const currentDefaultPriceRange = general.transactionType === 'rent' ? defaultRentPriceRange : defaultSalePriceRange;
+    const defaultSizeRange = { min: 0, max: 1000 }; // Da initialSearchState
 
     // Check price range
     if (
-      general.priceRange.min > currentRange.defaultRange.min ||
-      general.priceRange.max < currentRange.defaultRange.max
+      general.priceRange.min !== currentDefaultPriceRange.min ||
+      general.priceRange.max !== currentDefaultPriceRange.max
     ) {
       count++;
     }
 
     // Check size range
-    if (general.size.min > 50 || general.size.max < 500) {
+    if (general.size.min !== defaultSizeRange.min || general.size.max !== defaultSizeRange.max) {
       count++;
     }
+    
+    // Funzione helper per contare i filtri attivi in una sottocategoria rispetto ai default
+    const countSpecificFilters = (
+        filtersObject: Record<string, any>,
+        defaultValues: Record<string, any>
+      ) => {
+      let specificCount = 0;
+      for (const key in filtersObject) {
+        // Ignora 'category' stessa come filtro modificabile qui, contiamo i suoi attributi
+        if (key === 'category' && typeof filtersObject[key] === 'string') continue;
 
-    // Check specific category filters based on selectedMainCategory
-    if (selectedMainCategory) {
-      const category = selectedMainCategory.toLowerCase() as keyof PropertyFilters;
-      const specificFilters = activeFilters[category];
-      
-      if (specificFilters) {
-        Object.entries(specificFilters).forEach(([_, value]) => {
-          if ((typeof value === "boolean" && value) || 
-              (typeof value === "string" && value.length > 0)) {
-            count++;
-          }
-        });
+        const value = filtersObject[key];
+        const defaultValue = defaultValues[key];
+
+        if (typeof value === 'boolean' && value !== defaultValue) {
+          specificCount++;
+        } else if (typeof value === 'string' && value !== defaultValue && value.length > 0) {
+          // Se il default è una stringa vuota, qualsiasi valore non vuoto è un filtro attivo
+          specificCount++;
+        } else if (typeof value === 'number' && value !== defaultValue) {
+          specificCount++;
+        }
+        // Potrebbe essere necessario gestire altri tipi o logiche più complesse se i filtri evolvono
       }
-    }
+      return specificCount;
+    };
+    
+    // Valori di default da initialSearchState.filters (o una rappresentazione di essi)
+    const defaultResidentialFilters = { rooms: "", bathrooms: "", floor: "", elevator: false, pool: false, category: RESIDENTIAL_CATEGORIES[0] };
+    const defaultCommercialFilters = { bathrooms: "", emergencyExit: false, constructionDate: "", category: COMMERCIAL_CATEGORIES[0] };
+    const defaultIndustrialFilters = { ceilingHeight: "", fireSystem: false, floorLoad: "", offices: "", structure: "", category: INDUSTRIAL_CATEGORIES[0] };
+    const defaultLandFilters = { soilType: "", slope: "", category: LAND_CATEGORIES[0] };
+
+    count += countSpecificFilters(residential, defaultResidentialFilters);
+    count += countSpecificFilters(commercial, defaultCommercialFilters);
+    count += countSpecificFilters(industrial, defaultIndustrialFilters);
+    count += countSpecificFilters(land, defaultLandFilters);
 
     return count;
   };
+
 
   return (
     <>
       <ThemedView className="w-full">
         <SearchBar
-          value={searchQuery}
+          value={state.searchQuery}
           onChangeText={handleSearchChange}
-          onSearchPress={handleSearch}
+          onSearchPress={onSearchSubmitNavigate} // Pass the navigation callback here
           onFilterPress={() => setIsFilterOpen(true)}
           placeholder={placeholder}
           activeFiltersCount={getActiveFiltersCount()}
@@ -174,14 +143,14 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
       </ThemedView>
       <FilterPanel
         isOpen={isFilterOpen}
-        onClose={() => setIsFilterOpen(false)}
-        filters={tempFilters}
+        onClose={handleClosePanel}
+        filters={state.filters}
         categories={categories}
-        selectedMainCategory={selectedMainCategory}
-        onSelectMainCategory={setSelectedMainCategory}
+        selectedMainCategory={state.selectedMainCategoryInPanel}
+        onSelectMainCategory={handleSelectMainCategory}
         onUpdateFilters={handleUpdateFilters}
-        onApplyFilters={handleApplyFilters}
-        onResetFilters={handleResetFilters}
+        onApplyAndNavigate={onSearchSubmitNavigate} // Pass the navigation callback here
+        onResetFilters={() => handleResetFilters()} // Assicurati di chiamare la funzione
       />
     </>
   );

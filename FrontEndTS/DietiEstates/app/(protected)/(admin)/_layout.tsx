@@ -1,28 +1,38 @@
 import { Stack } from 'expo-router';
 import React from 'react';
+import { useThemeColor } from '@/hooks/useThemeColor';
+
 
 export default function AdminLayout() {
+  const headerBg = useThemeColor({}, 'background');
+  const tintColor = useThemeColor({}, 'text');
+  
   return (
-    <Stack 
-      screenOptions={{ 
+    <Stack
+      screenOptions={{
         headerShown: true,
+        title: '',
         animation: 'slide_from_right',
-        headerTitleStyle: { fontFamily: 'SpaceMono' }
+        headerTitleStyle: { fontFamily: 'SpaceMono' },
+        headerTintColor: tintColor,
+        headerBackVisible: true,
+        headerBackTitle: 'Indietro',
+        headerStyle: { backgroundColor: headerBg },
       }}
     >
-      <Stack.Screen 
-        name="home" 
+      <Stack.Screen
+        name="home"
         options={{
-          title: 'Admin Dashboard',
-          headerBackVisible: false
+          title: '',
+          headerShown: false
         }}
       />
-      <Stack.Screen 
+      <Stack.Screen
         name="(tabs)"
         options={{
-          title: 'Admin Tabs',
-          headerBackVisible: true
-        }}
+          title: '',
+          headerBackVisible: true,
+          }}
       />
     </Stack>
   );

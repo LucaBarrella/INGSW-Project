@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { type ViewProps } from 'react-native';
+import { type ViewProps, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { LabelInput } from './LabelInput';
 import ThemedButton from './ThemedButton';
-import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
+import { DatePicker } from './common/DatePicker';
 import { ConfirmationDialog } from './ConfirmationDialog';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
@@ -14,7 +14,7 @@ interface UserFormData {
   firstName: string;
   lastName: string;
   email: string;
-  birthDate: string;
+  birthDate: Date;
   phone?: string;
   REANumber?: string;
 }
@@ -44,38 +44,45 @@ export default function UserCreationForm({
     firstName: '',
     lastName: '',
     email: '',
-    birthDate: '',
+    birthDate: new Date(),
     phone: '',
     REANumber: '',
   });
-  const [error, setError] = useState<string>('');
+  // const [error, setError] = useState<string>(''); // Keep error state for potential backend errors
   const [showConfirmation, setShowConfirmation] = useState(false);
+  // Remove showError state
 
   const handleInputChange = (field: keyof UserFormData, value: string): void => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
-    setError('');
+  };
+
+  const handleDateChange = (date: Date): void => {
+    setFormData(prev => ({
+      ...prev,
+      birthDate: date
+    }));
   };
 
   const validateForm = () => {
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.birthDate) {
-      setError(t('forms.errors.fillRequired'));
-      return false;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      setError(t('forms.errors.invalidEmail'));
-      return false;
-    }
-
+    const missingFields = [];
+    
+    if (!formData.firstName) missingFields.push(t('forms.labels.firstName'));
+    if (!formData.lastName) missingFields.push(t('forms.labels.lastName'));
+    if (!formData.email) missingFields.push(t('forms.labels.email'));
+    if (!formData.birthDate) missingFields.push(t('forms.labels.birthDate'));
+    
     if (userType === 'agent') {
-      if (!formData.phone || !formData.REANumber) {
-        setError(t('forms.errors.agentRequiredFields'));
-        return false;
-      }
+      if (!formData.phone) missingFields.push(t('forms.labels.phone'));
+      if (!formData.REANumber) missingFields.push(t('forms.labels.REANumber'));
+    }
+
+    if (missingFields.length > 0) {
+      const errorMessage = t('forms.errors.fillRequired') + ':\n' + missingFields.join(', ');
+      Alert.alert(t('forms.errors.title'), errorMessage); // Use Alert.alert
+      return false;
     }
 
     return true;
@@ -89,12 +96,14 @@ export default function UserCreationForm({
         firstName: '',
         lastName: '',
         email: '',
-        birthDate: '',
+        birthDate: new Date(),
         phone: '',
         REANumber: '',
       });
     } catch (error) {
-      setError(error instanceof Error ? error.message : t('forms.errors.unknownError'));
+      // setError(error instanceof Error ? error.message : t('forms.errors.unknownError')); // Set error if error state is used
+      // Optionally, display the error using Alert or another mechanism
+      Alert.alert(t('forms.errors.title'), error instanceof Error ? error.message : t('forms.errors.unknownError'));
     } finally {
       setShowConfirmation(false);
     }
@@ -115,9 +124,6 @@ export default function UserCreationForm({
       style={{ backgroundColor: cardBackground }}
       {...props}
     >
-      {error ? (
-        <ThemedText className="text-red-500 mb-4">{error}</ThemedText>
-      ) : null}
 
       <LabelInput
         label={t('forms.labels.firstName')}
@@ -154,16 +160,11 @@ export default function UserCreationForm({
         inputBackgroundColor={background}
         className="mb-6"
       />
-      <LabelInput
+      <DatePicker
         label={t('forms.labels.birthDate')}
         value={formData.birthDate}
-        onChangeText={(value: string) => handleInputChange('birthDate', value)}
-        placeholder="YYYY-MM-DD"
-        required
-        textColor={text}
-        lightColor={cardBackground}
-        darkColor={cardBackground}
-        inputBackgroundColor={background}
+        onChange={handleDateChange}
+        maximumDate={new Date()}
         className="mb-6"
       />
 

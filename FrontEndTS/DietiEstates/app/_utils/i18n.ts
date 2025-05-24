@@ -1,6 +1,31 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import * as Localization from 'expo-localization';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+export const LANGUAGE_KEY = '@app_language';
+
+// Funzione per caricare la lingua salvata
+export const loadSavedLanguage = async () => {
+  try {
+    const savedLanguage = await AsyncStorage.getItem(LANGUAGE_KEY);
+    if (savedLanguage) {
+      await i18n.changeLanguage(savedLanguage);
+    }
+  } catch (error) {
+    console.error('Error loading saved language:', error);
+  }
+};
+
+// Funzione per salvare la lingua
+export const saveLanguage = async (language: string) => {
+  try {
+    await AsyncStorage.setItem(LANGUAGE_KEY, language);
+    await i18n.changeLanguage(language);
+  } catch (error) {
+    console.error('Error saving language:', error);
+  }
+};
 import en from './locales/en.json';
 import it from './locales/it.json';
 import fr from './locales/fr.json';

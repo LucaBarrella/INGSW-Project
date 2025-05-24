@@ -4,6 +4,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedIcon } from "@/components/ThemedIcon";
 import { PropertyDetail } from "./types";
+import { PropertyCharacteristicsDisplay, mapPropertyDetailToCharacteristics } from '@/components/Property/PropertyCharacteristicsDisplay';
 import { useTranslation } from "react-i18next";
 import { useThemeColor } from "@/hooks/useThemeColor";
 
@@ -138,6 +139,9 @@ export const PropertyRow: React.FC<PropertyRowProps> = ({
             />
             <ThemedText style={{ color: textColor }}>${property.price}</ThemedText>
           </ThemedView>
+          {/* >>> INIZIO INTEGRAZIONE CARATTERISTICHE <<< */}
+          <PropertyCharacteristicsDisplay property={mapPropertyDetailToCharacteristics(property)} />
+          {/* >>> FINE INTEGRAZIONE CARATTERISTICHE <<< */}
           <ThemedView
             className="px-2 py-0.5 rounded-xl"
             style={{ backgroundColor: getStatusColor(property.status) }}

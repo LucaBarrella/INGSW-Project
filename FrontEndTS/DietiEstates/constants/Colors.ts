@@ -15,8 +15,9 @@ export const Colors = {
     success: '#2E7D32', // Standard green
     info: '#0288D1',    // Standard blue
     tint: lightTertiary,
-    tabIconDefault: lightSecondary,
-    tabIconSelected: lightTertiary,
+    tabBarBackground: lightSecondary, // Sfondo TabBar light
+    tabIconDefault: lightTertiary, // Icone non selezionate light
+    tabIconSelected: lightTertiary, // Icone selezionate light
 
     roleCardText: lightPrimary,
     roleCardBackground: lightTertiary,
@@ -47,7 +48,8 @@ export const Colors = {
     success: '#66BB6A', // Lighter green for dark bg
     info: '#4FC3F7',    // Lighter blue for dark bg
     tint: darkTertiary,
-    tabIconDefault: darkSecondary,
+    tabBarBackground: darkSecondary, // Sfondo TabBar dark
+    tabIconDefault: darkTertiary, // Icone non selezionate dark
     tabIconSelected: darkTertiary,
     
     roleCardText: darkPrimary,

@@ -50,7 +50,13 @@ module.exports = function(api) {
             'material-symbols:visibility-outline-rounded',
             'material-symbols:calendar-month-outline',
             'material-symbols:attach-money',
-
+            'material-symbols:settings-outline',
+            'material-symbols:logout',
+            'material-symbols:chevron-right',
+            'material-symbols:account-circle',
+            'material-symbols:shield-person',
+            'material-symbols:map-outline-rounded',
+            'material-symbols:list-alt-outline-rounded',
             'material-symbols:favorite-rounded',
             'material-symbols:favorite-outline-rounded',
 
@@ -62,13 +68,29 @@ module.exports = function(api) {
             'mdi:logout',
             'mdi:account-circle',
             'mdi:chevron-right',
-
+            'mdi:card-account-details-outline', // Aggiunta per profilo agente
+            'mdi:star-box-outline',             // Aggiunta per profilo agente
+            'mdi:calendar-clock-outline',       // Aggiunta per profilo agente
+            'mdi:office-building-outline',      // Aggiunta per profilo agente
+            
 
             //!
             'mdi:home',
             'mdi:land-fields',
             'mdi:office-building',
-            'mdi:factory'
+            'mdi:factory',
+
+
+
+
+            'material-symbols:square-foot',
+            'material-symbols:flash-on',
+            'material-symbols:bed',
+            'material-symbols:bathtub',
+            'material-symbols:exit-to-app',
+            'material-symbols:fire-extinguisher',
+            'material-symbols:height',
+            'material-symbols:forest',
           ],
         },
       ],

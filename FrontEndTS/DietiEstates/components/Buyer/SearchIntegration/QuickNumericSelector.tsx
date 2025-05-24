@@ -58,20 +58,32 @@ export const QuickNumericSelector: React.FC<QuickNumericSelectorProps> = ({
 
   const handleInputChange = (text: string) => {
     // Rimuove caratteri non numerici
-    const numericValue = text.replace(/[^0-9]/g, '');
-    setInputValue(numericValue);
-    
+    let numericValue = text.replace(/[^0-9]/g, '');
+
+    // Se l'input è vuoto, gestisci come errore o valore minimo a seconda della logica desiderata
     if (numericValue === '') {
-      setInputValue('0');
-      setError(true);
+      setInputValue(''); // o gestisci diversamente, es. minValue.toString()
+      setError(true); // Potrebbe essere necessario un messaggio di errore specifico
+      // onValueChange(''); // O il valore che rappresenta "nessun input"
       return;
     }
 
-    const num = parseInt(numericValue);
-    if (num >= minValue && num <= maxValue) {
-      onValueChange(numericValue);
+    // Rimuovi gli zeri iniziali se il numero non è solo "0"
+    if (numericValue.length > 1 && numericValue.startsWith('0')) {
+      numericValue = numericValue.replace(/^0+/, '');
+      if (numericValue === '') numericValue = '0'; // Se dopo la rimozione è vuoto, era "00", quindi reimposta a "0"
+    }
+    
+    setInputValue(numericValue);
+    const num = parseInt(numericValue, 10);
+
+    if (!isNaN(num) && num >= minValue && num <= maxValue) {
+      onValueChange(numericValue); // Invia il valore stringa pulito
       setError(false);
     } else {
+      // Se il valore parziale (es. utente sta scrivendo) è valido ma non completo,
+      // potresti non voler settare errore subito, oppure sì se supera maxValue.
+      // Per ora, manteniamo la logica di errore se fuori range.
       setError(true);
     }
   };
