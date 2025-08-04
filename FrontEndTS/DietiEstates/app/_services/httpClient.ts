@@ -6,7 +6,7 @@ import * as SecureStore from 'expo-secure-store';
 // --- FLAG PER ABILITARE/DISABILITARE LE API MOCK ---
 // Duplichiamo il flag qui per evitare dipendenze circolari.
 // Assicurati che questo valore sia SINCRONIZZATO con quello in api.service.ts
-const USE_MOCK_API_HTTP = true;
+const USE_MOCK_API_HTTP = false;
 
 // Chiave per salvare/recuperare il token JWT da SecureStore
 const TOKEN_KEY = 'user_auth_token';
@@ -34,7 +34,7 @@ const TOKEN_KEY = 'user_auth_token';
 // Fallback temporaneo se le variabili non sono in app.json/extra
 // TODO: Rimuovere questo fallback e configurare correttamente app.json/extra
 const baseURL = __DEV__
-  ? 'http://localhost:8080/api' // Usa l'URL DEV da .env
+  ? 'http://localhost:8080' // Usa l'URL DEV da .env, TODO usa localhost per emulatori iOS e IP locale per dispositivi fisici
   : 'https://your-production-api-url.azurewebsites.net/api'; // Usa l'URL PROD da .env (DA AGGIORNARE!)
 
 if (!baseURL && !USE_MOCK_API_HTTP) { // Controlla baseURL solo se non siamo in mock http

@@ -12,7 +12,7 @@ type UserCreationData = { email: string; password?: string; name?: string; /* al
 type PasswordChangeData = { oldPassword: string; newPassword: string };
 
 // --- FLAG PER ABILITARE/DISABILITARE LE API MOCK ---
-const USE_MOCK_API = true; // Imposta a 'true' per usare dati mock, 'false' per API reali
+const USE_MOCK_API = false; // Imposta a 'true' per usare dati mock, 'false' per API reali
 
 // Importa i dati mock da un file separato
 import {
@@ -30,8 +30,8 @@ import {
 export const apiEndpoints = {
   //! Auth
   //? Buyer
-  buyerLogin: '/users/login',
-  buyerRegister: '/users/register', // Aggiunto endpoint registrazione
+  buyerLogin: '/login',
+  buyerRegister: '/signup', // Aggiunto endpoint registrazione
 
   //? Admin
   adminLogin: '/admins/login',
