@@ -68,11 +68,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ userType, lightColor, darkColor, 
           responseData = await ApiService.loginUser(credentials);
       }
 
-      // Assumendo che la risposta contenga un token JWT nella proprietà 'token'
-      const token = responseData?.token;
+      // Assumendo che la risposta contenga un token JWT nella proprietà 'accessToken'
+      const token = responseData?.accessToken;
 
       if (token) {
-        // Salva il token JWT in SecureStore
+        // Salva il token JWT in SecureStore, TODO salva (e implementa) anche refresh token
         await SecureStore.setItemAsync(TOKEN_KEY, token);
         console.log('Token salvato con successo!'); // Log per debug
 
