@@ -53,7 +53,7 @@ export const apiEndpoints = {
 
   //? Properties (Buyer & General)
   searchProperties: '/properties/search', // Endpoint per ricerca immobili
-  featuredProperties: '/properties/featured', // Endpoint per immobili in evidenza
+  featuredProperties: '/api/properties/featured', // Endpoint per immobili in evidenza
   propertyDetails: '/properties/details', // Endpoint base per dettagli immobile (si userà /properties/{id})
   createProperty: '/properties/create', // Endpoint per creare un nuovo immobile (POST)
 

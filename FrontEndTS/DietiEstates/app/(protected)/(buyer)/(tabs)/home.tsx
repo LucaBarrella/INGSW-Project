@@ -77,6 +77,7 @@ export default function HomeTab() {
       const data = await ApiService.getFeaturedProperties();
       // TODO: Adattare 'data' alla struttura attesa PropertyDetail[]
       // Esempio: const adaptedData = data.map(item => ({ ...item, price: String(item.price), id: Number(item.id) }));
+      console.log(data);
       setFeaturedProperties(data || []);
     } catch (err) {
       console.error("Error fetching featured properties:", err);
