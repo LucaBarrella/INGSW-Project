@@ -4,17 +4,15 @@ import { useTranslation } from 'react-i18next';
 import { LabelInput } from './LabelInput';
 import ThemedButton from './ThemedButton';
 import { ThemedView } from './ThemedView';
-import { DatePicker } from './common/DatePicker';
 import { ConfirmationDialog } from './ConfirmationDialog';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 type UserType = 'admin' | 'agent';
 
 interface UserFormData {
-  firstName: string;
-  lastName: string;
+  name: string;
+  surname: string;
   email: string;
-  birthDate: Date;
   phone?: string;
   REANumber?: string;
 }
@@ -41,10 +39,9 @@ export default function UserCreationForm({
   const cardBackground = useThemeColor({ light: lightColor, dark: darkColor }, 'loginCardBackground');
   
   const [formData, setFormData] = useState<UserFormData>({
-    firstName: '',
-    lastName: '',
+    name: '',
+    surname: '',
     email: '',
-    birthDate: new Date(),
     phone: '',
     REANumber: '',
   });
@@ -59,20 +56,12 @@ export default function UserCreationForm({
     }));
   };
 
-  const handleDateChange = (date: Date): void => {
-    setFormData(prev => ({
-      ...prev,
-      birthDate: date
-    }));
-  };
-
   const validateForm = () => {
     const missingFields = [];
     
-    if (!formData.firstName) missingFields.push(t('forms.labels.firstName'));
-    if (!formData.lastName) missingFields.push(t('forms.labels.lastName'));
+    if (!formData.name) missingFields.push(t('forms.labels.name'));
+    if (!formData.surname) missingFields.push(t('forms.labels.surname'));
     if (!formData.email) missingFields.push(t('forms.labels.email'));
-    if (!formData.birthDate) missingFields.push(t('forms.labels.birthDate'));
     
     if (userType === 'agent') {
       if (!formData.phone) missingFields.push(t('forms.labels.phone'));
@@ -93,10 +82,9 @@ export default function UserCreationForm({
       await onSubmit(formData);
       // Reset form on success
       setFormData({
-        firstName: '',
-        lastName: '',
+        name: '',
+        surname: '',
         email: '',
-        birthDate: new Date(),
         phone: '',
         REANumber: '',
       });
@@ -127,8 +115,8 @@ export default function UserCreationForm({
 
       <LabelInput
         label={t('forms.labels.firstName')}
-        value={formData.firstName}
-        onChangeText={(value: string) => handleInputChange('firstName', value)}
+        value={formData.name}
+        onChangeText={(value: string) => handleInputChange('name', value)}
         required
         textColor={text}
         lightColor={cardBackground}
@@ -138,8 +126,8 @@ export default function UserCreationForm({
       />
       <LabelInput
         label={t('forms.labels.lastName')}
-        value={formData.lastName}
-        onChangeText={(value: string) => handleInputChange('lastName', value)}
+        value={formData.surname}
+        onChangeText={(value: string) => handleInputChange('surname', value)}
         required
         textColor={text}
         lightColor={cardBackground}
@@ -158,13 +146,6 @@ export default function UserCreationForm({
         lightColor={cardBackground}
         darkColor={cardBackground}
         inputBackgroundColor={background}
-        className="mb-6"
-      />
-      <DatePicker
-        label={t('forms.labels.birthDate')}
-        value={formData.birthDate}
-        onChange={handleDateChange}
-        maximumDate={new Date()}
         className="mb-6"
       />
 

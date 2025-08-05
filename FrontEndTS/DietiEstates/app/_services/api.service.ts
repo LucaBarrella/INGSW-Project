@@ -25,6 +25,7 @@ import {
   MOCK_FEATURED_PROPERTIES,
   MOCK_PROPERTY_DETAILS
 } from './__mocks__/mockData';
+import { AxiosResponse } from 'axios';
 
 // Definisce i path relativi degli endpoint API
 export const apiEndpoints = {
@@ -81,13 +82,13 @@ export const loginUser = async (credentials: LoginCredentials): Promise<ApiRespo
  * @param userData - Dati dell'utente da registrare.
  * @returns La risposta dell'API.
  */
-export const registerUser = async (userData: UserCreationData): Promise<ApiResponseSuccess> => {
+export const registerUser = async (userData: UserCreationData): Promise<AxiosResponse<any,any>> => {
   if (USE_MOCK_API) {
     console.log('[MOCK API] registerUser:', userData);
     return mockDelay(MOCK_SUCCESS_RESPONSE);
   }
   const response = await httpClient.post(apiEndpoints.buyerRegister, userData);
-  return response.data;
+  return response;
 };
 
 /**

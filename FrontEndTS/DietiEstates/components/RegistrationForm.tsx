@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ViewProps, TouchableOpacity, Platform, Alert } from 'react-native';
+import { View, ViewProps, TouchableOpacity, Alert } from 'react-native';
 import { ThemedView } from './ThemedView';
 import { ThemedText } from './ThemedText';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -7,21 +7,21 @@ import { LabelInput } from './LabelInput';
 import ThemedButton from './ThemedButton';
 import { SocialButton } from './SocialButton';
 import { Provider } from '@/types/Provider';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { useRouter } from 'expo-router';
 import ApiService from '@/app/_services/api.service';
 
 interface RegistrationFormData {
-  firstName: string;
-  lastName: string;
-  birthdate: Date;
+  username: string | undefined;
+  name: string;
+  surname: string;
   email: string;
   password: string;
 }
 
 interface ValidationErrors {
-  firstName?: string;
-  lastName?: string;
+  username?: string;
+  name?: string;
+  surname?: string;
   email?: string;
   password?: string;
 }
@@ -33,16 +33,14 @@ export type RegistrationFormProps = ViewProps & {
 
 const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkColor, ...props }) => {
   const [formData, setFormData] = useState<RegistrationFormData>({
-    firstName: '',
-    lastName: '',
-    birthdate: new Date(),
+    username: '',
+    name: '',
+    surname: '',
     email: '',
     password: '',
   });
 
   const [errors, setErrors] = useState<ValidationErrors>({});
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [tempDate, setTempDate] = useState(new Date());
   const router = useRouter();
 
   const background = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
@@ -54,13 +52,13 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
     const newErrors: ValidationErrors = {};
     let isValid = true;
 
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = 'Il nome è obbligatorio';
+    if (!formData.name.trim()) {
+      newErrors.name = 'Il nome è obbligatorio';
       isValid = false;
     }
 
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Il cognome è obbligatorio';
+    if (!formData.surname.trim()) {
+      newErrors.surname = 'Il cognome è obbligatorio';
       isValid = false;
     }
 
@@ -84,21 +82,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
     return isValid;
   };
 
-  const handleDateChange = (_event: any, selectedDate?: Date) => {
-    const currentDate = selectedDate || tempDate;
-    setTempDate(currentDate);
-
-    if (Platform.OS === 'android') {
-      setFormData(prev => ({ ...prev, birthdate: currentDate }));
-      setShowDatePicker(false);
-    }
-  };
-
-  const confirmDate = () => {
-    setFormData(prev => ({ ...prev, birthdate: tempDate }));
-    setShowDatePicker(false);
-  };
-
   const handleSubmit = async () => {
     if (!validateForm()) {
       return;
@@ -106,13 +89,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
 
     try {
       const response = await ApiService.registerUser(formData);
-
-      if (response.success) {
+      if (response.status < 300) {
         Alert.alert('Registrazione Completata', 'La registrazione è avvenuta con successo!', [
           { text: 'OK', onPress: () => router.push('/(auth)/(buyer)/login') }
         ]);
       } else {
-        Alert.alert('Registrazione Fallita', response.message || 'Controlla i dati inseriti e riprova');
+        Alert.alert('Registrazione Fallita', response.statusText || 'Controlla i dati inseriti e riprova');
       }
     } catch (error: any) {
       console.error('Registration error:', error);
@@ -133,14 +115,14 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
         lightColor={cardBackground}
         darkColor={cardBackground}
         inputBackgroundColor={background}
-        value={formData.firstName}
+        value={formData.name}
         onChangeText={(text) => {
-          setFormData(prev => ({ ...prev, firstName: text }));
-          if (errors.firstName) {
-            setErrors(prev => ({ ...prev, firstName: undefined }));
+          setFormData(prev => ({ ...prev, name: text }));
+          if (errors.name) {
+            setErrors(prev => ({ ...prev, name: undefined }));
           }
         }}
-        error={!!errors.firstName}
+        error={!!errors.name}
         className="mb-6"
       />
 
@@ -152,69 +134,16 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
         lightColor={cardBackground}
         darkColor={cardBackground}
         inputBackgroundColor={background}
-        value={formData.lastName}
+        value={formData.surname}
         onChangeText={(text) => {
-          setFormData(prev => ({ ...prev, lastName: text }));
-          if (errors.lastName) {
-            setErrors(prev => ({ ...prev, lastName: undefined }));
+          setFormData(prev => ({ ...prev, surname: text }));
+          if (errors.surname) {
+            setErrors(prev => ({ ...prev, surname: undefined }));
           }
         }}
-        error={!!errors.lastName}
+        error={!!errors.surname}
         className="mb-6"
       />
-
-      <View className="mb-6">
-        <ThemedText className="mb-2" style={{ color: labelColor }}>Data di nascita</ThemedText>
-
-        {Platform.OS === 'web' ? (
-          <input
-            type="date"
-            value={formData.birthdate.toISOString().split('T')[0]}
-            onChange={(e) => {
-              const date = new Date(e.target.value);
-              setFormData(prev => ({ ...prev, birthdate: date }));
-            }}
-            style={{
-              backgroundColor: background,
-              color: text,
-              border: '1px solid #ccc',
-              borderRadius: 4,
-              padding: 8,
-              width: '100%'
-            }}
-          />
-        ) : (
-          <>
-            <TouchableOpacity
-              onPress={() => setShowDatePicker(true)}
-              className="border p-2 rounded-md min-h-[40px] min-w-[200px] w-full"
-              style={{ backgroundColor: background }}
-            >
-              <ThemedText style={{ color: text }}>{formData.birthdate.toLocaleDateString()}</ThemedText>
-            </TouchableOpacity>
-
-            {showDatePicker && (
-              <View className='flex-1 justify-center items-center'>
-                <DateTimePicker
-                  value={tempDate}
-                  mode="date"
-                  display="spinner"
-                  onChange={handleDateChange}
-                  maximumDate={new Date()} // Impedisce la selezione di date future
-                />
-                {Platform.OS === 'ios' && (
-                  <ThemedButton
-                    title="Conferma"
-                    onPress={confirmDate}
-                    borderRadius={8}
-                    className="w-full min-h-[40px] mt-4"
-                  />
-                )}
-              </View>
-            )}
-          </>
-        )}
-      </View>
 
       <LabelInput
         type="email"
@@ -232,6 +161,26 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
           }
         }}
         error={!!errors.email}
+        className="mb-6"
+        autoCapitalize="none"
+      />
+      
+      <LabelInput
+        type="default"
+        label="Username"
+        placeholder="Username"
+        textColor={text}
+        lightColor={cardBackground}
+        darkColor={cardBackground}
+        inputBackgroundColor={background}
+        value={formData.username}
+        onChangeText={(text) => {
+          setFormData(prev => ({ ...prev, username: text }));
+          if (errors.username) {
+            setErrors(prev => ({ ...prev, username: undefined }));
+          }
+        }}
+        error={!!errors.username}
         className="mb-6"
         autoCapitalize="none"
       />
