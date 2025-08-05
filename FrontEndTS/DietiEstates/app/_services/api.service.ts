@@ -52,7 +52,7 @@ export const apiEndpoints = {
   agentProperties: '/agent/properties', // Endpoint per lista immobili agente
 
   //? Properties (Buyer & General)
-  searchProperties: '/properties/search', // Endpoint per ricerca immobili
+  searchProperties: '/api/properties/search', // Endpoint per ricerca immobili
   featuredProperties: '/api/properties/featured', // Endpoint per immobili in evidenza
   propertyDetails: '/properties/details', // Endpoint base per dettagli immobile (si userà /properties/{id})
   createProperty: '/properties/create', // Endpoint per creare un nuovo immobile (POST)
@@ -349,7 +349,7 @@ export const searchProperties = async (
   // return response.data;
   console.warn("searchProperties: La logica API reale non è completamente implementata per i filtri complessi.");
   // Fallback a una chiamata semplice per ora se non si usa il mock
-  const response = await httpClient.get(apiEndpoints.searchProperties, { params: { query: params.query } });
+  const response = await httpClient.get(apiEndpoints.searchProperties+params.query, { params: { query: params.query } }); // TODO rimuovere parametri (params), utili solo per MOCK
   return response.data;
 };
 
