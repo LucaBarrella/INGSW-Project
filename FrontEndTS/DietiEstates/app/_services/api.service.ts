@@ -371,9 +371,9 @@ export const getFeaturedProperties = async (): Promise<PropertyDetail[]> => {
     return mockDelay(MOCK_FEATURED_PROPERTIES);
   }
   const response = await httpClient.get(apiEndpoints.featuredProperties);
-  const result = response.data;
-  // Assumiamo che l'API restituisca direttamente PropertyDetail[] o che l'adattamento avvenga nel componente
-  return response.data;
+  const DTOs: PropertyDTO[] = response.data;
+  const ret = await Promise.all(DTOs.map((value: PropertyDTO) => PropertyDTO_to_PropertyDetail(value)));
+  return ret;
 };
 
 

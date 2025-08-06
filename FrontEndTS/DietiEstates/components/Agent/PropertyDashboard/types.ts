@@ -19,6 +19,8 @@ export interface DashboardStats {
 export interface PropertyDTO {
   id: number;
   address: string;
+  latitude?: number;
+  longitude?: number;
   type: keyof Omit<PropertyFilters, "general">; // 'residential', 'commercial', 'industrial', 'land'
   price: number; // Prezzo come numero
   status: "under construction" | "new" | "renovated" | "good condition" | "to be renovated" | "poor condition"; // Stato dell'immobile
@@ -48,9 +50,6 @@ export interface PropertyDetail extends PropertyDTO {
     profileImageUrl?: string;
     agencyName?: string;
   };
-  
-  latitude?: number;
-  longitude?: number;
 
   // Dettagli specifici per categoria, allineati con PropertyFilters
   propertyDetails?: {
