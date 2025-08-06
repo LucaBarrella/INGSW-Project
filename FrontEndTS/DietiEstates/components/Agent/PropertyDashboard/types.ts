@@ -16,36 +16,39 @@ export interface DashboardStats {
   averageBookingsPerProperty: number;
 }
 
-export interface PropertyDetail {
+export interface PropertyDTO {
   id: number;
-  title: string;
   address: string;
   type: keyof Omit<PropertyFilters, "general">; // 'residential', 'commercial', 'industrial', 'land'
   price: number; // Prezzo come numero
-  views?: number; // Numero di visualizzazioni (opzionale)
-  bookings?: number; // Numero di prenotazioni/visite (opzionale)
-  status: "available" | "sold" | "rented" | "unavailable"; // Stato dell'immobile
+  status: "under construction" | "new" | "renovated" | "good condition" | "to be renovated" | "poor condition"; // Stato dell'immobile
   createdAt: string; // Data di creazione (ISO string)
-  updatedAt: string; // Data ultimo aggiornamento (ISO string)
   imageUrl?: string; // URL dell'immagine principale (opzionale)
   images?: string[]; // Array di URL immagini
   
-  transactionType: 'rent' | 'sale';
-  squareMeters: number;
-  bedrooms?: number;
-  bathrooms?: number;
+  contractType: 'rent' | 'sale';
+  area: number;
+  numberOfBedrooms?: number;
+  numberOfBathrooms?: number;
   description?: string; // Aggiunta descrizione completa
 
+  agent_id: number;
+  address_id: number;
+  features?: string[];
+  yearBuilt?: number;
+  energyRating?: string;
+}
+
+export interface PropertyDetail extends PropertyDTO {
+  
   agent?: {
-    id: string;
+    id: number;
     name: string;
     contact: string;
     profileImageUrl?: string;
     agencyName?: string;
   };
-  features?: string[];
-  yearBuilt?: number;
-  energyRating?: string;
+  
   latitude?: number;
   longitude?: number;
 

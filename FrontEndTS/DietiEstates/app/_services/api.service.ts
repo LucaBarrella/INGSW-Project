@@ -1,6 +1,6 @@
 import httpClient from './httpClient';
 // Importa i tipi necessari per i dati
-import { PropertyDetail, DashboardStats } from '@/components/Agent/PropertyDashboard/types'; // Importa tipi corretti
+import { PropertyDetail, DashboardStats, PropertyDTO } from '@/components/Agent/PropertyDashboard/types'; // Importa tipi corretti
 import { PropertyFilters } from '@/components/Buyer/SearchIntegration/types'; // Importa PropertyFilters
 
 // --- Tipi Base ---
@@ -57,11 +57,20 @@ export const apiEndpoints = {
   propertyDetails: '/properties/details', // Endpoint base per dettagli immobile (si userà /properties/{id})
   createProperty: '/properties/create', // Endpoint per creare un nuovo immobile (POST)
 
+  address: '/address'
+
 } as const;
 
 // --- Funzioni API ---
 
 // TODO: Continuare a definire tipi specifici per credentials, data e risposte API
+
+export const PropertyDTO_to_PropertyDetail = async (property: PropertyDTO) : Promise<PropertyDetail> =>{
+  var prop_detail : PropertyDetail = property;
+  prop_detail.address = await httpClient.get(apiEndpoints.address + '/' + property.address_id);
+  prop_detail.agent = await httpClient.get(apiEndpoints.agentProfile + '/' + property.agent_id);
+  return prop_detail;
+}
 
 /**
  * Esegue il login per un utente (acquirente).
@@ -231,7 +240,6 @@ export const searchProperties = async (
     if (query) {
       const lowerQuery = query.toLowerCase();
       results = results.filter(p =>
-        (p.title?.toLowerCase() || '').includes(lowerQuery) ||
         (p.address?.toLowerCase() || '').includes(lowerQuery) ||
         (p.description?.toLowerCase() || '').includes(lowerQuery)
       );
@@ -245,7 +253,7 @@ export const searchProperties = async (
         console.log('[ApiService] Applying general filters:', JSON.stringify(general));
         // Transaction Type
         if (general.transactionType) {
-          results = results.filter(p => p.transactionType === general.transactionType);
+          results = results.filter(p => p.contractType === general.transactionType);
           console.log(`[ApiService] After transactionType ("${general.transactionType}"): ${results.length} results`);
         }
         // Price Range
@@ -258,7 +266,7 @@ export const searchProperties = async (
         // Size Range
         if (general.size && general.size.min !== undefined && general.size.max !== undefined) {
           results = results.filter(p =>
-            p.squareMeters >= general.size!.min && p.squareMeters <= general.size!.max
+            p.area >= general.size!.min && p.area <= general.size!.max
           );
           console.log(`[ApiService] After sizeRange (${general.size.min}-${general.size.max}): ${results.length} results`);
         }
@@ -290,8 +298,8 @@ export const searchProperties = async (
         if (propertyType === 'residential' && filters.residential && p.propertyDetails?.residential) {
           const resFilters = filters.residential;
           const propDetailsRes = p.propertyDetails.residential;
-          if (resFilters.rooms && p.bedrooms !== parseInt(resFilters.rooms, 10)) { /*console.log(`[ApiService] Prop ID ${p.id} failed rooms`);*/ return false; }
-          if (resFilters.bathrooms && p.bathrooms !== parseInt(resFilters.bathrooms, 10)) { /*console.log(`[ApiService] Prop ID ${p.id} failed bathrooms`);*/ return false; }
+          if (resFilters.rooms && p.numberOfBedrooms !== parseInt(resFilters.rooms, 10)) { /*console.log(`[ApiService] Prop ID ${p.id} failed rooms`);*/ return false; }
+          if (resFilters.bathrooms && p.numberOfBathrooms !== parseInt(resFilters.bathrooms, 10)) { /*console.log(`[ApiService] Prop ID ${p.id} failed bathrooms`);*/ return false; }
           if (resFilters.floor && propDetailsRes.floor !== resFilters.floor) { /*console.log(`[ApiService] Prop ID ${p.id} failed floor`);*/ return false; }
           if (resFilters.elevator !== undefined && propDetailsRes.elevator !== resFilters.elevator) { /*console.log(`[ApiService] Prop ID ${p.id} failed elevator`);*/ return false; }
           if (resFilters.pool !== undefined && propDetailsRes.pool !== resFilters.pool) { /*console.log(`[ApiService] Prop ID ${p.id} failed pool`);*/ return false; }
@@ -363,6 +371,7 @@ export const getFeaturedProperties = async (): Promise<PropertyDetail[]> => {
     return mockDelay(MOCK_FEATURED_PROPERTIES);
   }
   const response = await httpClient.get(apiEndpoints.featuredProperties);
+  const result = response.data;
   // Assumiamo che l'API restituisca direttamente PropertyDetail[] o che l'adattamento avvenga nel componente
   return response.data;
 };

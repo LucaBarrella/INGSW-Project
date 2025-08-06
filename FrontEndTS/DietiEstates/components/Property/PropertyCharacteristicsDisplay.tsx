@@ -102,19 +102,19 @@ export const mapPropertyDetailToCharacteristics = (
 ): PropertyCharacteristicsData => {
   const characteristics: PropertyCharacteristicsData = {
     propertyType: propertyDetail.type,
-    sqft: propertyDetail.squareMeters,
+    sqft: propertyDetail.area,
     energyClass: propertyDetail.energyRating,
   };
 
   switch (propertyDetail.type) {
     case 'residential':
       // bedrooms e bathrooms sono già a livello radice in PropertyDetail
-      characteristics.bedrooms = propertyDetail.bedrooms;
-      characteristics.bathrooms = propertyDetail.bathrooms;
+      characteristics.bedrooms = propertyDetail.numberOfBedrooms;
+      characteristics.bathrooms = propertyDetail.numberOfBathrooms;
       break;
     case 'commercial':
       // bathrooms è già a livello radice in PropertyDetail
-      characteristics.bathrooms = propertyDetail.bathrooms;
+      characteristics.bathrooms = propertyDetail.numberOfBathrooms;
       // emergencyExit è un booleano
       characteristics.emergencyExit = propertyDetail.propertyDetails?.commercial?.emergencyExit;
       break;
