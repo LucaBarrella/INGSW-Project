@@ -1,18 +1,20 @@
-import React, { useState } from "react";
-import { ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import { ScrollView, ActivityIndicator } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
-import { SearchHeader } from "./SearchHeader";
 import { CategoryButton } from "./CategoryButton";
 import { LocationCard } from "./LocationCard";
 import { TabBar } from "./TabBar";
 import { Location, CategoryItem, TabItem } from "./types";
+import { getFeaturedProperties } from "@/app/_services/api.service";
+import ApiError from "@/app/_services/errors/ApiError";
+import { PropertyDetail } from "@/components/Agent/PropertyDashboard/types";
 
 const categories: CategoryItem[] = [
-  { title: "Casa", count: 5343 },
-  { title: "Condominio", count: 3240 },
-  { title: "Appartamento", count: 4214 },
-  { title: "Villa", count: 1890 },
+  { icon: "home", title: "Casa", count: 5343 },
+  { icon: "building", title: "Condominio", count: 3240 },
+  { icon: "apartment", title: "Appartamento", count: 4214 },
+  { icon: "villa", title: "Villa", count: 1890 },
 ];
 
 const tabs: TabItem[] = [
@@ -25,43 +27,46 @@ const tabs: TabItem[] = [
 export const Home: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("Home");
-  const [nearbyLocations, setNearbyLocations] = useState<Location[]>([
-    {
-      name: "Centro Storico",
-      distance: 2.5,
-      image: "https://placehold.co/300x200",
-    },
-    {
-      name: "Porto Antico",
-      distance: 4.8,
-      image: "https://placehold.co/300x200",
-    },
-    {
-      name: "Quartiere Universitario",
-      distance: 1.2,
-      image: "https://placehold.co/300x200",
-    },
-  ]);
+  const [featuredProperties, setFeaturedProperties] = useState<PropertyDetail[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSearch = () => {
     // Implement search functionality
   };
 
+  useEffect(() => {
+    const fetchFeatured = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const properties = await getFeaturedProperties();
+        setFeaturedProperties(properties);
+      } catch (err) {
+        if (err instanceof ApiError) {
+          setError(err.userMessage);
+        } else {
+          setError("Si è verificato un errore inatteso durante il recupero delle proprietà.");
+        }
+        console.error("Errore nel recupero delle proprietà in evidenza:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeatured();
+  }, []);
+
   return (
     <ThemedView className="flex-1 bg-gray-50">
       <ScrollView className="flex-1">
-        <SearchHeader
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          onSearch={handleSearch}
-        />
 
         <ThemedView className="p-4">
           {categories.map((category) => (
             <CategoryButton
               key={category.title}
-              title={category.title}
-              count={category.count}
+              icon={category.icon}
+              label={category.title}
               onPress={() => {}}
             />
           ))}
@@ -69,15 +74,27 @@ export const Home: React.FC = () => {
 
         <ThemedView className="p-4">
           <ThemedText className="text-xl font-semibold mb-4">
-            Consigliati per Te
+            Proprietà in Evidenza
           </ThemedText>
-          {nearbyLocations.map((location) => (
-            <LocationCard
-              key={location.name}
-              location={location}
-              onPress={() => {}}
-            />
-          ))}
+          {loading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : error ? (
+            <ThemedText className="text-red-500 text-center">{error}</ThemedText>
+          ) : featuredProperties.length > 0 ? (
+            featuredProperties.map((property) => (
+              <LocationCard
+                key={property.id}
+                location={{
+                  name: property.address || "Indirizzo Sconosciuto",
+                  distance: 0, // Non abbiamo una distanza qui, potresti volerla calcolare o rimuovere
+                  image: property.images?.[0] || "https://placehold.co/300x200",
+                }}
+                onPress={() => {}}
+              />
+            ))
+          ) : (
+            <ThemedText className="text-center">Nessuna proprietà in evidenza trovata.</ThemedText>
+          )}
         </ThemedView>
       </ScrollView>
 

@@ -4,10 +4,9 @@ import { PropertyDetail, DashboardStats, PropertyDTO } from '@/components/Agent/
 import { PropertyFilters } from '@/components/Buyer/SearchIntegration/types'; // Importa PropertyFilters
 
 // --- Tipi Base ---
-// TODO: Espandere e dettagliare questi tipi man mano che le API vengono definite meglio
-type LoginCredentials = { email: string; password: string };
+import { LoginCredentials } from '@/types/UserCredentials'; // Importa LoginCredentials
 type ApiResponseToken = { token: string; userType: 'buyer' | 'agent' | 'admin' }; // Esempio
-type ApiResponseSuccess = { success: boolean; message?: string; id?: string | number }; // Esempio
+type ApiResponseSuccess = { success: boolean; message?: string; id?: string | number; token?: string }; // Esempio
 type UserCreationData = { email: string; password?: string; name?: string; /* altri campi */ }; // Esempio generico
 type PasswordChangeData = { oldPassword: string; newPassword: string };
 
@@ -23,7 +22,6 @@ import {
   MOCK_AGENT_STATS,
   MOCK_PROPERTIES,
   MOCK_FEATURED_PROPERTIES,
-  MOCK_PROPERTY_DETAILS
 } from './__mocks__/mockData';
 import { AxiosResponse } from 'axios';
 
@@ -93,13 +91,13 @@ export const loginUser = async (credentials: LoginCredentials): Promise<ApiRespo
  * @param userData - Dati dell'utente da registrare.
  * @returns La risposta dell'API.
  */
-export const registerUser = async (userData: UserCreationData): Promise<AxiosResponse<any,any>> => {
+export const registerUser = async (userData: UserCreationData): Promise<ApiResponseSuccess> => {
   if (USE_MOCK_API) {
     console.log('[MOCK API] registerUser:', userData);
     return mockDelay(MOCK_SUCCESS_RESPONSE);
   }
   const response = await httpClient.post(apiEndpoints.buyerRegister, userData);
-  return response;
+  return response.data;
 };
 
 /**
@@ -236,7 +234,7 @@ export const searchProperties = async (
     });
     const { query, filters } = params;
     let results = [...MOCK_PROPERTIES];
-    console.log(`[ApiService] Initial MOCK_PROPERTIES:`, MOCK_PROPERTIES.map(p => ({id: p.id, title: p.title})));
+    console.log(`[ApiService] Initial MOCK_PROPERTIES:`, MOCK_PROPERTIES.map(p => ({id: p.id, address: p.address})));
 
     // 1. Filtro per query testuale
     if (query) {
@@ -336,7 +334,7 @@ export const searchProperties = async (
       });
       console.log(`[ApiService] After category specific filters: ${results.length} results`);
     }
-    console.log(`[ApiService] searchProperties (MOCK) final results (${results.length}):`, results.map(r => ({id: r.id, title: r.title })));
+    console.log(`[ApiService] searchProperties (MOCK) final results (${results.length}):`, results.map(r => ({id: r.id, address: r.address })));
     return mockDelay(results);
   }
 

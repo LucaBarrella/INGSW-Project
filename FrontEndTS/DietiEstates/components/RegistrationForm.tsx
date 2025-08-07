@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ViewProps, TouchableOpacity, Alert } from 'react-native';
+import { View, ViewProps, TouchableOpacity} from 'react-native';
 import { ThemedView } from './ThemedView';
 import { ThemedText } from './ThemedText';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -8,7 +8,7 @@ import ThemedButton from './ThemedButton';
 import { SocialButton } from './SocialButton';
 import { Provider } from '@/types/Provider';
 import { useRouter } from 'expo-router';
-import ApiService from '@/app/_services/api.service';
+import { useAuth } from '@/context/AuthContext';
 
 interface RegistrationFormData {
   username: string | undefined;
@@ -82,23 +82,23 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
     return isValid;
   };
 
+  const { signUp, error, clearError } = useAuth();
+
+  React.useEffect(() => {
+    if (error) {
+      clearError();
+    }
+  }, [formData.email, formData.password, formData.name, formData.surname, formData.username]);
+
   const handleSubmit = async () => {
     if (!validateForm()) {
       return;
     }
 
     try {
-      const response = await ApiService.registerUser(formData);
-      if (response.status < 300) {
-        Alert.alert('Registrazione Completata', 'La registrazione è avvenuta con successo!', [
-          { text: 'OK', onPress: () => router.push('/(auth)/(buyer)/login') }
-        ]);
-      } else {
-        Alert.alert('Registrazione Fallita', response.statusText || 'Controlla i dati inseriti e riprova');
-      }
-    } catch (error: any) {
-      console.error('Registration error:', error);
-      Alert.alert('Errore', error.message || 'Si è verificato un errore');
+      await signUp({ email: formData.email, password: formData.password, name: formData.name, username: formData.username, surname: formData.surname });
+    } catch (err) {
+      console.error('Errore nel componente RegistrationForm durante la registrazione:', err);
     }
   };
 
@@ -106,6 +106,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
     <ThemedView className="mt-[10%] mb-[10%] max-w-md p-8 rounded-2xl w-10/12 shadow-lg" style={{ backgroundColor: cardBackground }} {...props}>
       <ThemedText className="py-5 text-center" style={{ fontSize: 36, color: labelColor }}>Benvenuto</ThemedText>
       <ThemedText className="text-lg mb-6 text-center" style={{ color: labelColor }}>Registrati</ThemedText>
+
+      {error && (
+        <ThemedText style={{ color: 'red', textAlign: 'center', marginBottom: 10 }}>
+          {error}
+        </ThemedText>
+      )}
       
       <LabelInput
         type="default"

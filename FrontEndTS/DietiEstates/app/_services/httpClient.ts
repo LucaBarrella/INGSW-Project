@@ -1,4 +1,5 @@
 import axios, { AxiosError, InternalAxiosRequestConfig, AxiosInstance } from 'axios';
+import ApiError from './errors/ApiError';
 import * as SecureStore from 'expo-secure-store';
 // Importa il flag MOCK (potrebbe causare dipendenza circolare, vedi nota sotto)
 // import { USE_MOCK_API } from './api.service'; // <-- ATTENZIONE: Possibile dipendenza circolare
@@ -115,28 +116,52 @@ const httpClient: AxiosInstance = (() => {
 
     // Interceptor di Risposta (solo per istanza reale)
     instance.interceptors.response.use(
-    (response) => response,
-    (error: AxiosError) => {
-      console.error('Errore API:', error.response?.status, error.message);
-      // ... (resto della gestione errori esistente) ...
-       if (error.response) {
-         // Il server ha risposto con uno status code fuori dal range 2xx
-         console.error('Dati errore:', error.response.data);
-         console.error('Header errore:', error.response.headers);
+      (response) => response,
+      (error: AxiosError) => {
+        let userMessage = 'Si è verificato un errore inatteso.';
+        let statusCode = error.response?.status || 0;
 
-         if (error.response.status === 401) {
-           console.warn('Errore 401: Non autorizzato. Token mancante, invalido o scaduto.');
-           // TODO: Implementare logica di reindirizzamento al login o refresh token
-         } else if (error.response.status === 403) {
-           console.warn('Errore 403: Accesso negato.');
-         }
-       } else if (error.request) {
-         console.error('Errore di rete o nessuna risposta dal server:', error.request);
-       } else {
-         console.error('Errore configurazione richiesta Axios:', error.message);
-       }
-      return Promise.reject(error);
-    }
+        if (error.response) {
+          // Il server ha risposto con uno status code fuori dal range 2xx
+          console.error('Dati errore:', error.response.data);
+          console.error('Header errore:', error.response.headers);
+
+          switch (statusCode) {
+            case 400:
+              userMessage = 'Richiesta non valida. Controlla i dati inseriti.';
+              break;
+            case 401:
+              userMessage = 'Credenziali non valide o sessione scaduta. Effettua nuovamente il login.';
+              break;
+            case 403:
+              userMessage = 'Accesso negato. Non hai i permessi per questa operazione.';
+              break;
+            case 404:
+              userMessage = 'Risorsa non trovata.';
+              break;
+            case 409:
+              userMessage = 'Conflitto. La risorsa esiste già o c\'è un problema di stato.';
+              break;
+            case 500:
+              userMessage = 'Errore interno del server. Riprova più tardi.';
+              break;
+            case 503:
+              userMessage = 'Servizio non disponibile. Riprova più tardi.';
+              break;
+            default:
+              userMessage = `Si è verificato un errore: ${statusCode}.`;
+          }
+        } else if (error.request) {
+          // La richiesta è stata fatta ma non è stata ricevuta alcuna risposta
+          userMessage = 'Nessuna risposta dal server. Controlla la tua connessione.';
+          console.error('Errore di rete o nessuna risposta dal server:', error.request);
+        } else {
+          // Qualcosa è andato storto nella configurazione della richiesta
+          userMessage = 'Errore nella configurazione della richiesta.';
+          console.error('Errore configurazione richiesta Axios:', error.message);
+        }
+        return Promise.reject(new ApiError(statusCode, error.message, userMessage));
+      }
     );
     return instance;
   }

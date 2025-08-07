@@ -1,6 +1,6 @@
 import React from 'react';
-import { TouchableOpacity, View, Alert, type ViewProps } from 'react-native';
-import * as SecureStore from 'expo-secure-store'; // Import SecureStore
+import { TouchableOpacity, View, Alert, type ViewProps, Text } from 'react-native';
+import { useAuth } from '@/context/AuthContext';
 import { ThemedView } from './ThemedView';
 import { ThemedText } from './ThemedText';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -9,10 +9,7 @@ import { Provider } from '@/types/Provider';
 import ThemedButton from './ThemedButton';
 import { LabelInput } from './LabelInput';
 import { useRouter } from 'expo-router';
-import ApiService from '@/app/_services/api.service'; // Import default export
 
-// Chiave per salvare/recuperare il token JWT da SecureStore (deve corrispondere a quella in httpClient.ts)
-const TOKEN_KEY = 'user_auth_token';
 
 export type LoginFormProps = ViewProps & {
   userType: 'admin' | 'agent' | 'buyer';
@@ -34,6 +31,7 @@ const getSubHeaderText = (userType: 'admin' | 'agent' | 'buyer'): string => {
 
 const LoginForm: React.FC<LoginFormProps> = ({ userType, lightColor, darkColor, ...props }) => {
   const router = useRouter();
+  const { signIn, error, clearError } = useAuth();
   const background = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
   const text = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
   const cardBackground = useThemeColor({ light: lightColor, dark: darkColor }, 'loginCardBackground');
@@ -42,65 +40,22 @@ const LoginForm: React.FC<LoginFormProps> = ({ userType, lightColor, darkColor, 
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
 
+  React.useEffect(() => {
+    if (error) {
+      // Clear the error when the component mounts or if the user starts typing
+      clearError();
+    }
+  }, [email, password]);
+
   const handleLogin = async () => {
-    // Validazione input base
     if (!email || !password) {
       Alert.alert('Errore', 'Per favore, compila tutti i campi richiesti.');
       return;
     }
-
     try {
-      let responseData: any; // Tipo da definire in base alla risposta API
-      const credentials = { email, password };
-
-      switch (userType) {
-        case 'admin':
-          responseData = await ApiService.loginAdmin(credentials);
-          break;
-        case 'agent':
-          responseData = await ApiService.loginAgent(credentials);
-          break;
-        default: // buyer
-          responseData = await ApiService.loginUser(credentials);
-      }
-
-      // Assumendo che la risposta contenga un token JWT nella proprietà 'accessToken'
-      const token = responseData?.accessToken;
-
-      if (token) {
-        // Salva il token JWT in SecureStore, TODO salva (e implementa) anche refresh token
-        await SecureStore.setItemAsync(TOKEN_KEY, token);
-        console.log('Token salvato con successo!'); // Log per debug
-
-        // Naviga alla sezione protetta appropriata
-        if (userType === 'admin') {
-          router.push('/(protected)/(admin)/home');
-        } else {
-          // Assicurati che i nomi delle cartelle corrispondano (es. 'buyer', 'agent')
-          // Naviga alla home della tab bar specifica per il ruolo
-          router.push(`/(protected)/(${userType})/(tabs)/home`);
-        }
-      } else {
-        // Token non trovato nella risposta
-        console.error('Token non trovato nella risposta API:', responseData);
-        Alert.alert('Errore Login', 'Token di autenticazione non ricevuto dal server.');
-      }
-
-    } catch (error: any) {
-      console.error('Errore durante il login:', error);
-      // Gestione più specifica degli errori Axios
-      if (error.response) {
-        // Errore restituito dal backend (es. 401, 400)
-        const status = error.response.status;
-        const message = error.response.data?.message || 'Credenziali non valide o errore del server.';
-        Alert.alert(`Errore ${status}`, message);
-      } else if (error.request) {
-        // Errore di rete o nessuna risposta
-        Alert.alert('Errore di Rete', 'Impossibile connettersi al server. Controlla la tua connessione e riprova.');
-      } else {
-        // Altro errore (es. configurazione Axios)
-        Alert.alert('Errore', 'Si è verificato un errore imprevisto durante il login.');
-      }
+      await signIn({ email, password }, userType);
+    } catch (err) {
+      console.error('Errore nel componente LoginForm durante il login:', err);
     }
   };
 
@@ -112,6 +67,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ userType, lightColor, darkColor, 
       <ThemedText className="text-lg mb-6 text-center" style={{ color: labelColor }}>
         {getSubHeaderText(userType)}
       </ThemedText>
+
+      {error && (
+        <Text style={{ color: 'red', textAlign: 'center', marginBottom: 10 }}>
+          {error}
+        </Text>
+      )}
 
       <LabelInput
         type="email"

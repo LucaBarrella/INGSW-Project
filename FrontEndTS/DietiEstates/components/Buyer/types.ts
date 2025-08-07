@@ -5,6 +5,7 @@ export interface Location {
 }
 
 export interface CategoryItem {
+  icon: string;
   title: string;
   count: number;
 }
