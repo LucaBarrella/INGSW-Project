@@ -10,6 +10,8 @@
   "selectUserRole": "Seleziona ruolo utente per cercare casa",
   "selectAgentRole": "Seleziona ruolo agente immobiliare",
   "selectAdminRole": "Seleziona ruolo amministratore",
+  "UNDER_CONSTRUCTION": "in costruzione",
+  "commercial property": "proprietà commerciale",
 
   "admin": {
     "welcome": "Benvenuto nell'Area Amministratore",

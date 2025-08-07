@@ -34,7 +34,7 @@ const TOKEN_KEY = 'user_auth_token';
 // Fallback temporaneo se le variabili non sono in app.json/extra
 // TODO: Rimuovere questo fallback e configurare correttamente app.json/extra
 const baseURL = __DEV__
-  ? 'http://localhost:8080' // Usa l'URL DEV da .env, TODO usa localhost per emulatori iOS e IP locale per dispositivi fisici
+  ? 'http://192.168.1.224:8080' // Usa l'URL DEV da .env, TODO usa localhost per emulatori iOS e IP locale per dispositivi fisici
   : 'https://your-production-api-url.azurewebsites.net/api'; // Usa l'URL PROD da .env (DA AGGIORNARE!)
 
 if (!baseURL && !USE_MOCK_API_HTTP) { // Controlla baseURL solo se non siamo in mock http

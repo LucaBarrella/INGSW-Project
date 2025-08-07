@@ -7,6 +7,7 @@ import { PropertyCharacteristicsDisplay, mapPropertyDetailToCharacteristics } fr
 import { useThemeColor } from '@/hooks/useThemeColor';
 import * as Haptics from 'expo-haptics';
 import ThemedButton from '@/components/ThemedButton';
+import { useTranslation } from 'react-i18next';
 
 interface PropertyCardProps {
   property: PropertyDetail; // Usa il tipo unificato
@@ -46,6 +47,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
   };
 
 const placeholderImageUrl = 'https://placehold.co/600x400/000000/FFFFFF.webp?text=Image+Not+Found&font=Poppins';
+  const { t } = useTranslation();
 
 
   return (
@@ -53,7 +55,7 @@ const placeholderImageUrl = 'https://placehold.co/600x400/000000/FFFFFF.webp?tex
       onPress={handlePress}
       className="rounded-xl shadow-md overflow-hidden"
       accessibilityRole="button"
-      accessibilityLabel={`Visualizza dettagli per ${property.title}`}
+      accessibilityLabel={`Visualizza dettagli per ${t(property.propertyCategory)} in ${property.city}, ${t(property.status)}`}
     >
       <Image
         // Usa un placeholder se imageUrl non è definito
@@ -69,7 +71,7 @@ const placeholderImageUrl = 'https://placehold.co/600x400/000000/FFFFFF.webp?tex
           lightColor={textColor}
           darkColor={textColor}
         >
-          {property.title}
+            {t(property.propertyCategory)} in {property.city}, {t(property.status)}
         </ThemedText>
         
         <ThemedText 
@@ -78,7 +80,7 @@ const placeholderImageUrl = 'https://placehold.co/600x400/000000/FFFFFF.webp?tex
           lightColor={detailColor}
           darkColor={detailColor}
         >
-          {property.address}
+          {property.description}
         </ThemedText>
 
         {/* >>> INIZIO INTEGRAZIONE CARATTERISTICHE <<< */}

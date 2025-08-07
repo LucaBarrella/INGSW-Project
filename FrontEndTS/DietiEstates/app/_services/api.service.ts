@@ -68,9 +68,8 @@ export const apiEndpoints = {
 export const PropertyDTO_to_PropertyDetail = async (property: PropertyDTO) : Promise<PropertyDetail> =>{
   var prop_detail : PropertyDetail = property;
   const address = (await httpClient.get(apiEndpoints.address + '/' + property.id_address)).data;
-  prop_detail.address = property.propertyCategory + " in " + address.city + ", " + property.status; // TODO fix formatting
+  prop_detail.city = address.city;
   prop_detail.agent = (await httpClient.get(apiEndpoints.agentProfile + '/' + property.id_agent)).data.fullName;
-  console.log(prop_detail);
   return prop_detail;
 }
 

@@ -10,6 +10,7 @@
   "selectUserRole": "Select the user role to search for homes",
   "selectAgentRole": "Select the real estate agent role",
   "selectAdminRole": "Select the administrator role",
+  "UNDER_CONSTRUCTION": "under construction",
 
   "admin": {
     "welcome": "Welcome to Admin Dashboard",
