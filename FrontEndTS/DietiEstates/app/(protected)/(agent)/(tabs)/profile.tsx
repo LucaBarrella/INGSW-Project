@@ -13,16 +13,12 @@ import { UserInfoCard } from '@/components/Profile/UserInfoCard';
 import { ProfileOptionsGroup } from '@/components/Profile/ProfileOptionsGroup';
 import { ProfileOptionRowProps } from '@/components/Profile/ProfileOptionRow';
 
-// Chiave per recuperare/rimuovere il token JWT da SecureStore
+// Chiave per recuperare/rimuovere il token JWT da SecureStore, TODO secret
 const TOKEN_KEY = 'user_auth_token';
 
 type AgentProfile = {
   fullName: string;
   email: string;
-  licenseNumber: string;
-  specialization: string;
-  experienceYears: number;
-  officeAddress: string;
 };
 
 // InfoRow non è più necessaria

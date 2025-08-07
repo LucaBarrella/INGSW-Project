@@ -22,6 +22,7 @@ export interface PropertyDTO {
   latitude?: number;
   longitude?: number;
   type: keyof Omit<PropertyFilters, "general">; // 'residential', 'commercial', 'industrial', 'land'
+  propertyCategory: string;
   price: number; // Prezzo come numero
   status: "under construction" | "new" | "renovated" | "good condition" | "to be renovated" | "poor condition"; // Stato dell'immobile
   createdAt: string; // Data di creazione (ISO string)
@@ -34,8 +35,8 @@ export interface PropertyDTO {
   numberOfBathrooms?: number;
   description?: string; // Aggiunta descrizione completa
 
-  agent_id: number;
-  address_id: number;
+  id_agent: number;
+  id_address: number;
   features?: string[];
   yearBuilt?: number;
   energyRating?: string;

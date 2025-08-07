@@ -100,6 +100,7 @@ const httpClient: AxiosInstance = (() => {
         const token = await SecureStore.getItemAsync(TOKEN_KEY);
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
+          config.headers.Bearer = token;
         }
       } catch (error) {
         console.error("Errore nel recuperare il token da SecureStore:", error);

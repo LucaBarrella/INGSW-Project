@@ -47,7 +47,7 @@ export const apiEndpoints = {
   agentCreate: '/agent/create-estate-agent-account', // Corretto path come da file originale
 
   //? Agent
-  agentProfile: '/agent/profile', // Mantenuto endpoint profilo agente
+  agentProfile: '/agent/info', // Mantenuto endpoint profilo agente
   agentStats: '/agent/stats', // Endpoint per statistiche dashboard agente
   agentProperties: '/agent/properties', // Endpoint per lista immobili agente
 
@@ -67,8 +67,10 @@ export const apiEndpoints = {
 
 export const PropertyDTO_to_PropertyDetail = async (property: PropertyDTO) : Promise<PropertyDetail> =>{
   var prop_detail : PropertyDetail = property;
-  prop_detail.address = await httpClient.get(apiEndpoints.address + '/' + property.address_id);
-  prop_detail.agent = await httpClient.get(apiEndpoints.agentProfile + '/' + property.agent_id);
+  const address = (await httpClient.get(apiEndpoints.address + '/' + property.id_address)).data;
+  prop_detail.address = property.propertyCategory + " in " + address.city + ", " + property.status; // TODO fix formatting
+  prop_detail.agent = (await httpClient.get(apiEndpoints.agentProfile + '/' + property.id_agent)).data.fullName;
+  console.log(prop_detail);
   return prop_detail;
 }
 
@@ -372,6 +374,10 @@ export const getFeaturedProperties = async (): Promise<PropertyDetail[]> => {
   }
   const response = await httpClient.get(apiEndpoints.featuredProperties);
   const DTOs: PropertyDTO[] = response.data;
+  console.log(response);
+  console.log(DTOs);
+  console.log("HERE");
+  console.log(DTOs[0].id)
   const ret = await Promise.all(DTOs.map((value: PropertyDTO) => PropertyDTO_to_PropertyDetail(value)));
   return ret;
 };
