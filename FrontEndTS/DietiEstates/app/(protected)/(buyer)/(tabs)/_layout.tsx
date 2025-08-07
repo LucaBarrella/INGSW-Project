@@ -50,8 +50,15 @@ export default function BuyerTabLayout() {
       <Tabs.Screen
         name="favorites"
         options={{
-          title: t('buyer.tabs.dashboard'),
+          title: t('buyer.tabs.favorites'),
           tabBarIcon: FavoriteIcon
+        }}
+      />
+      <Tabs.Screen
+        name="offers"
+        options={{
+          title: t('buyer.tabs.offers'),
+          tabBarIcon: ({ color }) => <MaterialIcons name="receipt" size={24} color={color} />,
         }}
       />
       <Tabs.Screen

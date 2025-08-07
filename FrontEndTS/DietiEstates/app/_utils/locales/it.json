@@ -80,6 +80,16 @@
     }
   },
 
+  "buyer": {
+    "tabs": {
+      "home": "Home",
+      "visits": "Visite",
+      "favorites": "Salvati",
+      "profile": "Profilo",
+      "offers": "Offerte"
+    }
+  },
+
   "forms": {
     "confirmation": {
       "title": "Conferma Azione",
