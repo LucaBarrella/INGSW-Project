@@ -99,7 +99,7 @@ describe('ApiService Functions', () => {
   });
 
   it('createAgent dovrebbe chiamare httpClient.post con l\'endpoint e i dati agente corretti', async () => {
-    const agentData = { name: 'New Agent', email: 'new@agent.com', password: 'agentpass', reaNumber: 'REA123' };
+    const agentData = { name: 'New Agent', email: 'new@agent.com', password: 'agentpass', licenseNumber: 'REA123' };
     const mockResponse = { data: { id: 'agent123', ...agentData } };
     mockHttpPost.mockResolvedValueOnce(mockResponse);
 

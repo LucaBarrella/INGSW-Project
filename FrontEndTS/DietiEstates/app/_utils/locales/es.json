@@ -59,7 +59,7 @@
       "email": "Correo Electrónico",
       "birthDate": "Fecha de Nacimiento",
       "phone": "Número de Teléfono",
-      "REANumber": "Número de Licencia",
+      "licenseNumber": "Número de Licencia",
       "currentPassword": "Contraseña Actual",
       "newPassword": "Nueva Contraseña",
       "confirmPassword": "Confirmar Contraseña"

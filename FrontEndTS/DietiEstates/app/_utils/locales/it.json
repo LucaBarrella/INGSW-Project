@@ -99,7 +99,7 @@
       "email": "Email",
       "birthDate": "Data di nascita",
       "phone": "Numero di telefono",
-      "REANumber": "REA Number",
+      "licenseNumber": "License Number",
       "currentPassword": "Password Attuale",
       "newPassword": "Nuova Password",
       "confirmPassword": "Conferma Password"

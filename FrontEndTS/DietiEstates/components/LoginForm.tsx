@@ -41,11 +41,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ userType, lightColor, darkColor, 
 
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
-  const [authCode, setAuthCode] = React.useState('');
 
   const handleLogin = async () => {
     // Validazione input base
-    if (!email || !password || (userType !== 'buyer' && !authCode)) {
+    if (!email || !password) {
       Alert.alert('Errore', 'Per favore, compila tutti i campi richiesti.');
       return;
     }
@@ -56,12 +55,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ userType, lightColor, darkColor, 
 
       switch (userType) {
         case 'admin':
-          // TODO: Verificare se l'API adminLogin richiede anche authCode
           responseData = await ApiService.loginAdmin(credentials);
           break;
         case 'agent':
-          // TODO: Verificare se l'API agentLogin richiede anche authCode (REA Number?)
-          // Se sì, passare { ...credentials, reaNumber: authCode } o simile
           responseData = await ApiService.loginAgent(credentials);
           break;
         default: // buyer
@@ -139,20 +135,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ userType, lightColor, darkColor, 
         onChangeText={setPassword}
       />
 
-      {userType !== 'buyer' && (
-        <LabelInput
-          type="default"
-          label={userType === 'admin' ? 'Authentication Code' : 'REA Number'}
-          textColor={text}
-          lightColor={cardBackground}
-          darkColor={cardBackground}
-          inputBackgroundColor={background}
-          className="mb-6"
-          value={authCode}
-          onChangeText={setAuthCode}
-          placeholder={userType === 'admin' ? 'Enter your authentication code' : 'Enter your REA number'}
-        />
-      )}
 
       <ThemedButton
         title="Enter"

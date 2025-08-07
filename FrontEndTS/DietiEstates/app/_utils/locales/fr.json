@@ -59,7 +59,7 @@
       "email": "E-mail",
       "birthDate": "Date de Naissance",
       "phone": "Numéro de Téléphone",
-      "REANumber": "Numéro de Licence",
+      "licenseNumber": "Numéro de Licence",
 
       "currentPassword": "Mot de Passe Actuel",
       "newPassword": "Nouveau Mot de Passe",

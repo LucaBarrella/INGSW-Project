@@ -10,7 +10,7 @@ export const mockDelay = <T>(data: T, delayMs: number = DEFAULT_MOCK_DELAY_MS): 
 
 export const MOCK_TOKEN_RESPONSE = { token: 'mock-jwt-token-12345', userType: 'buyer' };
 export const MOCK_SUCCESS_RESPONSE = { status: 200, success: true, message: 'Operazione completata con successo (Mock)' };
-export const MOCK_AGENT_PROFILE = { fullName: 'Mario Rossi (Mock)', email: 'mock.agent@dietiestates.it', reaNumber: 'REA-MOCK-123' };
+export const MOCK_AGENT_PROFILE = { fullName: 'Mario Rossi (Mock)', email: 'mock.agent@dietiestates.it', licenseNumber: 'REA-MOCK-123' };
 
 export const MOCK_AGENT_STATS: DashboardStats = {
   totalProperties: 25, // Aggiornato per riflettere i nuovi immobili

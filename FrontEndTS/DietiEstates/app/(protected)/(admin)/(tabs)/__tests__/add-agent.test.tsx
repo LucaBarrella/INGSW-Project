@@ -27,14 +27,14 @@ jest.mock('react-i18next', () => ({
 jest.mock('@/components/UserCreationForm', () => (props: any) => {
   // Mock che permette di simulare l'invio del form chiamando onSubmit
   const handlePress = () => {
-    // Simula dati specifici per l'agente, incluso reaNumber
+    // Simula dati specifici per l'agente, incluso licenseNumber
     props.onSubmit({ 
       name: 'Test', 
       surname: 'Agent', 
       email: 'test@agent.com', 
       birthDate: '1995-05-05', 
       password: 'password456',
-      reaNumber: 'REA12345', // Campo specifico per agente
+      licenseNumber: 'REA12345', // Campo specifico per agente
       phoneNumber: '1234567890' // Campo specifico per agente
     });
   };
@@ -77,7 +77,7 @@ describe('AddAgentScreen Component', () => {
         email: 'test@agent.com', 
         birthDate: '1995-05-05', 
         password: 'password456',
-        reaNumber: 'REA12345',
+        licenseNumber: 'REA12345',
         phoneNumber: '1234567890'
       });
       // Verifica che router.back sia stato chiamato

@@ -14,7 +14,7 @@ interface UserFormData {
   surname: string;
   email: string;
   phone?: string;
-  REANumber?: string;
+  licenseNumber?: string;
 }
 
 interface UserCreationFormProps extends ViewProps {
@@ -43,7 +43,7 @@ export default function UserCreationForm({
     surname: '',
     email: '',
     phone: '',
-    REANumber: '',
+    licenseNumber: '',
   });
   // const [error, setError] = useState<string>(''); // Keep error state for potential backend errors
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -65,7 +65,7 @@ export default function UserCreationForm({
     
     if (userType === 'agent') {
       if (!formData.phone) missingFields.push(t('forms.labels.phone'));
-      if (!formData.REANumber) missingFields.push(t('forms.labels.REANumber'));
+      if (!formData.licenseNumber) missingFields.push(t('forms.labels.licenseNumber'));
     }
 
     if (missingFields.length > 0) {
@@ -86,7 +86,7 @@ export default function UserCreationForm({
         surname: '',
         email: '',
         phone: '',
-        REANumber: '',
+        licenseNumber: '',
       });
     } catch (error) {
       // setError(error instanceof Error ? error.message : t('forms.errors.unknownError')); // Set error if error state is used
@@ -164,9 +164,9 @@ export default function UserCreationForm({
             className="mb-6"
           />
           <LabelInput
-            label={t('forms.labels.REANumber')}
-            value={formData.REANumber}
-            onChangeText={(value: string) => handleInputChange('REANumber', value)}
+            label={t('forms.labels.licenseNumber')}
+            value={formData.licenseNumber}
+            onChangeText={(value: string) => handleInputChange('licenseNumber', value)}
             required
             textColor={text}
             lightColor={cardBackground}

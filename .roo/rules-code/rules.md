@@ -1,0 +1,1 @@
+6. Before using any type of library, search online for the official documentation of each library you intend to use, in order to avoid using deprecated or unsupported code. Use the MCP server "Context7" to search for the documentation.
