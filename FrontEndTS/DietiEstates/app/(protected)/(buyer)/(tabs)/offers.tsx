@@ -8,21 +8,19 @@ import OfferCard from '@/components/Offer/OfferCard';
 
 
 const OffersScreen: React.FC = () => {
-  const headerBg = useThemeColor({}, 'background');
+  const backgroundMuted = useThemeColor({}, 'backgroundMuted');
   const headerText = useThemeColor({}, 'text');
 
   const offers = mockOffers;
 
   return (
-    <ThemedView className="flex-1" style={{ backgroundColor: headerBg }}>
-        <ThemedView className="flex-row items-center p-4 pb-2 justify-center" style={{ backgroundColor: headerBg }}>
+    <ThemedView className="flex-1" style={{ backgroundColor: backgroundMuted }}>
+        <ThemedView className="flex-row items-center p-4 pb-2 justify-center">
           <ThemedText className="text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center" style={{ color: headerText }}>Offerte</ThemedText>
         </ThemedView>
-        <ScrollView className="flex-1 p-4">
+        <ScrollView className="flex-1 p-4" style={{ backgroundColor: backgroundMuted }}>
           {offers.map((offer) => (
-            <ThemedView key={offer.id} className="mb-4 bg-white rounded-2xl shadow-lg p-4">
-              <OfferCard offer={offer} />
-            </ThemedView>
+            <OfferCard key={offer.id} offer={offer} />
           ))}
         </ScrollView>
     </ThemedView>

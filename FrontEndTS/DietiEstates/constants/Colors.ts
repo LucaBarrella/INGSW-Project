@@ -40,6 +40,8 @@ export const Colors = {
     propertyCardDetail: lightTertiary,
     propertyCardActionButton: lightPrimary,
     border: '#e5e7eb',
+    white: '#FFFFFF',
+    backgroundMuted: '#f3f4f6',
   },
   dark: {
     text: darkTertiary,
@@ -73,5 +75,7 @@ export const Colors = {
     propertyCardDetail: darkTertiary,
     propertyCardActionButton: darkPrimary,
     border: '#374151',
+    white: '#FFFFFF',
+    backgroundMuted: '#111827',
   },
 };

@@ -50,25 +50,62 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
   const statusInfo = getStatusInfo(offer.status);
 
   return (
-    <ThemedView className="flex-row items-start justify-between gap-4 p-4 rounded-lg">
-      <ThemedView className="flex-[2_2_0px] flex-col gap-2">
-        <ThemedView className="flex-row items-center mb-2">
-          <Ionicons name={statusInfo.icon} size={20} color={statusInfo.color} style={{ marginRight: 5 }} />
-          <ThemedText className="text-lg font-bold" style={{ color: statusInfo.color }}>{statusInfo.text}</ThemedText>
+    <ThemedView className="bg-white dark:bg-gray-800 rounded-2xl shadow-md overflow-hidden m-4 border-[1px] border-gray-200 dark:border-gray-700">
+      <ThemedView className="relative">
+        <Image source={{ uri: offer.imageUrl }} className="w-full h-48" resizeMode="cover" />
+        <ThemedView
+          className="absolute top-3 right-3 flex-row items-center rounded-full px-3 py-1.5"
+          style={{ backgroundColor: statusInfo.color }}
+        >
+          <Ionicons name={statusInfo.icon} size={14} color={colors.white} />
+          <ThemedText className="text-xs font-bold ml-1.5" style={{ color: colors.white }}>
+            {statusInfo.text}
+          </ThemedText>
         </ThemedView>
-        <ThemedText className="text-2xl font-bold text-gray-800 mb-2">{offer.address}</ThemedText>
-        <ThemedText className="text-base text-gray-600">Importo: {offer.amount}</ThemedText>
-        <ThemedText className="text-base text-gray-600">Inviata: {offer.date}</ThemedText>
-        <ThemedText className="text-base text-gray-600 mt-2">{offer.actionDescription}</ThemedText>
+      </ThemedView>
+      <ThemedView className="p-4 flex-1">
+        {/* Blocco Indirizzo: Spaziatura inferiore rivista per coerenza */}
+        <ThemedView className="flex-row items-center mb-3 gap-2">
+          <Ionicons name="location-outline" size={22} color={colors.text} />
+          <ThemedText className="text-lg font-bold flex-1" style={{ color: colors.text }}>
+            {offer.address}
+          </ThemedText>
+        </ThemedView>
+
+        {/* Principio di Vicinanza: Importo e Data raggruppati sulla stessa riga */}
+        <ThemedView className="flex-row justify-between items-center mb-4">
+          {/* Gruppo Importo */}
+          <ThemedView className="flex-row items-center gap-1.5">
+            <Ionicons name="cash-outline" size={20} color={colors.propertyCardDetail} />
+            <ThemedText className="text-base" style={{ color: colors.propertyCardDetail }}>
+              {offer.amount}
+            </ThemedText>
+          </ThemedView>
+          {/* Gruppo Data */}
+          <ThemedView className="flex-row items-center gap-1.5">
+            <Ionicons name="calendar-outline" size={20} color={colors.propertyCardDetail} />
+            <ThemedText className="text-base" style={{ color: colors.propertyCardDetail }}>
+              {offer.date}
+            </ThemedText>
+          </ThemedView>
+        </ThemedView>
+
+        {/* Principio di Continuità: Spaziatura verticale bilanciata */}
+        <ThemedText className="text-base text-gray-600 dark:text-gray-300 mb-5 opacity-80">
+          {offer.actionDescription}
+        </ThemedText>
+
+        {/* Azione: mt-auto spinge il bottone in fondo, creando una chiara separazione */}
         <TouchableOpacity
-          className="flex-row items-center justify-center self-start mt-4 px-6 py-3 rounded-full"
+          className="w-full flex-row items-center justify-center mt-auto px-4 py-3 rounded-xl shadow-lg gap-2"
           style={{ backgroundColor: colors.buttonBackground }}
         >
-          <ThemedText className="text-base font-bold mr-2" style={{ color: colors.buttonTextColor }}>{offer.actionText}</ThemedText>
-          <Ionicons name={offer.actionIcon} size={20} color={colors.buttonTextColor} />
+          <ThemedText className="text-base font-bold" style={{ color: colors.buttonTextColor }}>
+            {offer.actionText}
+          </ThemedText>
+          <Ionicons name={offer.actionIcon} size={22} color={colors.buttonTextColor} />
         </TouchableOpacity>
       </ThemedView>
-      <Image source={{ uri: offer.imageUrl }} className="w-36 h-full rounded-2xl" resizeMode="cover" />
     </ThemedView>
   );
 };

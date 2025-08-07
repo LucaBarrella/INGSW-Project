@@ -21,7 +21,7 @@ export const mockOffers: Offer[] = [
     date: '15/07/2024',
     imageUrl: 'https://picsum.photos/id/10/200/300',
     actionText: 'Contro Proposta',
-    actionIcon: 'close',
+    actionIcon: 'arrow-redo-outline',
     actionDescription: 'Invia una controfferta o cerca altre proprietà.',
   },
   {
@@ -32,7 +32,7 @@ export const mockOffers: Offer[] = [
     date: '20/06/2024',
     imageUrl: 'https://picsum.photos/id/20/200/300',
     actionText: 'Contatta',
-    actionIcon: 'checkmark',
+    actionIcon: 'call-outline',
     actionDescription: "Contatta l'agente per procedere con l'acquisto",
   },
   {
@@ -43,7 +43,7 @@ export const mockOffers: Offer[] = [
     date: '25/07/2024',
     imageUrl: 'https://picsum.photos/id/30/200/300',
     actionText: 'Ritira Offerta',
-    actionIcon: 'refresh',
+    actionIcon: 'close-circle-outline',
     actionDescription: 'La tua offerta è in attesa di risposta.',
   },
 ];
