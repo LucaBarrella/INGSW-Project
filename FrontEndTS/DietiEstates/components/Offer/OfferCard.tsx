@@ -50,15 +50,27 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
   const statusInfo = getStatusInfo(offer.status);
 
   return (
-    <ThemedView className="bg-white dark:bg-gray-800 rounded-2xl shadow-md overflow-hidden m-4 border-[1px] border-gray-200 dark:border-gray-700">
+    <ThemedView className="rounded-2xl shadow-md overflow-hidden m-4 border-[1px] border-gray-200 dark:border-gray-700"
+      style={{
+        backgroundColor: colors.propertyCardBackground,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3, // For Android
+      }}
+    >
       <ThemedView className="relative">
         <Image source={{ uri: offer.imageUrl }} className="w-full h-48" resizeMode="cover" />
         <ThemedView
-          className="absolute top-3 right-3 flex-row items-center rounded-full px-3 py-1.5"
-          style={{ backgroundColor: statusInfo.color }}
+          className="absolute top-3 right-3 flex-row items-center rounded-full px-3 py-1.5 border-[1px]"
+          style={{
+            backgroundColor: `${statusInfo.color}99`, // Opacità del 60% (99 in esadecimale)
+            borderColor: statusInfo.color,
+          }}
         >
-          <Ionicons name={statusInfo.icon} size={14} color={colors.white} />
-          <ThemedText className="text-xs font-bold ml-1.5" style={{ color: colors.white }}>
+          <Ionicons name={statusInfo.icon} size={14} color={Colors.light.white} />
+          <ThemedText className="text-xs font-bold ml-1.5" style={{ color: Colors.light.white }}>
             {statusInfo.text}
           </ThemedText>
         </ThemedView>
