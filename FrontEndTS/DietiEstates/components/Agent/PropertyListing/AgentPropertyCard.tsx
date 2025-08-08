@@ -78,7 +78,7 @@ export const AgentPropertyCard: React.FC<AgentPropertyCardProps> = ({
         onPress={handlePress}
         className="rounded-xl shadow-md overflow-hidden"
         accessibilityRole="button"
-        accessibilityLabel={`Visualizza dettagli per ${property.title}`}
+        accessibilityLabel={`Visualizza dettagli per ${property.address}`}
       >
         <Image
           source={{ uri: property.imageUrl || placeholderImageUrl }}
@@ -93,7 +93,7 @@ export const AgentPropertyCard: React.FC<AgentPropertyCardProps> = ({
             lightColor={textColor}
             darkColor={textColor}
           >
-            {property.title}
+            {property.address}
           </ThemedText>
           
           <ThemedText 
@@ -102,7 +102,7 @@ export const AgentPropertyCard: React.FC<AgentPropertyCardProps> = ({
             lightColor={detailColor}
             darkColor={detailColor}
           >
-            {property.address}
+            {property.description}
           </ThemedText>
 
           {/* >>> INIZIO INTEGRAZIONE CARATTERISTICHE <<< */}

@@ -49,7 +49,7 @@ export const BuyerPropertyCard: React.FC<BuyerPropertyCardProps> = ({
       onPress={handlePress}
       className="rounded-xl shadow-md overflow-hidden"
       accessibilityRole="button"
-      accessibilityLabel={`Visualizza dettagli per ${property.title}`}
+      accessibilityLabel={`Visualizza dettagli per ${property.address}`}
     >
       <Image
         source={{ uri: property.imageUrl || 'https://placehold.co/600x400.webp?text=Image+Not+Found' }}
@@ -64,7 +64,7 @@ export const BuyerPropertyCard: React.FC<BuyerPropertyCardProps> = ({
           lightColor={textColor}
           darkColor={textColor}
         >
-          {property.title}
+          {property.address}
         </ThemedText>
         
         <ThemedText 
@@ -73,7 +73,7 @@ export const BuyerPropertyCard: React.FC<BuyerPropertyCardProps> = ({
           lightColor={detailColor}
           darkColor={detailColor}
         >
-          {property.address}
+          {property.description}
         </ThemedText>
 
         <ThemedView className="flex-row justify-between items-center" style={{ backgroundColor }}>

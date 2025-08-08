@@ -18,7 +18,7 @@ export interface DashboardStats {
 
 export interface PropertyDTO {
   id: number;
-  address: string;
+  city: string;
   latitude?: number;
   longitude?: number;
   type: keyof Omit<PropertyFilters, "general">; // 'residential', 'commercial', 'industrial', 'land'
