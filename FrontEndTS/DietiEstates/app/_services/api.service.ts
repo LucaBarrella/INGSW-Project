@@ -11,7 +11,7 @@ type UserCreationData = { email: string; password?: string; name?: string; /* al
 type PasswordChangeData = { oldPassword: string; newPassword: string };
 
 // --- FLAG PER ABILITARE/DISABILITARE LE API MOCK ---
-const USE_MOCK_API = false; // Imposta a 'true' per usare dati mock, 'false' per API reali
+const USE_MOCK_API = true; // Imposta a 'true' per usare dati mock, 'false' per API reali
 
 // Importa i dati mock da un file separato
 import {
@@ -236,13 +236,13 @@ export const searchProperties = async (
     });
     const { query, filters } = params;
     let results = [...MOCK_PROPERTIES];
-    console.log(`[ApiService] Initial MOCK_PROPERTIES:`, MOCK_PROPERTIES.map(p => ({id: p.id, address: p.address})));
+    console.log(`[ApiService] Initial MOCK_PROPERTIES:`, MOCK_PROPERTIES.map(p => ({id: p.id, city: p.city})));
 
     // 1. Filtro per query testuale
     if (query) {
       const lowerQuery = query.toLowerCase();
       results = results.filter(p =>
-        (p.address?.toLowerCase() || '').includes(lowerQuery) ||
+        (p.city?.toLowerCase() || '').includes(lowerQuery) ||
         (p.description?.toLowerCase() || '').includes(lowerQuery)
       );
       console.log(`[ApiService] After text query filter ("${query}"): ${results.length} results`);
@@ -290,8 +290,9 @@ export const searchProperties = async (
 
         // Filtro per sottocategoria (es. 'Villa', 'Appartamento')
         if (specificFiltersForType.category) {
-          if (!p.propertyDetails?.[propertyType]?.category || p.propertyDetails[propertyType]!.category !== specificFiltersForType.category) {
-            // console.log(`[ApiService] Property ID ${p.id}: Failed subCategory. Expected ${specificFiltersForType.category}, got ${p.propertyDetails?.[propertyType]?.category}`);
+          const propCategory = p.propertyDetails?.[propertyType]?.category;
+          if (!propCategory || propCategory !== specificFiltersForType.category) {
+            console.log(`[ApiService] Property ID ${p.id}: Failed category filter. Expected '${specificFiltersForType.category}', got '${propCategory}'`);
             return false;
           }
         }
@@ -300,11 +301,11 @@ export const searchProperties = async (
         if (propertyType === 'residential' && filters.residential && p.propertyDetails?.residential) {
           const resFilters = filters.residential;
           const propDetailsRes = p.propertyDetails.residential;
-          if (resFilters.rooms && p.numberOfBedrooms !== parseInt(resFilters.rooms, 10)) { /*console.log(`[ApiService] Prop ID ${p.id} failed rooms`);*/ return false; }
-          if (resFilters.bathrooms && p.numberOfBathrooms !== parseInt(resFilters.bathrooms, 10)) { /*console.log(`[ApiService] Prop ID ${p.id} failed bathrooms`);*/ return false; }
-          if (resFilters.floor && propDetailsRes.floor !== resFilters.floor) { /*console.log(`[ApiService] Prop ID ${p.id} failed floor`);*/ return false; }
-          if (resFilters.elevator !== undefined && propDetailsRes.elevator !== resFilters.elevator) { /*console.log(`[ApiService] Prop ID ${p.id} failed elevator`);*/ return false; }
-          if (resFilters.pool !== undefined && propDetailsRes.pool !== resFilters.pool) { /*console.log(`[ApiService] Prop ID ${p.id} failed pool`);*/ return false; }
+          if (resFilters.rooms && p.numberOfBedrooms !== parseInt(resFilters.rooms, 10)) { console.log(`[ApiService] Prop ID ${p.id} failed rooms. Expected ${resFilters.rooms}, got ${p.numberOfBedrooms}`); return false; }
+          if (resFilters.bathrooms && p.numberOfBathrooms !== parseInt(resFilters.bathrooms, 10)) { console.log(`[ApiService] Prop ID ${p.id} failed bathrooms. Expected ${resFilters.bathrooms}, got ${p.numberOfBathrooms}`); return false; }
+          if (resFilters.floor && propDetailsRes.floor !== resFilters.floor) { console.log(`[ApiService] Prop ID ${p.id} failed floor. Expected ${resFilters.floor}, got ${propDetailsRes.floor}`); return false; }
+          if (resFilters.elevator !== undefined && propDetailsRes.elevator !== resFilters.elevator) { console.log(`[ApiService] Prop ID ${p.id} failed elevator. Expected ${resFilters.elevator}, got ${propDetailsRes.elevator}`); return false; }
+          if (resFilters.pool !== undefined && propDetailsRes.pool !== resFilters.pool) { console.log(`[ApiService] Prop ID ${p.id} failed pool. Expected ${resFilters.pool}, got ${propDetailsRes.pool}`); return false; }
         }
         // Filtri specifici per 'commercial'
         else if (propertyType === 'commercial' && filters.commercial && p.propertyDetails?.commercial) {
@@ -336,7 +337,7 @@ export const searchProperties = async (
       });
       console.log(`[ApiService] After category specific filters: ${results.length} results`);
     }
-    console.log(`[ApiService] searchProperties (MOCK) final results (${results.length}):`, results.map(r => ({id: r.id, address: r.address })));
+    console.log(`[ApiService] searchProperties (MOCK) final results (${results.length}):`, results.map(r => ({id: r.id, city: r.city })));
     return mockDelay(results);
   }
 
@@ -371,15 +372,16 @@ export const getFeaturedProperties = async (): Promise<PropertyDetail[]> => {
   if (USE_MOCK_API) {
     console.log('[MOCK API] getFeaturedProperties');
     return mockDelay(MOCK_FEATURED_PROPERTIES);
+  } else {
+    const response = await httpClient.get(apiEndpoints.featuredProperties);
+    const DTOs: PropertyDTO[] = response.data;
+    console.log(response);
+    console.log(DTOs);
+    console.log("HERE");
+    console.log(DTOs[0].id)
+    const ret = await Promise.all(DTOs.map((value: PropertyDTO) => PropertyDTO_to_PropertyDetail(value)));
+    return ret;
   }
-  const response = await httpClient.get(apiEndpoints.featuredProperties);
-  const DTOs: PropertyDTO[] = response.data;
-  console.log(response);
-  console.log(DTOs);
-  console.log("HERE");
-  console.log(DTOs[0].id)
-  const ret = await Promise.all(DTOs.map((value: PropertyDTO) => PropertyDTO_to_PropertyDetail(value)));
-  return ret;
 };
 
 

@@ -26,7 +26,7 @@ export const MOCK_AGENT_STATS: DashboardStats = {
 export const MOCK_PROPERTIES: PropertyDetail[] = [
   {
     id: 1,
-    address: 'Via dei Giardini 1, Como',
+    city: 'Via dei Giardini 1, Como',
     price: 750000,
     status: 'good condition',
     createdAt: new Date(2024, 3, 15).toISOString(),
@@ -45,7 +45,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     energyRating: 'A+',
     latitude: 45.8100,
     longitude: 9.0863,
-    id_address: 1,
+    id_city: 1,
     propertyDetails: {
       residential: {
         category: 'Villa',
@@ -58,7 +58,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
   },
   {
     id: 2,
-    address: 'Corso Italia 45, Milano',
+    city: 'Corso Italia 45, Milano',
     price: 4500, // Affitto mensile
     status: 'under construction',
     createdAt: new Date(2024, 4, 1).toISOString(),
@@ -84,11 +84,11 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
       }
     },
     id_agent: 2,
-    id_address: 2
+    id_city: 2
   },
   {
     id: 3,
-    address: 'Zona Industriale 3, Bergamo',
+    city: 'Zona Industriale 3, Bergamo',
     price: 1200000,
     status: 'new',
     createdAt: new Date(2024, 2, 10).toISOString(),
@@ -114,12 +114,12 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
       }
     },
     id_agent: 1,
-    id_address: 3
+    id_city: 3
   },
   // ...existing code...
   {
     id: 4,
-    address: 'Via delle Querce 78, Monza',
+    city: 'Via delle Querce 78, Monza',
     price: 350000,
     status: 'new',
     createdAt: new Date(2024, 2, 20).toISOString(),
@@ -131,7 +131,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: 'Terreno edificabile in posizione collinare e panoramica, ideale per la costruzione di una villa unifamiliare o bifamiliare.',
     agent: { id: 3, name: 'Giacomo Poretti', contact: 'g.poretti@example.com', agencyName: "Dieti Estates Brianza" },
     id_agent: 3,
-    id_address: 4,
+    id_city: 4,
     features: ['Vista Panoramica', 'Zona Residenziale', 'Progetto Approvabile'],
     latitude: 45.5850,
     longitude: 9.2730,
@@ -145,7 +145,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
   },
   {
     id: 5,
-    address: 'Via Roma 101, Firenze',
+    city: 'Via Roma 101, Firenze',
     price: 1200,
     status: 'good condition',
     createdAt: new Date(2024, 5, 1).toISOString(),
@@ -159,7 +159,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: 'Luminoso appartamento trilocale completamente ristrutturato, situato in zona centrale e ben servita. Contratto transitorio o 4+4.',
     agent: { id: 2, name: 'Marina Massironi', contact: 'm.massironi@example.com', agencyName: "Dieti Estates Firenze" },
     id_agent: 2,
-    id_address: 5,
+    id_city: 5,
     features: ['Balcone', 'Aria Condizionata', 'Ristrutturato', 'Ascensore'],
     yearBuilt: 1970,
     energyRating: 'E',
@@ -177,7 +177,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
   },
   {
     id: 6,
-    address: 'Via Nuova 10, Napoli',
+    city: 'Via Nuova 10, Napoli',
     price: 250000,
     status: 'good condition',
     createdAt: new Date(2024, 1, 10).toISOString(),
@@ -191,7 +191,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: "Appartamento luminoso in zona centrale a Napoli, vicino alla metropolitana e ai principali servizi. Ottime condizioni interne.",
     agent: { id: 3, name: 'Giacomo Poretti', contact: 'g.poretti@example.com', agencyName: "Dieti Estates Napoli" },
     id_agent: 3,
-    id_address: 6,
+    id_city: 6,
     features: ['Balcone', 'Ristrutturato di recente', 'Vicino Metro'],
     yearBuilt: 1980,
     energyRating: 'C',
@@ -209,7 +209,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
   },
   {
     id: 7,
-    address: 'Piazza Affari 5, Milano',
+    city: 'Piazza Affari 5, Milano',
     price: 3000,
     status: 'new',
     createdAt: new Date(2024, 3, 5).toISOString(),
@@ -222,7 +222,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: "Ufficio prestigioso in Piazza Affari, completamente cablato e pronto all'uso. Ideale per società di rappresentanza.",
     agent: { id: 2, name: 'Marina Massironi', contact: 'm.massironi@example.com', agencyName: "Dieti Estates Milano" },
     id_agent: 2,
-    id_address: 7,
+    id_city: 7,
     features: ['Reception', 'Sale Riunioni', 'Cablato', 'Aria Condizionata Centralizzata'],
     yearBuilt: 2005,
     energyRating: 'B',
@@ -238,7 +238,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
   },
   {
     id: 8,
-    address: 'Via della Logistica 12, Bologna',
+    city: 'Via della Logistica 12, Bologna',
     price: 950000,
     status: 'good condition',
     createdAt: new Date(2023, 11, 20).toISOString(),
@@ -250,7 +250,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: "Ampio magazzino con zona uffici e piazzale di manovra, vicino all'autostrada. Ottimo per logistica e stoccaggio.",
     agent: { id: 1, name: 'Giovanni Storti', contact: 'g.storti@example.com', agencyName: "Dieti Estates Bologna" },
     id_agent: 1,
-    id_address: 8,
+    id_city: 8,
     features: ['Piazzale Esterno', 'Baie di Carico', 'Uffici Inclusi', 'Accesso Autostradale'],
     yearBuilt: 2010,
     energyRating: 'In fase di definizione',
@@ -269,7 +269,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
   },
   {
     id: 9,
-    address: 'Contrada Sole 1, Lecce',
+    city: 'Contrada Sole 1, Lecce',
     price: 80000,
     status: 'to be renovated',
     createdAt: new Date(2024, 0, 15).toISOString(),
@@ -281,7 +281,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: "Terreno agricolo pianeggiante, ideale per coltivazioni o uliveto. Accesso diretto da strada comunale.",
     agent: { id: 3, name: 'Giacomo Poretti', contact: 'g.poretti@example.com', agencyName: "Dieti Estates Salento" },
     id_agent: 3,
-    id_address: 9,
+    id_city: 9,
     features: ['Pianeggiante', 'Accesso Stradale', 'Irrigabile'],
     latitude: 40.3515,
     longitude: 18.1750,
@@ -295,7 +295,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
   },
   {
     id: 10,
-    address: 'Viale dei Pini 25, Roma',
+    city: 'Viale dei Pini 25, Roma',
     price: 4500,
     status: 'good condition',
     createdAt: new Date(2024, 4, 12).toISOString(),
@@ -309,7 +309,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: "Elegante villa con giardino curato e piscina in zona residenziale tranquilla di Roma Nord. Finiture di lusso.",
     agent: { id: 1, name: 'Giovanni Storti', contact: 'g.storti@example.com', agencyName: "Dieti Estates Roma" },
     id_agent: 1,
-    id_address: 10,
+    id_city: 10,
     features: ['Piscina Privata', 'Ampio Giardino', 'Camino Funzionante', 'Sistema di Allarme Perimetrale', 'Garage Triplo'],
     yearBuilt: 1995,
     energyRating: 'B',
@@ -327,7 +327,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
   },
   {
     id: 11,
-    address: 'Via Garibaldi 7, Torino',
+    city: 'Via Garibaldi 7, Torino',
     price: 120000,
     status: 'new',
     createdAt: new Date(2023, 9, 1).toISOString(),
@@ -341,7 +341,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: "Monolocale finemente ristrutturato nel cuore di Torino, ottimo come investimento o pied-à-terre. Venduto.",
     agent: { id: 2, name: 'Marina Massironi', contact: 'm.massironi@example.com', agencyName: "Dieti Estates Torino" },
     id_agent: 2,
-    id_address: 11,
+    id_city: 11,
     features: ['Ristrutturato', 'Posizione Centrale', 'Basse Spese Condominiali'],
     yearBuilt: 1960,
     energyRating: 'F',
@@ -359,7 +359,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
   },
   {
     id: 12,
-    address: 'Corso Umberto I 150, Palermo',
+    city: 'Corso Umberto I 150, Palermo',
     price: 350000,
     status: 'good condition',
     createdAt: new Date(2024, 2, 22).toISOString(),
@@ -372,7 +372,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: "Negozio in via di forte passaggio pedonale a Palermo, con due ampie vetrine su strada. Buone condizioni generali.",
     agent: { id: 3, name: 'Giacomo Poretti', contact: 'g.poretti@example.com', agencyName: "Dieti Estates Palermo" },
     id_agent: 3,
-    id_address: 12,
+    id_city: 12,
     features: ['Due Vetrine', 'Alta Visibilità', 'Serranda Elettrica'],
     yearBuilt: 1975,
     energyRating: 'G',
@@ -388,7 +388,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
   },
   {
     id: 13,
-    address: 'Lungarno Vespucci 1, Firenze',
+    city: 'Lungarno Vespucci 1, Firenze',
     price: 1200000,
     status: 'good condition',
     createdAt: new Date(2024, 0, 30).toISOString(),
@@ -402,7 +402,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: "Attico di lusso con terrazza panoramica sull'Arno e vista Duomo. Finiture di pregio e design moderno.",
     agent: { id: 1, name: 'Giovanni Storti', contact: 'g.storti@example.com', agencyName: "Dieti Estates Firenze" },
     id_agent: 1,
-    id_address: 13,
+    id_city: 13,
     features: ['Terrazza Panoramica', 'Vista Arno', 'Aria Condizionata Canalizzata', 'Domotica', 'Ascensore Privato'],
     yearBuilt: 2015,
     energyRating: 'A',
@@ -420,7 +420,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
   },
   {
     id: 14,
-    address: 'Via Panoramica 22, Trento',
+    city: 'Via Panoramica 22, Trento',
     price: 280000,
     status: 'new',
     createdAt: new Date(2023, 10, 10).toISOString(),
@@ -432,7 +432,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: "Terreno edificabile con splendida vista sulle montagne circostanti, ideale per la costruzione di una villa singola o bifamiliare.",
     agent: { id: 2, name: 'Marina Massironi', contact: 'm.massironi@example.com', agencyName: "Dieti Estates Trentino" },
     id_agent: 2,
-    id_address: 14,
+    id_city: 14,
     features: ['Vista Montagne', 'Zona Residenziale Esclusiva', 'Progetto Approvato (opzionale)'],
     latitude: 46.0667,
     longitude: 11.1167,
@@ -446,7 +446,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
   },
   {
     id: 15,
-    address: 'Via Indipendenza 50, Bologna',
+    city: 'Via Indipendenza 50, Bologna',
     price: 900,
     status: 'new',
     createdAt: new Date(2023, 8, 15).toISOString(),
@@ -460,7 +460,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: "Trilocale accogliente e funzionale in zona universitaria, comodo a tutti i servizi. Attualmente affittato a studenti con ottima rendita.",
     agent: { id: 3, name: 'Giacomo Poretti', contact: 'g.poretti@example.com', agencyName: "Dieti Estates Bologna" },
     id_agent: 3,
-    id_address: 15,
+    id_city: 15,
     features: ['Arredato', 'Vicino Università', 'Termoautonomo', 'Balcone'],
     yearBuilt: 1970,
     energyRating: 'E',
@@ -473,6 +473,69 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
         floor: '2',
         elevator: false,
         pool: false,
+      }
+    }
+  },
+  {
+    id: 16,
+    city: 'Via del Corso 200, Roma',
+    price: 850000,
+    status: 'renovated',
+    createdAt: new Date(2024, 6, 1).toISOString(),
+    type: 'residential',
+    propertyCategory: 'Appartamento',
+    imageUrl: 'https://picsum.photos/seed/aptroma/800/600',
+    images: ['https://picsum.photos/seed/aptroma/800/600', 'https://picsum.photos/seed/aptroma_int/800/600', 'https://picsum.photos/seed/aptroma_view/800/600'],
+    contractType: 'sale',
+    area: 120,
+    numberOfBedrooms: 2,
+    numberOfBathrooms: 2,
+    description: 'Prestigioso appartamento nel cuore di Roma, finemente ristrutturato con materiali di pregio. Vista mozzafiato sulla città.',
+    agent: { id: 1, name: 'Giovanni Storti', contact: 'g.storti@example.com', agencyName: "Dieti Estates Roma" },
+    id_agent: 1,
+    id_address: 16,
+    features: ['Vista Panoramica', 'Ristrutturazione di Lusso', 'Domotica', 'Portiere'],
+    yearBuilt: 1950,
+    energyRating: 'C',
+    latitude: 41.9058,
+    longitude: 12.4823,
+    propertyDetails: {
+      residential: {
+        category: 'Appartamento',
+        rooms: '4',
+        floor: '4',
+        elevator: true,
+        pool: false,
+      }
+    }
+  },
+  {
+    id: 17,
+    city: 'Strada Maggiore 30, Bologna',
+    price: 1500,
+    status: 'good condition',
+    createdAt: new Date(2024, 5, 20).toISOString(),
+    type: 'commercial',
+    propertyCategory: 'Ristorazione',
+    imageUrl: 'https://picsum.photos/seed/caffebologna/800/600',
+    images: ['https://picsum.photos/seed/caffebologna/800/600'],
+    contractType: 'rent',
+    area: 90,
+    numberOfBathrooms: 2,
+    description: 'Locale commerciale ideale per attività di ristorazione o bar, in posizione strategica nel centro storico di Bologna.',
+    agent: { id: 3, name: 'Giacomo Poretti', contact: 'g.poretti@example.com', agencyName: "Dieti Estates Bologna" },
+    id_agent: 3,
+    id_address: 17,
+    features: ['Canna Fumaria', 'Dehor Esterno', 'Arredato', 'Magazzino'],
+    yearBuilt: 1900,
+    energyRating: 'F',
+    latitude: 44.4938,
+    longitude: 11.3502,
+    propertyDetails: {
+      commercial: {
+        category: 'Ristorazione',
+        bathrooms: '2',
+        emergencyExit: true,
       }
     }
   }

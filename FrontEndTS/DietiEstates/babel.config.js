@@ -19,6 +19,13 @@ module.exports = function(api) {
             'material-symbols:house-outline',
             'material-symbols:business-center-outline',
             'material-symbols:admin-panel-settings-outline',
+            // Nuove icone material-symbols
+            'material-symbols:arrow-back-ios',
+            'material-symbols:directions-car',
+            'material-symbols:school',
+            'material-symbols:local-hospital',
+            'material-symbols:shopping-bag',
+            'material-symbols:train',
 
             'octicon:mark-github-16',
             'octicon:mark-github-24',

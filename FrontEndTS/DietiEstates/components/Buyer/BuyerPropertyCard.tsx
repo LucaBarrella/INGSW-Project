@@ -1,5 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { PropertyCard } from '@/components/Agent/PropertyListing/PropertyCard';
 import { ThemedIcon } from '@/components/ThemedIcon';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -22,13 +23,21 @@ export const BuyerPropertyCard: React.FC<BuyerPropertyCardProps> = ({
   lightColor,
   darkColor
 }) => {
+  const router = useRouter();
   const favoriteColor = useThemeColor({}, 'tint');
+
+  const handleDetailsPress = () => {
+    router.push({
+      pathname: '/(protected)/(buyer)/property-detail',
+      params: { propertyId: property.id },
+    });
+  };
 
   return (
     <View className="relative">
       <PropertyCard
         property={property}
-        onPress={onPress}
+        onPress={handleDetailsPress}
         lightColor={lightColor}
         darkColor={darkColor}
       />
