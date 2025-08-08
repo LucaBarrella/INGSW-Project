@@ -59,6 +59,8 @@
     "react-native-date-picker": "^5.0.12",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-iconify": "^2.0.3",
+    "react-native-map-clustering": "^4.0.0",
+    "react-native-maps": "^1.25.0",
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.3.0",
     "react-native-screens": "~4.10.0",

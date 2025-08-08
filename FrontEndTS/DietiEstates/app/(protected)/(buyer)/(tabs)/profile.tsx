@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, Alert } from 'react-native'; // Rimosso TouchableOpacity se non più usato direttamente
 import { useRouter } from 'expo-router';
-import * as SecureStore from 'expo-secure-store'; // Import SecureStore
+import { useAuth } from '../../../../context/AuthContext';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 // ThemedIcon potrebbe non essere più usata direttamente se ProfileOptionRow la gestisce
@@ -13,10 +13,8 @@ import { ProfileOptionRowProps } from '@/components/Profile/ProfileOptionRow'; /
 export default function ProfileTab() {
   const router = useRouter();
   const backgroundColor = useThemeColor({}, 'background');
+  const { signOut } = useAuth();
   // borderColor non è più usato direttamente qui se ProfileOptionsGroup e UserInfoCard lo gestiscono internamente
-
-  // Chiave per recuperare/rimuovere il token JWT da SecureStore
-  const TOKEN_KEY = 'user_auth_token';
 
   // TODO: Replace with real user data
   const mockUser = {
@@ -50,11 +48,7 @@ export default function ProfileTab() {
       icon: 'mdi:logout',
       onPress: async () => { // Trasformato in async
         try {
-          // Rimuovi il token da SecureStore
-          await SecureStore.deleteItemAsync(TOKEN_KEY);
-          console.log('Token rimosso con successo!'); // Log per debug
-          // Reindirizza alla schermata di autenticazione principale
-          router.replace('/(auth)');
+          await signOut();
         } catch (error) {
           console.error('Errore durante il logout:', error);
           Alert.alert('Errore Logout', 'Impossibile completare il logout. Riprova.');

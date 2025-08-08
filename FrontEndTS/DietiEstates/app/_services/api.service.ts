@@ -23,7 +23,7 @@ import {
   MOCK_PROPERTIES,
   MOCK_FEATURED_PROPERTIES,
 } from './__mocks__/mockData';
-import { AxiosResponse } from 'axios';
+
 
 // Definisce i path relativi degli endpoint API
 export const apiEndpoints = {
@@ -420,6 +420,28 @@ export const createProperty = async (propertyData: any): Promise<ApiResponseSucc
   return response.data;
 };
 
+/**
+ * Esegue il logout dell'utente invalidando il token sul server.
+ * @returns La risposta dell'API.
+ */
+export const logout = async (): Promise<ApiResponseSuccess> => {
+  if (USE_MOCK_API) {
+    console.log('[MOCK API] logout: Token invalidato');
+    return mockDelay(MOCK_SUCCESS_RESPONSE);
+  }
+  try {
+    // TODO: L'endpoint /api/auth/logout non è ancora disponibile.
+    // Una volta disponibile, decommentare la riga seguente:
+    // const response = await httpClient.post(apiEndpoints.logout);
+    // return response.data;
+    console.warn("logout: L'endpoint /api/auth/logout non è ancora disponibile. Simulazione successo.");
+    return { success: true, message: "Logout simulato con successo." };
+  } catch (error) {
+    console.error('Errore durante il logout API:', error);
+    throw error; // Rilancia l'errore per essere gestito a monte
+  }
+};
+
 // Esporta un oggetto contenente tutte le funzioni per un accesso facilitato
 const ApiService = {
   endpoints: apiEndpoints,
@@ -437,6 +459,7 @@ const ApiService = {
   getFeaturedProperties,
   getPropertyDetails,
   createProperty, // Aggiunta la nuova funzione
+  logout, // Aggiunta la nuova funzione di logout
   // Aggiungere qui altre funzioni API man mano che vengono implementate (es. favorites, visits)
 };
 

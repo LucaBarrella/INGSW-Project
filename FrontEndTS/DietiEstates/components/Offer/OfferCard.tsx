@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, TouchableOpacity } from 'react-native';
+import { Image, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ComponentProps } from 'react';
 
@@ -14,6 +14,26 @@ interface OfferCardProps {
   offer: Offer;
 }
 
+const StatusBadge = ({ status, color, icon }: { 
+  status: string; 
+  color: string; 
+  icon: IconName 
+}) => {
+  return (
+    <ThemedView 
+      className="absolute top-3 right-3 flex-row items-center gap-1.5 px-3 py-1.5 rounded-full"
+      style={{ 
+        backgroundColor: `${color}99`, 
+        borderColor: `${color}40`,
+        borderWidth: 1,
+      }}
+    >
+      <Ionicons name={icon} size={14} color={"#FFFFFF"} />
+      <ThemedText className="font-bold" style={{ color: "#FFFFFF" }}>{status}</ThemedText>
+    </ThemedView>
+  );
+};
+
 const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
@@ -23,25 +43,25 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
       case 'accettata':
         return {
           color: colors.visitStatusAccepted,
-          icon: 'checkmark-circle',
+          icon: 'checkmark-circle-outline',
           text: 'Accettata',
         };
       case 'rifiutata':
         return {
           color: colors.visitStatusRejected,
-          icon: 'close-circle',
+          icon: 'close-circle-outline',
           text: 'Rifiutata',
         };
       case 'in attesa':
         return {
           color: colors.visitStatusPending,
-          icon: 'time',
+          icon: 'time-outline',
           text: 'In attesa',
         };
       default:
         return {
-          color: colors.text, // Colore di default o errore
-          icon: 'help-circle', // Icona di default
+          color: colors.text,
+          icon: 'help-circle-outline',
           text: 'Sconosciuto',
         };
     }
@@ -50,67 +70,49 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
   const statusInfo = getStatusInfo(offer.status);
 
   return (
-    <ThemedView className="rounded-2xl shadow-md overflow-hidden m-4 border-[1px] border-gray-200 dark:border-gray-700"
-      style={{
-        backgroundColor: colors.propertyCardBackground,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3, // For Android
-      }}
-    >
-      <ThemedView className="relative">
-        <Image source={{ uri: offer.imageUrl }} className="w-full h-48" resizeMode="cover" />
-        <ThemedView
-          className="absolute top-3 right-3 flex-row items-center rounded-full px-3 py-1.5 border-[1px]"
-          style={{
-            backgroundColor: `${statusInfo.color}99`, // Opacità del 60% (99 in esadecimale)
-            borderColor: statusInfo.color,
-          }}
-        >
-          <Ionicons name={statusInfo.icon} size={14} color={Colors.light.white} />
-          <ThemedText className="text-xs font-bold ml-1.5" style={{ color: Colors.light.white }}>
-            {statusInfo.text}
-          </ThemedText>
-        </ThemedView>
+    <ThemedView className="bg-background rounded-xl m-4 shadow-lg border-border" style={{ backgroundColor: 'transparent' }}>
+      <ThemedView className="relative" style={{ backgroundColor: 'transparent' }}>
+        <Image 
+          source={{ uri: offer.imageUrl }} 
+          className="w-full h-52 rounded-t-xl"
+          resizeMode="cover"
+        />
+        <StatusBadge 
+          status={statusInfo.text} 
+          color={statusInfo.color} 
+          icon={statusInfo.icon} 
+        />
       </ThemedView>
-      <ThemedView className="p-4 flex-1">
-        {/* Blocco Indirizzo: Spaziatura inferiore rivista per coerenza */}
-        <ThemedView className="flex-row items-center mb-3 gap-2">
-          <Ionicons name="location-outline" size={22} color={colors.text} />
-          <ThemedText className="text-lg font-bold flex-1" style={{ color: colors.text }}>
-            {offer.address}
-          </ThemedText>
-        </ThemedView>
-
-        {/* Principio di Vicinanza: Importo e Data raggruppati sulla stessa riga */}
-        <ThemedView className="flex-row justify-between items-center mb-4">
-          {/* Gruppo Importo */}
-          <ThemedView className="flex-row items-center gap-1.5">
-            <Ionicons name="cash-outline" size={20} color={colors.propertyCardDetail} />
-            <ThemedText className="text-base" style={{ color: colors.propertyCardDetail }}>
-              {offer.amount}
-            </ThemedText>
-          </ThemedView>
-          {/* Gruppo Data */}
-          <ThemedView className="flex-row items-center gap-1.5">
-            <Ionicons name="calendar-outline" size={20} color={colors.propertyCardDetail} />
-            <ThemedText className="text-base" style={{ color: colors.propertyCardDetail }}>
-              {offer.date}
-            </ThemedText>
-          </ThemedView>
-        </ThemedView>
-
-        {/* Principio di Continuità: Spaziatura verticale bilanciata */}
-        <ThemedText className="text-base text-gray-600 dark:text-gray-300 mb-5 opacity-80">
-          {offer.actionDescription}
-        </ThemedText>
-
-        {/* Azione: mt-auto spinge il bottone in fondo, creando una chiara separazione */}
+      
+      <ThemedView className="p-5 space-y-4 bg-card rounded-b-xl gap-4" style={{ backgroundColor: colors.propertyCardBackground }}>
+        {/* Address Section */}
+        <View className="flex-row items-start gap-2">
+          <Ionicons name="location-outline" size={20} color={colors.text} className="mt-0.5" />
+          <ThemedText className="text-lg font-semibold flex-1">{offer.address}</ThemedText>
+        </View>
+        
+        {/* Financial and Date Details */}
+        <View className="flex-row justify-between items-center">
+          <View className="flex-row items-center gap-1.5">
+            <Ionicons name="cash-outline" size={16} color={colors.text} />
+            <ThemedText className="text-muted-foreground">{offer.amount}</ThemedText>
+          </View>
+          
+          <View className="flex-row items-center gap-1.5">
+            <Ionicons name="calendar-outline" size={16} color={colors.text} />
+            <ThemedText className="text-muted-foreground">{offer.date}</ThemedText>
+          </View>
+        </View>
+        
+        {/* Description */}
+        <ThemedText className="text-sm text-muted-foreground">{offer.actionDescription}</ThemedText>
+        
+        {/* Action Button */}
         <TouchableOpacity
-          className="w-full flex-row items-center justify-center mt-auto px-4 py-3 rounded-xl shadow-lg gap-2"
-          style={{ backgroundColor: colors.buttonBackground }}
+          className="w-full flex-row items-center justify-center gap-2 mt-2 px-4 py-3 rounded-lg"
+          style={{
+            backgroundColor: colors.buttonBackground,
+          }}
         >
           <ThemedText className="text-base font-bold" style={{ color: colors.buttonTextColor }}>
             {offer.actionText}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import * as SecureStore from 'expo-secure-store';
+import { useAuth } from '../../../../context/AuthContext';
 import { ThemedView } from '@/components/ThemedView';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { useTranslation } from 'react-i18next';
@@ -14,9 +14,7 @@ export default function AdminProfileTab() {
   const router = useRouter();
   const { t } = useTranslation();
   const backgroundColor = useThemeColor({}, 'background');
-
-  // Chiave per recuperare/rimuovere il token JWT da SecureStore
-  const TOKEN_KEY = 'admin_auth_token';
+  const { signOut } = useAuth();
 
   // TODO: Replace with real admin data from context/state
   const mockAdmin = {
@@ -46,8 +44,7 @@ export default function AdminProfileTab() {
       icon: 'material-symbols:logout', // Icona specificata nel punto 3
       onPress: async () => {
         try {
-          await SecureStore.deleteItemAsync(TOKEN_KEY);
-          router.replace('/(auth)');
+          await signOut();
         } catch (error) {
           console.error('Errore durante il logout:', error);
           Alert.alert(

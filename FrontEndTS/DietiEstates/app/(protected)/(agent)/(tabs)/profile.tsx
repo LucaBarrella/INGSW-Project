@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ScrollView, Alert } from 'react-native'; // Rimosso TouchableOpacity, ThemedButton
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
-import * as SecureStore from 'expo-secure-store';
+import { useAuth } from '../../../../context/AuthContext';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { TabHeader } from '@/components/TabHeader';
@@ -13,12 +13,14 @@ import { UserInfoCard } from '@/components/Profile/UserInfoCard';
 import { ProfileOptionsGroup } from '@/components/Profile/ProfileOptionsGroup';
 import { ProfileOptionRowProps } from '@/components/Profile/ProfileOptionRow';
 
-// Chiave per recuperare/rimuovere il token JWT da SecureStore, TODO secret
-const TOKEN_KEY = 'user_auth_token';
 
 type AgentProfile = {
   fullName: string;
   email: string;
+  licenseNumber: string;
+  specialization: string;
+  experienceYears: number;
+  officeAddress: string;
 };
 
 // InfoRow non è più necessaria
@@ -26,6 +28,7 @@ type AgentProfile = {
 export default function ProfileScreen() {
   const { t } = useTranslation();
   const router = useRouter(); // Inizializza router
+  const { signOut } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [profile, setProfile] = useState<AgentProfile | null>(null);
@@ -55,9 +58,7 @@ export default function ProfileScreen() {
   // Funzione per il logout
   const handleLogout = async () => {
     try {
-      await SecureStore.deleteItemAsync(TOKEN_KEY);
-      console.log('Token agente rimosso con successo!');
-      router.replace('/(auth)'); // Torna alla schermata di selezione ruolo/login
+      await signOut();
     } catch (error) {
       console.error('Errore durante il logout agente:', error);
       Alert.alert(t('common.error'), t('logout.error')); // Assumendo traduzioni esistenti

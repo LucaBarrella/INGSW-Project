@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import { getToken, saveToken, removeToken } from '@/app/_services/token.service';
 import ApiService from '@/app/_services/api.service';
+import { logout } from '@/app/_services/api.service'; // Importa la funzione logout
 import { UserCredentials } from '@/types/UserCredentials';
 import { Alert } from 'react-native';
 import { useRouter, useSegments } from 'expo-router';
@@ -44,15 +45,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
+    console.log("Auth effect running. User:", user ? user.userType : null, "Segments:", segments);
+    const isProtected = (segments: string[]) => segments[0] === '(protected)';
+
     if (!isLoading) {
       const inAuthGroup = segments[0] === '(auth)';
-      const inProtectedGroup = segments[0] === '(protected)';
 
-      if (user && !inProtectedGroup) {
+      if (user && !isProtected(segments)) {
         // Utente loggato, reindirizza alla home protetta
         router.replace('/(protected)/(buyer)/(tabs)/home');
-      } else if (!user && inProtectedGroup) {
+      } else if (!user && isProtected(segments)) {
         // Utente non loggato, reindirizza alla pagina di login
+        console.log("Redirecting to login page...");
         router.replace('/(auth)');
       }
     }
@@ -95,14 +99,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signOut = async () => {
+    console.log("Attempting to sign out...");
     try {
+      await logout(); // Chiama la funzione API di logout
+      console.log('Logout API chiamato con successo.');
+    } catch (apiError) {
+      console.error('Errore durante il logout API:', apiError);
+      // Non bloccare il logout locale anche se l'API fallisce
+      Alert.alert('Errore Logout', 'Si è verificato un problema durante il logout dal server. Riprova più tardi.');
+    } finally {
       await removeToken();
       setUser(null);
-      console.log('Logout riuscito!');
+      console.log("Sign out process complete. User state should be null.");
       // La navigazione è gestita dall'useEffect
-    } catch (error) {
-      console.error('Errore durante il logout:', error);
-      Alert.alert('Errore Logout', 'Impossibile effettuare il logout.');
     }
   };
 

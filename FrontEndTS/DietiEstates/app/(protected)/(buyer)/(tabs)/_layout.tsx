@@ -1,19 +1,10 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import {HapticTab} from '@/components/HapticTab';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import TabBarBackground from '@/components/ui/TabBarBackground';
+import { CustomTabBar } from '@/components/CustomTabBar';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
-
-
-const HomeIcon = ({ color }: { color: string }) => <MaterialIcons name="home" size={24} color={color} />;
-const VisitsIcon = ({ color }: { color: string }) => <MaterialIcons name="calendar-today" size={24} color={color} />;
-const FavoriteIcon = ({ color }: { color: string }) => <MaterialIcons name="favorite" size={24} color={color} />;
-const ProfileIcon = ({ color }: { color: string }) => <MaterialIcons name="person" size={24} color={color} />;
-
+import { HapticTab } from '@/components/HapticTab';
 
 export default function BuyerTabLayout() {
   const colorScheme = useColorScheme();
@@ -21,51 +12,40 @@ export default function BuyerTabLayout() {
 
   return (
     <Tabs
+      tabBar={(props) => <CustomTabBar {...props} />}
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
         tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            position: 'absolute',
-          },
-          default: {},
-        }),
       }}>
       <Tabs.Screen
         name="home"
         options={{
           title: t('buyer.tabs.home'),
-          tabBarIcon: HomeIcon
         }}
       />
       <Tabs.Screen
         name="visits"
         options={{
           title: t('buyer.tabs.visits'),
-          tabBarIcon: VisitsIcon
         }}
       />
       <Tabs.Screen
         name="favorites"
         options={{
           title: t('buyer.tabs.favorites'),
-          tabBarIcon: FavoriteIcon
         }}
       />
       <Tabs.Screen
         name="offers"
         options={{
           title: t('buyer.tabs.offers'),
-          tabBarIcon: ({ color }) => <MaterialIcons name="receipt" size={24} color={color} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
           title: t('buyer.tabs.profile'),
-          tabBarIcon: ProfileIcon
         }}
       />
     </Tabs>
