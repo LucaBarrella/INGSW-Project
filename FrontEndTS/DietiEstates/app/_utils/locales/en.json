@@ -11,6 +11,22 @@
   "selectAgentRole": "Select the real estate agent role",
   "selectAdminRole": "Select the administrator role",
   "UNDER_CONSTRUCTION": "under construction",
+  
+  "property status": {
+    "UNDER_CONSTRUCTION": "under construction",
+    "POOR_CONDITION": "poor condition",
+    "TO_BE_RENOVATED": "to be renovated",
+    "RENOVATED": "renovated",
+    "GOOD_CONDITION": "good condition",
+    "NEW": "new"
+  },
+
+  "property category": {
+    "commercial property": "commercial property",
+    "residential property": "residential property",
+    "land": "land",
+    "garage": "garage"
+  },
 
   "admin": {
     "welcome": "Welcome to Admin Dashboard",

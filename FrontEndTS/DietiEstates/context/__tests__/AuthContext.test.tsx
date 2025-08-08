@@ -17,7 +17,7 @@ jest.mock('expo-router', () => ({
 const TestComponent = () => {
   const { user, isLoading } = useAuth();
   if (isLoading) return <Text>Loading...</Text>;
-  return <Text>{user ? `User: ${user.token}` : 'No user'}</Text>;
+  return <Text>{user ? `User: ${user.accessToken}` : 'No user'}</Text>;
 };
 
 describe('AuthContext', () => {

@@ -5,8 +5,8 @@ import { PropertyFilters } from '@/components/Buyer/SearchIntegration/types'; //
 
 // --- Tipi Base ---
 import { LoginCredentials } from '@/types/UserCredentials'; // Importa LoginCredentials
-type ApiResponseToken = { token: string; userType: 'buyer' | 'agent' | 'admin' }; // Esempio
-type ApiResponseSuccess = { success: boolean; message?: string; id?: string | number; token?: string }; // Esempio
+type ApiResponseToken = { accessToken: string; userType: 'buyer' | 'agent' | 'admin' }; // Esempio
+type ApiResponseSuccess = { success: boolean; message?: string; id?: string | number; accessToken?: string }; // Esempio
 type UserCreationData = { email: string; password?: string; name?: string; /* altri campi */ }; // Esempio generico
 type PasswordChangeData = { oldPassword: string; newPassword: string };
 
@@ -39,6 +39,9 @@ export const apiEndpoints = {
   agentLogin: '/estates_agents/login',
 
   //! After login
+  //? Common
+  logout: '/logout',
+
   //? Admin
   adminChangePassword: '/admins/change-amministration-password',
   adminCreate: '/admins/create-admin',

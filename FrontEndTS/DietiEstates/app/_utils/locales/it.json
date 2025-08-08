@@ -10,8 +10,22 @@
   "selectUserRole": "Seleziona ruolo utente per cercare casa",
   "selectAgentRole": "Seleziona ruolo agente immobiliare",
   "selectAdminRole": "Seleziona ruolo amministratore",
-  "UNDER_CONSTRUCTION": "in costruzione",
-  "commercial property": "proprietà commerciale",
+
+  "property status": {
+    "UNDER_CONSTRUCTION": "in costruzione",
+    "POOR_CONDITION": "cattive condizioni",
+    "TO_BE_RENOVATED": "da ristrutturare",
+    "RENOVATED": "ristrutturato",
+    "GOOD_CONDITION": "buone condizioni",
+    "NEW": "nuovo"
+  },
+
+  "property category": {
+    "commercial property": "proprietà commerciale",
+    "residential property": "proprietà residenziale",
+    "land": "terreno",
+    "garage": "autorimessa"
+  },
 
   "admin": {
     "welcome": "Benvenuto nell'Area Amministratore",

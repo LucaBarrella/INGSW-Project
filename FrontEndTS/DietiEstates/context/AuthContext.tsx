@@ -119,7 +119,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     clearError(); // Resetta l'errore all'inizio di un nuovo tentativo
     try {
       const responseData = await ApiService.registerUser(credentials);
-      const token = responseData?.token;
+      const token = responseData?.accessToken;
       if (token) {
         await saveToken(token);
         setUser({ token });
