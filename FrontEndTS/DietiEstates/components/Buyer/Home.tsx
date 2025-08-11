@@ -9,6 +9,7 @@ import { Location, CategoryItem, TabItem } from "./types";
 import { getFeaturedProperties } from "@/app/_services/api.service";
 import ApiError from "@/app/_services/errors/ApiError";
 import { PropertyDetail } from "@/components/Agent/PropertyDashboard/types";
+import { useTranslation } from "react-i18next";
 
 const categories: CategoryItem[] = [
   { icon: "home", title: "Casa", count: 5343 },
@@ -56,6 +57,7 @@ export const Home: React.FC = () => {
 
     fetchFeatured();
   }, []);
+  const { t } = useTranslation();
 
   return (
     <ThemedView className="flex-1 bg-gray-50">
@@ -85,7 +87,7 @@ export const Home: React.FC = () => {
               <LocationCard
                 key={property.id}
                 location={{
-                  name: property.address || "Indirizzo Sconosciuto",
+                  name: t('property_category.'+property.propertyCategory)+ " in " + property.city,
                   distance: 0, // Non abbiamo una distanza qui, potresti volerla calcolare o rimuovere
                   image: property.images?.[0] || "https://placehold.co/300x200",
                 }}

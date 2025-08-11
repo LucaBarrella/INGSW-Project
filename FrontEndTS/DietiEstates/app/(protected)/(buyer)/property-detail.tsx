@@ -7,6 +7,7 @@ import { Colors } from '@/constants/Colors';
 import { ThemedIcon } from '@/components/ThemedIcon';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
+import { useTranslation } from 'react-i18next';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -23,6 +24,7 @@ const PropertyDetailScreen: React.FC = () => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   const scrollViewRef = useRef<ScrollView>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchPropertyDetails = async () => {
@@ -178,7 +180,7 @@ const PropertyDetailScreen: React.FC = () => {
 
         {/* Titolo, indirizzo e prezzo */}
         <View style={styles.propertyInfo}>
-          <ThemedText style={styles.title}>{property.propertyCategory || 'Immobile'}</ThemedText>
+          <ThemedText style={styles.title}>{t('property_category.'+property.propertyCategory) || 'Immobile'}</ThemedText>
           <ThemedText style={styles.address}>
             {property.city || 'Indirizzo non disponibile'}
           </ThemedText>
@@ -222,7 +224,7 @@ const PropertyDetailScreen: React.FC = () => {
           </View>
           <View style={styles.tag}>
             <ThemedText style={styles.tagText}>
-              {property.status === 'NEW' ? 'Nuovo' : property.status === 'renovated' ? 'Ristrutturato' : 'Buono stato'}
+             {t('property_status.'+property.status)}
             </ThemedText>
           </View>
           <View style={styles.tag}>

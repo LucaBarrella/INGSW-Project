@@ -1,13 +1,17 @@
 import axios, { AxiosError, InternalAxiosRequestConfig, AxiosInstance } from 'axios';
 import ApiError from './errors/ApiError';
 import * as SecureStore from 'expo-secure-store';
+import { apiEndpoints } from './api.service';
+import { getRefreshToken, saveRefreshToken, saveToken } from './token.service';
+import { Alert } from 'react-native';
+import { useNavigation } from 'expo-router';
 // Importa il flag MOCK (potrebbe causare dipendenza circolare, vedi nota sotto)
 // import { USE_MOCK_API } from './api.service'; // <-- ATTENZIONE: Possibile dipendenza circolare
 
 // --- FLAG PER ABILITARE/DISABILITARE LE API MOCK ---
 // Duplichiamo il flag qui per evitare dipendenze circolari.
 // Assicurati che questo valore sia SINCRONIZZATO con quello in api.service.ts
-const USE_MOCK_API_HTTP = true;
+const USE_MOCK_API_HTTP = false;
 
 // Chiave per salvare/recuperare il token JWT da SecureStore
 const TOKEN_KEY = 'user_auth_token';
@@ -35,7 +39,7 @@ const TOKEN_KEY = 'user_auth_token';
 // Fallback temporaneo se le variabili non sono in app.json/extra
 // TODO: Rimuovere questo fallback e configurare correttamente app.json/extra
 const baseURL = __DEV__
-  ? 'http://192.168.1.52:8080' // Usa l'URL DEV da .env, TODO usa localhost per emulatori iOS e IP locale per dispositivi fisici
+  ? 'http://192.168.1.224:8080' // Usa l'URL DEV da .env, TODO usa localhost per emulatori iOS e IP locale per dispositivi fisici
   : 'https://your-production-api-url.azurewebsites.net/api'; // Usa l'URL PROD da .env (DA AGGIORNARE!)
 
 if (!baseURL && !USE_MOCK_API_HTTP) { // Controlla baseURL solo se non siamo in mock http
@@ -100,7 +104,7 @@ const httpClient: AxiosInstance = (() => {
       try {
         const token = await SecureStore.getItemAsync(TOKEN_KEY);
         if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
+          config.headers['Authorization'] = `Bearer ${token}`;
           config.headers.Bearer = token;
         }
       } catch (error) {
@@ -117,11 +121,11 @@ const httpClient: AxiosInstance = (() => {
     // Interceptor di Risposta (solo per istanza reale)
     instance.interceptors.response.use(
       (response) => response,
-      (error: AxiosError) => {
+      async (error: AxiosError) => {
         let userMessage = 'Si è verificato un errore inatteso.';
         let statusCode = error.response?.status || 0;
-
         if (error.response) {
+          console.log(statusCode);
           // Il server ha risposto con uno status code fuori dal range 2xx
           console.error('Dati errore:', error.response.data);
           console.error('Header errore:', error.response.headers);
@@ -141,6 +145,17 @@ const httpClient: AxiosInstance = (() => {
               break;
             case 409:
               userMessage = 'Conflitto. La risorsa esiste già o c\'è un problema di stato.';
+              break;
+            case 498:
+              if (!error.request.responseURL.endsWith("/refresh")) {
+                const newToken = await httpClient.post(apiEndpoints.refresh, {refreshToken: await getRefreshToken()});
+                saveToken(newToken.data.accessToken);
+                saveRefreshToken(newToken.data.refreshToken);
+                return httpClient.request(error.config);
+              }
+              else {
+                // TODO navigate to homepage
+              }
               break;
             case 500:
               userMessage = 'Errore interno del server. Riprova più tardi.';

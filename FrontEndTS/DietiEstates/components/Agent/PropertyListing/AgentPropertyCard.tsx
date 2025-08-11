@@ -8,6 +8,7 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import * as Haptics from 'expo-haptics';
 import ThemedButton from '@/components/ThemedButton';
 import { ConfirmationDialog } from '@/components/ConfirmationDialog';
+import { useTranslation } from 'react-i18next';
 
 interface AgentPropertyCardProps {
   property: PropertyDetail;
@@ -71,6 +72,7 @@ export const AgentPropertyCard: React.FC<AgentPropertyCardProps> = ({
   };
 
   const placeholderImageUrl = 'https://placehold.co/600x400/000000/FFFFFF.webp?text=Image+Not+Found&font=Poppins';
+  const { t } = useTranslation();
   
   return (
     <>
@@ -78,7 +80,7 @@ export const AgentPropertyCard: React.FC<AgentPropertyCardProps> = ({
         onPress={handlePress}
         className="rounded-xl shadow-md overflow-hidden"
         accessibilityRole="button"
-        accessibilityLabel={`Visualizza dettagli per ${property.address}`}
+        accessibilityLabel={`Visualizza dettagli per ${t('property_category.'+property.propertyCategory)} in ${property.city}, ${t('property_status.'+property.status)}`}
       >
         <Image
           source={{ uri: property.imageUrl || placeholderImageUrl }}
@@ -93,7 +95,7 @@ export const AgentPropertyCard: React.FC<AgentPropertyCardProps> = ({
             lightColor={textColor}
             darkColor={textColor}
           >
-            {property.address}
+            {t('property_category.'+property.propertyCategory)} in {property.city}, {t('property_status.'+property.status)}
           </ThemedText>
           
           <ThemedText 
@@ -141,7 +143,7 @@ export const AgentPropertyCard: React.FC<AgentPropertyCardProps> = ({
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
         customTitle="Conferma Eliminazione"
-        customMessage={`Sei sicuro di voler eliminare l'immobile "${property.title}"?`}
+        customMessage={`Sei sicuro di voler eliminare l'immobile?`}
         confirmText="Elimina"
       />
     </>

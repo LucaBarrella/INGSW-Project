@@ -46,7 +46,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
     onPress();
   };
 
-const placeholderImageUrl = 'https://placehold.co/600x400/000000/FFFFFF.webp?text=Image+Not+Found&font=Poppins';
+  const placeholderImageUrl = 'https://placehold.co/600x400/000000/FFFFFF.webp?text=Image+Not+Found&font=Poppins';
   const { t } = useTranslation();
 
 

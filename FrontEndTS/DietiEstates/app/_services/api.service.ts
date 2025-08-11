@@ -11,7 +11,7 @@ type UserCreationData = { email: string; password?: string; name?: string; /* al
 type PasswordChangeData = { oldPassword: string; newPassword: string };
 
 // --- FLAG PER ABILITARE/DISABILITARE LE API MOCK ---
-const USE_MOCK_API = true; // Imposta a 'true' per usare dati mock, 'false' per API reali
+const USE_MOCK_API = false; // Imposta a 'true' per usare dati mock, 'false' per API reali
 
 // Importa i dati mock da un file separato
 import {
@@ -41,6 +41,7 @@ export const apiEndpoints = {
   //! After login
   //? Common
   logout: '/logout',
+  refresh: '/refresh',
 
   //? Admin
   adminChangePassword: '/admins/change-amministration-password',
@@ -53,8 +54,8 @@ export const apiEndpoints = {
   agentProperties: '/agent/properties', // Endpoint per lista immobili agente
 
   //? Properties (Buyer & General)
-  searchProperties: '/api/properties/search', // Endpoint per ricerca immobili
-  featuredProperties: '/api/properties/featured', // Endpoint per immobili in evidenza
+  searchProperties: '/properties/search', // Endpoint per ricerca immobili
+  featuredProperties: '/properties/featured', // Endpoint per immobili in evidenza
   propertyDetails: '/properties/details', // Endpoint base per dettagli immobile (si userà /properties/{id})
   createProperty: '/properties/create', // Endpoint per creare un nuovo immobile (POST)
 
@@ -375,10 +376,6 @@ export const getFeaturedProperties = async (): Promise<PropertyDetail[]> => {
   } else {
     const response = await httpClient.get(apiEndpoints.featuredProperties);
     const DTOs: PropertyDTO[] = response.data;
-    console.log(response);
-    console.log(DTOs);
-    console.log("HERE");
-    console.log(DTOs[0].id)
     const ret = await Promise.all(DTOs.map((value: PropertyDTO) => PropertyDTO_to_PropertyDetail(value)));
     return ret;
   }
@@ -405,7 +402,7 @@ export const getPropertyDetails = async (propertyId: string | number): Promise<P
   // Costruisce l'URL completo per l'endpoint specifico dell'immobile
   const url = `${apiEndpoints.propertyDetails}/${propertyId}`;
   const response = await httpClient.get(url);
-  return response.data;
+  return PropertyDTO_to_PropertyDetail(response.data);
 };
 
 /**

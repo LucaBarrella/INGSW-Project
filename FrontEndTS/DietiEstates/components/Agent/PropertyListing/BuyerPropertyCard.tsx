@@ -6,6 +6,7 @@ import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import * as Haptics from 'expo-haptics';
 import ThemedButton from '@/components/ThemedButton';
+import { useTranslation } from 'react-i18next';
 
 interface BuyerPropertyCardProps {
   property: PropertyDetail;
@@ -43,13 +44,15 @@ export const BuyerPropertyCard: React.FC<BuyerPropertyCardProps> = ({
     }
     onPress();
   };
+  
+  const { t } = useTranslation();
 
   return (
     <TouchableOpacity
       onPress={handlePress}
       className="rounded-xl shadow-md overflow-hidden"
       accessibilityRole="button"
-      accessibilityLabel={`Visualizza dettagli per ${property.address}`}
+      accessibilityLabel={`Visualizza dettagli per ${t('property_category.'+property.propertyCategory)} in ${property.city}, ${t('property_status.'+property.status)}`}
     >
       <Image
         source={{ uri: property.imageUrl || 'https://placehold.co/600x400.webp?text=Image+Not+Found' }}
@@ -64,7 +67,7 @@ export const BuyerPropertyCard: React.FC<BuyerPropertyCardProps> = ({
           lightColor={textColor}
           darkColor={textColor}
         >
-          {property.address}
+          {t('property_category.'+property.propertyCategory)} in {property.city}
         </ThemedText>
         
         <ThemedText 

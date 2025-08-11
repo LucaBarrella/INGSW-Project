@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
-import { getToken, saveToken, removeToken } from '@/app/_services/token.service';
+import { getToken, saveToken, removeToken, saveRefreshToken } from '@/app/_services/token.service';
 import ApiService from '@/app/_services/api.service';
 import { logout } from '@/app/_services/api.service'; // Importa la funzione logout
 import { UserCredentials } from '@/types/UserCredentials';
@@ -82,6 +82,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const token = responseData?.accessToken;
       if (token) {
         await saveToken(token);
+        await saveRefreshToken(responseData.refreshToken);
         setUser({ token });
         console.log('Login riuscito, token salvato!');
       } else {
