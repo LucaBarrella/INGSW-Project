@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Schedule Visit</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style type="text/tailwindcss">
+      :root {
+        --brand-primary: #0d7ff2;
+        --background-primary: #ffffff;
+        --background-secondary: #f3f4f6;
+        --text-primary: #111827;
+        --text-secondary: #6b7280;
+        --text-disabled: #9ca3af;
+        --border-primary: #e5e7eb;
+      }
+      body {
+        font-family: "Manrope", sans-serif;
+      }
+      .day-chip {
+        @apply flex flex-col items-center justify-center gap-1.5 h-20 w-14 shrink-0 rounded-xl cursor-pointer transition-colors duration-200;
+      }
+      .day-chip.available {
+        @apply bg-transparent text-[var(--text-primary)];
+      }
+      .day-chip.today {
+        @apply bg-gray-100 border border-gray-200;
+      }
+      .day-chip.selected {
+        @apply bg-[var(--brand-primary)] text-white;
+      }
+      .day-chip.disabled {
+        @apply bg-transparent text-[var(--text-disabled)] cursor-not-allowed;
+      }
+      .time-slot {
+        @apply flex items-center justify-center h-10 rounded-full cursor-pointer transition-all duration-200 flex-1 basis-[calc(50%-0.5rem)];
+      }
+      .time-slot.available {
+        @apply border border-[var(--border-primary)] text-[var(--text-primary)] hover:border-[var(--brand-primary)];
+      }
+      .time-slot.selected {
+        @apply bg-[var(--brand-primary)] text-white font-bold border-[var(--brand-primary)];
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-gray-800">
+<div class="relative flex size-full min-h-screen flex-col justify-end bg-black/30 backdrop-blur-sm">
+<div class="flex flex-col rounded-t-3xl bg-[var(--background-primary)] shadow-2xl">
+<div class="flex h-8 w-full items-center justify-center pt-3">
+<div class="h-1.5 w-10 rounded-full bg-gray-300"></div>
+</div>
+<div class="flex-1 p-4 pb-0">
+<h1 class="text-[var(--text-primary)] text-2xl font-bold text-center mb-4">Schedule Your Visit</h1>
+<div class="flex items-center justify-between px-2 py-2">
+<button class="p-2 rounded-full hover:bg-gray-100">
+<span class="material-icons text-[var(--text-secondary)]">chevron_left</span>
+</button>
+<h2 class="text-[var(--text-primary)] text-lg font-bold">May 2024</h2>
+<button class="p-2 rounded-full hover:bg-gray-100">
+<span class="material-icons text-[var(--text-secondary)]">chevron_right</span>
+</button>
+</div>
+<div class="flex gap-2 overflow-x-auto p-2 -mx-4 no-scrollbar">
+<div class="day-chip disabled">
+<span class="text-sm font-medium">Sun</span>
+<span class="text-lg font-bold">12</span>
+</div>
+<div class="day-chip today available">
+<span class="text-sm font-medium">Mon</span>
+<span class="text-lg font-bold">13</span>
+</div>
+<div class="day-chip selected">
+<span class="text-sm font-medium">Tue</span>
+<span class="text-lg font-bold">14</span>
+</div>
+<div class="day-chip available">
+<span class="text-sm font-medium">Wed</span>
+<span class="text-lg font-bold">15</span>
+</div>
+<div class="day-chip available">
+<span class="text-sm font-medium">Thu</span>
+<span class="text-lg font-bold">16</span>
+</div>
+<div class="day-chip available">
+<span class="text-sm font-medium">Fri</span>
+<span class="text-lg font-bold">17</span>
+</div>
+<div class="day-chip available">
+<span class="text-sm font-medium">Sat</span>
+<span class="text-lg font-bold">18</span>
+</div>
+<div class="day-chip disabled">
+<span class="text-sm font-medium">Sun</span>
+<span class="text-lg font-bold">19</span>
+</div>
+</div>
+<h3 class="text-[var(--text-primary)] text-base font-semibold px-2 pt-6 pb-3">Available Times</h3>
+<div class="grid grid-cols-2 gap-3 px-2 pb-4">
+<button class="time-slot available">
+<span class="truncate">09:30</span>
+</button>
+<button class="time-slot selected">
+<span class="truncate">10:00</span>
+</button>
+<button class="time-slot available">
+<span class="truncate">10:30</span>
+</button>
+<button class="time-slot available">
+<span class="truncate">11:00</span>
+</button>
+<button class="time-slot available">
+<span class="truncate">11:30</span>
+</button>
+<button class="time-slot available">
+<span class="truncate">12:00</span>
+</button>
+<button class="time-slot available">
+<span class="truncate">12:30</span>
+</button>
+<button class="time-slot available">
+<span class="truncate">13:00</span>
+</button>
+<button class="time-slot available">
+<span class="truncate">14:00</span>
+</button>
+<button class="time-slot available">
+<span class="truncate">14:30</span>
+</button>
+</div>
+</div>
+<div class="sticky bottom-0 bg-white p-4 pt-2 border-t border-[var(--border-primary)]">
+<button class="w-full h-12 rounded-full bg-[var(--brand-primary)] text-white text-base font-bold flex items-center justify-center transition-all duration-300 disabled:bg-gray-300 disabled:text-gray-500" id="confirm-button">
+            Confirm Visit for 10:00
+          </button>
+</div>
+</div>
+</div>
+
+</body></html>
