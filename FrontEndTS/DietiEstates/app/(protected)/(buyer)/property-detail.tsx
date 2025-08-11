@@ -8,6 +8,7 @@ import { ThemedIcon } from '@/components/ThemedIcon';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { useTranslation } from 'react-i18next';
+import VisitSchedulerPanel from '../../../components/Buyer/VisitSchedulerPanel';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -22,6 +23,7 @@ const PropertyDetailScreen: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'description' | 'details' | 'features'>('description');
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isVisitPanelVisible, setVisitPanelVisible] = useState(false);
 
   const scrollViewRef = useRef<ScrollView>(null);
   const { t } = useTranslation();
@@ -234,7 +236,7 @@ const PropertyDetailScreen: React.FC = () => {
 
         {/* Pulsanti di azione */}
         <View style={styles.actionButtons}>
-          <TouchableOpacity style={styles.primaryButton}>
+          <TouchableOpacity style={styles.primaryButton} onPress={() => setVisitPanelVisible(true)}>
             <ThemedText style={styles.primaryButtonText}>Pianifica una visita</ThemedText>
           </TouchableOpacity>
           <TouchableOpacity style={styles.secondaryButton}>
@@ -337,6 +339,10 @@ const PropertyDetailScreen: React.FC = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
+      <VisitSchedulerPanel
+        isVisible={isVisitPanelVisible}
+        onClose={() => setVisitPanelVisible(false)}
+      />
     </ThemedView>
   );
 };
