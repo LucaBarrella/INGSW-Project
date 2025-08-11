@@ -1,9 +1,9 @@
 import React from 'react';
-import { render, act, waitFor } from '@testing-library/react-native';
+import { render, act } from '@testing-library/react-native';
 import { AuthProvider, useAuth } from '../AuthContext';
 import * as tokenService from '@/app/_services/token.service';
 import ApiService from '@/app/_services/api.service';
-import { Text, View } from 'react-native';
+import { Text } from 'react-native';
 
 jest.mock('@/app/_services/token.service');
 jest.mock('@/app/_services/api.service');

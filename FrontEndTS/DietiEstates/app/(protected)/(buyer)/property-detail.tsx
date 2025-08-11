@@ -222,7 +222,7 @@ const PropertyDetailScreen: React.FC = () => {
           </View>
           <View style={styles.tag}>
             <ThemedText style={styles.tagText}>
-              {property.status === 'new' ? 'Nuovo' : property.status === 'renovated' ? 'Ristrutturato' : 'Buono stato'}
+              {property.status === 'NEW' ? 'Nuovo' : property.status === 'renovated' ? 'Ristrutturato' : 'Buono stato'}
             </ThemedText>
           </View>
           <View style={styles.tag}>

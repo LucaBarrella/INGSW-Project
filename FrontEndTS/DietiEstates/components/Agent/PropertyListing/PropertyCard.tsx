@@ -55,7 +55,7 @@ const placeholderImageUrl = 'https://placehold.co/600x400/000000/FFFFFF.webp?tex
       onPress={handlePress}
       className="rounded-xl shadow-md overflow-hidden"
       accessibilityRole="button"
-      accessibilityLabel={`Visualizza dettagli per ${t('property category.'+property.propertyCategory)} in ${property.city}, ${t('property status.'+property.status)}`}
+      accessibilityLabel={`Visualizza dettagli per ${t('property_category.'+property.propertyCategory)} in ${property.city}, ${t('property_status.'+property.status)}`}
     >
       <Image
         // Usa un placeholder se imageUrl non è definito
@@ -71,7 +71,7 @@ const placeholderImageUrl = 'https://placehold.co/600x400/000000/FFFFFF.webp?tex
           lightColor={textColor}
           darkColor={textColor}
         >
-            {t('property category.'+property.propertyCategory)} in {property.city}, {t('property status.'+property.status)}
+            {t('property_category.'+property.propertyCategory)} in {property.city}, {t('property_status.'+property.status)}
         </ThemedText>
         
         <ThemedText 

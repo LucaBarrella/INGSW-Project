@@ -24,7 +24,7 @@ export interface PropertyDTO {
   type: keyof Omit<PropertyFilters, "general">; // 'residential', 'commercial', 'industrial', 'land'
   propertyCategory: string;
   price: number; // Prezzo come numero
-  status: "under construction" | "new" | "renovated" | "good condition" | "to be renovated" | "poor condition"; // Stato dell'immobile
+  status: "UNDER_CONSTRUCTION" | "NEW" | "RENOVATED" | "GOOD_CONDITION" | "TO_BE_RENOVATED" | "POOR_CONDITION"; // Stato dell'immobile
   createdAt: string; // Data di creazione (ISO string)
   imageUrl?: string; // URL dell'immagine principale (opzionale)
   images?: string[]; // Array di URL immagini

@@ -12,7 +12,7 @@
   "selectAdminRole": "Select the administrator role",
   "UNDER_CONSTRUCTION": "under construction",
   
-  "property status": {
+  "property_status": {
     "UNDER_CONSTRUCTION": "under construction",
     "POOR_CONDITION": "poor condition",
     "TO_BE_RENOVATED": "to be renovated",
@@ -21,9 +21,9 @@
     "NEW": "new"
   },
 
-  "property category": {
-    "commercial property": "commercial property",
-    "residential property": "residential property",
+  "property_category": {
+    "commercial_property": "commercial property",
+    "residential_property": "residential property",
     "land": "land",
     "garage": "garage"
   },

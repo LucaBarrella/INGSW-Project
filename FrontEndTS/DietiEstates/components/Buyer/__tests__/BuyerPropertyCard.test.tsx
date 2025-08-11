@@ -18,7 +18,7 @@ const mockProperty: PropertyDetail = {
   price: 300000,
   propertyCategory: 'Residential',
   type: 'residential',
-  status: 'new',
+  status: 'NEW',
   description: 'A beautiful house',
   energyRating: 'A',
   yearBuilt: 2020,

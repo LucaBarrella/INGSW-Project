@@ -11,7 +11,7 @@
   "selectAgentRole": "Seleziona ruolo agente immobiliare",
   "selectAdminRole": "Seleziona ruolo amministratore",
 
-  "property status": {
+  "property_status": {
     "UNDER_CONSTRUCTION": "in costruzione",
     "POOR_CONDITION": "cattive condizioni",
     "TO_BE_RENOVATED": "da ristrutturare",
@@ -20,9 +20,9 @@
     "NEW": "nuovo"
   },
 
-  "property category": {
-    "commercial property": "proprietà commerciale",
-    "residential property": "proprietà residenziale",
+  "property_category": {
+    "commercial_property": "proprietà commerciale",
+    "residential_property": "proprietà residenziale",
     "land": "terreno",
     "garage": "autorimessa"
   },
