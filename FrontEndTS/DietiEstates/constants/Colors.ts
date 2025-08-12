@@ -42,6 +42,12 @@ export const Colors = {
     border: '#e5e7eb',
     white: '#FFFFFF',
     backgroundMuted: '#f3f4f6',
+
+    // Agenda conflict colors
+    errorBackground: '#FFEBEE',
+    errorBorder: '#FFCDD2',
+    errorText: '#D32F2F',
+    errorIcon: '#F44336', // Lighter red for light bg
   },
   dark: {
     text: darkTertiary,
@@ -77,5 +83,11 @@ export const Colors = {
     border: '#374151',
     white: '#FFFFFF',
     backgroundMuted: '#111827',
+
+    // Agenda conflict colors
+    errorBackground: '#B71C1C',
+    errorBorder: '#D32F2F',
+    errorText: '#FFEBEE',
+    errorIcon: '#fd7a7a',
   },
 };

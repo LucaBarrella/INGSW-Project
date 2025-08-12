@@ -1,6 +1,6 @@
 import { PropertyDetail, DashboardStats } from '@/components/Agent/PropertyDashboard/types';
-// PropertyType non è più necessario qui se PropertyDetail.type è ora più specifico
-// import { PropertyType } from '@/components/Agent/AddPropertySteps/Step1_PropertyType';
+import { Appointment, VisitRequest } from '@/types/agenda';
+
 
 // --- DATI MOCK ---
 export const DEFAULT_MOCK_DELAY_MS = 500; // Simula un ritardo di rete
@@ -8,7 +8,7 @@ export const DEFAULT_MOCK_DELAY_MS = 500; // Simula un ritardo di rete
 export const mockDelay = <T>(data: T, delayMs: number = DEFAULT_MOCK_DELAY_MS): Promise<T> =>
   new Promise(resolve => setTimeout(() => resolve(data), delayMs));
 
-export const MOCK_TOKEN_RESPONSE = { token: 'mock-jwt-token-12345', userType: 'buyer' };
+export const MOCK_TOKEN_RESPONSE = { accessToken: 'mock-jwt-token-12345', userType: 'agent', refreshToken: 'mock-refresh-token-12345' };
 export const MOCK_SUCCESS_RESPONSE = { status: 200, success: true, message: 'Operazione completata con successo (Mock)' };
 export const MOCK_AGENT_PROFILE = { fullName: 'Mario Rossi (Mock)', email: 'mock.agent@dietiestates.it', licenseNumber: 'REA-MOCK-123' };
 
@@ -22,6 +22,72 @@ export const MOCK_AGENT_STATS: DashboardStats = {
   totalBookings: 65,
   averageBookingsPerProperty: 2.6, // Potrebbe essere ricalcolato
 };
+
+export const mockAppointments: Appointment[] = [
+    // Scenario: Visita di Gruppo (stesso orario, stessa proprietà)
+    {
+      id: '1',
+      property: { id: 'p1', address: 'Via Roma 1' },
+      client: { id: 'c1', name: 'Mario Rossi' },
+      startTime: new Date(new Date().setHours(10, 0, 0, 0)),
+      endTime: new Date(new Date().setHours(10, 30, 0, 0)),
+      durationMinutes: 30,
+      type: 'standard',
+    },
+    {
+      id: '3',
+      property: { id: 'p1', address: 'Via Roma 1' }, // Stessa proprietà di #1
+      client: { id: 'c5', name: 'Carlo Gialli' },
+      startTime: new Date(new Date().setHours(10, 0, 0, 0)), // Stesso orario di #1
+      endTime: new Date(new Date().setHours(10, 30, 0, 0)),
+      durationMinutes: 30,
+      type: 'standard',
+    },
+    // Scenario: Conflitto (stesso orario, proprietà diverse)
+    {
+        id: '2',
+        property: { id: 'p3', address: 'Corso Umberto 55' },
+        client: { id: 'c3', name: 'Anna Bianchi' },
+        startTime: new Date(new Date().setHours(12, 0, 0, 0)),
+        endTime: new Date(new Date().setHours(12, 30, 0, 0)),
+        durationMinutes: 30,
+        type: 'standard',
+      },
+      {
+        id: '4',
+        property: { id: 'p4', address: 'Via Milano 2' }, // Proprietà diversa da #2
+        client: { id: 'c4', name: 'Luigi Verdi' },
+        startTime: new Date(new Date().setHours(12, 0, 0, 0)), // Stesso orario di #2
+        endTime: new Date(new Date().setHours(12, 30, 0, 0)),
+        durationMinutes: 30,
+        type: 'standard',
+      },
+  ];
+  
+  export const mockVisitRequests: VisitRequest[] = [
+    {
+      id: 'req1',
+      property: { id: 'p5', address: 'Via Napoli 10' },
+      potentialClients: [{ id: 'c6', name: 'Giuseppe Russo' }],
+      requestedTime: new Date(new Date().setHours(14, 0, 0, 0)),
+      status: 'pending',
+    },
+    // Queste due richieste, se accettate, creeranno una visita di gruppo
+    {
+      id: 'req2',
+      property: { id: 'p6', address: 'Piazza Garibaldi 1' },
+      potentialClients: [{ id: 'c7', name: 'Francesca Neri' }],
+      requestedTime: new Date(new Date().setHours(16, 0, 0, 0)),
+      status: 'pending',
+    },
+    {
+      id: 'req3',
+      property: { id: 'p6', address: 'Piazza Garibaldi 1' }, // Stessa proprietà di req2
+      potentialClients: [{ id: 'c8', name: 'Antonio Gialli' }],
+      requestedTime: new Date(new Date().setHours(16, 0, 0, 0)), // Stesso orario di req2
+      status: 'pending',
+    },
+  ];
 
 export const MOCK_PROPERTIES: PropertyDetail[] = [
   {
@@ -40,12 +106,13 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: 'Magnifica villa con piscina privata, ampio giardino e finiture di pregio, situata in una zona residenziale esclusiva di Como. Ideale per famiglie che cercano comfort e privacy.',
     agent: { id: 1, name: 'Giovanni Storti', contact: 'g.storti@example.com', agencyName: "Dieti Estates Como" },
     id_agent: 1,
+    id_address: 1,
     features: ['Piscina', 'Giardino Privato', 'Aria Condizionata', 'Sistema di Allarme', 'Garage Doppio'],
     yearBuilt: 2018,
     energyRating: 'A+',
     latitude: 45.8100,
     longitude: 9.0863,
-    id_city: 1,
+    propertyCategory: 'Villa',
     propertyDetails: {
       residential: {
         category: 'Villa',
@@ -63,6 +130,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     status: 'UNDER_CONSTRUCTION',
     createdAt: new Date(2024, 4, 1).toISOString(),
     type: 'commercial',
+    propertyCategory: 'Negozio',
     imageUrl: 'https://picsum.photos/seed/commercial1/800/600',
     images: ['https://picsum.photos/seed/commercial1/800/600'],
     contractType: 'rent',
@@ -84,7 +152,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
       }
     },
     id_agent: 2,
-    id_city: 2
+    id_address: 2
   },
   {
     id: 3,
@@ -93,6 +161,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     status: 'NEW',
     createdAt: new Date(2024, 2, 10).toISOString(),
     type: 'industrial',
+    propertyCategory: 'Capannone',
     imageUrl: 'https://picsum.photos/seed/industrial1/800/600',
     images: ['https://picsum.photos/seed/industrial1/800/600', 'https://picsum.photos/seed/industrial1_int/800/600'],
     contractType: 'sale',
@@ -114,7 +183,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
       }
     },
     id_agent: 1,
-    id_city: 3
+    id_address: 3
   },
   // ...existing code...
   {
@@ -124,6 +193,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     status: 'NEW',
     createdAt: new Date(2024, 2, 20).toISOString(),
     type: 'land',
+    propertyCategory: 'Edificabile',
     imageUrl: 'https://picsum.photos/seed/land1/800/600',
     images: ['https://picsum.photos/seed/land1/800/600'],
     contractType: 'sale',
@@ -131,7 +201,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: 'Terreno edificabile in posizione collinare e panoramica, ideale per la costruzione di una villa unifamiliare o bifamiliare.',
     agent: { id: 3, name: 'Giacomo Poretti', contact: 'g.poretti@example.com', agencyName: "Dieti Estates Brianza" },
     id_agent: 3,
-    id_city: 4,
+    id_address: 4,
     features: ['Vista Panoramica', 'Zona Residenziale', 'Progetto Approvabile'],
     latitude: 45.5850,
     longitude: 9.2730,
@@ -150,6 +220,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     status: 'GOOD_CONDITION',
     createdAt: new Date(2024, 5, 1).toISOString(),
     type: 'residential',
+    propertyCategory: 'Appartamento',
     imageUrl: 'https://picsum.photos/seed/aptfirenze/800/600',
     images: ['https://picsum.photos/seed/aptfirenze/800/600', 'https://picsum.photos/seed/aptfirenze_int/800/600'],
     contractType: 'rent',
@@ -159,7 +230,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: 'Luminoso appartamento trilocale completamente ristrutturato, situato in zona centrale e ben servita. Contratto transitorio o 4+4.',
     agent: { id: 2, name: 'Marina Massironi', contact: 'm.massironi@example.com', agencyName: "Dieti Estates Firenze" },
     id_agent: 2,
-    id_city: 5,
+    id_address: 5,
     features: ['Balcone', 'Aria Condizionata', 'Ristrutturato', 'Ascensore'],
     yearBuilt: 1970,
     energyRating: 'E',
@@ -182,6 +253,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     status: 'GOOD_CONDITION',
     createdAt: new Date(2024, 1, 10).toISOString(),
     type: 'residential',
+    propertyCategory: 'Appartamento',
     imageUrl: 'https://picsum.photos/seed/aptnapoli/800/600',
     images: ['https://picsum.photos/seed/aptnapoli/800/600', 'https://picsum.photos/seed/aptnapoli_int/800/600'],
     contractType: 'sale',
@@ -191,7 +263,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: "Appartamento luminoso in zona centrale a Napoli, vicino alla metropolitana e ai principali servizi. Ottime condizioni interne.",
     agent: { id: 3, name: 'Giacomo Poretti', contact: 'g.poretti@example.com', agencyName: "Dieti Estates Napoli" },
     id_agent: 3,
-    id_city: 6,
+    id_address: 6,
     features: ['Balcone', 'Ristrutturato di recente', 'Vicino Metro'],
     yearBuilt: 1980,
     energyRating: 'C',
@@ -214,6 +286,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     status: 'NEW',
     createdAt: new Date(2024, 3, 5).toISOString(),
     type: 'commercial',
+    propertyCategory: 'Ufficio',
     imageUrl: 'https://picsum.photos/seed/uffmilano/800/600',
     images: ['https://picsum.photos/seed/uffmilano/800/600', 'https://picsum.photos/seed/uffmilano_int/800/600'],
     contractType: 'rent',
@@ -222,7 +295,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: "Ufficio prestigioso in Piazza Affari, completamente cablato e pronto all'uso. Ideale per società di rappresentanza.",
     agent: { id: 2, name: 'Marina Massironi', contact: 'm.massironi@example.com', agencyName: "Dieti Estates Milano" },
     id_agent: 2,
-    id_city: 7,
+    id_address: 7,
     features: ['Reception', 'Sale Riunioni', 'Cablato', 'Aria Condizionata Centralizzata'],
     yearBuilt: 2005,
     energyRating: 'B',
@@ -243,6 +316,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     status: 'GOOD_CONDITION',
     createdAt: new Date(2023, 11, 20).toISOString(),
     type: 'industrial',
+    propertyCategory: 'Magazzino',
     imageUrl: 'https://picsum.photos/seed/magbologna/800/600',
     images: ['https://picsum.photos/seed/magbologna/800/600', 'https://picsum.photos/seed/magbologna_int/800/600'],
     contractType: 'sale',
@@ -250,7 +324,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: "Ampio magazzino con zona uffici e piazzale di manovra, vicino all'autostrada. Ottimo per logistica e stoccaggio.",
     agent: { id: 1, name: 'Giovanni Storti', contact: 'g.storti@example.com', agencyName: "Dieti Estates Bologna" },
     id_agent: 1,
-    id_city: 8,
+    id_address: 8,
     features: ['Piazzale Esterno', 'Baie di Carico', 'Uffici Inclusi', 'Accesso Autostradale'],
     yearBuilt: 2010,
     energyRating: 'In fase di definizione',
@@ -274,6 +348,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     status: 'TO_BE_RENOVATED',
     createdAt: new Date(2024, 0, 15).toISOString(),
     type: 'land',
+    propertyCategory: 'Coltivabile',
     imageUrl: 'https://picsum.photos/seed/terlecce/800/600',
     images: ['https://picsum.photos/seed/terlecce/800/600'],
     contractType: 'sale',
@@ -281,7 +356,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: "Terreno agricolo pianeggiante, ideale per coltivazioni o uliveto. Accesso diretto da strada comunale.",
     agent: { id: 3, name: 'Giacomo Poretti', contact: 'g.poretti@example.com', agencyName: "Dieti Estates Salento" },
     id_agent: 3,
-    id_city: 9,
+    id_address: 9,
     features: ['Pianeggiante', 'Accesso Stradale', 'Irrigabile'],
     latitude: 40.3515,
     longitude: 18.1750,
@@ -300,6 +375,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     status: 'GOOD_CONDITION',
     createdAt: new Date(2024, 4, 12).toISOString(),
     type: 'residential',
+    propertyCategory: 'Villa',
     imageUrl: 'https://picsum.photos/seed/villaroma/800/600',
     images: ['https://picsum.photos/seed/villaroma/800/600', 'https://picsum.photos/seed/villaroma_int1/800/600', 'https://picsum.photos/seed/villaroma_int2/800/600'],
     contractType: 'rent',
@@ -309,7 +385,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: "Elegante villa con giardino curato e piscina in zona residenziale tranquilla di Roma Nord. Finiture di lusso.",
     agent: { id: 1, name: 'Giovanni Storti', contact: 'g.storti@example.com', agencyName: "Dieti Estates Roma" },
     id_agent: 1,
-    id_city: 10,
+    id_address: 10,
     features: ['Piscina Privata', 'Ampio Giardino', 'Camino Funzionante', 'Sistema di Allarme Perimetrale', 'Garage Triplo'],
     yearBuilt: 1995,
     energyRating: 'B',
@@ -332,6 +408,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     status: 'NEW',
     createdAt: new Date(2023, 9, 1).toISOString(),
     type: 'residential',
+    propertyCategory: 'Appartamento',
     imageUrl: 'https://picsum.photos/seed/studiotorino/800/600',
     images: ['https://picsum.photos/seed/studiotorino/800/600'],
     contractType: 'sale',
@@ -341,7 +418,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: "Monolocale finemente ristrutturato nel cuore di Torino, ottimo come investimento o pied-à-terre. Venduto.",
     agent: { id: 2, name: 'Marina Massironi', contact: 'm.massironi@example.com', agencyName: "Dieti Estates Torino" },
     id_agent: 2,
-    id_city: 11,
+    id_address: 11,
     features: ['Ristrutturato', 'Posizione Centrale', 'Basse Spese Condominiali'],
     yearBuilt: 1960,
     energyRating: 'F',
@@ -364,6 +441,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     status: 'GOOD_CONDITION',
     createdAt: new Date(2024, 2, 22).toISOString(),
     type: 'commercial',
+    propertyCategory: 'Negozio',
     imageUrl: 'https://picsum.photos/400/300.webp',
     images: ['https://picsum.photos/400/300.webp'],
     contractType: 'sale',
@@ -372,7 +450,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: "Negozio in via di forte passaggio pedonale a Palermo, con due ampie vetrine su strada. Buone condizioni generali.",
     agent: { id: 3, name: 'Giacomo Poretti', contact: 'g.poretti@example.com', agencyName: "Dieti Estates Palermo" },
     id_agent: 3,
-    id_city: 12,
+    id_address: 12,
     features: ['Due Vetrine', 'Alta Visibilità', 'Serranda Elettrica'],
     yearBuilt: 1975,
     energyRating: 'G',
@@ -393,6 +471,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     status: 'GOOD_CONDITION',
     createdAt: new Date(2024, 0, 30).toISOString(),
     type: 'residential',
+    propertyCategory: 'Attico',
     imageUrl: 'https://picsum.photos/seed/atticofirenze/800/600',
     images: ['https://picsum.photos/seed/atticofirenze/800/600', 'https://picsum.photos/seed/atticofirenze_terrazza/800/600'],
     contractType: 'sale',
@@ -402,7 +481,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: "Attico di lusso con terrazza panoramica sull'Arno e vista Duomo. Finiture di pregio e design moderno.",
     agent: { id: 1, name: 'Giovanni Storti', contact: 'g.storti@example.com', agencyName: "Dieti Estates Firenze" },
     id_agent: 1,
-    id_city: 13,
+    id_address: 13,
     features: ['Terrazza Panoramica', 'Vista Arno', 'Aria Condizionata Canalizzata', 'Domotica', 'Ascensore Privato'],
     yearBuilt: 2015,
     energyRating: 'A',
@@ -425,6 +504,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     status: 'NEW',
     createdAt: new Date(2023, 10, 10).toISOString(),
     type: 'land',
+    propertyCategory: 'Edificabile',
     imageUrl: 'https://picsum.photos/seed/terrentrento/800/600',
     images: ['https://picsum.photos/seed/terrentrento/800/600'],
     contractType: 'sale',
@@ -432,7 +512,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: "Terreno edificabile con splendida vista sulle montagne circostanti, ideale per la costruzione di una villa singola o bifamiliare.",
     agent: { id: 2, name: 'Marina Massironi', contact: 'm.massironi@example.com', agencyName: "Dieti Estates Trentino" },
     id_agent: 2,
-    id_city: 14,
+    id_address: 14,
     features: ['Vista Montagne', 'Zona Residenziale Esclusiva', 'Progetto Approvato (opzionale)'],
     latitude: 46.0667,
     longitude: 11.1167,
@@ -451,6 +531,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     status: 'NEW',
     createdAt: new Date(2023, 8, 15).toISOString(),
     type: 'residential',
+    propertyCategory: 'Appartamento',
     imageUrl: 'https://picsum.photos/seed/aptbologna/800/600',
     images: ['https://picsum.photos/seed/aptbologna/800/600', 'https://picsum.photos/seed/aptbologna_int/800/600'],
     contractType: 'rent',
@@ -460,7 +541,7 @@ export const MOCK_PROPERTIES: PropertyDetail[] = [
     description: "Trilocale accogliente e funzionale in zona universitaria, comodo a tutti i servizi. Attualmente affittato a studenti con ottima rendita.",
     agent: { id: 3, name: 'Giacomo Poretti', contact: 'g.poretti@example.com', agencyName: "Dieti Estates Bologna" },
     id_agent: 3,
-    id_city: 15,
+    id_address: 15,
     features: ['Arredato', 'Vicino Università', 'Termoautonomo', 'Balcone'],
     yearBuilt: 1970,
     energyRating: 'E',

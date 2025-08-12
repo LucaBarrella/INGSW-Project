@@ -31,6 +31,7 @@ export const BuyerPropertyCard: React.FC<BuyerPropertyCardProps> = ({
       pathname: '/(protected)/(buyer)/property-detail',
       params: { propertyId: property.id },
     });
+    onPress();
   };
 
   return (

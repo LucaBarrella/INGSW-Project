@@ -49,15 +49,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const isProtected = (segments: string[]) => segments[0] === '(protected)';
 
     if (!isLoading) {
-      const inAuthGroup = segments[0] === '(auth)';
-
       if (user && !isProtected(segments)) {
         // Utente loggato, reindirizza alla home protetta
-        router.replace('/(protected)/(buyer)/(tabs)/home');
+        let redirectPath = '';
+        switch (user.userType) {
+          case 'agent':
+            redirectPath = '/(protected)/(agent)/(tabs)/home';
+            break;
+          case 'buyer':
+            redirectPath = '/(protected)/(buyer)/(tabs)/home';
+            break;
+          case 'admin':
+            redirectPath = '/(protected)/(admin)/(tabs)/home';
+            break;
+          default:
+            redirectPath = '/(protected)/(buyer)/(tabs)/home'; // Fallback
+        }
+        router.replace(redirectPath as any);
       } else if (!user && isProtected(segments)) {
         // Utente non loggato, reindirizza alla pagina di login
         console.log("Redirecting to login page...");
-        router.replace('/(auth)');
+        router.replace('/(auth)' as any);
       }
     }
   }, [user, segments, isLoading]);
@@ -83,7 +95,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (token) {
         await saveToken(token);
         await saveRefreshToken(responseData.refreshToken);
-        setUser({ token });
+        setUser({ token, userType: responseData.userType });
         console.log('Login riuscito, token salvato!');
       } else {
         setError('Token di autenticazione non ricevuto dal server.');
