@@ -25,8 +25,8 @@ const AnimatedSlideUpPanel: React.FC<AnimatedSlideUpPanelProps> = ({
   const translateY = useSharedValue(windowHeight);
   const opacity = useSharedValue(0);
   
-  const backgroundColor = useThemeColor({}, 'propertyCardBackground');
-  const borderColor = useThemeColor({}, 'border');
+  const backgroundColor = useThemeColor({}, 'background');
+  const borderColor = useThemeColor({}, 'background');
   const subduedText = useThemeColor({}, 'propertyCardDetail');
 
 

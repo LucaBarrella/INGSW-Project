@@ -70,7 +70,7 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
 
 
   // --- Theme Colors ---
-  const backgroundColor = useThemeColor({}, 'propertyCardBackground');
+  const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
   const textSecondaryColor = useThemeColor({}, 'propertyCardDetail');
   const brandColor = useThemeColor({}, 'tint');
