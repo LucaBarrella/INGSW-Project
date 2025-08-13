@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, useColorScheme, Dimensions, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, useColorScheme, Dimensions, NativeSyntheticEvent, NativeScrollEvent, Modal, Platform, SafeAreaView, StatusBar, useWindowDimensions } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { getPropertyDetails } from '@/app/_services/api.service';
 import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
@@ -8,6 +8,8 @@ import { ThemedIcon } from '@/components/ThemedIcon';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { useTranslation } from 'react-i18next';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import Gallery from 'react-native-awesome-gallery';
 import VisitSchedulerPanel from '../../../components/Buyer/VisitSchedulerPanel';
 import OfferPanel from '../../../components/Offer/OfferPanel';
 
@@ -26,6 +28,8 @@ const PropertyDetailScreen: React.FC = () => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isVisitPanelVisible, setVisitPanelVisible] = useState(false);
   const [isOfferPanelVisible, setOfferPanelVisible] = useState(false);
+  const [isGalleryVisible, setIsGalleryVisible] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   const scrollViewRef = useRef<ScrollView>(null);
   const { t } = useTranslation();
@@ -162,12 +166,20 @@ const PropertyDetailScreen: React.FC = () => {
             scrollEnabled={images.length > 1}
           >
             {images.map((uri, index) => (
-              <Image 
+              <TouchableOpacity
                 key={index}
-                source={{ uri: uri || 'https://via.placeholder.com/400x250' }} 
-                style={styles.coverImage} 
-                resizeMode="cover"
-              />
+                onPress={() => {
+                  setSelectedImageIndex(index);
+                  setIsGalleryVisible(true);
+                }}
+                activeOpacity={0.7}
+              >
+                <Image
+                  source={{ uri: uri || 'https://via.placeholder.com/400x250' }}
+                  style={styles.coverImage}
+                  resizeMode="cover"
+                />
+              </TouchableOpacity>
             ))}
           </ScrollView>
           {images.length > 1 && (
@@ -351,6 +363,54 @@ const PropertyDetailScreen: React.FC = () => {
         propertyAddress={property?.city || 'Indirizzo non disponibile'}
         askingPrice={property?.price ? property.price.toString() : '0'}
       />
+
+      {/* Gallery Modal */}
+      <Modal
+        visible={isGalleryVisible}
+        animationType="slide"
+        presentationStyle="fullScreen"
+        onRequestClose={() => setIsGalleryVisible(false)}
+        supportedOrientations={['portrait', 'landscape']} /* Aggiunto supporto per orientamenti */
+      >
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <Gallery
+            data={images.map(uri => ({ uri }))}
+            renderItem={({ item, index }) => {
+              const { width, height } = useWindowDimensions();
+              return (
+                <Image
+                  source={{ uri: item.uri }}
+                  style={{ width, height }} /* Rimosso flex: 1 */
+                  resizeMode="contain"
+                />
+              );
+            }}
+            keyExtractor={(item, index) => index.toString()}
+            initialIndex={selectedImageIndex}
+            onIndexChange={(index) => setSelectedImageIndex(index)}
+            swipeEnabled={true}
+            pinchEnabled={true}
+            doubleTapEnabled={true}
+            maxScale={6}
+            doubleTapScale={3}
+            onSwipeToClose={() => setIsGalleryVisible(false)}
+            hideAdjacentImagesOnScaledImage={false}
+            disableTransitionOnScaledImage={false}
+          />
+          {/* Overlay Controls */}
+          <View style={styles.galleryOverlay}>
+            <TouchableOpacity
+              onPress={() => setIsGalleryVisible(false)}
+              style={styles.closeButton}
+            >
+              <ThemedText style={styles.closeButtonTextTop}>✕</ThemedText>
+            </TouchableOpacity>
+            <ThemedText style={styles.galleryCounter}>
+              {selectedImageIndex + 1} / {images.length}
+            </ThemedText>
+          </View>
+        </GestureHandlerRootView>
+      </Modal>
     </ThemedView>
   );
 };
@@ -659,6 +719,50 @@ const createStyles = (themeColors: typeof Colors.light) => StyleSheet.create({
   backButtonText: {
     fontSize: 14,
     color: themeColors.buttonTextColor,
+  },
+  imageTouchable: {
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  galleryOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'transparent',
+    justifyContent: 'space-between',
+    padding: 20,
+    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + 10 : 50,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + 10 : 50,
+    right: 20, /* Spostato a destra */
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    borderRadius: 20,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+  },
+  galleryCounter: {
+    position: 'absolute',
+    top: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + 10 : 50,
+    left: 20, /* Spostato a sinistra */
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 15,
+    fontSize: 14,
+    fontWeight: '600',
+    zIndex: 1000,
+  },
+  closeButtonTextTop: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
   },
 });
 
