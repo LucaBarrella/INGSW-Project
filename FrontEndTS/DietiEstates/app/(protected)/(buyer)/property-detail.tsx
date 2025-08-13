@@ -9,6 +9,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { useTranslation } from 'react-i18next';
 import VisitSchedulerPanel from '../../../components/Buyer/VisitSchedulerPanel';
+import OfferPanel from '../../../components/Offer/OfferPanel';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -24,6 +25,7 @@ const PropertyDetailScreen: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'description' | 'details' | 'features'>('description');
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isVisitPanelVisible, setVisitPanelVisible] = useState(false);
+  const [isOfferPanelVisible, setOfferPanelVisible] = useState(false);
 
   const scrollViewRef = useRef<ScrollView>(null);
   const { t } = useTranslation();
@@ -239,7 +241,7 @@ const PropertyDetailScreen: React.FC = () => {
           <TouchableOpacity style={styles.primaryButton} onPress={() => setVisitPanelVisible(true)}>
             <ThemedText style={styles.primaryButtonText}>Pianifica una visita</ThemedText>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.secondaryButton}>
+          <TouchableOpacity style={styles.secondaryButton} onPress={() => setOfferPanelVisible(true)}>
             <ThemedText style={styles.secondaryButtonText}>Fai un'offerta</ThemedText>
           </TouchableOpacity>
         </View>
@@ -342,6 +344,12 @@ const PropertyDetailScreen: React.FC = () => {
       <VisitSchedulerPanel
         isVisible={isVisitPanelVisible}
         onClose={() => setVisitPanelVisible(false)}
+      />
+      <OfferPanel
+        isVisible={isOfferPanelVisible}
+        onClose={() => setOfferPanelVisible(false)}
+        propertyAddress={property?.city || 'Indirizzo non disponibile'}
+        askingPrice={property?.price ? property.price.toString() : '0'}
       />
     </ThemedView>
   );

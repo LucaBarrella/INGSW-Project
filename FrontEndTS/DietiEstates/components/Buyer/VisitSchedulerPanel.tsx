@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Modal, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
-import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, runOnJS } from 'react-native-reanimated';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import AnimatedSlideUpPanel from '../common/AnimatedSlideUpPanel';
 
 // --- Helper Functions ---
 const getDaysInMonth = (date: Date, availableDates: string[]) => {
@@ -64,22 +63,11 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
   onClose,
   availableDates = MOCK_AVAILABLE_DATES,
 }) => {
-  const screenHeight = Dimensions.get('window').height;
-  const panelInitialHeight = screenHeight * 0.85;
-  const minHeight = screenHeight * 0.6;
-  const maxHeight = screenHeight * 0.95;
-
-  // --- State ---
-  const [panelHeight, setPanelHeight] = useState(panelInitialHeight);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [days, setDays] = useState<Day[]>([]);
   const [selectedDay, setSelectedDay] = useState<Day | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
-  // --- Animations ---
-  const translateY = useSharedValue(screenHeight);
-  const opacity = useSharedValue(0);
-  const context = useSharedValue({ y: 0 });
 
   // --- Theme Colors ---
   const backgroundColor = useThemeColor({}, 'propertyCardBackground');
@@ -121,11 +109,6 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
     }
   }, [availableDates]);
 
-  useEffect(() => {
-    if (isVisible) {
-      showPanel();
-    }
-  }, [isVisible]);
   
   useEffect(() => {
       setDays(getDaysInMonth(currentDate, availableDates));
@@ -150,184 +133,112 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
     }
   };
 
-  const showPanel = () => {
-    opacity.value = withTiming(1, { duration: 300 });
-    translateY.value = withSpring(0, { damping: 50, stiffness: 200 });
-  };
-
-  const hidePanel = () => {
-    opacity.value = withTiming(0, { duration: 250 });
-    translateY.value = withTiming(screenHeight, {}, (isFinished) => {
-      if (isFinished) {
-        runOnJS(onClose)();
-        runOnJS(setPanelHeight)(panelInitialHeight);
-        runOnJS(setSelectedDay)(null);
-        runOnJS(setSelectedTime)(null);
-      }
-    });
-  };
-
-  const panGesture = Gesture.Pan()
-    .onStart(() => {
-      context.value = { y: translateY.value };
-    })
-    .onUpdate((event) => {
-      'worklet';
-      translateY.value = context.value.y + event.translationY;
-      translateY.value = Math.max(translateY.value, screenHeight - maxHeight);
-    })
-    .onEnd((event) => {
-      'worklet';
-      if (event.velocityY > 500) {
-        translateY.value = withTiming(screenHeight, {}, (isFinished) => {
-          if (isFinished) {
-            runOnJS(onClose)();
-          }
-        });
-      } else if (translateY.value > screenHeight - minHeight + 100) {
-        translateY.value = withTiming(screenHeight, {}, (isFinished) => {
-          if (isFinished) {
-            runOnJS(onClose)();
-          }
-        });
-      } else {
-        const newHeight = screenHeight - translateY.value;
-        runOnJS(setPanelHeight)(newHeight);
-        translateY.value = withSpring(screenHeight - newHeight);
-      }
-    });
-
-  const animatedPanelStyle = useAnimatedStyle(() => ({
-    height: panelHeight,
-    transform: [{ translateY: translateY.value }],
-  }));
-
-  const animatedOverlayStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-  }));
 
   // --- Render ---
   return (
-    <Modal transparent visible={isVisible} animationType="none" onRequestClose={hidePanel}>
-      <GestureHandlerRootView className="flex-1">
-        <Animated.View style={[{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)' }, animatedOverlayStyle]}>
-          <TouchableOpacity style={{ flex: 1 }} onPress={hidePanel} />
-        </Animated.View>
-        
-        <GestureDetector gesture={panGesture}>
-          <Animated.View style={[
-            {
-              backgroundColor: backgroundColor,
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              right: 0,
-              borderTopLeftRadius: 24,
-              borderTopRightRadius: 24,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: -10 },
-              shadowOpacity: 0.1,
-              shadowRadius: 10,
-              elevation: 20,
-            },
-            animatedPanelStyle
-          ]}>
-            <View className="w-full items-center pt-3">
-              <View className="h-1.5 w-10 rounded-full bg-gray-300" />
-            </View>
-            
-            <ScrollView showsVerticalScrollIndicator={false} className="flex-1 p-4 pb-0">
-              <Text style={{ color: textColor }} className="text-2xl font-bold text-center mb-4">Schedule Your Visit</Text>
+    <AnimatedSlideUpPanel
+      isVisible={isVisible}
+      onClose={onClose}
+      initialHeightRatio={0.85}
+      panelStyle={{
+        borderTopLeftRadius: 24,
+        borderTopRightRadius: 24,
+        shadowColor: textColor,
+        shadowOffset: { width: 0, height: -10 },
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        elevation: 20,
+      }}
+    >
+      <ScrollView showsVerticalScrollIndicator={false} className="flex-1 p-4 pb-0">
+        <Text style={{ color: textColor }} className="text-2xl font-bold text-center mb-4">Schedule Your Visit</Text>
 
-              {/* Month Selector */}
-              <View className="flex-row items-center justify-between px-2 py-2">
-                <TouchableOpacity onPress={() => handleMonthChange(-1)} className="p-2 rounded-full hover:bg-gray-100">
-                  <Ionicons name="chevron-back" size={24} color={textSecondaryColor} />
-                </TouchableOpacity>
-                <Text style={{ color: textColor }} className="text-lg font-bold">
-                  {currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-                </Text>
-                <TouchableOpacity onPress={() => handleMonthChange(1)} className="p-2 rounded-full hover:bg-gray-100">
-                  <Ionicons name="chevron-forward" size={24} color={textSecondaryColor} />
-                </TouchableOpacity>
-              </View>
+        {/* Month Selector */}
+        <View className="flex-row items-center justify-between px-2 py-2">
+          <TouchableOpacity onPress={() => handleMonthChange(-1)} className="p-2 rounded-full hover:bg-gray-100">
+            <Ionicons name="chevron-back" size={24} color={textSecondaryColor} />
+          </TouchableOpacity>
+          <Text style={{ color: textColor }} className="text-lg font-bold">
+            {currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+          </Text>
+          <TouchableOpacity onPress={() => handleMonthChange(1)} className="p-2 rounded-full hover:bg-gray-100">
+            <Ionicons name="chevron-forward" size={24} color={textSecondaryColor} />
+          </TouchableOpacity>
+        </View>
 
-              {/* Day Selector */}
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-2 px-4 py-2 -mx-4">
-                {days.map((day) => {
-                  const isSelected = selectedDay?.date.getTime() === day.date.getTime();
-                  // isPastDay is no longer needed here as getDaysInMonth already filters past days
-                  const isDisabled = !day.isAvailable; 
+        {/* Day Selector */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-2 px-4 py-2 -mx-4">
+          {days.map((day) => {
+            const isSelected = selectedDay?.date.getTime() === day.date.getTime();
+            // isPastDay is no longer needed here as getDaysInMonth already filters past days
+            const isDisabled = !day.isAvailable;
 
-                  return (
-                    <TouchableOpacity
-                      key={day.date.toISOString()}
-                      onPress={() => handleSelectDay(day)}
-                      disabled={isDisabled}
-                      className="flex flex-col items-center justify-center gap-1.5 h-20 w-14 shrink-0 rounded-xl p-2"
-                      style={{
-                        backgroundColor: isSelected ? brandColor : (day.isToday && !isSelected ? mutedBackgroundColor : 'transparent'),
-                        borderColor: day.isToday && !isSelected ? brandColor : 'transparent',
-                        borderWidth: 1,
-                        opacity: isDisabled ? 0.5 : 1,
-                      }}
-                    >
-                      <Text style={{ color: isSelected ? buttonTextColor : (day.isToday && !isSelected ? brandColor : textColor) }} className="text-sm font-medium">
-                        {day.dayName}
-                      </Text>
-                      <Text style={{ color: isSelected ? buttonTextColor : (day.isToday && !isSelected ? brandColor : textColor) }} className="text-lg font-bold">
-                        {day.dayNumber}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </ScrollView>
-
-              {/* Time Selector */}
-              {selectedDay && (
-                <>
-                  <Text style={{ color: textColor }} className="text-base font-semibold px-4 pt-6 pb-3">Available Times</Text>
-                  <View className="flex-row flex-wrap justify-between px-4 pb-4">
-                    {availableTimes.map(time => {
-                      const isSelected = selectedTime === time;
-                      return (
-                        <TouchableOpacity
-                          key={time}
-                          onPress={() => setSelectedTime(time)}
-                          className="h-10 rounded-full items-center justify-center basis-[48%] mb-3"
-                          style={{
-                            backgroundColor: isSelected ? brandColor : 'transparent',
-                            borderColor: isSelected ? brandColor : borderColor,
-                            borderWidth: 1,
-                          }}
-                        >
-                          <Text style={{ color: isSelected ? buttonTextColor : textColor, fontWeight: isSelected ? 'bold' : 'normal' }}>
-                            {time}
-                          </Text>
-                        </TouchableOpacity>
-                      );
-                    })}
-                  </View>
-                </>
-              )}
-            </ScrollView>
-
-            {/* Footer Button */}
-            <View style={{ backgroundColor, borderTopColor: borderColor }} className="sticky bottom-0 p-4 pt-2 border-t mb-8">
+            return (
               <TouchableOpacity
-                disabled={!selectedDay || !selectedTime}
-                className="w-full h-12 rounded-full flex items-center justify-center"
-                style={{ backgroundColor: (!selectedDay || !selectedTime) ? disabledColor : brandColor }}
+                key={day.date.toISOString()}
+                onPress={() => handleSelectDay(day)}
+                disabled={isDisabled}
+                className="flex flex-col items-center justify-center gap-1.5 h-20 w-14 shrink-0 rounded-xl p-2"
+                style={{
+                  backgroundColor: isSelected ? brandColor : (day.isToday && !isSelected ? mutedBackgroundColor : 'transparent'),
+                  borderColor: day.isToday && !isSelected ? brandColor : 'transparent',
+                  borderWidth: 1,
+                  opacity: isDisabled ? 0.5 : 1,
+                }}
               >
-                <Text style={{ color: buttonTextColor }} className="text-base font-bold">
-                  {selectedTime ? `Confirm Visit for ${selectedTime}` : 'Select a time slot'}
+                <Text style={{ color: isSelected ? buttonTextColor : (day.isToday && !isSelected ? brandColor : textColor) }} className="text-sm font-medium">
+                  {day.dayName}
+                </Text>
+                <Text style={{ color: isSelected ? buttonTextColor : (day.isToday && !isSelected ? brandColor : textColor) }} className="text-lg font-bold">
+                  {day.dayNumber}
                 </Text>
               </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+
+        {/* Time Selector */}
+        {selectedDay && (
+          <>
+            <Text style={{ color: textColor }} className="text-base font-semibold px-4 pt-6 pb-3">Available Times</Text>
+            <View className="flex-row flex-wrap justify-between px-4 pb-4">
+              {availableTimes.map(time => {
+                const isSelected = selectedTime === time;
+                return (
+                  <TouchableOpacity
+                    key={time}
+                    onPress={() => setSelectedTime(time)}
+                    className="h-10 rounded-full items-center justify-center basis-[48%] mb-3"
+                    style={{
+                      backgroundColor: isSelected ? brandColor : 'transparent',
+                      borderColor: isSelected ? brandColor : borderColor,
+                      borderWidth: 1,
+                    }}
+                  >
+                    <Text style={{ color: isSelected ? buttonTextColor : textColor, fontWeight: isSelected ? 'bold' : 'normal' }}>
+                      {time}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
-          </Animated.View>
-        </GestureDetector>
-      </GestureHandlerRootView>
-    </Modal>
+          </>
+        )}
+      </ScrollView>
+
+      {/* Footer Button */}
+      <View style={{ backgroundColor, borderTopColor: borderColor }} className="sticky bottom-0 p-4 pt-2 border-t mb-8">
+        <TouchableOpacity
+          disabled={!selectedDay || !selectedTime}
+          className="w-full h-12 rounded-full flex items-center justify-center"
+          style={{ backgroundColor: (!selectedDay || !selectedTime) ? disabledColor : brandColor }}
+        >
+          <Text style={{ color: buttonTextColor }} className="text-base font-bold">
+            {selectedTime ? `Confirm Visit for ${selectedTime}` : 'Select a time slot'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </AnimatedSlideUpPanel>
   );
 };
 
