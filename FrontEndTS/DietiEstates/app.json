@@ -3,7 +3,7 @@
     "name": "DietiEstates",
     "slug": "DietiEstates",
     "version": "1.0.0",
-    "orientation": "default",
+    "orientation": "portrait",
     "icon": "./assets/images/logo.jpeg",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
