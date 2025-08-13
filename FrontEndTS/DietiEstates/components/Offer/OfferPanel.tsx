@@ -39,7 +39,7 @@ const OfferPanel: React.FC<OfferPanelProps> = ({
     if (isNaN(numericAmount) || numericAmount <= 0) return false;
     
     // Check if amount is less than asking price
-    const askingPriceNumeric = parseFloat(askingPrice.replace(/[^\d.]/g, ''));
+    const askingPriceNumeric = parseFloat(askingPrice.replace(/[^\d,]/g, '').replace(',', '.'));
     if (isNaN(askingPriceNumeric)) return false;
     
     return numericAmount < askingPriceNumeric;
