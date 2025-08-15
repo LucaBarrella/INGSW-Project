@@ -80,7 +80,7 @@ export const AgentPropertyCard: React.FC<AgentPropertyCardProps> = ({
         onPress={handlePress}
         className="rounded-xl shadow-md overflow-hidden"
         accessibilityRole="button"
-        accessibilityLabel={`Visualizza dettagli per ${t('property_category.'+property.propertyCategory)} in ${property.city}, ${t('property_status.'+property.status)}`}
+        accessibilityLabel={`Visualizza dettagli per ${t('property_category.'+property.propertyCategory)} in ${property.address.city}, ${t('property_status.'+property.status)}`}
       >
         <Image
           source={{ uri: property.imageUrl || placeholderImageUrl }}
@@ -95,7 +95,7 @@ export const AgentPropertyCard: React.FC<AgentPropertyCardProps> = ({
             lightColor={textColor}
             darkColor={textColor}
           >
-            {t('property_category.'+property.propertyCategory)} in {property.city}, {t('property_status.'+property.status)}
+            {t('property_category.'+property.propertyCategory)} in {property.address.city}, {t('property_status.'+property.status)}
           </ThemedText>
           
           <ThemedText 

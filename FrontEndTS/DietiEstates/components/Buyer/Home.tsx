@@ -87,7 +87,7 @@ export const Home: React.FC = () => {
               <LocationCard
                 key={property.id}
                 location={{
-                  name: t('property_category.'+property.propertyCategory)+ " in " + property.city,
+                  name: t('property_category.'+property.propertyCategory)+ " in " + property.address.city,
                   distance: 0, // Non abbiamo una distanza qui, potresti volerla calcolare o rimuovere
                   image: property.images?.[0] || "https://placehold.co/300x200",
                 }}

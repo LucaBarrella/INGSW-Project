@@ -69,9 +69,9 @@ export const apiEndpoints = {
 
 export const PropertyDTO_to_PropertyDetail = async (property: PropertyDTO) : Promise<PropertyDetail> =>{
   var prop_detail : PropertyDetail = property;
-  const address = (await httpClient.get(apiEndpoints.address + '/' + property.id_address)).data;
-  prop_detail.city = address.city;
-  prop_detail.agent = (await httpClient.get(apiEndpoints.agentProfile + '/' + property.id_agent)).data.fullName;
+  console.log(property);
+  console.log("//////////////////////////////////////////");
+  prop_detail.agentFullName = property.agent.firstName + " " + property.agent.lastName;
   return prop_detail;
 }
 
@@ -237,13 +237,13 @@ export const searchProperties = async (
     });
     const { query, filters } = params;
     let results = [...MOCK_PROPERTIES];
-    console.log(`[ApiService] Initial MOCK_PROPERTIES:`, MOCK_PROPERTIES.map(p => ({id: p.id, city: p.city})));
+    console.log(`[ApiService] Initial MOCK_PROPERTIES:`, MOCK_PROPERTIES.map(p => ({id: p.id, city: p.address.city})));
 
     // 1. Filtro per query testuale
     if (query) {
       const lowerQuery = query.toLowerCase();
       results = results.filter(p =>
-        (p.city?.toLowerCase() || '').includes(lowerQuery) ||
+        (p.address.city?.toLowerCase() || '').includes(lowerQuery) ||
         (p.description?.toLowerCase() || '').includes(lowerQuery)
       );
       console.log(`[ApiService] After text query filter ("${query}"): ${results.length} results`);
@@ -338,7 +338,7 @@ export const searchProperties = async (
       });
       console.log(`[ApiService] After category specific filters: ${results.length} results`);
     }
-    console.log(`[ApiService] searchProperties (MOCK) final results (${results.length}):`, results.map(r => ({id: r.id, city: r.city })));
+    console.log(`[ApiService] searchProperties (MOCK) final results (${results.length}):`, results.map(r => ({id: r.id, city: r.address.city })));
     return mockDelay(results);
   }
 

@@ -18,7 +18,7 @@ export interface DashboardStats {
 
 export interface PropertyDTO {
   id: number;
-  city: string;
+  address: object;
   latitude?: number;
   longitude?: number;
   type: keyof Omit<PropertyFilters, "general">; // 'residential', 'commercial', 'industrial', 'land'
@@ -40,17 +40,20 @@ export interface PropertyDTO {
   features?: string[];
   yearBuilt?: number;
   energyRating?: string;
-}
 
-export interface PropertyDetail extends PropertyDTO {
-  
   agent?: {
     id: number;
-    name: string;
+    firstName: string;
+    lastName: string;
     contact: string;
     profileImageUrl?: string;
     agencyName?: string;
   };
+}
+
+export interface PropertyDetail extends PropertyDTO {
+
+  agentFullName: string;
 
   // Dettagli specifici per categoria, allineati con PropertyFilters
   propertyDetails?: {

@@ -198,7 +198,7 @@ const PropertyDetailScreen: React.FC = () => {
         <View style={styles.propertyInfo}>
           <ThemedText style={styles.title}>{t('property_category.'+property.propertyCategory) || 'Immobile'}</ThemedText>
           <ThemedText style={styles.address}>
-            {property.city || 'Indirizzo non disponibile'}
+            {property.address.city || 'Indirizzo non disponibile'}
           </ThemedText>
           <ThemedText style={styles.price}>{formatPrice(property.price)}</ThemedText>
         </View>
@@ -345,8 +345,8 @@ const PropertyDetailScreen: React.FC = () => {
             resizeMode="cover"
           />
           <View style={styles.agentInfo}>
-            <ThemedText style={styles.agentName}>{property.agent?.name || 'Agente immobiliare'}</ThemedText>
-            <ThemedText style={styles.agentRole}>{property.agent?.agencyName || 'Agenzia immobiliare'}</ThemedText>
+            <ThemedText style={styles.agentName}>{property.agentFullName || 'Agente immobiliare'}</ThemedText>
+            <ThemedText style={styles.agentRole}>{property.agent?.agency?.name || 'Agenzia immobiliare'}</ThemedText>
           </View>
           <TouchableOpacity style={styles.contactButton}>
             <ThemedText style={styles.contactButtonText}>Contatta</ThemedText>
@@ -360,7 +360,7 @@ const PropertyDetailScreen: React.FC = () => {
       <OfferPanel
         isVisible={isOfferPanelVisible}
         onClose={() => setOfferPanelVisible(false)}
-        propertyAddress={property?.city || 'Indirizzo non disponibile'}
+        propertyAddress={property?.address.city || 'Indirizzo non disponibile'}
         askingPrice={property?.price ? property.price.toString() : '0'}
       />
 

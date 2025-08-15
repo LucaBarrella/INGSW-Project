@@ -76,7 +76,7 @@ export const PropertyRow: React.FC<PropertyRowProps> = ({
             />
           </TouchableOpacity>
           <ThemedText className="font-medium text-base flex-1">
-            {t(property.propertyCategory)} in {property.city}, {t(property.status)}
+            {t(property.propertyCategory)} in {property.address.city}, {t(property.status)}
           </ThemedText>
         </ThemedView>
         <ThemedView
