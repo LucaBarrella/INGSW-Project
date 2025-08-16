@@ -198,7 +198,7 @@ const PropertyDetailScreen: React.FC = () => {
         <View style={styles.propertyInfo}>
           <ThemedText style={styles.title}>{t('property_category.'+property.propertyCategory) || 'Immobile'}</ThemedText>
           <ThemedText style={styles.address}>
-            {property.address.city || 'Indirizzo non disponibile'}
+            {property.address?.city || 'Indirizzo non disponibile'}
           </ThemedText>
           <ThemedText style={styles.price}>{formatPrice(property.price)}</ThemedText>
         </View>
@@ -360,7 +360,7 @@ const PropertyDetailScreen: React.FC = () => {
       <OfferPanel
         isVisible={isOfferPanelVisible}
         onClose={() => setOfferPanelVisible(false)}
-        propertyAddress={property?.address.city || 'Indirizzo non disponibile'}
+        propertyAddress={property?.address?.city || 'Indirizzo non disponibile'}
         askingPrice={property?.price ? property.price.toString() : '0'}
       />
 

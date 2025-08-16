@@ -12,6 +12,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 const HomeIcon = ({ color }: { color: string }) => <MaterialIcons name="home" size={24} color={color} />;
 const VisitsIcon = ({ color }: { color: string }) => <MaterialIcons name="calendar-today" size={24} color={color} />;
 const AgendaIcon = ({ color }: { color: string }) => <MaterialIcons name="event-note" size={24} color={color} />;
+const OffersIcon = ({ color }: { color: string }) => <MaterialIcons name="real-estate-agent" size={24} color={color} />;
 const DashboardIcon = ({ color }: { color: string }) => <MaterialIcons name="dashboard" size={24} color={color} />;
 const ProfileIcon = ({ color }: { color: string }) => <MaterialIcons name="person" size={24} color={color} />;
 
@@ -53,6 +54,13 @@ export default function AgentTabLayout() {
         options={{
           title: t('agent.tabs.agenda'),
           tabBarIcon: AgendaIcon
+        }}
+      />
+      <Tabs.Screen
+        name="offers"
+        options={{
+          title: t('agent.tabs.offers'),
+          tabBarIcon: OffersIcon
         }}
       />
       <Tabs.Screen
