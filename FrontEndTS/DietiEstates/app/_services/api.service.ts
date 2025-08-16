@@ -361,7 +361,7 @@ export const searchProperties = async (
   // return response.data;
   console.warn("searchProperties: La logica API reale non è completamente implementata per i filtri complessi.");
   // Fallback a una chiamata semplice per ora se non si usa il mock
-  const response = await httpClient.get(apiEndpoints.searchProperties+params.query, { params: { query: params.query } }); // TODO rimuovere parametri (params), utili solo per MOCK
+  const response = await httpClient.get(apiEndpoints.searchProperties+params.query, { params: { query: params.query, filters: params.filters } }); // TODO rimuovere parametri (params), utili solo per MOCK
   const DTOs: PropertyDTO[] = response.data;
   const ret = await Promise.all(DTOs.map((value: PropertyDTO) => PropertyDTO_to_PropertyDetail(value)));
   return ret;
