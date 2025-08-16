@@ -21,6 +21,8 @@ export interface PropertyDTO {
   address: {
     city: string;
   };
+  views?: number;
+  bookings?: number;
   latitude?: number;
   longitude?: number;
   type: keyof Omit<PropertyFilters, "general">; // 'residential', 'commercial', 'industrial', 'land'

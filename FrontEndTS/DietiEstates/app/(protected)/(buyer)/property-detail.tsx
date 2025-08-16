@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, useColorScheme, Dimensions, NativeSyntheticEvent, NativeScrollEvent, Modal, Platform, SafeAreaView, StatusBar, useWindowDimensions } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { getPropertyDetails } from '@/app/_services/api.service';
 import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
 import { Colors } from '@/constants/Colors';
 import { ThemedIcon } from '@/components/ThemedIcon';
@@ -12,6 +11,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Gallery from 'react-native-awesome-gallery';
 import VisitSchedulerPanel from '../../../components/Buyer/VisitSchedulerPanel';
 import OfferPanel from '../../../components/Offer/OfferPanel';
+import { usePropertiesViewModel } from '@/src/presentation/hooks/usePropertiesViewModel';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -21,9 +21,6 @@ const PropertyDetailScreen: React.FC = () => {
   const colorScheme = useColorScheme();
   const themeColors = Colors[colorScheme ?? 'light'];
 
-  const [property, setProperty] = useState<PropertyDetail | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'description' | 'details' | 'features'>('description');
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isVisitPanelVisible, setVisitPanelVisible] = useState(false);
@@ -34,27 +31,23 @@ const PropertyDetailScreen: React.FC = () => {
   const scrollViewRef = useRef<ScrollView>(null);
   const { t } = useTranslation();
 
-  useEffect(() => {
-    const fetchPropertyDetails = async () => {
-      try {
-        setLoading(true);
-        if (!propertyId) {
-          setError('ID immobile non specificato');
-          return;
-        }
-        
-        const propertyData = await getPropertyDetails(propertyId as string);
-        setProperty(propertyData);
-      } catch (err) {
-        console.error('Errore nel recupero dei dettagli immobile:', err);
-        setError('Impossibile caricare i dettagli dell\'immobile');
-      } finally {
-        setLoading(false);
+  const {
+    properties,
+    loading,
+    error,
+    fetchPropertyById
+  } = usePropertiesViewModel();
+
+  React.useEffect(() => {
+    const loadProperty = async () => {
+      if (propertyId) {
+        await fetchPropertyById(propertyId as string);
       }
     };
+    loadProperty();
+  }, [propertyId, fetchPropertyById]);
 
-    fetchPropertyDetails();
-  }, [propertyId]);
+  const property = properties.find(p => p.id === propertyId);
 
   const handleBack = () => {
     router.back();
@@ -95,31 +88,30 @@ const PropertyDetailScreen: React.FC = () => {
               {property.status}
             </ThemedText>
             <ThemedText style={styles.tabContentText}>
-              <ThemedText style={styles.detailLabel}>Contratto: </ThemedText>
-              {property.contractType === 'rent' ? 'Affitto' : 'Vendita'}
+              <ThemedText style={styles.detailLabel}>Agente: </ThemedText>
+              {property.agentId || 'Non specificato'}
             </ThemedText>
             <ThemedText style={styles.tabContentText}>
-              <ThemedText style={styles.detailLabel}>Anno costruzione: </ThemedText>
-              {property.yearBuilt || 'Non specificato'}
-            </ThemedText>
-            <ThemedText style={styles.tabContentText}>
-              <ThemedText style={styles.detailLabel}>Classificazione energetica: </ThemedText>
-              {property.energyRating || 'Non specificata'}
+              <ThemedText style={styles.detailLabel}>Prezzo: </ThemedText>
+              {property.price.toLocaleString('it-IT')} €
             </ThemedText>
           </View>
         );
       case 'features':
         return (
           <View style={styles.tabContent}>
-            {property.features && property.features.length > 0 ? (
-              property.features.map((feature, index) => (
-                <ThemedText key={index} style={styles.tabContentText}>
-                  • {feature}
-                </ThemedText>
-              ))
-            ) : (
-              <ThemedText style={styles.tabContentText}>Nessuna caratteristica disponibile</ThemedText>
-            )}
+            <ThemedText style={styles.tabContentText}>
+              <ThemedText style={styles.detailLabel}>ID: </ThemedText>
+              {property.id}
+            </ThemedText>
+            <ThemedText style={styles.tabContentText}>
+              <ThemedText style={styles.detailLabel}>Creato: </ThemedText>
+              {property.createdAt.toLocaleDateString('it-IT')}
+            </ThemedText>
+            <ThemedText style={styles.tabContentText}>
+              <ThemedText style={styles.detailLabel}>Aggiornato: </ThemedText>
+              {property.updatedAt.toLocaleDateString('it-IT')}
+            </ThemedText>
           </View>
         );
       default:
@@ -148,7 +140,7 @@ const PropertyDetailScreen: React.FC = () => {
     );
   }
 
-  const images = property.images && property.images.length > 0 ? property.images : (property.imageUrl ? [property.imageUrl] : []);
+  const images = ['https://via.placeholder.com/400x250']; // Placeholder temporaneo
 
   return (
     <ThemedView style={styles.container}>
@@ -196,9 +188,9 @@ const PropertyDetailScreen: React.FC = () => {
 
         {/* Titolo, indirizzo e prezzo */}
         <View style={styles.propertyInfo}>
-          <ThemedText style={styles.title}>{t('property_category.'+property.propertyCategory) || 'Immobile'}</ThemedText>
+          <ThemedText style={styles.title}>{property.title || 'Immobile'}</ThemedText>
           <ThemedText style={styles.address}>
-            {property.address?.city || 'Indirizzo non disponibile'}
+            {property.address || 'Indirizzo non disponibile'}
           </ThemedText>
           <ThemedText style={styles.price}>{formatPrice(property.price)}</ThemedText>
         </View>
@@ -206,28 +198,28 @@ const PropertyDetailScreen: React.FC = () => {
         {/* Dettagli principali */}
         <View style={styles.detailsContainer}>
           <View style={styles.detailItem}>
-            <ThemedIcon icon="material-symbols:bed" size={24} lightColor={themeColors.text} darkColor={themeColors.text} accessibilityLabel="Letto" />
+            <ThemedIcon icon="material-symbols:home" size={24} lightColor={themeColors.text} darkColor={themeColors.text} accessibilityLabel="Proprietà" />
             <ThemedText style={styles.detailText}>
-              {property.numberOfBedrooms || 0} {property.numberOfBedrooms === 1 ? 'Letto' : 'Letti'}
+              Proprietà
             </ThemedText>
           </View>
           <View style={styles.detailItem}>
-            <ThemedIcon icon="material-symbols:bathtub" size={24} lightColor={themeColors.text} darkColor={themeColors.text} accessibilityLabel="Bagno" />
+            <ThemedIcon icon="material-symbols:person" size={24} lightColor={themeColors.text} darkColor={themeColors.text} accessibilityLabel="Agente" />
             <ThemedText style={styles.detailText}>
-              {property.numberOfBathrooms || 0} {property.numberOfBathrooms === 1 ? 'Bagno' : 'Bagni'}
+              Agente: {property.agentId || 'N/A'}
             </ThemedText>
           </View>
           <View style={styles.detailItem}>
-            <ThemedIcon icon="material-symbols:square-foot" size={24} lightColor={themeColors.text} darkColor={themeColors.text} accessibilityLabel="Superficie" />
+            <ThemedIcon icon="material-symbols:calendar-today" size={24} lightColor={themeColors.text} darkColor={themeColors.text} accessibilityLabel="Creato" />
             <ThemedText style={styles.detailText}>
-              {property.area.toLocaleString('it-IT')} m²
+              {property.createdAt.toLocaleDateString('it-IT')}
             </ThemedText>
           </View>
           <View style={styles.detailItem}>
-            <ThemedIcon icon="material-symbols:directions-car" size={24} lightColor={themeColors.text} darkColor={themeColors.text} accessibilityLabel="Posti auto" />
-              <ThemedText style={styles.detailText}>
-                Posti auto: 2
-              </ThemedText>
+            <ThemedIcon icon="material-symbols:update" size={24} lightColor={themeColors.text} darkColor={themeColors.text} accessibilityLabel="Aggiornato" />
+            <ThemedText style={styles.detailText}>
+              {property.updatedAt.toLocaleDateString('it-IT')}
+            </ThemedText>
           </View>
         </View>
 
@@ -235,16 +227,13 @@ const PropertyDetailScreen: React.FC = () => {
         <View style={styles.tagsContainer}>
           <View style={styles.tag}>
             <ThemedText style={styles.tagText}>
-              {property.contractType === 'rent' ? 'Affitto' : 'Vendita'}
+              {property.status === 'active' ? 'Attivo' : property.status === 'sold' ? 'Venduto' : property.status === 'rented' ? 'Affittato' : 'Inattivo'}
             </ThemedText>
           </View>
           <View style={styles.tag}>
             <ThemedText style={styles.tagText}>
-             {t('property_status.'+property.status)}
+              Premium
             </ThemedText>
-          </View>
-          <View style={styles.tag}>
-            <ThemedText style={styles.tagText}>Premium</ThemedText>
           </View>
         </View>
 
@@ -337,16 +326,16 @@ const PropertyDetailScreen: React.FC = () => {
 
         {/* Agente immobiliare */}
         <View style={styles.agentCard}>
-          <Image 
-            source={{ 
-              uri: property.agent?.profileImageUrl || 'https://via.placeholder.com/64x64' 
-            }} 
-            style={styles.agentAvatar} 
+          <Image
+            source={{
+              uri: 'https://via.placeholder.com/64x64'
+            }}
+            style={styles.agentAvatar}
             resizeMode="cover"
           />
           <View style={styles.agentInfo}>
-            <ThemedText style={styles.agentName}>{property.agentFullName || 'Agente immobiliare'}</ThemedText>
-            <ThemedText style={styles.agentRole}>{property.agent?.agency?.name || 'Agenzia immobiliare'}</ThemedText>
+            <ThemedText style={styles.agentName}>Agente immobiliare</ThemedText>
+            <ThemedText style={styles.agentRole}>Agenzia immobiliare</ThemedText>
           </View>
           <TouchableOpacity style={styles.contactButton}>
             <ThemedText style={styles.contactButtonText}>Contatta</ThemedText>
@@ -360,7 +349,7 @@ const PropertyDetailScreen: React.FC = () => {
       <OfferPanel
         isVisible={isOfferPanelVisible}
         onClose={() => setOfferPanelVisible(false)}
-        propertyAddress={property?.address?.city || 'Indirizzo non disponibile'}
+        propertyAddress={property?.address || 'Indirizzo non disponibile'}
         askingPrice={property?.price ? property.price.toString() : '0'}
       />
 

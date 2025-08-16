@@ -17,9 +17,9 @@ import PropertyTypeDescription from '@/components/Agent/AddPropertySteps/Propert
 import ThemedButton from '@/components/ThemedButton';
 import StepIndicator from '@/components/StepIndicator';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import ApiService from '@/app/_services/api.service';
 import { router } from 'expo-router';
 import { propertySchema, PropertyFormData } from './schemas/propertySchema'; // Importa lo schema e il tipo
+import { usePropertiesViewModel } from '@/src/presentation/hooks/usePropertiesViewModel';
 
 // Define the complete form data structure
 // interface PropertyFormData { // Rimosso, ora importato dallo schema
@@ -81,6 +81,7 @@ export default function AddPropertyScreen() {
   const [currentStep, setCurrentStep] = React.useState(1);
   const [selectedImages, setSelectedImages] = React.useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const { createProperty, loading, error: viewModelError } = usePropertiesViewModel();
 
   const { control, handleSubmit, watch, setValue, trigger, formState: { errors } } = useForm<PropertyFormData>({
     resolver: zodResolver(propertySchema), // Applica il resolver
@@ -156,87 +157,86 @@ export default function AddPropertyScreen() {
     if (isSubmitting) return; // Previene submit multipli
     setIsSubmitting(true);
 
-    // 1. Preparazione Dati
-    const apiData: any = {
-      listingType: data.listingType,
-      propertyType: data.propertyType,
-      title: data.title,
-      description: data.description,
-      price: parseFloat(data.price), // Zod assicura che sia un numero stringa valido
-      size: parseInt(data.size, 10), // Zod assicura che sia un numero stringa valido
-      address: data.address,
-      city: data.city,
-      energyClass: data.energyClass, // Zod assicura che sia un valore valido
-      availability: data.availability,
-      // Aggiungi campi specifici basati su propertyType
-    };
-
-    // Aggiungi campi specifici in base al tipo
-    switch (data.propertyType) {
-      case 'RESIDENTIAL':
-        // Con Zod, i tipi dovrebbero essere già corretti se la validazione passa
-        apiData.category = data.residentialCategory;
-        apiData.rooms = parseInt(data.rooms, 10);
-        apiData.bathrooms = parseInt(data.bathrooms, 10);
-        apiData.floor = parseInt(data.floor, 10); // Zod assicura che sia un numero stringa valido
-        apiData.elevator = data.elevator;
-        apiData.pool = data.pool;
-        break;
-      case 'COMMERCIAL':
-        apiData.category = data.commercialCategory;
-        apiData.bathrooms = parseInt(data.commercialBathrooms, 10);
-        apiData.emergencyExit = data.emergencyExit;
-        apiData.constructionDate = parseInt(data.constructionDate, 10); // Zod assicura che sia un anno valido
-        break;
-      case 'INDUSTRIAL':
-        apiData.category = data.industrialCategory;
-        apiData.ceilingHeight = parseFloat(data.ceilingHeight);
-        apiData.fireSystem = data.fireSystem;
-        apiData.floorLoad = parseInt(data.floorLoad, 10);
-        apiData.offices = parseInt(data.offices, 10);
-        apiData.structure = data.structure;
-        break;
-      case 'LAND':
-        apiData.category = data.landCategory;
-        apiData.soilType = data.soilType;
-        apiData.slope = parseFloat(data.slope);
-        break;
-    }
-
-    console.log('API Data Prepared:', apiData);
-    console.log('Selected Images:', selectedImages);
-
-    // 2. Upload Immagini (Simulato)
-    // TODO: Sostituire con logica di upload reale (es. FormData o SDK Cloudinary/S3)
-    console.log("Simulating image uploads...");
-    const uploadedImageUrls: string[] = [];
-    for (const uri of selectedImages) {
-      try {
-        // Simula il tempo di upload per ogni immagine
-        await new Promise(resolve => setTimeout(resolve, 300));
-        const mockUrl = `https://cdn.example.com/images/${uri.split('/').pop()?.split('.')[0]}-${Date.now()}.jpg`;
-        uploadedImageUrls.push(mockUrl);
-        console.log(`Simulated upload success for ${uri} -> ${mockUrl}`);
-      } catch (uploadError) {
-        console.error(`Simulated upload failed for ${uri}:`, uploadError);
-        // Decidere come gestire errori di upload parziali (es. interrompere o continuare?)
-        // Per ora, continuiamo ma logghiamo l'errore.
-      }
-    }
-    console.log("Simulated image uploads complete:", uploadedImageUrls);
-
-
-    // 3. Chiamata API
     try {
-      // Aggiungi gli URL delle immagini ai dati API (il nome del campo dipende dal backend)
-      apiData.imageUrls = uploadedImageUrls;
+      // 1. Preparazione Dati
+      const propertyData: any = {
+        listingType: data.listingType,
+        propertyType: data.propertyType,
+        title: data.title,
+        description: data.description,
+        price: parseFloat(data.price), // Zod assicura che sia un numero stringa valido
+        size: parseInt(data.size, 10), // Zod assicura che sia un numero stringa valido
+        address: data.address,
+        city: data.city,
+        energyClass: data.energyClass, // Zod assicura che sia un valore valido
+        availability: data.availability,
+        // Aggiungi campi specifici basati su propertyType
+      };
 
-      // Chiamata API reale (usando la versione mock per ora)
-      const response = await ApiService.createProperty(apiData);
-      console.log("API Response:", response); // Log della risposta (utile per debug)
+      // Aggiungi campi specifici in base al tipo
+      switch (data.propertyType) {
+        case 'RESIDENTIAL':
+          // Con Zod, i tipi dovrebbero essere già corretti se la validazione passa
+          propertyData.category = data.residentialCategory;
+          propertyData.rooms = parseInt(data.rooms, 10);
+          propertyData.bathrooms = parseInt(data.bathrooms, 10);
+          propertyData.floor = parseInt(data.floor, 10); // Zod assicura che sia un numero stringa valido
+          propertyData.elevator = data.elevator;
+          propertyData.pool = data.pool;
+          break;
+        case 'COMMERCIAL':
+          propertyData.category = data.commercialCategory;
+          propertyData.bathrooms = parseInt(data.commercialBathrooms, 10);
+          propertyData.emergencyExit = data.emergencyExit;
+          propertyData.constructionDate = parseInt(data.constructionDate, 10); // Zod assicura che sia un anno valido
+          break;
+        case 'INDUSTRIAL':
+          propertyData.category = data.industrialCategory;
+          propertyData.ceilingHeight = parseFloat(data.ceilingHeight);
+          propertyData.fireSystem = data.fireSystem;
+          propertyData.floorLoad = parseInt(data.floorLoad, 10);
+          propertyData.offices = parseInt(data.offices, 10);
+          propertyData.structure = data.structure;
+          break;
+        case 'LAND':
+          propertyData.category = data.landCategory;
+          propertyData.soilType = data.soilType;
+          propertyData.slope = parseFloat(data.slope);
+          break;
+      }
+
+      console.log('Property Data Prepared:', propertyData);
+      console.log('Selected Images:', selectedImages);
+
+      // 2. Upload Immagini (Simulato)
+      // TODO: Sostituire con logica di upload reale (es. FormData o SDK Cloudinary/S3)
+      console.log("Simulating image uploads...");
+      const uploadedImageUrls: string[] = [];
+      for (const uri of selectedImages) {
+        try {
+          // Simula il tempo di upload per ogni immagine
+          await new Promise(resolve => setTimeout(resolve, 300));
+          const mockUrl = `https://cdn.example.com/images/${uri.split('/').pop()?.split('.')[0]}-${Date.now()}.jpg`;
+          uploadedImageUrls.push(mockUrl);
+          console.log(`Simulated upload success for ${uri} -> ${mockUrl}`);
+        } catch (uploadError) {
+          console.error(`Simulated upload failed for ${uri}:`, uploadError);
+          // Decidere come gestire errori di upload parziali (es. interrompere o continuare?)
+          // Per ora, continuiamo ma logghiamo l'errore.
+        }
+      }
+      console.log("Simulated image uploads complete:", uploadedImageUrls);
+
+      // 3. Chiamata al ViewModel
+      // Aggiungi gli URL delle immagini ai dati della proprietà (il nome del campo dipende dal backend)
+      propertyData.imageUrls = uploadedImageUrls;
+
+      // Chiamata al ViewModel
+      const response = await createProperty(propertyData);
+      console.log("ViewModel Response:", response); // Log della risposta (utile per debug)
 
       // 4. Gestione Risposta - Naviga alla schermata di feedback
-      if (response.success) {
+      if (response) {
         router.replace({
           pathname: '/feedback',
           params: {
@@ -248,8 +248,8 @@ export default function AddPropertyScreen() {
           },
         });
       } else {
-        // Anche se l'API mock restituisce sempre successo, gestiamo il caso teorico di fallimento
-        throw new Error(response.message || 'Errore durante la creazione dell\'immobile.');
+        // Gestione del caso di fallimento
+        throw new Error('Errore durante la creazione dell\'immobile.');
       }
 
     } catch (error: any) {
@@ -298,12 +298,12 @@ export default function AddPropertyScreen() {
           )}
           {currentStep === 5 && (
             <ThemedButton
-              title={isSubmitting ? "Salvataggio..." : "Salva Immobile"}
+              title={isSubmitting || loading ? "Salvataggio..." : "Salva Immobile"}
               onPress={handleSubmit(onSubmit)}
-              disabled={isSubmitting}
+              disabled={isSubmitting || loading}
               className="py-3 px-4 flex-grow" // Padding e flex-grow per il pulsante finale
             >
-              {isSubmitting && <ActivityIndicator color={buttonTextColor} style={{ marginLeft: 8 }} />}
+              {(isSubmitting || loading) && <ActivityIndicator color={buttonTextColor} style={{ marginLeft: 8 }} />}
             </ThemedButton>
           )}
         </ThemedView>

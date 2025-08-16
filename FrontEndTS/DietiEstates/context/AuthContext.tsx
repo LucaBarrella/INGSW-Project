@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
-import { getToken, saveToken, removeToken, saveRefreshToken } from '@/app/_services/token.service';
+import { getToken, saveToken, removeToken, saveRefreshToken, getRefreshToken, removeRefreshToken } from '@/app/_services/token.service';
 import ApiService from '@/app/_services/api.service';
-import { logout } from '@/app/_services/api.service'; // Importa la funzione logout
+// Rimosso importazione errata di logout
 import { UserCredentials } from '@/types/UserCredentials';
 import { Alert } from 'react-native';
 import { useRouter, useSegments } from 'expo-router';
@@ -113,15 +113,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signOut = async () => {
     console.log("Attempting to sign out...");
+    let logoutApiSuccess = false;
     try {
-      await logout(); // Chiama la funzione API di logout
-      console.log('Logout API chiamato con successo.');
+      const refreshToken = await getRefreshToken();
+      console.log('Refresh token recuperato:', refreshToken);
+      if (refreshToken) {
+        await ApiService.logout(refreshToken); // Chiama la funzione API di logout con il refreshToken
+        logoutApiSuccess = true;
+        console.log('Logout API chiamato con successo.');
+      } else {
+        console.warn('Refresh token non trovato. Esecuzione del logout locale.');
+      }
     } catch (apiError) {
       console.error('Errore durante il logout API:', apiError);
       // Non bloccare il logout locale anche se l'API fallisce
       Alert.alert('Errore Logout', 'Si è verificato un problema durante il logout dal server. Riprova più tardi.');
     } finally {
       await removeToken();
+      await removeRefreshToken();
       setUser(null);
       console.log("Sign out process complete. User state should be null.");
       // La navigazione è gestita dall'useEffect
@@ -135,8 +144,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const token = responseData?.accessToken;
       if (token) {
         await saveToken(token);
-        setUser({ token });
-        console.log('Registrazione riuscita, token salvato!');
+        await saveRefreshToken(responseData.refreshToken);
+        setUser({ token, userType: responseData.userType });
+        console.log('Registrazione riuscita. Token salvato!');
+        Alert.alert(
+          'Registrazione Riuscita',
+          'Il tuo account è stato creato con successo. Benvenuto!',
+          [
+            { text: 'OK', onPress: () => router.replace('/(protected)/(buyer)/(tabs)/home' as any) }
+          ]
+        );
       } else {
         setError('Token di autenticazione non ricevuto dopo la registrazione.');
       }

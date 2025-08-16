@@ -73,9 +73,32 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
     if (!formData.password) {
       newErrors.password = 'La password è obbligatoria';
       isValid = false;
-    } else if (formData.password.length < 8) {
-      newErrors.password = 'La password deve essere di almeno 8 caratteri';
-      isValid = false;
+    } else {
+      // Validazione della password con tutti i requisiti
+      if (formData.password.length < 8) {
+        newErrors.password = 'La password deve essere di almeno 8 caratteri';
+        isValid = false;
+      }
+      
+      if (!/[A-Z]/.test(formData.password)) {
+        newErrors.password = (newErrors.password || '') + (newErrors.password ? '\n' : '') + 'La password deve contenere almeno una lettera maiuscola';
+        isValid = false;
+      }
+      
+      if (!/[a-z]/.test(formData.password)) {
+        newErrors.password = (newErrors.password || '') + (newErrors.password ? '\n' : '') + 'La password deve contenere almeno una lettera minuscola';
+        isValid = false;
+      }
+      
+      if (!/[0-9]/.test(formData.password)) {
+        newErrors.password = (newErrors.password || '') + (newErrors.password ? '\n' : '') + 'La password deve contenere almeno un numero';
+        isValid = false;
+      }
+      
+      if (!/[@#$%^&+=]/.test(formData.password)) {
+        newErrors.password = (newErrors.password || '') + (newErrors.password ? '\n' : '') + 'La password deve contenere almeno un carattere speciale (@#$%^&+=)';
+        isValid = false;
+      }
     }
 
     setErrors(newErrors);
@@ -207,6 +230,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
           }
         }}
         error={!!errors.password}
+        errorMessage={errors.password}
         className="mb-6"
       />
 
