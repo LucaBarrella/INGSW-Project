@@ -90,10 +90,18 @@ export const searchProperties = async (
         if (general.transactionType) {
           results = results.filter(p => p.contractType === general.transactionType);
         }
-        if (general.priceRange && general.priceRange.min !== undefined && general.priceRange.max !== undefined) {
-          results = results.filter(p =>
-            p.price >= general.priceRange!.min && p.price <= general.priceRange!.max
-          );
+        if (general.priceRange) {
+          if (general.priceRange.min !== undefined ) {
+            results = results.filter(p =>
+              p.price >= general.priceRange!.min
+            );
+          }
+
+          if (general.priceRange.max !== undefined) {
+            results = results.filter(p =>
+              p.price >= general.priceRange!.max
+            );
+          }
         }
         if (general.size && general.size.min !== undefined && general.size.max !== undefined) {
           results = results.filter(p =>
@@ -157,7 +165,7 @@ export const searchProperties = async (
     Object.assign(backendParams, params.filters.general);
   }
 
-  const response = await httpClient.get(propertyEndpoints.searchProperties + params.query, { params: { query: params.query } });
+  const response = await httpClient.post(propertyEndpoints.searchProperties + params.query, { ...params.filters, params: { query: params.query  } });
   const DTOs: PropertyDTO[] = response.data;
   const ret = await Promise.all(DTOs.map((value: PropertyDTO) => PropertyDTO_to_PropertyDetail(value)));
   return ret;

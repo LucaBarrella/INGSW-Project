@@ -149,7 +149,7 @@ export const DEFAULT_PRICE_RANGES: PriceRanges = {
   },
   sale: {
     min: 0,
-    max: 10000000,
+    max: 2000000,
     step: 50000,
     defaultRange: { min: 0, max: 500000 }
   }
