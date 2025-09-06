@@ -20,7 +20,7 @@ export interface ApiPropertyDetail {
 // Deve corrispondere a ciò che l'API si aspetta, che potrebbe essere diverso da PropertyFilters del dominio
 export interface ApiPropertyFilters {
   general?: {
-    transactionType?: string;
+    contract?: string;
     priceRange?: { min?: number; max?: number };
     size?: { min?: number; max?: number };
   };

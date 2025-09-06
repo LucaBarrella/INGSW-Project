@@ -12,7 +12,7 @@ import { SearchResultsView } from '@/components/Buyer/SearchResults/SearchResult
 
 export default function SearchResultsScreen() {
   // Aggiunto triggerSearch al tipo dei parametri URL
-  const params = useLocalSearchParams<{ category?: string; query?: string; transactionType?: 'rent' | 'sale', triggerSearch?: string }>();
+  const params = useLocalSearchParams<{ category?: string; query?: string; contract?: 'rent' | 'sale', triggerSearch?: string }>();
   const { state, dispatch } = useSearch();
   const [isLoading, setIsLoading] = useState(true); // Mantenuto per il caricamento dei dati API
   const [properties, setProperties] = useState<PropertyDetail[]>([]);
@@ -65,11 +65,11 @@ export default function SearchResultsScreen() {
       }
     }
     
-    if (params.transactionType && params.transactionType !== state.filters.general.transactionType) {
-        console.log(`[SearchScreen] URL transactionType ("${params.transactionType}") differs from context ("${state.filters.general.transactionType}"). Dispatching UPDATE_FILTER for general.`);
+    if (params.contract && params.contract !== state.filters.general.contract) {
+        console.log(`[SearchScreen] URL transactionType ("${params.contract}") differs from context ("${state.filters.general.contract}"). Dispatching UPDATE_FILTER for general.`);
         dispatch({
             type: 'UPDATE_FILTER',
-            payload: { subCategory: 'general', newFilters: { transactionType: params.transactionType } },
+            payload: { subCategory: 'general', newFilters: { contract: params.contract } },
         });
         dispatchNeeded = true;
     }
@@ -135,7 +135,7 @@ export default function SearchResultsScreen() {
   // dopo che il context è stato sincronizzato.
 
   useEffect(() => {
-    console.log(`[SearchScreen] useEffect for triggerSearch triggered. isLoadingFromStorage: ${state.isLoadingFromStorage}, triggerSearch: ${params.triggerSearch}, contextQuery: ${state.searchQuery}, contextFilters: ${JSON.stringify(state.filters.general.transactionType)}`);
+    console.log(`[SearchScreen] useEffect for triggerSearch triggered. isLoadingFromStorage: ${state.isLoadingFromStorage}, triggerSearch: ${params.triggerSearch}, contextQuery: ${state.searchQuery}, contextFilters: ${JSON.stringify(state.filters.general.contract)}`);
     
     // Esegue fetchProperties solo se il context ha finito di caricare E il parametro triggerSearch è presente
     if (!state.isLoadingFromStorage && params.triggerSearch === 'true') {

@@ -103,7 +103,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
     }
   }, [isOpen]);
 
-  const currentPriceRange = DEFAULT_PRICE_RANGES[filters.general.transactionType];
+  const currentPriceRange = DEFAULT_PRICE_RANGES[filters.general?.contract === 'rent' ? 'rent' : 'sale'];
 
   const handleReset = () => {
     // Mantiene il tipo di transazione corrente per impostazione predefinita durante il reset
@@ -273,13 +273,13 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
                         { label: "Affitto", value: "rent" },
                         { label: "Vendita", value: "sale" }
                       ]}
-                      value={filters.general.transactionType}
+                      value={filters.general.contract}
                       onChange={(value) => {
                         const transactionType = value as "rent" | "sale";
                         onUpdateFilters({
                           subCategory: 'general',
                           newFilters: {
-                            transactionType: transactionType,
+                            contract: transactionType,
                             // Resetta priceRange al default per il nuovo tipo di transazione
                             priceRange: DEFAULT_PRICE_RANGES[transactionType].defaultRange
                           },
@@ -289,7 +289,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
                   </ThemedView>
 
                   <RangeSlider
-                    title={`Prezzo ${filters.general.transactionType === "rent" ? "Mensile" : "Massimo"}`}
+                    title={`Prezzo ${filters.general.contract === "rent" ? "Mensile" : "Massimo"}`}
                     min={currentPriceRange.min}
                     max={currentPriceRange.max}
                     step={currentPriceRange.step}

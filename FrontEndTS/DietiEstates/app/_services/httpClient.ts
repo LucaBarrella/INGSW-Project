@@ -1,17 +1,15 @@
 import axios, { AxiosError, InternalAxiosRequestConfig, AxiosInstance } from 'axios';
 import ApiError from './errors/ApiError';
 import * as SecureStore from 'expo-secure-store';
-import { apiEndpoints } from './api.service';
 import { getRefreshToken, saveRefreshToken, saveToken } from './token.service';
-import { Alert } from 'react-native';
-import { useNavigation } from 'expo-router';
+import { refresh } from '@/src/data/api/AuthApiService';
 // Importa il flag MOCK (potrebbe causare dipendenza circolare, vedi nota sotto)
 // import { USE_MOCK_API } from './api.service'; // <-- ATTENZIONE: Possibile dipendenza circolare
 
 // --- FLAG PER ABILITARE/DISABILITARE LE API MOCK ---
 // Duplichiamo il flag qui per evitare dipendenze circolari.
 // Assicurati che questo valore sia SINCRONIZZATO con quello in api.service.ts
-const USE_MOCK_API_HTTP = false;
+const USE_MOCK_API_HTTP = true;
 
 // Chiave per salvare/recuperare il token JWT da SecureStore
 const TOKEN_KEY = 'user_auth_token';
@@ -39,7 +37,7 @@ const TOKEN_KEY = 'user_auth_token';
 // Fallback temporaneo se le variabili non sono in app.json/extra
 // TODO: Rimuovere questo fallback e configurare correttamente app.json/extra
 const baseURL = __DEV__
-  ? 'http://localhost:8080' // Usa l'URL DEV da .env, TODO usa localhost per emulatori iOS e IP locale per dispositivi fisici
+  ? 'http://192.168.1.224:8080' // Usa l'URL DEV da .env, TODO usa localhost per emulatori iOS e IP locale per dispositivi fisici
   : 'https://your-production-api-url.azurewebsites.net/api'; // Usa l'URL PROD da .env (DA AGGIORNARE!)
 
 if (!baseURL && !USE_MOCK_API_HTTP) { // Controlla baseURL solo se non siamo in mock http
@@ -148,9 +146,9 @@ const httpClient: AxiosInstance = (() => {
               break;
             case 498:
               if (!error.request.responseURL.endsWith("/refresh")) {
-                const newToken = await httpClient.post(apiEndpoints.refresh, {refreshToken: await getRefreshToken()});
-                saveToken(newToken.data.accessToken);
-                saveRefreshToken(newToken.data.refreshToken);
+                const newToken = await refresh();
+                saveToken(newToken.accessToken);
+                saveRefreshToken(newToken.refreshToken);
                 return httpClient.request(error.config);
               }
               else {

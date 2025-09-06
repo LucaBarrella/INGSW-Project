@@ -2,6 +2,7 @@ import httpClient from '../../../app/_services/httpClient';
 import { PropertyDetail, DashboardStats, PropertyDTO } from '../../../components/Agent/PropertyDashboard/types';
 import { PropertyFilters } from '../../../components/Buyer/SearchIntegration/types';
 import { mockDelay, MOCK_AGENT_STATS, MOCK_PROPERTIES, MOCK_FEATURED_PROPERTIES } from '../../../app/_services/__mocks__/mockData';
+import { Alert } from 'react-native';
 
 // Definisce i path relativi degli endpoint API per la gestione delle proprietà
 const propertyEndpoints = {
@@ -73,6 +74,7 @@ export const searchProperties = async (
   });
 
   if (process.env.NODE_ENV === 'test' || (httpClient as any).USE_MOCK_API_HTTP) {
+    alert("LUCA SMETTILA DI USARE LA MOCK API");
     const { query, filters } = params;
     let results = [...MOCK_PROPERTIES];
 
@@ -87,8 +89,8 @@ export const searchProperties = async (
     if (filters) {
       const general = filters.general;
       if (general) {
-        if (general.transactionType) {
-          results = results.filter(p => p.contractType === general.transactionType);
+        if (general.contract) {
+          results = results.filter(p => p.contractType === general.contract);
         }
         if (general.priceRange) {
           if (general.priceRange.min !== undefined ) {
@@ -163,9 +165,19 @@ export const searchProperties = async (
   if (params.query) backendParams.q = params.query;
   if (params.filters) {
     Object.assign(backendParams, params.filters.general);
-  }
+    if (params.filters.general.priceRange) {
+      if (params.filters.general.priceRange.min !== undefined ) {
+        backendParams.minPrice = params.filters.general.priceRange.min;
+      }
 
-  const response = await httpClient.post(propertyEndpoints.searchProperties + params.query, { ...params.filters, params: { query: params.query  } });
+      if (params.filters.general.priceRange.max !== undefined) {
+        backendParams.maxPrice = params.filters.general.priceRange.max;
+      }
+    }
+    
+  }
+  console.log("searching with filters: " + JSON.stringify(backendParams));
+  const response = await httpClient.post(propertyEndpoints.searchProperties + params.query, { ...backendParams, params: { query: params.query  } });
   const DTOs: PropertyDTO[] = response.data;
   const ret = await Promise.all(DTOs.map((value: PropertyDTO) => PropertyDTO_to_PropertyDetail(value)));
   return ret;

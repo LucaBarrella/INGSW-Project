@@ -52,7 +52,7 @@ const mockCategories: Categories = {
 
 const initialFilters = {
     general: {
-      transactionType: "sale",
+      contract: "sale",
       priceRange: DEFAULT_PRICE_RANGES.sale.defaultRange,
       size: { min: 50, max: 500 },
     },

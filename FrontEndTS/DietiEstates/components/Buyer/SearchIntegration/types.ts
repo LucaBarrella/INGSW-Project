@@ -40,7 +40,7 @@ type LandCategory = typeof LAND_CATEGORIES[number];
 // Define the main filters interface
 export interface PropertyFilters {
   general: {
-    transactionType: "rent" | "sale";
+    contract: "rent" | "sale";
     priceRange: Range;
     size: Range;
   };

@@ -26,7 +26,7 @@ export const initialSearchState: SearchState = {
   searchQuery: '',
   filters: {
     general: {
-      transactionType: 'sale', // Default a 'sale' o 'rent' come preferito
+      contract: 'sale', // Default a 'sale' o 'rent' come preferito
       priceRange: DEFAULT_PRICE_RANGES.sale.defaultRange, // Default per 'sale'
       size: { min: 0, max: 1000 }, // Esempio di range di default per la dimensione
     },
@@ -132,7 +132,7 @@ export const searchReducer = (state: SearchState, action: SearchAction): SearchS
       }
       break;
     case 'RESET_FILTERS':
-      const currentTransactionType = state.filters.general.transactionType;
+      const currentTransactionType = state.filters.general.contract;
       const defaultFilters = initialSearchState.filters;
       newState = {
         ...state,
@@ -141,11 +141,11 @@ export const searchReducer = (state: SearchState, action: SearchAction): SearchS
           ...defaultFilters,
           general: {
             ...defaultFilters.general,
-            transactionType: action.payload?.keepTransactionType
+            contract: action.payload?.keepTransactionType
               ? currentTransactionType
-              : defaultFilters.general.transactionType,
+              : defaultFilters.general.contract,
             // Assicurati che il priceRange sia aggiornato in base al transactionType effettivo dopo il reset
-            priceRange: (action.payload?.keepTransactionType ? currentTransactionType : defaultFilters.general.transactionType) === 'rent'
+            priceRange: (action.payload?.keepTransactionType ? currentTransactionType : defaultFilters.general.contract) === 'rent'
               ? DEFAULT_PRICE_RANGES.rent.defaultRange
               : DEFAULT_PRICE_RANGES.sale.defaultRange,
           },
@@ -211,7 +211,14 @@ export const SearchProvider = ({ children }: { children: ReactNode }) => {
         if (storedFilters !== null) {
           try {
             const parsedFilters: PropertyFilters = JSON.parse(storedFilters);
-            // TODO: Aggiungere validazione più robusta per parsedFilters
+            // Validate filters.general.contract
+            if (parsedFilters.general && !['sale', 'rent'].includes(parsedFilters.general.contract)) {
+              console.warn('[SearchContext] Invalid filters.general.contract found in storage. Defaulting to "sale".');
+              parsedFilters.general.contract = 'sale';
+            } else if (!parsedFilters.general) {
+              console.warn('[SearchContext] filters.general is undefined in storage. Defaulting contract to "sale".');
+              parsedFilters.general = { ...initialSearchState.filters.general, contract: 'sale' };
+            }
             loadedState.filters = parsedFilters;
             successfullyParsedFilters = true;
             console.log('[SearchContext] Loaded and parsed filters:', parsedFilters);

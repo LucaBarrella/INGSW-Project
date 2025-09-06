@@ -59,7 +59,7 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
   const getActiveFiltersCount = () => {
     let count = 0;
     // Aggiungi un controllo per assicurarti che state e state.filters esistano
-    if (!state || !state.filters) {
+    if (!state || !state.filters || !state.filters.general) {
       return 0;
     }
     const { general, residential, commercial, industrial, land } = state.filters;
@@ -72,7 +72,7 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
     // NOTA: Questo dovrebbe essere allineato con initialSearchState in SearchContext.tsx
     const defaultSalePriceRange = DEFAULT_PRICE_RANGES.sale.defaultRange;
     const defaultRentPriceRange = DEFAULT_PRICE_RANGES.rent.defaultRange;
-    const currentDefaultPriceRange = general.transactionType === 'rent' ? defaultRentPriceRange : defaultSalePriceRange;
+    const currentDefaultPriceRange = (general?.contract || 'sale') === 'rent' ? defaultRentPriceRange : defaultSalePriceRange;
     const defaultSizeRange = { min: 0, max: 1000 }; // Da initialSearchState
 
     // Check price range

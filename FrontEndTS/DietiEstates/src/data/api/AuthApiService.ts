@@ -75,6 +75,14 @@ export const loginAgent = async (credentials: LoginCredentials): Promise<ApiResp
 };
 
 /**
+ * Use refresh token
+ */
+export const refresh = async (): Promise<{ accessToken: string, refreshToken: string }> => {
+  const response = await httpClient.post(authEndpoints.refresh);
+  return response.data;
+};
+
+/**
  * Cambia la password di un amministratore.
  * @param passwordData - Dati per il cambio password.
  * @returns La risposta dell'API.
