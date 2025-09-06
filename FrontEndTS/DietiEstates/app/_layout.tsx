@@ -18,6 +18,7 @@ import { AuthProvider } from '../context/AuthContext';
 SplashScreen.preventAutoHideAsync();
 
 const STACK_SCREENS = [
+  { name: "(onboarding)"},
   { name: "(auth)" },
   { name: "(protected)", options: { gestureEnabled: false } },
   { name: "+not-found", options: { presentation: 'modal' as const } }
@@ -45,7 +46,7 @@ export default function RootLayout() {
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <SearchProvider>
             <AuthProvider>
-              <Stack screenOptions={{ headerShown: false }} initialRouteName="(auth)">
+              <Stack screenOptions={{ headerShown: false }}>
                 {STACK_SCREENS.map(screen => (
                   <Stack.Screen
                     key={screen.name}

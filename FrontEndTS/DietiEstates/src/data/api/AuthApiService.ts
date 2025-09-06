@@ -5,12 +5,10 @@ import { mockDelay, MOCK_TOKEN_RESPONSE } from '../../../app/_services/__mocks__
 
 // Definisce i path relativi degli endpoint API per l'autenticazione
 const authEndpoints = {
-  buyerLogin: '/login',
-  buyerRegister: '/signup',
-  adminLogin: '/admins/login',
-  agentLogin: '/estates_agents/login',
-  logout: '/logout',
-  refresh: '/refresh',
+  login: '/auth/login',
+  register: '/auth/signup',
+  logout: '/auth/logout',
+  refresh: '/auth/refresh',
   adminChangePassword: '/admins/change-amministration-password',
 } as const;
 
@@ -20,12 +18,17 @@ const authEndpoints = {
  * @returns La risposta dell'API (es. contenente il token).
  */
 export const loginUser = async (credentials: LoginCredentials): Promise<ApiResponseToken> => {
-  // Il flag USE_MOCK_API è gestito internamente da httpClient
-  console.log('[AuthApiService] loginUser:', credentials);
+  // Unified login endpoint for B2C: POST /api/auth/login
+  console.log('[AuthApiService] loginUser (unified):', credentials);
   if (process.env.NODE_ENV === 'test' || (httpClient as any).USE_MOCK_API_HTTP) {
-    return mockDelay({ ...MOCK_TOKEN_RESPONSE, userType: 'buyer', accessToken: 'mock-access-token-buyer' });
+    return mockDelay({
+      ...MOCK_TOKEN_RESPONSE,
+      userType: 'buyer',
+      accessToken: 'mock-access-token-buyer',
+      roles: ['buyer'],
+    });
   }
-  const response = await httpClient.post(authEndpoints.buyerLogin, credentials);
+  const response = await httpClient.post(authEndpoints.login, credentials);
   return response.data;
 };
 
@@ -39,7 +42,7 @@ export const registerUser = async (userData: { email: string; password?: string;
   if (process.env.NODE_ENV === 'test' || (httpClient as any).USE_MOCK_API_HTTP) {
     return mockDelay({ ...MOCK_TOKEN_RESPONSE, userType: 'buyer', accessToken: 'mock-access-token-buyer' });
   }
-  const response = await httpClient.post(authEndpoints.buyerRegister, userData);
+  const response = await httpClient.post(authEndpoints.register, userData);
   return response.data;
 };
 
@@ -53,7 +56,7 @@ export const loginAdmin = async (credentials: LoginCredentials): Promise<ApiResp
   if (process.env.NODE_ENV === 'test' || (httpClient as any).USE_MOCK_API_HTTP) {
     return mockDelay({ ...MOCK_TOKEN_RESPONSE, userType: 'admin', accessToken: 'mock-access-token-admin' });
   }
-  const response = await httpClient.post(authEndpoints.adminLogin, credentials);
+  const response = await httpClient.post(authEndpoints.login, credentials);
   return response.data;
 };
 
@@ -67,7 +70,7 @@ export const loginAgent = async (credentials: LoginCredentials): Promise<ApiResp
   if (process.env.NODE_ENV === 'test' || (httpClient as any).USE_MOCK_API_HTTP) {
     return mockDelay({ ...MOCK_TOKEN_RESPONSE, userType: 'agent', accessToken: 'mock-access-token-agent' });
   }
-  const response = await httpClient.post(authEndpoints.agentLogin, credentials);
+  const response = await httpClient.post(authEndpoints.login, credentials);
   return response.data;
 };
 

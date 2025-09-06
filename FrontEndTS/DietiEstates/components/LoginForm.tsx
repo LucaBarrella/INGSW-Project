@@ -10,26 +10,12 @@ import ThemedButton from './ThemedButton';
 import { LabelInput } from './LabelInput';
 import { useRouter } from 'expo-router';
 
-
 export type LoginFormProps = ViewProps & {
-  userType: 'admin' | 'agent' | 'buyer';
   lightColor?: string;
   darkColor?: string;
 };
 
-const getHeaderText = (userType: 'admin' | 'agent' | 'buyer'): string => {
-  if (userType === 'admin') return 'Admin Access';
-  if (userType === 'agent') return 'Agent Access';
-  return 'Welcome Back';
-};
-
-const getSubHeaderText = (userType: 'admin' | 'agent' | 'buyer'): string => {
-  if (userType === 'admin') return 'Authenticate to access the admin panel';
-  if (userType === 'agent') return 'Authenticate to access the agent panel';
-  return 'Sign in to continue';
-};
-
-const LoginForm: React.FC<LoginFormProps> = ({ userType, lightColor, darkColor, ...props }) => {
+const LoginForm: React.FC<LoginFormProps> = ({ lightColor, darkColor, ...props }) => {
   const router = useRouter();
   const { signIn, error, clearError } = useAuth();
   const background = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
@@ -53,7 +39,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ userType, lightColor, darkColor, 
       return;
     }
     try {
-      await signIn({ email, password }, userType);
+      // Nuovo signIn unificato: non richiede più userType
+      await signIn({ email, password });
     } catch (err) {
       console.error('Errore nel componente LoginForm durante il login:', err);
     }
@@ -62,10 +49,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ userType, lightColor, darkColor, 
   return (
     <ThemedView className="transform scale-90 md:scale-100 max-w-md p-8 rounded-2xl w-10/12 shadow-lg mt-[12%] mb-[10%]" style={{ backgroundColor: cardBackground }} {...props}>
       <ThemedText className="py-5 text-center" style={{ fontSize: 36, color: labelColor }}>
-        {getHeaderText(userType)}
+        Accedi
       </ThemedText>
       <ThemedText className="text-lg mb-6 text-center" style={{ color: labelColor }}>
-        {getSubHeaderText(userType)}
+        Benvenuto — accedi per continuare
       </ThemedText>
 
       {error && (
@@ -96,36 +83,34 @@ const LoginForm: React.FC<LoginFormProps> = ({ userType, lightColor, darkColor, 
         onChangeText={setPassword}
       />
 
-
       <ThemedButton
-        title="Enter"
-        onPress={handleLogin} 
+        title="Entra"
+        onPress={handleLogin}
         borderRadius={8}
         className="min-h-[40px]"
       />
 
-      {userType === 'buyer' && (
-        <>
-          <ThemedText className="text-base mt-3 mb-3 text-center" style={{ color: labelColor }}>or continue with:</ThemedText>
-          <View className="items-center mb-3">
-            <SocialButton provider={Provider.Google} onPress={() => console.log('Login con Google')} lightColor='#FFFFFF' darkColor='#FFFFFF' />
-          </View>
-          <View className="items-center mb-3">
-            <SocialButton provider={Provider.Meta} onPress={() => console.log('Login con Meta')} lightColor='#FFFFFF' darkColor='#1877F2' />
-          </View>
-          <View className="items-center mb-3">
-            <SocialButton provider={Provider.GitHub} onPress={() => console.log('Login con GitHub')} lightColor='#FFFFFF' darkColor='#333333' />
-          </View>
-          <View className="flex-row justify-center mt-3">
-            <ThemedText style={{ color: labelColor }}>Don't have an account yet? </ThemedText>
-            <TouchableOpacity onPress={() => router.push('/(auth)/(buyer)/register')}>
-              <ThemedText className="text-blue-500 underline font-bold" style={{ color: labelColor }}>
-                Sign up
-              </ThemedText>
-            </TouchableOpacity>
-          </View>
-        </>
-      )}
+      {/* Pulsanti social sempre visibili (unificazione accesso) */}
+      <>
+        <ThemedText className="text-base mt-3 mb-3 text-center" style={{ color: labelColor }}>o continua con:</ThemedText>
+        <View className="items-center mb-3">
+          <SocialButton provider={Provider.Google} onPress={() => console.log('Login con Google')} lightColor='#FFFFFF' darkColor='#FFFFFF' />
+        </View>
+        <View className="items-center mb-3">
+          <SocialButton provider={Provider.Meta} onPress={() => console.log('Login con Meta')} lightColor='#FFFFFF' darkColor='#1877F2' />
+        </View>
+        <View className="items-center mb-3">
+          <SocialButton provider={Provider.GitHub} onPress={() => console.log('Login con GitHub')} lightColor='#FFFFFF' darkColor='#333333' />
+        </View>
+        <View className="flex-row justify-center mt-3">
+          <ThemedText style={{ color: labelColor }}>Non hai un account? </ThemedText>
+          <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
+            <ThemedText className="text-blue-500 underline font-bold" style={{ color: labelColor }}>
+              Registrati
+            </ThemedText>
+          </TouchableOpacity>
+        </View>
+      </>
     </ThemedView>
   );
 };

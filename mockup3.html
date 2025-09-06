@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Rejected Offers</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style type="text/tailwindcss">
+        :root {
+            --background-start-rgb: 214, 224, 237;
+            --background-end-rgb: 240, 242, 245;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .glassmorphism-card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-gradient-to-br from-[rgb(var(--background-start-rgb))] to-[rgb(var(--background-end-rgb))]">
+<div class="relative flex size-full min-h-screen flex-col group/design-root overflow-x-hidden text-slate-800">
+<div class="sticky top-0 z-10 bg-white/30 backdrop-blur-md">
+<div class="flex items-center p-4">
+<button class="text-slate-700">
+<svg fill="currentColor" height="24px" viewBox="0 0 256 256" width="24px" xmlns="http://www.w3.org/2000/svg">
+<path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"></path>
+</svg>
+</button>
+<h1 class="flex-1 text-center text-xl font-bold tracking-tight pr-6">Rejected Offers</h1>
+</div>
+</div>
+<main class="flex-1 px-4 py-6 space-y-6">
+<div class="glassmorphism-card flex items-center gap-4 rounded-xl p-4 border-l-4 border-gray-400 opacity-80">
+<div class="flex-shrink-0">
+<img alt="Property at 123 Maple Street" class="w-20 h-20 object-cover rounded-lg saturate-50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-r4GXw8gDv2VFlwULKNc9BJb_b9Xzub4FMNIusDjhDJKGp3174y79soRmvNFc2okWVdHadUfQsriGgTftpha0LuG1_ZAJXFLHfauFNQlS9dK7K6aWvzB6FIpMQuLSFvSnGVhZqUD5J8MQjhJW08j7V6dKy7rOUxM0YOX92Hhe8qIjOzzp2ZJS0bVPg0zeAFGmXTaD8TTDPdCLBtOUp8e7j5QccIUgvTA6EV5zr5JV3ZfFgzx2nLRrmf4HqVCzNiheT6mkB-3SSY-j"/>
+</div>
+<div class="flex-1">
+<p class="text-sm font-medium text-red-500 bg-red-100 px-2 py-0.5 rounded-full inline-block mb-1">Rejected</p>
+<p class="text-lg font-bold text-slate-900">123 Maple Street</p>
+<p class="text-sm text-slate-600">Offer from Sarah Miller</p>
+</div>
+</div>
+<div class="glassmorphism-card flex items-center gap-4 rounded-xl p-4 border-l-4 border-gray-400 opacity-80">
+<div class="flex-shrink-0">
+<img alt="Property at 456 Oak Avenue" class="w-20 h-20 object-cover rounded-lg saturate-50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_yrkk9KH2gPdqqppdno2X1sLSlqCPLbiHMzP37LKcgY5e7J3lDK8Ve3Sllxs9Kbbz4y6psJFHGU9FyoSx7WidaC5iibyHP9z-RvvHDRgnY56Hs-vjkms0zbffkSZnXJNTq6u_aNjWsia5CQC3CEJvbnxuZp7gfvKadxasbpVhzMTa3HfN185GAUjORvyJOWgdW9AvOKWodzdKNeTuhVWYyPervZi_lPoeFiUIuaQOpL7jUKBSounQFMLbsHE5dyOHiJ7JLI79nL9k"/>
+</div>
+<div class="flex-1">
+<p class="text-sm font-medium text-red-500 bg-red-100 px-2 py-0.5 rounded-full inline-block mb-1">Rejected</p>
+<p class="text-lg font-bold text-slate-900">456 Oak Avenue</p>
+<p class="text-sm text-slate-600">Offer from David Lee</p>
+</div>
+</div>
+<div class="glassmorphism-card flex items-center gap-4 rounded-xl p-4 border-l-4 border-gray-400 opacity-80">
+<div class="flex-shrink-0">
+<img alt="Property at 789 Pine Lane" class="w-20 h-20 object-cover rounded-lg saturate-50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8ehEAgSIjjPG1NY4l_-RNT4xXjSk4rVcaH0VXWwS0dBxmSz1fvxW9Iy4CQJk_zRApkaOdMe8qLmIOmg4qrNSfSXxb4e7fq9NNLYIWHoAT7gNl9CyNY9aY_0xqmehHBYMAJKO9ihWUvfxMjjaRDajKQaciG8zKsEdSSCuLO6CUW-8xC5J9b31RHh2LgJMwyTZjj2pOymAs-QGOL-A_rIPBkDBp3NHFFZ1lsXpG5wO44eoCPsEgVrym130mkkJI3b16mCYjIdWLB_tV"/>
+</div>
+<div class="flex-1">
+<p class="text-sm font-medium text-red-500 bg-red-100 px-2 py-0.5 rounded-full inline-block mb-1">Rejected</p>
+<p class="text-lg font-bold text-slate-900">789 Pine Lane</p>
+<p class="text-sm text-slate-600">Offer from Emily Chen</p>
+</div>
+</div>
+<div class="glassmorphism-card flex items-center gap-4 rounded-xl p-4 border-l-4 border-gray-400 opacity-80">
+<div class="flex-shrink-0">
+<img alt="Property at 101 Cedar Road" class="w-20 h-20 object-cover rounded-lg saturate-50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAG6FLkzgIKIuWR2UT93kqH94l3Llh3ekg8STsFzRt942nICEml32SzRWKcZS91NilI0jQQm43AJcmcHdHRNn5eQGe1w8Y0aQOl1H8q5LtcuQCkdfDsiqa2esZaBbFFIQnM2qHLkOxplBQ01-hdysVeU4fwe-lhEMlaQJ3QUgctqOVXHaKtIh6pw55MCJmXl1vKeHPSnuhIrKZKt0S8PE3fOi03KTklXf5S1g_Y3k6Av7UM08LT7tnuyDH5WafGcM84V6HcL1fBKlo_"/>
+</div>
+<div class="flex-1">
+<p class="text-sm font-medium text-red-500 bg-red-100 px-2 py-0.5 rounded-full inline-block mb-1">Rejected</p>
+<p class="text-lg font-bold text-slate-900">101 Cedar Road</p>
+<p class="text-sm text-slate-600">Offer from Michael Brown</p>
+</div>
+</div>
+</main>
+<footer class="sticky bottom-0 bg-white/50 backdrop-blur-md border-t border-slate-200/80">
+<nav class="flex justify-around items-center px-4 py-2">
+<a class="flex flex-col items-center justify-center gap-1 text-blue-500" href="#">
+<svg fill="currentColor" height="24px" viewBox="0 0 256 256" width="24px" xmlns="http://www.w3.org/2000/svg">
+<path d="M224,115.55V208a16,16,0,0,1-16,16H168a16,16,0,0,1-16-16V168a8,8,0,0,0-8-8H112a8,8,0,0,0-8,8v40a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V115.55a16,16,0,0,1,5.17-11.78l80-75.48.11-.11a16,16,0,0,1,21.53,0,1.14,1.14,0,0,0,.11.11l80,75.48A16,16,0,0,1,224,115.55Z"></path>
+</svg>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-slate-500 hover:text-blue-500" href="#">
+<svg fill="currentColor" height="24px" viewBox="0 0 256 256" width="24px" xmlns="http://www.w3.org/2000/svg">
+<path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
+</svg>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-slate-500 hover:text-blue-500" href="#">
+<svg fill="currentColor" height="24px" viewBox="0 0 256 256" width="24px" xmlns="http://www.w3.org/2000/svg">
+<path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"></path>
+</svg>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-slate-500 hover:text-blue-500" href="#">
+<svg fill="currentColor" height="24px" viewBox="0 0 256 256" width="24px" xmlns="http://www.w3.org/2000/svg">
+<path d="M140,128a12,12,0,1,1-12-12A12,12,0,0,1,140,128ZM84,116a12,12,0,1,0,12,12A12,12,0,0,0,84,116Zm88,0a12,12,0,1,0,12,12A12,12,0,0,0,172,116Zm60,12A104,104,0,0,1,79.12,219.82L45.07,231.17a16,16,0,0,1-20.24-20.24l11.35-34.05A104,104,0,1,1,232,128Zm-16,0A88,88,0,1,0,51.81,172.06a8,8,0,0,1,.66,6.54L40,216,77.4,203.53a7.85,7.85,0,0,1,2.53-.42,8,8,0,0,1,4,1.08A88,88,0,0,0,216,128Z"></path>
+</svg>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-slate-500 hover:text-blue-500" href="#">
+<svg fill="currentColor" height="24px" viewBox="0 0 256 256" width="24px" xmlns="http://www.w3.org/2000/svg">
+<path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"></path>
+</svg>
+</a>
+</nav>
+</footer>
+</div>
+
+</body></html>

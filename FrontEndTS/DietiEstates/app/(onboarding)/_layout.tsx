@@ -4,7 +4,7 @@ import React from 'react';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
-const AuthLayout = () => {
+const OnboardingLayout = () => {
   const colorScheme = useColorScheme();
   const headerBg = useThemeColor({}, 'background');
   const headerText = useThemeColor({}, 'text');
@@ -13,38 +13,17 @@ const AuthLayout = () => {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack
         screenOptions={{
-          headerShown: true,
+          headerShown: false,
           animation: 'slide_from_right',
           headerStyle: { backgroundColor: headerBg },
           headerTintColor: headerText,
-          headerTitleStyle: { fontFamily: 'SpaceMono' }
+          headerTitleStyle: { fontFamily: 'SpaceMono' },
         }}
       >
-        <Stack.Screen
-          name="login"
-          options={{
-            title: 'Login',
-            headerShown: false
-          }}
-        />
-        <Stack.Screen
-          name="register"
-          options={{
-            title: 'Register',
-            headerBackTitle: 'Indietro'
-          }}
-        />
-        
-        <Stack.Screen
-          name="select-role"
-          options={{
-            title: 'Select Role',
-            headerBackTitle: 'Indietro'
-          }}
-        />
+        <Stack.Screen name="index" options={{ headerShown: false }} />
       </Stack>
     </ThemeProvider>
   );
 }
 
-export default AuthLayout;
+export default OnboardingLayout;
