@@ -10,14 +10,11 @@ export async function getMeteoForTheDay(latitude: number, longitude: number, dat
         "end_date": date.toISOString().split("T")[0],
     };
     const url = "https://api.open-meteo.com/v1/forecast";
+    
     const responses = await fetchWeatherApi(url, params);
-
     const response = responses[0];
-    console.log("resp: " + JSON.stringify(response));
-
 
     const minutely_15 = response.minutely15()!;
-
     return minutely_15.variables(0)!.valuesArray();
 }
 
@@ -58,6 +55,5 @@ export function getEmojiFromMeteoCode(code: number) {
         96: '⛈️🌧️', // T-Storm + L. Hail
         99: '⛈️🌧️', // T-Storm + Hail
     };
-    console.log(code);
     return emojiMapping[code] || '❓';
 }
