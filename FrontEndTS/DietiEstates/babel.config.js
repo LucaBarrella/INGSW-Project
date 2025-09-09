@@ -1,4 +1,4 @@
-module.exports = function(api) {
+module.exports = function (api) {
   api.cache(true);
   return {
     presets: [
@@ -41,7 +41,7 @@ module.exports = function(api) {
             // 'fa6-brands:github',
             // 'fa6-brand:apple',
             'devicon:google',
-            
+
             'lineicons:google',
             'lineicons:meta-alt',
             'lineicons:github',
@@ -71,17 +71,27 @@ module.exports = function(api) {
             'material-symbols:list-alt-outline-rounded',
             'material-symbols:favorite-rounded',
             'material-symbols:favorite-outline-rounded',
+            'material-symbols:help',
 
             // New weather icons
-            'material-symbols:clear-day',
-            'material-symbols:partly-cloudy-day',
-            'material-symbols:cloud',
-            'material-symbols:foggy',
-            'material-symbols:weather-snowy', // For icy fog, snow, snow grains
-            'material-symbols:rainy-light',
-            'material-symbols:rainy',
-            'material-symbols:rainy-heavy',
-            'material-symbols:thunderstorm',
+            "meteocons:clear-day-fill",
+            "meteocons:partly-cloudy-day-fill",
+            "meteocons:overcast-day-fill",
+            "meteocons:fog-day-fill",
+            "meteocons:fog-day-fill",
+            "meteocons:partly-cloudy-day-drizzle-fill",
+            "meteocons:overcast-day-drizzle-fill",
+            "meteocons:extreme-day-drizzle-fill",
+            "meteocons:partly-cloudy-day-hail-fill",
+            "meteocons:overcast-day-hail-fill",
+            "meteocons:overcast-day-rain-fill",
+            "meteocons:partly-cloudy-day-snow-fill",
+            "meteocons:overcast-day-snow-fill",
+            "meteocons:extreme-day-snow-fill",
+            "meteocons:partly-cloudy-day-rain-fill",
+            "meteocons:extreme-day-rain-fill",
+            "meteocons:thunderstorms-day-extreme-fill",
+            "meteocons:thunderstorms-day-extreme-snow-fill",
 
 
             //! DELETE ALL ICONS BELOW:
@@ -95,7 +105,7 @@ module.exports = function(api) {
             'mdi:star-box-outline',             // Aggiunta per profilo agente
             'mdi:calendar-clock-outline',       // Aggiunta per profilo agente
             'mdi:office-building-outline',      // Aggiunta per profilo agente
-            
+
 
             //!
             'mdi:home',

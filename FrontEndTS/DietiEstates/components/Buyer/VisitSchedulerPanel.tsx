@@ -4,7 +4,7 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import AnimatedSlideUpPanel from '../common/AnimatedSlideUpPanel';
 import { getMeteoForTheDay, getTimeFromIndex, getEmojiFromMeteoCode } from '@/src/data/api/OpenMeteoApiService';
 import { Property } from '@/src/domain/Property';
-import { IconSymbol, IconSymbolName } from '@/components/ui/IconSymbol'; // Import IconSymbol
+import { Ionicons } from '@expo/vector-icons';
 import { ThemedIcon } from '@/components/ThemedIcon';
 
 // --- Helper Functions ---
@@ -163,13 +163,13 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
         {/* Month Selector */}
         <View className="flex-row items-center justify-between px-2 py-2">
           <TouchableOpacity onPress={() => handleMonthChange(-1)} className="p-2 rounded-full hover:bg-gray-100">
-            <ThemedIcon icon="ion:chevron-back" size={24} lightColor={textSecondaryColor} accessibilityLabel="Previous month" />
+            <Ionicons name="chevron-back" size={24} color={textSecondaryColor} />
           </TouchableOpacity>
           <Text style={{ color: textColor }} className="text-lg font-bold">
             {currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
           </Text>
           <TouchableOpacity onPress={() => handleMonthChange(1)} className="p-2 rounded-full hover:bg-gray-100">
-            <ThemedIcon icon="ion:chevron-forward" size={24} lightColor={textSecondaryColor} accessibilityLabel="Next month" />
+            <Ionicons name="chevron-forward" size={24} color={textSecondaryColor} />
           </TouchableOpacity>
         </View>
 
@@ -219,14 +219,10 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
                       backgroundColor: isSelected ? brandColor : 'transparent',
                       borderColor: isSelected ? brandColor : borderColor,
                       borderWidth: 1,
+                      flexDirection: 'row'
                     }}
                   >
-                    <IconSymbol
-                      name={getEmojiFromMeteoCode(meteo.get(time)) as IconSymbolName}
-                      size={20}
-                      color={isSelected ? buttonTextColor : textColor}
-                      testID={`weather-icon-${time}`}
-                    />
+                    <ThemedIcon icon={`${getEmojiFromMeteoCode(meteo.get(time))}`} accessibilityLabel={''}></ThemedIcon>
                     <Text style={{ color: isSelected ? buttonTextColor : textColor, fontWeight: isSelected ? 'bold' : 'normal' }}>
                       {time}
                     </Text>
