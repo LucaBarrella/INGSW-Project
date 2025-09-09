@@ -2,7 +2,6 @@ import httpClient from '../../../app/_services/httpClient';
 import { PropertyDetail, DashboardStats, PropertyDTO } from '../../../components/Agent/PropertyDashboard/types';
 import { PropertyFilters } from '../../../components/Buyer/SearchIntegration/types';
 import { mockDelay, MOCK_AGENT_STATS, MOCK_PROPERTIES, MOCK_FEATURED_PROPERTIES } from '../../../app/_services/__mocks__/mockData';
-import { Alert } from 'react-native';
 
 // Definisce i path relativi degli endpoint API per la gestione delle proprietà
 const propertyEndpoints = {

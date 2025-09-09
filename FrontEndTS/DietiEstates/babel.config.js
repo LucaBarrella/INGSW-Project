@@ -56,6 +56,8 @@ module.exports = function(api) {
             'material-symbols:home-outline',
             'material-symbols:visibility-outline-rounded',
             'material-symbols:calendar-month-outline',
+            'material-symbols:calendar-today',
+            'material-symbols:update',
             'material-symbols:attach-money',
             'material-symbols:settings-outline',
             'material-symbols:logout',
@@ -104,3 +106,4 @@ module.exports = function(api) {
     ],
   };
 };
+

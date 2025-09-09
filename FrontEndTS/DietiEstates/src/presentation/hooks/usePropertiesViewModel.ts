@@ -97,7 +97,7 @@ export const usePropertiesViewModel = () => {
   };
 
   useEffect(() => {
-    fetchProperties();
+    // fetchProperties(); // TODO do this only when needed.
   }, []);
 
   return {

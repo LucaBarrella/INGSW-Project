@@ -12,6 +12,7 @@ import Gallery from 'react-native-awesome-gallery';
 import VisitSchedulerPanel from '../../../components/Buyer/VisitSchedulerPanel';
 import OfferPanel from '../../../components/Offer/OfferPanel';
 import { usePropertiesViewModel } from '@/src/presentation/hooks/usePropertiesViewModel';
+import { Property } from '@/src/domain/Property';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -27,6 +28,8 @@ const PropertyDetailScreen: React.FC = () => {
   const [isOfferPanelVisible, setOfferPanelVisible] = useState(false);
   const [isGalleryVisible, setIsGalleryVisible] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [property, setProperty] = useState<Property>();
+  const [fetchingProperty, setFetchingProperty] = useState(false);
 
   const scrollViewRef = useRef<ScrollView>(null);
   const { t } = useTranslation();
@@ -37,17 +40,17 @@ const PropertyDetailScreen: React.FC = () => {
     error,
     fetchPropertyById
   } = usePropertiesViewModel();
-
-  React.useEffect(() => {
-    const loadProperty = async () => {
-      if (propertyId) {
-        await fetchPropertyById(propertyId as string);
+  
+  if (!fetchingProperty && property === undefined && propertyId) {
+    setFetchingProperty(true);
+    fetchPropertyById(propertyId as string).then(
+      (newProp) => {
+        setProperty(newProp || undefined);
+        setFetchingProperty(false);
       }
-    };
-    loadProperty();
-  }, [propertyId, fetchPropertyById]);
+    );
+  }
 
-  const property = properties.find(p => p.id === propertyId);
 
   const handleBack = () => {
     router.back();
@@ -198,13 +201,13 @@ const PropertyDetailScreen: React.FC = () => {
         {/* Dettagli principali */}
         <View style={styles.detailsContainer}>
           <View style={styles.detailItem}>
-            <ThemedIcon icon="material-symbols:home" size={24} lightColor={themeColors.text} darkColor={themeColors.text} accessibilityLabel="Proprietà" />
+            <ThemedIcon icon="material-symbols:home-outline" size={24} lightColor={themeColors.text} darkColor={themeColors.text} accessibilityLabel="Proprietà" />
             <ThemedText style={styles.detailText}>
               Proprietà
             </ThemedText>
           </View>
           <View style={styles.detailItem}>
-            <ThemedIcon icon="material-symbols:person" size={24} lightColor={themeColors.text} darkColor={themeColors.text} accessibilityLabel="Agente" />
+            <ThemedIcon icon="material-symbols:person-add-outline" size={24} lightColor={themeColors.text} darkColor={themeColors.text} accessibilityLabel="Agente" />
             <ThemedText style={styles.detailText}>
               Agente: {property.agentId || 'N/A'}
             </ThemedText>
