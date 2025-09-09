@@ -216,13 +216,13 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
                     onPress={() => setSelectedTime(time)}
                     className="h-10 rounded-full items-center justify-center basis-[48%] mb-3"
                     style={{
-                      backgroundColor: isSelected ? brandColor : 'transparent',
+                      backgroundColor: isSelected ? brandColor : brandColor+"32",
                       borderColor: isSelected ? brandColor : borderColor,
                       borderWidth: 1,
                       flexDirection: 'row'
                     }}
                   >
-                    <ThemedIcon icon={`${getEmojiFromMeteoCode(meteo.get(time))}`} accessibilityLabel={''}></ThemedIcon>
+                    <ThemedIcon icon={`${getEmojiFromMeteoCode(meteo.get(time))}`} size={38} accessibilityLabel={''}></ThemedIcon>
                     <Text style={{ color: isSelected ? buttonTextColor : textColor, fontWeight: isSelected ? 'bold' : 'normal' }}>
                       {time}
                     </Text>
