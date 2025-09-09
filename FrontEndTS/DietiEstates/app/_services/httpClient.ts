@@ -137,13 +137,6 @@ const httpClient: AxiosInstance = (() => {
               break;
             case 403:
               userMessage = 'Accesso negato. Non hai i permessi per questa operazione.';
-              break;
-            case 404:
-              userMessage = 'Risorsa non trovata.';
-              break;
-            case 409:
-              userMessage = 'Conflitto. La risorsa esiste già o c\'è un problema di stato.';
-              break;
             case 498:
               if (!error.request.responseURL.endsWith("/refresh")) {
                 const newToken = await refresh();
@@ -154,6 +147,12 @@ const httpClient: AxiosInstance = (() => {
               else {
                 // TODO navigate to homepage
               }
+              break;
+            case 404:
+              userMessage = 'Risorsa non trovata.';
+              break;
+            case 409:
+              userMessage = 'Conflitto. La risorsa esiste già o c\'è un problema di stato.';
               break;
             case 500:
               userMessage = 'Errore interno del server. Riprova più tardi.';

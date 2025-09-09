@@ -2,6 +2,7 @@ import httpClient from '../../../app/_services/httpClient';
 import { LoginCredentials } from '../../../types/UserCredentials';
 import { ApiResponseToken } from './ResponseTokenService';
 import { mockDelay, MOCK_TOKEN_RESPONSE } from '../../../app/_services/__mocks__/mockData';
+import { getRefreshToken } from '@/app/_services/token.service';
 
 // Definisce i path relativi degli endpoint API per l'autenticazione
 const authEndpoints = {
@@ -78,7 +79,7 @@ export const loginAgent = async (credentials: LoginCredentials): Promise<ApiResp
  * Use refresh token
  */
 export const refresh = async (): Promise<{ accessToken: string, refreshToken: string }> => {
-  const response = await httpClient.post(authEndpoints.refresh);
+  const response = await httpClient.post(authEndpoints.refresh, {refreshToken: await getRefreshToken()});
   return response.data;
 };
 
