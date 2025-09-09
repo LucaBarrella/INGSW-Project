@@ -25,35 +25,35 @@ export function getTimeFromIndex(index: number){
 
 
 export function getEmojiFromMeteoCode(code: number) {
-    const emojiMapping: { [key: number]: string } = {
-        0: '☀️', // Clear
-        1: '🌤️', // Mostly Clear
-        2: '⛅', // Partly Cloudy
-        3: '☁️', // Overcast
-        45: '🌫️', // Fog
-        48: '🌫️❄️', // Icy Fog
-        51: '🌧️', // L. Drizzle
-        53: '🌧️', // Drizzle
-        55: '🌧️', // H. Drizzle
-        56: '🌧️❄️', // L. Icy Drizzle
-        57: '🌧️❄️', // Icy Drizzle
-        61: '🌧️', // L. Rain
-        63: '🌧️', // Rain
-        65: '🌧️', // H. Rain
-        66: '🌧️❄️', // L. Icy Rain
-        67: '🌧️❄️', // Icy Rain
-        71: '🌨️', // L. Snow
-        73: '🌨️', // Snow
-        75: '🌨️', // H. Snow
-        77: '🌨️', // Snow Grains
-        80: '🌧️', // L. Showers
-        81: '🌧️', // Showers
-        82: '🌧️', // H. Showers
-        85: '🌨️', // L. Snow Showers
-        86: '🌨️', // Snow Showers
-        95: '⛈️', // Thunder Storm
-        96: '⛈️🌧️', // T-Storm + L. Hail
-        99: '⛈️🌧️', // T-Storm + Hail
+    const iconMapping: { [key: number]: string } = {
+        0: 'sunny', // Clear
+        1: 'cloud', // Mostly Clear
+        2: 'cloud', // Partly Cloudy
+        3: 'cloud', // Overcast
+        45: 'blur-on', // Fog
+        48: 'ac_unit', // Icy Fog
+        51: 'water-drop', // L. Drizzle
+        53: 'umbrella', // Drizzle
+        55: 'umbrella', // H. Drizzle
+        56: 'ac_unit', // L. Icy Drizzle
+        57: 'ac_unit', // Icy Drizzle
+        61: 'water-drop', // L. Rain
+        63: 'umbrella', // Rain
+        65: 'umbrella', // H. Rain
+        66: 'ac_unit', // L. Icy Rain
+        67: 'ac_unit', // Icy Rain
+        71: 'ac_unit', // L. Snow
+        73: 'ac_unit', // Snow
+        75: 'ac_unit', // H. Snow
+        77: 'ac_unit', // Snow Grains
+        80: 'water-drop', // L. Showers
+        81: 'umbrella', // Showers
+        82: 'umbrella', // H. Showers
+        85: 'ac_unit', // L. Snow Showers
+        86: 'ac_unit', // Snow Showers
+        95: 'thunderstorm', // Thunder Storm
+        96: 'thunderstorm', // T-Storm + L. Hail
+        99: 'thunderstorm', // T-Storm + Hail
     };
-    return emojiMapping[code] || '❓';
+    return iconMapping[code] || 'help'; // Default icon for unknown codes
 }

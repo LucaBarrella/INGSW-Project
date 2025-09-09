@@ -6,6 +6,8 @@ export interface Property {
   price: number;
   agentId: string;
   status: 'active' | 'sold' | 'rented' | 'inactive';
+  latitude: number;
+  longitude: number;
   createdAt: Date;
   updatedAt: Date;
 }

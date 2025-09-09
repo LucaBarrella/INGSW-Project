@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import AnimatedSlideUpPanel from '../common/AnimatedSlideUpPanel';
 import { getMeteoForTheDay, getTimeFromIndex, getEmojiFromMeteoCode } from '@/src/data/api/OpenMeteoApiService';
 import { Property } from '@/src/domain/Property';
+import { IconSymbol, IconSymbolName } from '@/components/ui/IconSymbol'; // Import IconSymbol
+import { ThemedIcon } from '@/components/ThemedIcon';
 
 // --- Helper Functions ---
 const getDaysInMonth = (date: Date, availableDates: string[]) => {
@@ -162,13 +163,13 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
         {/* Month Selector */}
         <View className="flex-row items-center justify-between px-2 py-2">
           <TouchableOpacity onPress={() => handleMonthChange(-1)} className="p-2 rounded-full hover:bg-gray-100">
-            <Ionicons name="chevron-back" size={24} color={textSecondaryColor} />
+            <ThemedIcon icon="ion:chevron-back" size={24} lightColor={textSecondaryColor} accessibilityLabel="Previous month" />
           </TouchableOpacity>
           <Text style={{ color: textColor }} className="text-lg font-bold">
             {currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
           </Text>
           <TouchableOpacity onPress={() => handleMonthChange(1)} className="p-2 rounded-full hover:bg-gray-100">
-            <Ionicons name="chevron-forward" size={24} color={textSecondaryColor} />
+            <ThemedIcon icon="ion:chevron-forward" size={24} lightColor={textSecondaryColor} accessibilityLabel="Next month" />
           </TouchableOpacity>
         </View>
 
@@ -220,8 +221,14 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
                       borderWidth: 1,
                     }}
                   >
+                    <IconSymbol
+                      name={getEmojiFromMeteoCode(meteo.get(time)) as IconSymbolName}
+                      size={20}
+                      color={isSelected ? buttonTextColor : textColor}
+                      testID={`weather-icon-${time}`}
+                    />
                     <Text style={{ color: isSelected ? buttonTextColor : textColor, fontWeight: isSelected ? 'bold' : 'normal' }}>
-                      {getEmojiFromMeteoCode(meteo.get(time))}{time}
+                      {time}
                     </Text>
                   </TouchableOpacity>
                 );

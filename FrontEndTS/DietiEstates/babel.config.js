@@ -10,6 +10,9 @@ module.exports = function(api) {
         'react-native-iconify/babel',
         {
           icons: [
+            'ion:chevron-back',
+            'ion:chevron-forward',
+
             // Icone Material Symbols usate in Step1 e Step5
             'material-symbols:factory-outline',
             'material-symbols:landscape-outline',
@@ -69,6 +72,17 @@ module.exports = function(api) {
             'material-symbols:favorite-rounded',
             'material-symbols:favorite-outline-rounded',
 
+            // New weather icons
+            'material-symbols:clear-day',
+            'material-symbols:partly-cloudy-day',
+            'material-symbols:cloud',
+            'material-symbols:foggy',
+            'material-symbols:weather-snowy', // For icy fog, snow, snow grains
+            'material-symbols:rainy-light',
+            'material-symbols:rainy',
+            'material-symbols:rainy-heavy',
+            'material-symbols:thunderstorm',
+
 
             //! DELETE ALL ICONS BELOW:
             'mdi:account-edit',
@@ -91,7 +105,6 @@ module.exports = function(api) {
 
 
 
-
             'material-symbols:square-foot',
             'material-symbols:flash-on',
             'material-symbols:bed',
@@ -106,4 +119,3 @@ module.exports = function(api) {
     ],
   };
 };
-
