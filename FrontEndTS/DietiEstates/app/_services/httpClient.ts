@@ -9,7 +9,7 @@ import { refresh } from '@/src/data/api/AuthApiService';
 // --- FLAG PER ABILITARE/DISABILITARE LE API MOCK ---
 // Duplichiamo il flag qui per evitare dipendenze circolari.
 // Assicurati che questo valore sia SINCRONIZZATO con quello in api.service.ts
-const USE_MOCK_API_HTTP = true;
+const USE_MOCK_API_HTTP = false;
 
 // Chiave per salvare/recuperare il token JWT da SecureStore
 const TOKEN_KEY = 'user_auth_token';

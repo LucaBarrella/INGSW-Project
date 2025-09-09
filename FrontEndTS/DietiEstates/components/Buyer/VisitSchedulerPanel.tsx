@@ -186,6 +186,7 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
                   opacity: isDisabled ? 0.5 : 1,
                 }}
               >
+                <Text>☀️</Text>
                 <Text style={{ color: isSelected ? buttonTextColor : (day.isToday && !isSelected ? brandColor : textColor) }} className="text-sm font-medium">
                   {day.dayName}
                 </Text>
