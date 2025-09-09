@@ -348,6 +348,7 @@ const PropertyDetailScreen: React.FC = () => {
       <VisitSchedulerPanel
         isVisible={isVisitPanelVisible}
         onClose={() => setVisitPanelVisible(false)}
+        property={property}
       />
       <OfferPanel
         isVisible={isOfferPanelVisible}

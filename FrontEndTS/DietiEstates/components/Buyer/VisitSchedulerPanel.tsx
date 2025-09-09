@@ -3,6 +3,8 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import AnimatedSlideUpPanel from '../common/AnimatedSlideUpPanel';
+import { getMeteoForTheDay, getTimeFromIndex, getEmojiFromMeteoCode } from '@/src/data/api/OpenMeteoApiService';
+import { Property } from '@/src/domain/Property';
 
 // --- Helper Functions ---
 const getDaysInMonth = (date: Date, availableDates: string[]) => {
@@ -19,13 +21,16 @@ const getDaysInMonth = (date: Date, availableDates: string[]) => {
     const dateString = dayDate.toISOString().split('T')[0];
 
     // Only add days that are today or in the future AND are available
-    if (dayDate.getTime() >= today.getTime() && availableDates.includes(dateString)) {
+    const isPastDay = dayDate.getTime() < today.getTime();
+    const isAvailable = availableDates.includes(dateString);
+
+    if (!isPastDay) { // Only add days that are today or in the future
       days.push({
         date: dayDate,
         dayName: dayDate.toLocaleDateString('en-US', { weekday: 'short' }),
         dayNumber: i,
         isToday: dayDate.getTime() === today.getTime(),
-        isAvailable: true, // Already filtered by availableDates and future
+        isAvailable: isAvailable, // Now correctly reflects if the date is in availableDates
       });
     }
   }
@@ -36,7 +41,7 @@ const getDaysInMonth = (date: Date, availableDates: string[]) => {
 const MOCK_AVAILABLE_DATES = [
     "2025-08-05", "2025-08-06", "2025-08-07", "2025-08-08",
     "2025-08-11", "2025-08-12", "2025-08-13", "2025-08-18", "2025-08-19",
-    "2025-09-02", "2025-09-03",
+    "2025-09-02", "2025-09-03", "2025-09-10", "2025-09-11", "2025-09-12",
 ];
 const availableTimes = [
   '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '14:00', '14:30'
@@ -46,6 +51,7 @@ const availableTimes = [
 interface VisitSchedulerPanelProps {
   isVisible: boolean;
   onClose: () => void;
+  property: Property;
   availableDates?: string[];
 }
 
@@ -61,13 +67,14 @@ interface Day {
 const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
   isVisible,
   onClose,
+  property,
   availableDates = MOCK_AVAILABLE_DATES,
 }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [days, setDays] = useState<Day[]>([]);
   const [selectedDay, setSelectedDay] = useState<Day | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-
+  const [meteo, setMeteo] = useState(new Map());
 
   // --- Theme Colors ---
   const backgroundColor = useThemeColor({}, 'background');
@@ -83,36 +90,30 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
   useEffect(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
-    // Trova la prima data disponibile da domani in poi
+
+    // Find the earliest available date that is today or in the future
     const firstAvailableDay = availableDates
       .map(d => new Date(d))
-      .sort((a, b) => a.getTime() - b.getTime()) // Ordina per assicurarsi di ottenere il più presto
-      .find(d => new Date(d).getTime() > today.getTime()); // Trova la prima data strettamente dopo oggi
+      .sort((a, b) => a.getTime() - b.getTime())
+      .find(d => d.getTime() >= today.getTime());
 
     let initialDateToSet = new Date();
     if (firstAvailableDay) {
       initialDateToSet = firstAvailableDay;
     } else {
-      // Se non ci sono date future disponibili, imposta la data corrente
+      // If no future available dates, default to today
       initialDateToSet = today;
     }
 
     setCurrentDate(initialDateToSet);
-    const updatedDays = getDaysInMonth(initialDateToSet, availableDates);
-    setDays(updatedDays);
-    
-    // Autoseleziona il primo giorno disponibile che non sia nel passato
-    const dayToAutoSelect = updatedDays.find(day => day.isAvailable && day.date.getTime() >= today.getTime());
+    setDays(getDaysInMonth(initialDateToSet, availableDates));
+
+    // Auto-select the first available day that is today or in the future
+    const dayToAutoSelect = getDaysInMonth(initialDateToSet, availableDates).find(day => day.isAvailable && day.date.getTime() >= today.getTime());
     if (dayToAutoSelect) {
       setSelectedDay(dayToAutoSelect);
     }
   }, [availableDates]);
-
-  
-  useEffect(() => {
-      setDays(getDaysInMonth(currentDate, availableDates));
-  }, [currentDate, availableDates]);
 
 
   // --- Handlers ---
@@ -130,9 +131,14 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
     if (day.isAvailable) {
       setSelectedDay(day);
       setSelectedTime(null);
+      getMeteoForTheDay(55, 20, day.date).then((meteoInfo) => {
+        if (meteoInfo) {
+          const mappedMeteo = new Map(Array.from(meteoInfo).map((value, index) => [getTimeFromIndex(index), value]));
+          setMeteo(mappedMeteo);
+        }
+      })
     }
   };
-
 
   // --- Render ---
   return (
@@ -170,7 +176,6 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
         <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-2 px-4 py-2 -mx-4">
           {days.map((day) => {
             const isSelected = selectedDay?.date.getTime() === day.date.getTime();
-            // isPastDay is no longer needed here as getDaysInMonth already filters past days
             const isDisabled = !day.isAvailable;
 
             return (
@@ -186,7 +191,6 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
                   opacity: isDisabled ? 0.5 : 1,
                 }}
               >
-                <Text>☀️</Text>
                 <Text style={{ color: isSelected ? buttonTextColor : (day.isToday && !isSelected ? brandColor : textColor) }} className="text-sm font-medium">
                   {day.dayName}
                 </Text>
@@ -217,7 +221,7 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
                     }}
                   >
                     <Text style={{ color: isSelected ? buttonTextColor : textColor, fontWeight: isSelected ? 'bold' : 'normal' }}>
-                      {time}
+                      {getEmojiFromMeteoCode(meteo.get(time))}{time}
                     </Text>
                   </TouchableOpacity>
                 );
