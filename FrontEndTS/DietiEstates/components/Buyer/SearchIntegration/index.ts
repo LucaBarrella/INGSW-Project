@@ -3,7 +3,6 @@ export * from "./SearchBar";
 export * from "./FilterPanel";
 export * from "./RangeSlider";
 export * from "./SearchAndFilter";
-export * from "./CategorySpecificFilters";
 export * from "./QuickNumericSelector";
 export * from "./SegmentedControl";
 
