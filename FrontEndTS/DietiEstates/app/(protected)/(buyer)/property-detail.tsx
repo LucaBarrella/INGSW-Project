@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, useColorScheme, Dimensions, NativeSyntheticEvent, NativeScrollEvent, Modal, Platform, SafeAreaView, StatusBar, useWindowDimensions } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
@@ -13,6 +13,7 @@ import VisitSchedulerPanel from '../../../components/Buyer/VisitSchedulerPanel';
 import OfferPanel from '../../../components/Offer/OfferPanel';
 import { usePropertiesViewModel } from '@/src/presentation/hooks/usePropertiesViewModel';
 import { Property } from '@/src/domain/Property';
+import HistoryStorageService from '@/app/_services/history.service';
 
 const { width: screenWidth } = Dimensions.get('window');
 

@@ -4,6 +4,34 @@ export interface Range {
   max: number;
 }
 
+// Photon / Geolocation types (used for Photon autocomplete integration)
+export interface PhotonFeature {
+  id: string;
+  type: string;
+  geometry: {
+    type: 'Point';
+    coordinates: [number, number]; // [lon, lat]
+  };
+  properties: {
+    name?: string;
+    street?: string;
+    housenumber?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+    osm_id?: number | string;
+    [key: string]: any;
+  };
+  label?: string; // Convenience label derived from properties
+}
+
+export interface Geolocation {
+  lat: number;
+  lon: number;
+  label?: string;
+  radiusKm?: number; // default search radius in kilometers
+}
+
 // Category Constants
 export const RESIDENTIAL_CATEGORIES = [
   "Casa Indipendente",
@@ -43,6 +71,8 @@ export interface PropertyFilters {
     contract: "rent" | "sale";
     priceRange: Range;
     size: Range;
+    // Raggio di ricerca in chilometri (valore singolo)
+    searchRadiusKm?: number;
   };
   residential: {
     category: ResidentialCategory;
@@ -176,4 +206,33 @@ export interface SearchAndFilterProps {
   placeholder?: string;
   categories: Categories; // Still needed for FilterPanel setup if not from context
   onSearchSubmitNavigate?: () => void; // New prop for navigation
+}
+
+// Nuove interfacce per la ristrutturazione dei filtri
+export type FilterControlType =
+  | 'RangeSlider'
+  | 'SegmentedControl'
+  | 'Switch'
+  | 'QuickNumericSelector'
+  | 'LabelInput';
+
+export interface FilterDefinition {
+  key: string;
+  label: string;
+  control: FilterControlType;
+  options?: string[];
+  min?: number;
+  max?: number;
+  step?: number;
+  unit?: string;
+  defaultValue?: any;
+  categorySpecific?: boolean;
+}
+
+export interface CategoryFilterMap {
+  [category: string]: string[];
+}
+
+export interface FilterValues {
+  [key: string]: any;
 }

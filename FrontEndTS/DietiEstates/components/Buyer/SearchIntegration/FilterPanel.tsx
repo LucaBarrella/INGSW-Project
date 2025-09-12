@@ -1,56 +1,41 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ScrollView, TouchableOpacity, Animated, Platform, StyleSheet, Modal, Easing, Dimensions } from "react-native";
+import { ScrollView, TouchableOpacity, Animated, Platform, StyleSheet, Modal, Easing, Dimensions, View, Switch } from "react-native";
 import { PanGestureHandler, State, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { RangeSlider } from "./RangeSlider";
-import { CategorySpecificFilters } from "./CategorySpecificFilters";
-import { 
-  PropertyFilters, 
-  Categories, 
-  DEFAULT_PRICE_RANGES,
-  RESIDENTIAL_CATEGORIES,
-  COMMERCIAL_CATEGORIES,
-  INDUSTRIAL_CATEGORIES,
-  LAND_CATEGORIES
-} from "./types";
+import { SegmentedControl } from "./SegmentedControl";
+import { QuickNumericSelector } from "./QuickNumericSelector";
+import { LabelInput } from "@/components/LabelInput";
 import { Ionicons } from "@expo/vector-icons";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { withErrorBoundary } from "./ErrorBoundary";
-import { SegmentedControl } from "./SegmentedControl";
+import { useSearch } from "@/context/SearchContext";
+import { ALL_FILTERS, CATEGORY_FILTERS } from "@/config/filter-config";
+import type { FilterDefinition } from "./types";
 
 interface FilterPanelProps {
   isOpen: boolean;
   onClose: () => void;
-  filters: PropertyFilters;
-  categories: Categories;
-  selectedMainCategory: keyof Omit<PropertyFilters, "general"> | null;
-  onSelectMainCategory: (category: keyof Omit<PropertyFilters, "general"> | null) => void;
-  onUpdateFilters: (
-    updatedPart: Partial<PropertyFilters> |
-                 { category: keyof Omit<PropertyFilters, 'general'>; newFilters: Partial<PropertyFilters[keyof Omit<PropertyFilters, 'general'>]> } |
-                 { subCategory: 'general'; newFilters: Partial<PropertyFilters['general']> }
-  ) => void;
-  onResetFilters: (keepTransactionType?: boolean) => void;
-  onApplyAndNavigate?: () => void; // Added new prop
+  onApplyAndNavigate?: () => void;
 }
 
-const FilterPanelComponent: React.FC<FilterPanelProps> = ({
-  isOpen,
-  onClose,
-  filters,
-  categories,
-  selectedMainCategory,
-  onSelectMainCategory,
-  onUpdateFilters,
-  onResetFilters,
-  onApplyAndNavigate, // Destructure the new prop
-}) => {
+const categoryStateToConfigMap: Record<string, string> = {
+  residential: 'RESIDENTIAL',
+  commercial: 'COMMERCIAL',
+  industrial: 'COMMERCIAL', // 'industrial' frontend mapped to COMMERCIAL config (no separate INDUSTRIAL config)
+  land: 'LAND',
+};
+
+const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onApplyAndNavigate }) => {
   const translateY = useRef(new Animated.Value(2000)).current;
   const [panelHeight, setPanelHeight] = useState(Dimensions.get('window').height * 0.8);
   const minHeight = Dimensions.get('window').height * 0.4;
   const maxHeight = Dimensions.get('window').height * 0.95;
   const overlayOpacity = useRef(new Animated.Value(0)).current;
+
+  const { state, dispatch } = useSearch();
+  const { filters, selectedMainCategoryInPanel } = state;
 
   const textColor = useThemeColor({}, "text");
   const tintColor = useThemeColor({}, "tint");
@@ -60,24 +45,25 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
   const buttonBackground = useThemeColor({}, "buttonBackground");
   const buttonTextColor = useThemeColor({}, "buttonTextColor");
 
-  const showPanel = () => {
-    translateY.setValue(2000);
-    overlayOpacity.setValue(0);
-    
-    Animated.parallel([
-      Animated.timing(translateY, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-        easing: Easing.out(Easing.cubic),
-      }),
-      Animated.timing(overlayOpacity, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  };
+  useEffect(() => {
+    if (isOpen) {
+      translateY.setValue(2000);
+      overlayOpacity.setValue(0);
+      Animated.parallel([
+        Animated.timing(translateY, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+          easing: Easing.out(Easing.cubic),
+        }),
+        Animated.timing(overlayOpacity, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [isOpen]);
 
   const hidePanel = () => {
     Animated.parallel([
@@ -92,84 +78,133 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
         duration: 200,
         useNativeDriver: true,
       }),
-    ]).start(() => {
-      onClose();
-    });
+    ]).start(() => onClose());
   };
 
-  useEffect(() => {
-    if (isOpen) {
-      showPanel();
+  const handleReset = (keepTransactionType = true) => {
+    dispatch({ type: 'RESET_FILTERS', payload: { keepTransactionType } });
+  };
+
+  const selectCategory = (categoryKey: keyof typeof categoryStateToConfigMap | null) => {
+    dispatch({ type: 'SET_SELECTED_MAIN_CATEGORY_IN_PANEL', payload: categoryKey as any });
+if (categoryKey) {
+  // imposta category di default se necessario
+  const defaultCat = (filters as any)[categoryKey]?.category ?? null;
+  if (!defaultCat) {
+    const defaultValue = (categoryKey === 'residential' && (filters as any).residential?.category)
+      ? (filters as any).residential.category
+      : null;
+    if (defaultValue) {
+      dispatch({
+        type: 'UPDATE_FILTER',
+        payload: { category: categoryKey as any, newFilters: { category: defaultValue as any } } as any
+      });
     }
-  }, [isOpen]);
-
-  const currentPriceRange = DEFAULT_PRICE_RANGES[filters.general?.contract === 'rent' ? 'rent' : 'sale'];
-
-  const handleReset = () => {
-    // Mantiene il tipo di transazione corrente per impostazione predefinita durante il reset
-    onResetFilters(true);
+  }
+}
   };
 
-  const getDefaultCategoryValue = (categoryKey: keyof Omit<PropertyFilters, "general">) => {
-    switch (categoryKey) {
-      case 'residential':
-        return RESIDENTIAL_CATEGORIES[0];
-      case 'commercial':
-        return COMMERCIAL_CATEGORIES[0];
-      case 'industrial':
-        return INDUSTRIAL_CATEGORIES[0];
-      case 'land':
-        return LAND_CATEGORIES[0];
+  const updateGeneralFilter = (newFilters: Record<string, any>) => {
+    dispatch({ type: 'UPDATE_FILTER', payload: { subCategory: 'general', newFilters } });
+  };
+
+  const updateCategoryFilter = (categoryKey: keyof typeof categoryStateToConfigMap, newFilters: Record<string, any>) => {
+    dispatch({ type: 'UPDATE_FILTER', payload: { category: categoryKey as any, newFilters } });
+  };
+
+  const renderControl = (def: FilterDefinition, currentCategoryKey?: keyof typeof categoryStateToConfigMap) => {
+    const isGeneral = !currentCategoryKey;
+    const value = isGeneral
+      ? (filters.general as any)[def.key] ?? def.defaultValue
+      : ((filters as any)[currentCategoryKey as string] ?? {})[def.key] ?? def.defaultValue;
+
+    const onChange = (next: any) => {
+      if (isGeneral) {
+        updateGeneralFilter({ [def.key]: next });
+      } else {
+        updateCategoryFilter(currentCategoryKey as any, { [def.key]: next });
+      }
+    };
+
+    switch (def.control) {
+      case 'RangeSlider':
+        return (
+          <RangeSlider
+            key={def.key}
+            title={def.label}
+            min={def.min ?? 0}
+            max={def.max ?? 1000000}
+            step={def.step ?? 1}
+            value={value ?? { min: def.min ?? 0, max: def.max ?? 0 }}
+            onChange={onChange}
+            formatValue={(v) => (def.unit ? `${v}${def.unit}` : `${v}`)}
+          />
+        );
+      case 'SegmentedControl':
+        return (
+          <View key={def.key} className="mb-4">
+            <ThemedText className="text-sm mb-2" style={{ color: textColor }}>{def.label}</ThemedText>
+            <SegmentedControl
+              options={(def.options ?? []).map(o => ({ label: String(o), value: o }))}
+              value={value}
+              onChange={(v: any) => onChange(v)}
+            />
+          </View>
+        );
+      case 'Switch':
+        return (
+          <View key={def.key} className="flex-row justify-between items-center mb-4">
+            <ThemedText style={{ color: textColor }}>{def.label}</ThemedText>
+            <Switch
+              value={!!value}
+              onValueChange={(v) => onChange(v)}
+            />
+          </View>
+        );
+      case 'QuickNumericSelector':
+        return (
+          <QuickNumericSelector
+            key={def.key}
+            label={def.label}
+            value={String(value ?? '')}
+            onValueChange={(v: string) => onChange(v)}
+            minValue={def.min}
+            maxValue={def.max}
+            unit={def.unit}
+          />
+        );
+      case 'LabelInput':
       default:
-        // Questo non dovrebbe accadere con i tipi corretti, ma per sicurezza:
-        const exhaustiveCheck: never = categoryKey;
-        return '';
+        return (
+          <LabelInput
+            key={def.key}
+            label={def.label}
+            value={String(value ?? '')}
+            onChangeText={(t: string) => onChange(t)}
+          />
+        );
     }
   };
 
-  const handleBackToCategories = () => {
-    onSelectMainCategory(null);
-  };
+  // determina le categorie disponibili dalla config
+  const availableCategories = Object.keys(CATEGORY_FILTERS);
 
-  const handleSelectCategory = (categoryKey: keyof Omit<PropertyFilters, "general">) => {
-    onSelectMainCategory(categoryKey); // Dispatcha SET_SELECTED_MAIN_CATEGORY_IN_PANEL
+  const selectedCategoryConfigKey = selectedMainCategoryInPanel
+    ? categoryStateToConfigMap[selectedMainCategoryInPanel as string]
+    : null;
 
-    // Dispatcha UPDATE_FILTER per impostare la sottocategoria di default
-    const defaultSubCategoryValue = getDefaultCategoryValue(categoryKey);
-    onUpdateFilters({
-      category: categoryKey,
-      newFilters: { category: defaultSubCategoryValue } as any // Cast as any per superare il controllo di tipo stretto momentaneamente
-                                                              // Idealmente, il tipo di newFilters dovrebbe essere più specifico
-    });
-  };
+  const filtersToRender = selectedCategoryConfigKey
+    ? (CATEGORY_FILTERS as any)[selectedCategoryConfigKey] ?? []
+    : // se nessuna categoria selezionata, mostriamo filtri generali + sintesi categorie
+      [];
 
   return (
-    <Modal
-      visible={isOpen}
-      transparent={true}
-      animationType="none"
-      onRequestClose={hidePanel}
-    >
+    <Modal visible={isOpen} transparent animationType="none" onRequestClose={hidePanel}>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <Animated.View
-          style={[
-            StyleSheet.absoluteFill,
-            {
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
-              opacity: overlayOpacity,
-            },
-          ]}
-        >
-          <TouchableOpacity 
-            style={StyleSheet.absoluteFill} 
-            onPress={hidePanel}
-            activeOpacity={1}
-          />
+        <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.5)', opacity: overlayOpacity }]}>
+          <TouchableOpacity style={StyleSheet.absoluteFill} onPress={hidePanel} activeOpacity={1} />
           <PanGestureHandler
-            onGestureEvent={Animated.event(
-              [{ nativeEvent: { translationY: translateY } }],
-              { useNativeDriver: true }
-            )}
+            onGestureEvent={Animated.event([{ nativeEvent: { translationY: translateY } }], { useNativeDriver: true })}
             onHandlerStateChange={(event) => {
               if (event.nativeEvent.oldState === State.ACTIVE) {
                 let newHeight = panelHeight - event.nativeEvent.translationY;
@@ -179,74 +214,31 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
               }
             }}
           >
-            <Animated.View
-              style={[{
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                right: 0,
-                height: panelHeight,
-                backgroundColor: backgroundPrimary,
-                borderTopLeftRadius: 30,
-                borderTopRightRadius: 30,
-                transform: [{ translateY }],
-                ...Platform.select({
-                  ios: {
-                    shadowColor: '#000',
-                    shadowOffset: { width: 0, height: -3 },
-                    shadowOpacity: 0.2,
-                    shadowRadius: 8,
-                  },
-                  android: {
-                    elevation: 8,
-                  },
-                }),
-              }]}
-            >
+            <Animated.View style={[{
+              position: 'absolute', bottom: 0, left: 0, right: 0, height: panelHeight,
+              backgroundColor: backgroundPrimary, borderTopLeftRadius: 30, borderTopRightRadius: 30,
+              transform: [{ translateY }], ...Platform.select({ ios: { shadowColor: '#000', shadowOffset: { width: 0, height: -3 }, shadowOpacity: 0.2, shadowRadius: 8 }, android: { elevation: 8 } })
+            }]}>
               <ThemedView className="items-center pt-2 rounded-t-2xl" style={{ backgroundColor: tabIconDefault }}>
-                <ThemedView 
-                  className="w-12 h-1 rounded-full mb-2"
-                  style={{ backgroundColor: textColor }}
-                />
+                <ThemedView className="w-12 h-1 rounded-full mb-2" style={{ backgroundColor: textColor }} />
               </ThemedView>
-              
-              <ThemedView
-                className="flex-row justify-between items-center px-4 pb-4" // Rimosse classi border-b, border-gray-200, dark:border-gray-700
-                style={{ backgroundColor: tabIconDefault }}
-              >
-                <ThemedView className="flex-row items-center" style={{ backgroundColor: tabIconDefault }}> 
+
+              <ThemedView className="flex-row justify-between items-center px-4 pb-4" style={{ backgroundColor: tabIconDefault }}>
+                <ThemedView className="flex-row items-center" style={{ backgroundColor: tabIconDefault }}>
                   <Ionicons name="funnel" size={24} color={tintColor} />
                   <ThemedView className="ml-3" style={{ backgroundColor: tabIconDefault }}>
-                    <ThemedText
-                      className="text-lg font-semibold"
-                      style={{ color: textColor }}
-                    >
-                      Filtri
-                    </ThemedText>
-                    <ThemedText
-                      className="text-sm"
-                      style={{ color: textColor }}
-                    >
-                      {selectedMainCategory && categories[selectedMainCategory]
-                        ? categories[selectedMainCategory]?.name ?? selectedMainCategory
-                        : "Seleziona una categoria"}
+                    <ThemedText className="text-lg font-semibold" style={{ color: textColor }}>Filtri</ThemedText>
+                    <ThemedText className="text-sm" style={{ color: textColor }}>
+                      {selectedMainCategoryInPanel ? String(selectedMainCategoryInPanel) : "Seleziona una categoria"}
                     </ThemedText>
                   </ThemedView>
                 </ThemedView>
-                
+
                 <ThemedView className="flex-row items-center" style={{ backgroundColor: tabIconDefault }}>
-                  <TouchableOpacity 
-                    onPress={handleReset} 
-                    className="mr-4 py-2 px-3"
-                    //TODO add something to the button
-                  >
+                  <TouchableOpacity onPress={() => handleReset(true)} className="mr-4 py-2 px-3">
                     <ThemedText style={{ color: tintColor }}>Reset</ThemedText>
                   </TouchableOpacity>
-                  <TouchableOpacity 
-                    onPress={hidePanel}
-                    className="p-1"
-                    //TODO add something to the button
-                  >
+                  <TouchableOpacity onPress={hidePanel} className="p-1">
                     <Ionicons name="close" size={24} color={textColor} />
                   </TouchableOpacity>
                 </ThemedView>
@@ -254,132 +246,63 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
 
               <ScrollView className="flex-1 p-4">
                 <ThemedView className="mb-6">
-                  <ThemedText
-                    className="text-lg font-semibold mb-4"
-                    style={{ color: textColor }}
-                  >
-                    Filtri Generali
-                  </ThemedText>
-
-                  <ThemedView className="mb-4">
-                    <ThemedText 
-                      className="text-sm mb-2" 
-                      style={{ color: textColor }}
-                    >
-                      Tipo di Transazione
-                    </ThemedText>
-                    <SegmentedControl
-                      options={[
-                        { label: "Affitto", value: "rent" },
-                        { label: "Vendita", value: "sale" }
-                      ]}
-                      value={filters.general.contract}
-                      onChange={(value) => {
-                        const transactionType = value as "rent" | "sale";
-                        onUpdateFilters({
-                          subCategory: 'general',
-                          newFilters: {
-                            contract: transactionType,
-                            // Resetta priceRange al default per il nuovo tipo di transazione
-                            priceRange: DEFAULT_PRICE_RANGES[transactionType].defaultRange
-                          },
-                        });
-                      }}
-                    />
-                  </ThemedView>
-
-                  <RangeSlider
-                    title={`Prezzo ${filters.general.contract === "rent" ? "Mensile" : "Massimo"}`}
-                    min={currentPriceRange.min}
-                    max={currentPriceRange.max}
-                    step={currentPriceRange.step}
-                    value={filters.general.priceRange}
-                    onChange={(value) => {
-                      onUpdateFilters({
-                        subCategory: 'general',
-                        newFilters: { priceRange: value },
-                      });
-                    }}
-                    formatValue={(value) => 
-                      `€${value.toLocaleString('it-IT')}`
-                    }
-                  />
-
-                  <RangeSlider
-                    title="Dimensione"
-                    min={20}
-                    max={1000}
-                    step={10}
-                    value={filters.general.size}
-                    onChange={(value) => {
-                      onUpdateFilters({
-                        subCategory: 'general',
-                        newFilters: { size: value },
-                      });
-                    }}
-                    formatValue={(value) => `${value}m²`}
-                  />
+                  {/* Filtri generali */}
+                  <ThemedText className="text-lg font-semibold mb-4" style={{ color: textColor }}>Filtri Generali</ThemedText>
+                  {renderControl(ALL_FILTERS.contract)}
+                  {renderControl(ALL_FILTERS.priceRange)}
+                  {renderControl(ALL_FILTERS.size)}
+                  {renderControl(ALL_FILTERS.searchRadiusKm)}
                 </ThemedView>
 
-                {!selectedMainCategory ? (
+                {!selectedMainCategoryInPanel ? (
                   <ThemedView className="grid grid-cols-2 gap-4">
-                    {Object.entries(categories).map(([key, category]) => (
+                    {availableCategories.map((catKey) => (
                       <TouchableOpacity
-                        key={key}
-                        onPress={() => handleSelectCategory(key as keyof Omit<PropertyFilters, "general">)}
+                        key={catKey}
+                        onPress={() => {
+                          // mappiamo la chiave config uppercase al corrispondente stato (reverse map)
+                          const stateKey = Object.keys(categoryStateToConfigMap).find(k => categoryStateToConfigMap[k] === catKey);
+                          selectCategory(stateKey as any);
+                        }}
                         className="p-4 rounded-lg"
                         style={{ backgroundColor: loginCardBackground }}
                       >
-                        <ThemedText
-                          className="font-medium"
-                          style={{ color: textColor }}
-                        >
-                          {category.name}
+                        <ThemedText className="font-medium" style={{ color: textColor }}>
+                          {catKey}
                         </ThemedText>
                       </TouchableOpacity>
                     ))}
                   </ThemedView>
                 ) : (
-                  <CategorySpecificFilters
-                    category={selectedMainCategory}
-                    filters={filters}
-                    // CategorySpecificFilters potrebbe aver bisogno di un onUpdateFilters adattato
-                    // se non invia già un payload compatibile con UPDATE_FILTER del context.
-                    // Per ora, passiamo onUpdateFilters direttamente.
-                    // Se CategorySpecificFilters invia l'intero oggetto filters,
-                    // onUpdateFilters in FilterPanel dovrebbe gestirlo o CategorySpecificFilters
-                    // dovrebbe essere modificato per inviare solo la parte modificata.
-                    onUpdateFilters={onUpdateFilters}
-                    onBackToCategories={handleBackToCategories}
-                  />
+                  <ThemedView>
+                    <TouchableOpacity onPress={() => selectCategory(null)} className="flex-row items-center mb-4 px-3 py-2 self-start rounded-lg" style={{ backgroundColor: loginCardBackground }}>
+                      <Ionicons name="swap-horizontal" size={20} color={tintColor} />
+                      <ThemedText style={{ color: tintColor, marginLeft: 4 }}>Cambia Categoria</ThemedText>
+                    </TouchableOpacity>
+
+                    {/* Render dinamico dei filtri per la categoria selezionata */}
+                    {filtersToRender.map((key: string) => {
+                      const def: FilterDefinition = (ALL_FILTERS as any)[key];
+                      if (!def) return null;
+                      // otteniamo lo state-key corrispondente (es. residential, commercial, industrial, land)
+                      const stateKey = (Object.keys(categoryStateToConfigMap).find(k => categoryStateToConfigMap[k] === selectedCategoryConfigKey) || null) as any;
+                      return renderControl(def, stateKey);
+                    })}
+                  </ThemedView>
                 )}
               </ScrollView>
 
-              <ThemedView 
-                className="px-4 pt-4 pb-8 border-t border-gray-200 dark:border-gray-700"
-                style={{ backgroundColor: backgroundPrimary }}
-              >
+              <ThemedView className="px-4 pt-4 pb-8 border-t border-gray-200 dark:border-gray-700" style={{ backgroundColor: backgroundPrimary }}>
                 <TouchableOpacity
                   onPress={() => {
-                    // Filters are already applied to the context via onUpdateFilters calls
-                    // First, close the panel
                     hidePanel();
-                    // Then, if the navigation callback is provided, call it
-                    if (onApplyAndNavigate) {
-                      console.log('[FilterPanel] Calling onApplyAndNavigate');
-                      onApplyAndNavigate();
-                    }
+                    if (onApplyAndNavigate) onApplyAndNavigate();
                   }}
                   className="p-4 rounded-lg items-center flex-row justify-center"
                   style={{ backgroundColor: buttonBackground }}
                 >
                   <Ionicons name="search" size={20} color={buttonTextColor} style={{ marginRight: 8 }} />
-                  <ThemedText 
-                    className="text-white font-semibold"
-                    style={{ color: buttonTextColor }}
-                  >
-                    Cerca
-                  </ThemedText>
+                  <ThemedText className="text-white font-semibold" style={{ color: buttonTextColor }}>Cerca</ThemedText>
                 </TouchableOpacity>
               </ThemedView>
             </Animated.View>
@@ -390,15 +313,13 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
   );
 };
 
-export const FilterPanel = withErrorBoundary<FilterPanelProps>(FilterPanelComponent, {
+export const FilterPanel = withErrorBoundary(FilterPanelComponent, {
   onError: (error, errorInfo) => {
     console.error("FilterPanel Error:", error, errorInfo);
   },
   fallbackComponent: (
     <ThemedView className="p-4">
-      <ThemedText className="text-red-500">
-        Errore nel caricamento dei filtri. Riprova più tardi.
-      </ThemedText>
+      <ThemedText className="text-red-500">Errore nel caricamento dei filtri. Riprova più tardi.</ThemedText>
     </ThemedView>
   ),
 });

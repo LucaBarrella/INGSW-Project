@@ -8,6 +8,7 @@ import {
   COMMERCIAL_CATEGORIES,
   INDUSTRIAL_CATEGORIES,
   LAND_CATEGORIES,
+  Geolocation,
 } from '../components/Buyer/SearchIntegration/types'; // Assumendo che i tipi siano qui
 
 // 1. Definire Tipi, Azioni e Stato Iniziale del Context
@@ -15,6 +16,7 @@ import {
 // Interfaccia di Stato (SearchState)
 export interface SearchState {
   searchQuery: string;
+  geolocation: Geolocation | null;
   filters: PropertyFilters;
   selectedMainCategoryInPanel: keyof Omit<PropertyFilters, 'general'> | null;
   isLoadingFromStorage: boolean;
@@ -24,6 +26,7 @@ export interface SearchState {
 // Stato Iniziale (initialSearchState)
 export const initialSearchState: SearchState = {
   searchQuery: '',
+  geolocation: null,
   filters: {
     general: {
       contract: 'sale', // Default a 'sale' o 'rent' come preferito
@@ -70,6 +73,7 @@ export type SearchAction =
   | { type: 'UPDATE_FILTER'; payload: Partial<PropertyFilters> | { category: keyof Omit<PropertyFilters, 'general'>; newFilters: Partial<PropertyFilters[keyof Omit<PropertyFilters, 'general'>]> } | { subCategory: 'general'; newFilters: Partial<PropertyFilters['general']>} }
   | { type: 'RESET_FILTERS'; payload?: { keepTransactionType?: boolean } }
   | { type: 'SET_SELECTED_MAIN_CATEGORY_IN_PANEL'; payload: keyof Omit<PropertyFilters, 'general'> | null }
+  | { type: 'SET_GEOLOCATION'; payload: Geolocation | null }
   | { type: 'LOAD_STATE_FROM_STORAGE'; payload: Partial<SearchState> }
   | { type: 'SET_STORAGE_LOADING'; payload: boolean }
   | { type: 'SET_STORAGE_ERROR'; payload: string | null };
@@ -78,6 +82,7 @@ export type SearchAction =
 export interface SearchContextType {
   state: SearchState;
   dispatch: Dispatch<SearchAction>;
+  setGeolocation: (g: Geolocation | null) => void;
 }
 
 // Verrà inizializzato a null e poi fornito dal Provider
@@ -155,6 +160,9 @@ export const searchReducer = (state: SearchState, action: SearchAction): SearchS
       break;
     case 'SET_SELECTED_MAIN_CATEGORY_IN_PANEL':
       newState = { ...state, selectedMainCategoryInPanel: action.payload };
+      break;
+    case 'SET_GEOLOCATION':
+      newState = { ...state, geolocation: action.payload };
       break;
     case 'LOAD_STATE_FROM_STORAGE':
       newState = {
@@ -313,8 +321,12 @@ export const SearchProvider = ({ children }: { children: ReactNode }) => {
     saveState();
   }, [state.searchQuery, state.filters, state.selectedMainCategoryInPanel, state.isLoadingFromStorage]);
 
+  const setGeolocation = (g: Geolocation | null) => {
+    dispatch({ type: 'SET_GEOLOCATION', payload: g });
+  };
+
   return (
-    <SearchContext.Provider value={{ state, dispatch }}>
+    <SearchContext.Provider value={{ state, dispatch, setGeolocation }}>
       {children}
     </SearchContext.Provider>
   );

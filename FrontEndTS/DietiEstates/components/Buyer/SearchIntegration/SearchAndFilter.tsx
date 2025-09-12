@@ -144,13 +144,7 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
       <FilterPanel
         isOpen={isFilterOpen}
         onClose={handleClosePanel}
-        filters={state.filters}
-        categories={categories}
-        selectedMainCategory={state.selectedMainCategoryInPanel}
-        onSelectMainCategory={handleSelectMainCategory}
-        onUpdateFilters={handleUpdateFilters}
-        onApplyAndNavigate={onSearchSubmitNavigate} // Pass the navigation callback here
-        onResetFilters={() => handleResetFilters()} // Assicurati di chiamare la funzione
+        onApplyAndNavigate={onSearchSubmitNavigate}
       />
     </>
   );

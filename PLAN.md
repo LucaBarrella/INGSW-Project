@@ -1,202 +1,98 @@
-# Piano di Implementazione Tecnica: Agenda Interattiva dell'Agente
+# Progettazione Architetturale: Timeline Immobili Visitati
 
-Questo documento descrive l'architettura tecnica per la funzionalità "Agenda Interattiva dell'Agente" in un'applicazione React Native con TypeScript.
+Questo documento descrive l'architettura per l'implementazione della funzionalità "Timeline Immobili Visitati" con scroll infinito, in sostituzione della sezione "In Evidenza".
 
-## 1. Struttura dei Componenti
+## 1. Obiettivi
 
-La funzionalità sarà suddivisa in componenti riutilizzabili e ben definiti.
+-   **Scroll Infinito:** Esperienza utente fluida e continua, simile a quella delle principali app social.
+-   **Ordinamento LIFO:** Gli immobili visitati più di recente appaiono per primi.
+-   **Gestione Ottimizzata della Memoria:** Meccanismo di paginazione e pulizia della RAM per garantire performance elevate.
+-   **Separazione delle Responsabilità:** Codice modulare, testabile e manutenibile.
+
+## 2. Architettura Proposta
+
+L'architettura si basa su tre pilastri: un servizio di storage, un custom hook per la logica di business e il componente `FlatList` di React Native per la UI.
+
+### Diagramma di Flusso
 
 ```mermaid
 graph TD
-    A[AgendaScreen] --> B(DynamicTimeline);
-    A --> C(SmartTriagePanel);
-    B --> D{AppointmentBlock};
-    C --> E{RequestCard};
-    E --> F[DefaultCardView];
-    E --> G[ExpandedCardView];
-    C --> H{GroupOpportunityCard};
-    C --> I{ConflictResolutionCard};
-
-    subgraph DynamicTimeline
-        D
+    subgraph Schermata Dettaglio Immobile
+        A[Apertura di property-detail.tsx] --> B{useEffect};
+        B --> C[HistoryStorageService.addPropertyToHistory(id)];
+        C --> D[AsyncStorage: Salva ID in testa alla lista];
     end
 
-    subgraph SmartTriagePanel
-        E
-        H
-        I
-    end
+    subgraph Schermata Home
+        E[Apertura di home.tsx] --> F{useInfiniteHistory};
+        F --> G[loadInitialHistory];
+        G --> H[HistoryStorageService.getHistory(page: 1)];
+        H --> I[ApiService.getPropertiesByIds(ids)];
+        I --> J[FlatList: Mostra immobili];
 
-    subgraph RequestCard
-        F
-        G
+        K[Utente scrolla fino alla fine] --> L{onEndReached};
+        L --> M[loadMoreHistory];
+        M --> N[HistoryStorageService.getHistory(page: n)];
+        N --> O[ApiService.getPropertiesByIds(ids)];
+        O --> P[Aggiunge immobili alla FlatList];
+        P --> Q{RAM > soglia?};
+        Q -- Sì --> R[Rimuove immobili vecchi dalla RAM];
+        Q -- No --> J;
+        R --> J;
     end
 ```
 
----
+### 3. Dettagli Implementativi dello Scrolling Infinito
 
-### Componenti Principali
+L'implementazione si affida al componente **`FlatList`** di React Native, scelto per le sue performance e le funzionalità native di virtualizzazione.
 
-#### `AgendaScreen`
--   **Descrizione:** Componente di livello superiore che funge da contenitore per l'intera schermata dell'agenda.
--   **Props:**
-    -   `userId: string` - ID dell'agente corrente.
--   **Stato Interno:**
-    -   `isTriagePanelVisible: boolean` - Controlla la visibilità del pannello "Smart Triage".
-    -   `appointments: Appointment[]` - Lista degli appuntamenti confermati.
-    -   `visitRequests: VisitRequest[]` - Lista delle richieste di visita in sospeso.
-    -   `selectedDate: Date` - La data attualmente visualizzata nella timeline.
+#### 3.1. `HistoryStorageService`
 
-#### `DynamicTimeline`
--   **Descrizione:** Visualizza la griglia temporale con gli appuntamenti confermati.
--   **Props:**
-    -   `appointments: Appointment[]` - Appuntamenti da visualizzare.
-    -   `currentDate: Date` - La data da mostrare.
-    -   `onSelectAppointment: (appointmentId: string) => void` - Callback per quando un appuntamento viene selezionato.
--   **Stato Interno:**
-    -   `timelineLayout: object` - Calcoli per il posizionamento degli eventi sulla griglia (es. ora di inizio, durata).
+-   **Percorso:** `FrontEndTS/DietiEstates/app/_services/history.service.ts`
+-   **Responsabilità:** Gestire la persistenza degli ID degli immobili visitati su `AsyncStorage`.
+-   **Metodi:**
+    -   `addPropertyToHistory(propertyId: number): Promise<void>`: Aggiunge un ID in cima alla lista (LIFO).
+    -   `getHistory(page: number, limit: number): Promise<number[]>`: Recupera una porzione paginata di ID.
+    -   `getHistoryCount(): Promise<number>`: Restituisce il conteggio totale.
 
-#### `AppointmentBlock`
--   **Descrizione:** Rappresenta un singolo blocco di appuntamento nella timeline.
--   **Props:**
-    -   `appointment: Appointment` - I dati dell'appuntamento.
-    -   `isConflicting: boolean` - (Opzionale) Indica se l'appuntamento è in conflitto.
-    -   `isGroup: boolean` - (Opzionale) Indica se è un'opportunità di gruppo.
-    -   `onPress: () => void` - Azione al tocco.
--   **Stato Interno:** Nessuno.
+#### 3.2. `useInfiniteHistory` (Custom Hook)
 
-#### `SmartTriagePanel`
--   **Descrizione:** Pannello a comparsa (bottom sheet) che mostra le richieste di visita in sospeso.
--   **Props:**
-    -   `isVisible: boolean` - Controlla se il pannello è visibile.
-    -   `requests: VisitRequest[]` - Le richieste da mostrare.
-    -   `onClose: () => void` - Funzione per chiudere il pannello.
-    -   `onConfirmRequest: (requestId: string) => void` - Gestore per la conferma.
-    -   `onDeclineRequest: (requestId: string) => void` - Gestore per il rifiuto.
--   **Stato Interno:**
-    -   `activeFilter: 'all' | 'conflicts' | 'groups'` - Filtro per le richieste.
+-   **Percorso:** `FrontEndTS/DietiEstates/hooks/useInfiniteHistory.ts`
+-   **Responsabilità:** Orchestrare il caricamento dei dati, la paginazione e la gestione dello stato in memoria.
+-   **Stato:** `properties`, `isLoading`, `isFetchingMore`, `error`, `currentPage`, `hasMore`.
+-   **Funzioni:**
+    -   `loadInitialHistory()`: Carica il primo set di immobili.
+    -   `loadMoreHistory()`: Carica le pagine successive, appende i nuovi risultati all'array `properties` e gestisce la pulizia della RAM se la dimensione supera una soglia (es. `MAX_IN_MEMORY = 50`).
 
-#### `RequestCard`
--   **Descrizione:** Card interattiva per una singola richiesta di visita. Gestisce lo swipe per azioni rapide.
--   **Props:**
-    -   `request: VisitRequest` - I dati della richiesta.
-    -   `onConfirm: () => void` - Azione di conferma.
-    -   `onDecline: () => void` - Azione di rifiuto.
--   **Stato Interno:**
-    -   `isExpanded: boolean` - Controlla la vista compatta/espansa.
+#### 3.3. Schermata `home.tsx` e `FlatList`
 
-## 2. Modelli di Dati (TypeScript)
+-   **Percorso:** `FrontEndTS/DietiEstates/app/(protected)/(buyer)/(tabs)/home.tsx`
+-   **Componente UI:** `FlatList`.
+-   **Proprietà chiave di `FlatList`:**
+    -   `data={properties}`: Collega i dati dall'hook al componente.
+    -   `renderItem={({ item }) => <BuyerPropertyCard property={item} />}`: Definisce come renderizzare ogni elemento.
+    -   `keyExtractor={(item) => item.id.toString()}`: Fornisce una chiave unica per ogni elemento.
+    -   `onEndReached={loadMoreHistory}`: Funzione chiamata quando l'utente si avvicina alla fine della lista.
+    -   `onEndReachedThreshold={0.5}`: Determina a che punto dal fondo attivare `onEndReached` (0.5 significa a metà dell'ultima schermata visibile).
+    -   `ListFooterComponent`: Mostra un `ActivityIndicator` mentre `isFetchingMore` è `true`.
+    -   `ListEmptyComponent`: Renderizza il componente `HistoryPlaceholder` se l'array `properties` è vuoto.
 
-Definiamo le interfacce per i principali oggetti di dati.
+#### 3.4. Schermata `property-detail.tsx`
 
-```typescript
-// Stato di una richiesta o appuntamento
-type Status = 'pending' | 'confirmed' | 'declined' | 'conflicting';
+-   **Percorso:** `FrontEndTS/DietiEstates/app/(protected)/(buyer)/property-detail.tsx`
+-   **Modifiche:**
+    -   Aggiungere un `useEffect` che, al montaggio, invoca `HistoryStorageService.addPropertyToHistory()` con l'ID dell'immobile.
 
-// Tipo di appuntamento per la colorazione
-type AppointmentType = 'standard' | 'group' | 'conflict';
+#### 3.5. `HistoryPlaceholder` (Nuovo Componente)
 
-interface User {
-  id: string;
-  name: string;
-  avatarUrl?: string;
-}
+-   **Percorso:** `FrontEndTS/DietiEstates/components/Buyer/HistoryPlaceholder.tsx`
+-   **Responsabilità:** Fornire un feedback visivo quando la cronologia è vuota. Viene renderizzato automaticamente da `FlatList` tramite la prop `ListEmptyComponent` quando non ci sono dati da mostrare.
 
-interface Property {
-  id: string;
-  address: string;
-  imageUrl?: string;
-}
+## 4. Considerazioni sull'Architettura
 
-interface Appointment {
-  id: string;
-  property: Property;
-  client: User;
-  startTime: Date;
-  endTime: Date;
-  durationMinutes: number;
-  type: AppointmentType;
-  notes?: string;
-}
+-   **SOLID:**
+    -   **Single Responsibility Principle:** Ogni modulo ha una sola responsabilità.
+    -   **Open/Closed Principle:** Il sistema è aperto all'estensione ma chiuso alle modifiche.
+-   **Testabilità:** L'astrazione della logica in un servizio e in un hook rende possibile testare la logica di business e di storage in isolamento dalla UI.
 
-interface VisitRequest {
-  id: string;
-  property: Property;
-  potentialClients: User[];
-  requestedTime: Date;
-  status: Status;
-  isGroupOpportunity?: boolean;
-  conflict?: Conflict;
-}
-
-interface Conflict {
-  conflictingAppointmentId: string;
-  reason: string; // Es. "Orario sovrapposto"
-}
-```
-
-## 3. Strategia di Gestione dello Stato
-
-Proponiamo un approccio ibrido utilizzando `useState` e `useReducer` a livello del componente `AgendaScreen` per centralizzare la logica di business.
-
--   **Dati Principali:**
-    -   `appointments: Appointment[]` e `visitRequests: VisitRequest[]` saranno gestiti da un `useReducer` per centralizzare le azioni di aggiunta, rimozione e aggiornamento. Questo semplifica la gestione delle transizioni di stato (es. da richiesta a appuntamento confermato).
-    -   L'hook `useReducer` accetterà azioni come `CONFIRM_REQUEST`, `DECLINE_REQUEST`, `ADD_APPOINTMENT`.
-
--   **Stato della UI:**
-    -   Lo stato locale della UI (es. `isTriagePanelVisible`, `isExpanded` in `RequestCard`) sarà gestito con `useState` all'interno dei componenti pertinenti per mantenere l'incapsulamento e ridurre re-render non necessari a livello globale.
-
-#### Esempio di Reducer
-
-```typescript
-type AgendaAction =
-  | { type: 'LOAD_DATA'; payload: { appointments: Appointment[]; requests: VisitRequest[] } }
-  | { type: 'CONFIRM_REQUEST'; payload: { requestId: string } }
-  | { type: 'DECLINE_REQUEST'; payload: { requestId: string } };
-
-function agendaReducer(state: AgendaState, action: AgendaAction): AgendaState {
-  switch (action.type) {
-    case 'CONFIRM_REQUEST':
-      // Logica per spostare una richiesta a un appuntamento
-      return { ...state, /* ... */ };
-    case 'DECLINE_REQUEST':
-      // Logica per rimuovere una richiesta
-      return { ...state, /* ... */ };
-    default:
-      return state;
-  }
-}
-```
-
-## 4. Flusso di Interazione
-
-#### Aprire/Chiudere il "Smart Triage"
-1.  **Utente:** Tocca l'icona dell'inbox.
-2.  **Sistema:** `AgendaScreen` imposta `isTriagePanelVisible` a `true`.
-3.  **UI:** Il `SmartTriagePanel` viene visualizzato con un'animazione dal basso.
-
-#### Espandere/Comprimere una `RequestCard`
-1.  **Utente:** Tocca una `RequestCard`.
-2.  **Sistema:** La `RequestCard` aggiorna il suo stato interno `isExpanded` a `!isExpanded`.
-3.  **UI:** La card si anima per mostrare/nascondere i dettagli aggiuntivi.
-
-#### Confermare/Rifiutare una Richiesta
--   **Via Tap:**
-    1.  L'utente tocca i pulsanti "Conferma" o "Rifiuta" nella `RequestCard`.
-    2.  Viene invocata la callback `onConfirm` o `onDecline`.
-    3.  `AgendaScreen` invia un'azione al suo `reducer`.
--   **Via Swipe:**
-    1.  L'utente esegue uno swipe su una `RequestCard`.
-    2.  La libreria di gesture (es. `React Native Gesture Handler`) rileva il gesto.
-    3.  Al completamento dello swipe, viene chiamata la funzione di conferma/rifiuto.
-
-#### Gestire un "Group Opportunity"
-1.  Una `GroupOpportunityCard` viene visualizzata nel "Smart Triage".
-2.  L'utente può confermare l'intero gruppo, creando un singolo `Appointment` di tipo `group` con più clienti associati.
-
-#### Gestire i Conflitti
-1.  Se una richiesta è in conflitto, la `RequestCard` mostra un indicatore di errore.
-2.  Al tocco, si entra in una "Modalità Risoluzione" dove l'utente può:
-    -   Riprogrammare l'appuntamento in conflitto.
-    -   Rifiutare la nuova richiesta.
-    -   Contattare i clienti coinvolti.
+Questo piano fornisce una base solida per un'implementazione pulita, performante e manutenibile.
