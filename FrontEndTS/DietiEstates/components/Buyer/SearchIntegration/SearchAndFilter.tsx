@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import { useSearch } from "@/context/SearchContext";
+import { initialSearchState, useSearch } from "@/context/SearchContext";
 import { ThemedView } from "@/components/ThemedView";
 import { SearchBar } from "./SearchBar";
 import { FilterPanel } from "./FilterPanel";
-import { 
-  PropertyFilters, 
-  Categories, 
+import {
+  PropertyFilters,
+  Categories,
   DEFAULT_PRICE_RANGES,
   RESIDENTIAL_CATEGORIES,
   COMMERCIAL_CATEGORIES,
-  INDUSTRIAL_CATEGORIES,
+  GARAGE_CATEGORIES,
   LAND_CATEGORIES
 } from "./types";
 
@@ -62,29 +62,46 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
     if (!state || !state.filters || !state.filters.general) {
       return 0;
     }
-    const { general, residential, commercial, industrial, land } = state.filters;
+
+    // Fast path: se i filtri sono esattamente uguali ai default iniziali, il conteggio è 0.
+    // Usiamo JSON.stringify come confronto rapido (sufficiente qui dato che la struttura è stabile).
+    try {
+      if (JSON.stringify(state.filters) === JSON.stringify(initialSearchState.filters)) {
+        return 0;
+      }
+    } catch (e) {
+      // In caso di errori nel stringify, prosegui con il calcolo normale
+      console.warn('[SearchAndFilter] Error comparing filters to defaults', e);
+    }
+    const { general, residential, commercial, garage, land } = state.filters;
     
-    // Utilizza i valori di default da initialSearchState per il confronto
-    // Questo richiede l'accesso a initialSearchState o a una sua copia/logica simile qui.
-    // Per semplicità, assumiamo che initialSearchState sia accessibile o che i valori di default siano noti.
-    // Idealmente, initialSearchState dovrebbe essere importato o i suoi valori di default definiti come costanti.
-    // Per ora, useremo valori hardcoded rappresentativi dei default per il conteggio.
-    // NOTA: Questo dovrebbe essere allineato con initialSearchState in SearchContext.tsx
+    // Usiamo i valori di default da initialSearchState per avere consistenza
     const defaultSalePriceRange = DEFAULT_PRICE_RANGES.sale.defaultRange;
     const defaultRentPriceRange = DEFAULT_PRICE_RANGES.rent.defaultRange;
     const currentDefaultPriceRange = (general?.contract || 'sale') === 'rent' ? defaultRentPriceRange : defaultSalePriceRange;
-    const defaultSizeRange = { min: 0, max: 1000 }; // Da initialSearchState
+    const defaultSizeRange = initialSearchState.filters.general.size;
+    const defaultSearchRadiusRange = initialSearchState.filters.general.searchRadiusKm || { min: 20, max: 20 };
+    
 
-    // Check price range
-    if (
-      general.priceRange.min !== currentDefaultPriceRange.min ||
-      general.priceRange.max !== currentDefaultPriceRange.max
-    ) {
+    // Check price range - confronto più robusto che considera anche il tipo di contract
+    const isPriceRangeDefault = (
+      general.priceRange.min === currentDefaultPriceRange.min &&
+      general.priceRange.max === currentDefaultPriceRange.max
+    );
+    
+    if (!isPriceRangeDefault) {
       count++;
     }
 
     // Check size range
     if (general.size.min !== defaultSizeRange.min || general.size.max !== defaultSizeRange.max) {
+      count++;
+    }
+
+    // Check search radius range
+    if (general.searchRadiusKm &&
+        (general.searchRadiusKm.min !== defaultSearchRadiusRange.min ||
+         general.searchRadiusKm.max !== defaultSearchRadiusRange.max)) {
       count++;
     }
     
@@ -115,15 +132,41 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
     };
     
     // Valori di default da initialSearchState.filters (o una rappresentazione di essi)
-    const defaultResidentialFilters = { rooms: "", bathrooms: "", floor: "", elevator: false, pool: false, category: RESIDENTIAL_CATEGORIES[0] };
-    const defaultCommercialFilters = { bathrooms: "", emergencyExit: false, constructionDate: "", category: COMMERCIAL_CATEGORIES[0] };
-    const defaultIndustrialFilters = { ceilingHeight: "", fireSystem: false, floorLoad: "", offices: "", structure: "", category: INDUSTRIAL_CATEGORIES[0] };
-    const defaultLandFilters = { soilType: "", slope: "", category: LAND_CATEGORIES[0] };
-
-    count += countSpecificFilters(residential, defaultResidentialFilters);
-    count += countSpecificFilters(commercial, defaultCommercialFilters);
-    count += countSpecificFilters(industrial, defaultIndustrialFilters);
-    count += countSpecificFilters(land, defaultLandFilters);
+    const defaultResidentialFilters = {
+      category: RESIDENTIAL_CATEGORIES[0],
+      minNumberOfFloors: undefined,
+      minNumberOfRooms: "",
+      minNumberOfBathrooms: "",
+      floor: "",
+      mustHaveElevator: false,
+      hasPool: false,
+      minParkingSpaces: undefined,
+    };
+    const defaultCommercialFilters = {
+      category: COMMERCIAL_CATEGORIES[0],
+      minNumberOfFloors: undefined,
+      minNumberOfRooms: undefined,
+      minNumberOfBathrooms: undefined,
+      mustHaveWheelchairAccess: false,
+      minNumeroVetrine: undefined,
+      constructionYear: "",
+    };
+    const defaultGarageFilters = {
+      category: GARAGE_CATEGORIES[0],
+      minNumberOfFloors: undefined,
+      mustHaveSurveillance: false,
+    };
+    const defaultLandFilters = {
+      category: LAND_CATEGORIES[0],
+      landType: "",
+      mustBeAccessibleFromStreet: false,
+      slope: 0,
+    };
+    
+    count += countSpecificFilters(residential as any, defaultResidentialFilters as any);
+    count += countSpecificFilters(commercial as any, defaultCommercialFilters as any);
+    count += countSpecificFilters(garage as any, defaultGarageFilters as any);
+    count += countSpecificFilters(land as any, defaultLandFilters as any);
 
     return count;
   };

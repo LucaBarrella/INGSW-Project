@@ -6,8 +6,8 @@ import {
   DEFAULT_PRICE_RANGES,
   RESIDENTIAL_CATEGORIES,
   COMMERCIAL_CATEGORIES,
-  INDUSTRIAL_CATEGORIES,
   LAND_CATEGORIES,
+  GARAGE_CATEGORIES,
   Geolocation,
 } from '../components/Buyer/SearchIntegration/types'; // Assumendo che i tipi siano qui
 
@@ -29,36 +29,40 @@ export const initialSearchState: SearchState = {
   geolocation: null,
   filters: {
     general: {
-      contract: 'sale', // Default a 'sale' o 'rent' come preferito
-      priceRange: DEFAULT_PRICE_RANGES.sale.defaultRange, // Default per 'sale'
-      size: { min: 0, max: 1000 }, // Esempio di range di default per la dimensione
+      contract: 'sale',
+      priceRange: DEFAULT_PRICE_RANGES.sale.defaultRange,
+      size: { min: 20, max: 200 },
+      searchRadiusKm: { min: 20, max: 20 }, // Default: 20km radius
     },
     residential: {
       category: RESIDENTIAL_CATEGORIES[0],
-      rooms: '',
-      bathrooms: '',
+      // backend-aligned defaults
+      minNumberOfFloors: undefined,
+      minNumberOfRooms: '',
+      minNumberOfBathrooms: '',
       floor: '',
-      elevator: false,
-      pool: false,
+      mustHaveElevator: false,
+      hasPool: false,
+      minParkingSpaces: undefined,
     },
     commercial: {
       category: COMMERCIAL_CATEGORIES[0],
-      bathrooms: '',
-      emergencyExit: false,
-      constructionDate: '',
-    },
-    industrial: {
-      category: INDUSTRIAL_CATEGORIES[0],
-      ceilingHeight: '',
-      fireSystem: false,
-      floorLoad: '',
-      offices: '',
-      structure: '',
+      minNumberOfFloors: undefined,
+      minNumberOfRooms: undefined,
+      minNumberOfBathrooms: undefined,
+      mustHaveWheelchairAccess: false,
+      minNumeroVetrine: undefined,
+      constructionYear: '',
     },
     land: {
       category: LAND_CATEGORIES[0],
-      soilType: '',
-      slope: '',
+      mustBeAccessibleFromStreet: false,
+      slope: 0,
+    },
+    garage: {
+      category: GARAGE_CATEGORIES[0],
+      minNumberOfFloors: undefined,
+      mustHaveSurveillance: false,
     },
   },
   selectedMainCategoryInPanel: null,
@@ -103,14 +107,35 @@ export const searchReducer = (state: SearchState, action: SearchAction): SearchS
     case 'UPDATE_FILTER':
       // Gestione deep merge per aggiornamenti parziali dei filtri
       if ('subCategory' in action.payload && action.payload.subCategory === 'general') {
+        // SearchContext.tsx — aggiorna branch 'UPDATE_FILTER' per gestire il cambio contract
+        const prevContract = state.filters.general.contract;
+        const newGeneral = {
+          ...state.filters.general,
+          ...action.payload.newFilters,
+        };
+
+        // Se il contract viene cambiato e il priceRange era ancora il default precedente,
+        // sincronizziamo il priceRange al default del nuovo contract.
+        if ('contract' in action.payload.newFilters) {
+          const prevDefault = prevContract === 'rent'
+            ? DEFAULT_PRICE_RANGES.rent.defaultRange
+            : DEFAULT_PRICE_RANGES.sale.defaultRange;
+          const currPrice = state.filters.general.priceRange;
+          const priceEqualToPrevDefault = currPrice.min === prevDefault.min && currPrice.max === prevDefault.max;
+
+          const newContract = (action.payload.newFilters as any).contract as 'rent' | 'sale';
+          if (priceEqualToPrevDefault) {
+            newGeneral.priceRange = newContract === 'rent'
+              ? DEFAULT_PRICE_RANGES.rent.defaultRange
+              : DEFAULT_PRICE_RANGES.sale.defaultRange;
+          }
+        }
+
         newState = {
           ...state,
           filters: {
             ...state.filters,
-            general: {
-              ...state.filters.general,
-              ...action.payload.newFilters,
-            },
+            general: newGeneral,
           },
         };
       } else if ('category' in action.payload) {

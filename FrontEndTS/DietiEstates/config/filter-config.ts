@@ -77,8 +77,8 @@ export const ALL_FILTERS: { [key: string]: FilterDefinition } = {
     defaultValue: 0,
     categorySpecific: true
   },
-  hasElevator: {
-    key: 'hasElevator',
+  mustHaveElevator: {
+    key: 'mustHaveElevator',
     label: 'Con ascensore',
     control: 'Switch',
     defaultValue: false,
@@ -91,17 +91,79 @@ export const ALL_FILTERS: { [key: string]: FilterDefinition } = {
     defaultValue: false,
     categorySpecific: true
   },
+  
+  // Allineamento con API /properties/search
+  // Anno minimo di costruzione (minYearBuilt)
+  minYearBuilt: {
+    key: 'minYearBuilt',
+    label: 'Anno di costruzione minimo',
+    control: 'QuickNumericSelector',
+    min: 1800,
+    max: new Date().getFullYear(),
+    defaultValue: 1900,
+    categorySpecific: true
+  },
+
+  // Numero minimo di posti auto (minParkingSpaces)
+  minParkingSpaces: {
+    key: 'minParkingSpaces',
+    label: 'Posti auto minimi',
+    control: 'QuickNumericSelector',
+    min: 0,
+    max: 20,
+    defaultValue: 0,
+    categorySpecific: true
+  },
+
+  // Stato/condizione accettata (acceptedCondition) - semplificato rispetto all'API che accetta array
+  acceptedCondition: {
+    key: 'acceptedCondition',
+    label: 'Condizione accettata',
+    control: 'SegmentedControl',
+    options: ['NEW', 'GOOD_CONDITION', 'RENOVATED', 'TO_RESTORE'],
+    defaultValue: 'GOOD_CONDITION',
+    categorySpecific: true
+  },
+
+  // Energia minima richiesta (minEnergyRating)
+  minEnergyRating: {
+    key: 'minEnergyRating',
+    label: 'Classe energetica minima',
+    control: 'SegmentedControl',
+    options: ['A1','A2','B','C','D','E','F','G'],
+    defaultValue: 'C',
+    categorySpecific: true
+  },
+
+  // Giardino accettato (acceptedGarden) -- mappa ai valori API
+  acceptedGarden: {
+    key: 'acceptedGarden',
+    label: 'Giardino',
+    control: 'SegmentedControl',
+    options: ['PRIVATE','SHARED','ABSENT'],
+    defaultValue: 'ABSENT',
+    categorySpecific: true
+  },
+
+  // Arredato (mustBeFurnished / isFurnished)
+  mustBeFurnished: {
+    key: 'mustBeFurnished',
+    label: 'Arredato',
+    control: 'Switch',
+    defaultValue: false,
+    categorySpecific: true
+  },
 
   // Filtri specifici per COMMERCIAL
-  hasDisabledAccess: {
-    key: 'hasDisabledAccess',
+  mustHaveWheelchairAccess: {
+    key: 'mustHaveWheelchairAccess',
     label: 'Accesso per disabili',
     control: 'Switch',
     defaultValue: false,
     categorySpecific: true
   },
-  hasSurveillance: {
-    key: 'hasSurveillance',
+  mustHaveSurveillance: {
+    key: 'mustHaveSurveillance',
     label: 'Sistema di sorveglianza',
     control: 'Switch',
     defaultValue: false,
@@ -118,22 +180,6 @@ export const ALL_FILTERS: { [key: string]: FilterDefinition } = {
   },
 
   // Filtri specifici per GARAGE
-  garageType: {
-    key: 'garageType',
-    label: 'Tipo di garage',
-    control: 'SegmentedControl',
-    options: ['Double Garage', 'Parking Space', 'Single Garage'],
-    defaultValue: 'Parking Space',
-    categorySpecific: true
-  },
-  hasElectricCharging: {
-    key: 'hasElectricCharging',
-    label: 'Colonnina di ricarica',
-    control: 'Switch',
-    defaultValue: false,
-    categorySpecific: true
-  },
-
   // Filtri specifici per LAND
   landType: {
     key: 'landType',
@@ -143,8 +189,8 @@ export const ALL_FILTERS: { [key: string]: FilterDefinition } = {
     defaultValue: 'Building Plot',
     categorySpecific: true
   },
-  hasRoadAccess: {
-    key: 'hasRoadAccess',
+  mustBeAccessibleFromStreet: {
+    key: 'mustBeAccessibleFromStreet',
     label: 'Accesso stradale',
     control: 'Switch',
     defaultValue: false,
@@ -169,25 +215,30 @@ export const CATEGORY_FILTERS: CategoryFilterMap = {
     'minNumberOfRooms',
     'minNumberOfBathrooms',
     'floor',
-    'hasElevator',
-    'hasPool'
+    'mustHaveElevator',
+    'hasPool',
+    'minParkingSpaces',
+    'acceptedCondition',
+    'minEnergyRating',
+    'acceptedGarden',
+    'mustBeFurnished',
+    'minYearBuilt'
   ],
   COMMERCIAL: [
     // Commerciale supporta riscaldamento
     'heating',
-    'hasDisabledAccess',
-    'hasSurveillance',
+    'mustHaveWheelchairAccess',
+    'mustHaveSurveillance',
     'constructionYear'
   ],
   GARAGE: [
     // Garage non ha riscaldamento applicabile qui
-    'garageType',
-    'hasElectricCharging'
+    'mustHaveSurveillance'
   ],
   LAND: [
     // Land non mostra filtri di riscaldamento
     'landType',
-    'hasRoadAccess',
+    'mustBeAccessibleFromStreet',
     'slope'
   ]
 };

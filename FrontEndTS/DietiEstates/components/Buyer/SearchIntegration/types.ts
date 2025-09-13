@@ -48,10 +48,10 @@ export const COMMERCIAL_CATEGORIES = [
   "Locale_Commerciale"
 ] as const;
 
-export const INDUSTRIAL_CATEGORIES = [
-  "Magazzino",
-  "Capannone",
-  "Fabbrica"
+export const GARAGE_CATEGORIES = [
+  "Double Garage",
+  "Parking Space",
+  "Single Garage"
 ] as const;
 
 export const LAND_CATEGORIES = [
@@ -62,44 +62,49 @@ export const LAND_CATEGORIES = [
 
 type ResidentialCategory = typeof RESIDENTIAL_CATEGORIES[number];
 type CommercialCategory = typeof COMMERCIAL_CATEGORIES[number];
-type IndustrialCategory = typeof INDUSTRIAL_CATEGORIES[number];
 type LandCategory = typeof LAND_CATEGORIES[number];
+type GarageCategory = typeof GARAGE_CATEGORIES[number];
 
-// Define the main filters interface
+// Define the main filters interface (aligned with backend field names)
 export interface PropertyFilters {
   general: {
     contract: "rent" | "sale";
     priceRange: Range;
     size: Range;
-    // Raggio di ricerca in chilometri (valore singolo)
-    searchRadiusKm?: number;
+    // Raggio di ricerca in chilometri (usiamo Range per compatibilità con RangeSlider)
+    searchRadiusKm?: Range;
   };
   residential: {
     category: ResidentialCategory;
-    rooms: string;
-    bathrooms: string;
+    // Backend-aligned fields
+    minNumberOfFloors?: number;
+    minNumberOfRooms: number | string;
+    minNumberOfBathrooms: number | string;
     floor: string;
-    elevator: boolean;
-    pool: boolean;
+    mustHaveElevator: boolean;
+    hasPool: boolean;
+    minParkingSpaces?: number;
   };
   commercial: {
     category: CommercialCategory;
-    bathrooms: string;
-    emergencyExit: boolean;
-    constructionDate: string;
+    minNumberOfFloors?: number;
+    minNumberOfRooms?: number;
+    minNumberOfBathrooms?: number;
+    mustHaveWheelchairAccess: boolean;
+    minNumeroVetrine?: number;
+    constructionYear: string | number;
   };
-  industrial: {
-    category: IndustrialCategory;
-    ceilingHeight: string;
-    fireSystem: boolean;
-    floorLoad: string;
-    offices: string;
-    structure: string;
+  garage: {
+    category: GarageCategory;
+    // Garage specific backend field
+    minNumberOfFloors?: number;
+    mustHaveSurveillance: boolean;
   };
   land: {
     category: LandCategory;
-    soilType: string;
-    slope: string;
+    // Backend naming
+    mustBeAccessibleFromStreet: boolean;
+    slope: string | number;
   };
 }
 

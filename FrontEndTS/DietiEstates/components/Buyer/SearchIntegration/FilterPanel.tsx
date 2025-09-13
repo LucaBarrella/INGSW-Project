@@ -12,6 +12,7 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { withErrorBoundary } from "./ErrorBoundary";
 import { useSearch } from "@/context/SearchContext";
 import { ALL_FILTERS, CATEGORY_FILTERS } from "@/config/filter-config";
+import { RESIDENTIAL_CATEGORIES, COMMERCIAL_CATEGORIES, GARAGE_CATEGORIES, LAND_CATEGORIES } from "./types"; //Dobbiamo creare GARAGE_CATEGORIES
 import type { FilterDefinition } from "./types";
 
 interface FilterPanelProps {
@@ -24,6 +25,7 @@ const categoryStateToConfigMap: Record<string, string> = {
   residential: 'RESIDENTIAL',
   commercial: 'COMMERCIAL',
   industrial: 'COMMERCIAL', // 'industrial' frontend mapped to COMMERCIAL config (no separate INDUSTRIAL config)
+  garage: 'GARAGE',
   land: 'LAND',
 };
 
@@ -279,13 +281,55 @@ if (categoryKey) {
                       <Ionicons name="swap-horizontal" size={20} color={tintColor} />
                       <ThemedText style={{ color: tintColor, marginLeft: 4 }}>Cambia Categoria</ThemedText>
                     </TouchableOpacity>
-
+    
+                    {/* Selettore sottocategoria (es. Appartamento, Loft, ...) */}
+                    {(() => {
+                      // Usa direttamente selectedMainCategoryInPanel (già 'residential'|'commercial'|'industrial'|'land')
+                      const stateKey = selectedMainCategoryInPanel as keyof typeof categoryStateToConfigMap | undefined;
+                      // Debug: log stato corrente per investigare perché le opzioni non compaiono
+                      // eslint-disable-next-line no-console
+                      console.log('[FilterPanel] selectedMainCategoryInPanel:', selectedMainCategoryInPanel, 'selectedCategoryConfigKey:', selectedCategoryConfigKey, 'resolved stateKey:', stateKey);
+                      if (!stateKey) return null;
+    
+                      const optionsMap: Record<string, string[]> = {
+                        residential: RESIDENTIAL_CATEGORIES as unknown as string[],
+                        commercial: COMMERCIAL_CATEGORIES as unknown as string[],
+                        industrial: COMMERCIAL_CATEGORIES as unknown as string[], // industrial maps to commercial set
+                        garage: GARAGE_CATEGORIES as unknown as string[],
+                        land: LAND_CATEGORIES as unknown as string[],
+                      };
+    
+                      const opts = optionsMap[stateKey] || [];
+                      // Debug: log opzioni trovate
+                      // eslint-disable-next-line no-console
+                      console.log('[FilterPanel] category options for', stateKey, opts);
+                      if (opts.length === 0) return null;
+    
+                      const currentValue = ((filters as any)[stateKey] || {}).category;
+    
+                      return (
+                        <ThemedView className="mb-4">
+                          <ThemedText className="text-sm mb-2" style={{ color: textColor }}>
+                            Tipo ({String(stateKey)})
+                          </ThemedText>
+                          <SegmentedControl
+                            options={opts.map(o => ({ label: String(o), value: o }))}
+                            value={currentValue}
+                            onChange={(v: any) => {
+                              // aggiorna la proprietà 'category' della categoria selezionata
+                              updateCategoryFilter(stateKey as any, { category: v });
+                            }}
+                          />
+                        </ThemedView>
+                      );
+                    })()}
+    
                     {/* Render dinamico dei filtri per la categoria selezionata */}
                     {filtersToRender.map((key: string) => {
                       const def: FilterDefinition = (ALL_FILTERS as any)[key];
                       if (!def) return null;
-                      // otteniamo lo state-key corrispondente (es. residential, commercial, industrial, land)
-                      const stateKey = (Object.keys(categoryStateToConfigMap).find(k => categoryStateToConfigMap[k] === selectedCategoryConfigKey) || null) as any;
+                      // Per i controlli della categoria passiamo la chiave di stato direttamente
+                      const stateKey = selectedMainCategoryInPanel as keyof typeof categoryStateToConfigMap | undefined;
                       return renderControl(def, stateKey);
                     })}
                   </ThemedView>
