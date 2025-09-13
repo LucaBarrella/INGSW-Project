@@ -88,8 +88,7 @@
     "jest-expo": "~53.0.2",
     "react-test-renderer": "^19.1.1",
     "typescript": "~5.8.3",
-    "eslint": "^9.0.0",
-    "eslint-config-expo": "~9.2.0"
+    "eslint": "^9.0.0"
   },
   "private": true
 }

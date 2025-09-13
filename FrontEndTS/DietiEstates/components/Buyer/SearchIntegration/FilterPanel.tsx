@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ScrollView, TouchableOpacity, Animated, Platform, StyleSheet, Modal, Easing, Dimensions, View, Switch } from "react-native";
-import { PanGestureHandler, State, GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { RangeSlider } from "./RangeSlider";
@@ -205,17 +205,17 @@ if (categoryKey) {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.5)', opacity: overlayOpacity }]}>
           <TouchableOpacity style={StyleSheet.absoluteFill} onPress={hidePanel} activeOpacity={1} />
-          <PanGestureHandler
-            onGestureEvent={Animated.event([{ nativeEvent: { translationY: translateY } }], { useNativeDriver: true })}
-            onHandlerStateChange={(event) => {
-              if (event.nativeEvent.oldState === State.ACTIVE) {
-                let newHeight = panelHeight - event.nativeEvent.translationY;
-                newHeight = Math.max(minHeight, Math.min(maxHeight, newHeight));
-                setPanelHeight(newHeight);
-                translateY.setValue(0);
-              }
-            }}
-          >
+          <GestureDetector gesture={Gesture.Pan()
+            .onUpdate((event) => {
+              translateY.setValue(event.translationY);
+            })
+            .onEnd((event) => {
+              let newHeight = panelHeight - event.translationY;
+              newHeight = Math.max(minHeight, Math.min(maxHeight, newHeight));
+              setPanelHeight(newHeight);
+              translateY.setValue(0);
+            })
+          }>
             <Animated.View style={[{
               position: 'absolute', bottom: 0, left: 0, right: 0, height: panelHeight,
               backgroundColor: backgroundPrimary, borderTopLeftRadius: 30, borderTopRightRadius: 30,
@@ -350,7 +350,7 @@ if (categoryKey) {
                 </TouchableOpacity>
               </ThemedView>
             </Animated.View>
-          </PanGestureHandler>
+          </GestureDetector>
         </Animated.View>
       </GestureHandlerRootView>
     </Modal>
