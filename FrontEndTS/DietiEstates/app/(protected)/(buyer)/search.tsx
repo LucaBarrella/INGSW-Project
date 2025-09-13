@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, Stack, router } from 'expo-router';
 import { useSearch } from '@/context/SearchContext';
-import { PropertyFilters, RESIDENTIAL_CATEGORIES, COMMERCIAL_CATEGORIES, INDUSTRIAL_CATEGORIES, LAND_CATEGORIES } from '@/components/Buyer/SearchIntegration/types';
+import { PropertyFilters, RESIDENTIAL_CATEGORIES, COMMERCIAL_CATEGORIES, LAND_CATEGORIES } from '@/components/Buyer/SearchIntegration/types';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
@@ -38,7 +38,7 @@ export default function SearchResultsScreen() {
 
     if (params.category) {
       const categoryKey = params.category.toLowerCase() as keyof Omit<PropertyFilters, 'general'>;
-      if (['residential', 'commercial', 'industrial', 'land'].includes(categoryKey)) {
+      if (['residential', 'commercial', 'land'].includes(categoryKey)) {
         if (categoryKey !== state.selectedMainCategoryInPanel) {
           console.log(`[SearchScreen] URL category ("${categoryKey}") differs from context selectedMainCategoryInPanel ("${state.selectedMainCategoryInPanel}"). Dispatching SET_SELECTED_MAIN_CATEGORY_IN_PANEL.`);
           dispatch({ type: 'SET_SELECTED_MAIN_CATEGORY_IN_PANEL', payload: categoryKey });
@@ -49,7 +49,6 @@ export default function SearchResultsScreen() {
         switch (categoryKey) {
             case 'residential': defaultSubCategory = RESIDENTIAL_CATEGORIES[0]; break;
             case 'commercial': defaultSubCategory = COMMERCIAL_CATEGORIES[0]; break;
-            case 'industrial': defaultSubCategory = INDUSTRIAL_CATEGORIES[0]; break;
             case 'land': defaultSubCategory = LAND_CATEGORIES[0]; break;
         }
 
@@ -112,7 +111,12 @@ export default function SearchResultsScreen() {
         filters: JSON.stringify(filtersToUse, null, 2)
       });
       
-      const results = await ApiService.searchProperties({ query: queryToUse, filters: filtersToUse });
+      const results = await ApiService.searchProperties({
+        query: queryToUse,
+        filters: filtersToUse,
+        geolocation: state.geolocation || undefined,
+        selectedMainCategory: state.selectedMainCategoryInPanel
+      });
       
       console.log('[SearchScreen] fetchProperties: API call successful. Results received:', {
         count: results?.length || 0,

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { TextInput, TouchableOpacity, View, FlatList } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { SearchBarProps, PhotonFeature } from './types';
@@ -31,8 +32,37 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const { state, setGeolocation } = useSearch();
 
   const [suggestions, setSuggestions] = useState<PhotonFeature[]>([]);
-  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const isSelectingRef = React.useRef(false);
+  const lastQueryRef = React.useRef<string>(''); // Per tracciare l'ultima query inviata a Photon
+  const suggestionsCache = React.useRef<Map<string, PhotonFeature[]>>(new Map()); // Cache in memoria
+  const accessFrequency = React.useRef<Map<string, number>>(new Map()); // Contatore accessi per LFU
+
+  // Carica la cache da AsyncStorage all'avvio
+  useEffect(() => {
+    const loadCacheFromStorage = async () => {
+      try {
+        const storedCache = await AsyncStorage.getItem('photonSuggestionsCache');
+        if (storedCache) {
+          const parsedArray = JSON.parse(storedCache);
+          // Ricostruisce la Map con i tipi corretti
+          const parsedCache = new Map<string, PhotonFeature[]>();
+          const parsedFrequency = new Map<string, number>();
+          
+          for (const [key, value] of parsedArray) {
+            parsedCache.set(key, value as PhotonFeature[]);
+            parsedFrequency.set(key, 1); // Reset frequency on load
+          }
+          suggestionsCache.current = parsedCache;
+          accessFrequency.current = parsedFrequency;
+          console.log('[SearchBar] Loaded suggestions cache from AsyncStorage:', parsedCache.size, 'entries');
+        }
+      } catch (error) {
+        console.error('[SearchBar] Error loading cache from AsyncStorage:', error);
+      }
+    };
+
+    loadCacheFromStorage();
+  }, []);
 
   useEffect(() => {
     // Skip fetching suggestions if we're currently selecting one
@@ -42,27 +72,96 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     }
 
     const q = value?.trim() ?? '';
-    if (!q) {
-      setSuggestions([]);
-      setIsLoadingSuggestions(false);
+    
+    // Se c'è già una geolocalizzazione selezionata e la query corrisponde al label,
+    // evita completamente qualsiasi operazione con i suggerimenti
+    if (state.geolocation && q === state.geolocation.label) {
+      console.log('[SearchBar] Geolocation already selected, skipping suggestions entirely');
       return;
     }
-
-    setIsLoadingSuggestions(true);
+    
+    if (!q) {
+      setSuggestions([]);
+      lastQueryRef.current = '';
+      console.log('[SearchBar] Query is empty, clearing suggestions');
+      return;
+    }
+    
+    // Usa cache persistente se disponibile
+    if (suggestionsCache.current.has(q)) {
+      console.log('[SearchBar] Using persistent cache for query:', q);
+      setSuggestions(suggestionsCache.current.get(q)!);
+      lastQueryRef.current = q;
+      
+      // Incrementa il contatore di accesso per LFU
+      const currentCount = accessFrequency.current.get(q) || 0;
+      accessFrequency.current.set(q, currentCount + 1);
+      return;
+    }
+    
+    // Evita chiamate duplicate per la stessa query (cache a breve termine)
+    if (q === lastQueryRef.current) {
+      console.log('[SearchBar] Same query as last time, skipping Photon call');
+      return;
+    }
+    
+    // Evita chiamate per query troppo corte (meno di 2 caratteri)
+    if (q.length < 2) {
+      console.log('[SearchBar] Skipping Photon call - query too short:', q);
+      setSuggestions([]);
+      return;
+    }
     const timer = setTimeout(async () => {
       try {
+        console.log('[SearchBar] Calling Photon API for query:', q);
         const s = await getAutocompleteSuggestions(q, 6);
         setSuggestions(s);
+        lastQueryRef.current = q;
+        
+        // Salva nella cache persistente con algoritmo LFU
+        suggestionsCache.current.set(q, s);
+        accessFrequency.current.set(q, 1); // Inizializza contatore accessi
+        
+        // Gestione limite cache con algoritmo LFU (Least Frequently Used)
+        if (suggestionsCache.current.size > 100) {
+          // Trova la voce con il minor numero di accessi
+          let minKey = '';
+          let minCount = Infinity;
+          
+          for (const [key, count] of accessFrequency.current.entries()) {
+            if (count < minCount) {
+              minCount = count;
+              minKey = key;
+            }
+          }
+          
+          // Rimuovi la voce meno utilizzata
+          if (minKey) {
+            suggestionsCache.current.delete(minKey);
+            accessFrequency.current.delete(minKey);
+            console.log('[SearchBar] LFU: Removed least frequently used entry:', minKey);
+          }
+        }
+        
+        // Salva la cache aggiornata in AsyncStorage
+        try {
+          const cacheArray = Array.from(suggestionsCache.current.entries());
+          await AsyncStorage.setItem('photonSuggestionsCache', JSON.stringify(cacheArray));
+          const cacheSizeKB = Math.round(JSON.stringify(cacheArray).length / 1024);
+          console.log('[SearchBar] Cache saved to AsyncStorage:', suggestionsCache.current.size, 'entries (~' + cacheSizeKB + ' KB)');
+        } catch (error) {
+          console.error('[SearchBar] Error saving cache to AsyncStorage:', error);
+        }
+        
+        console.log('[SearchBar] Photon response received and cached, suggestions count:', s.length);
       } catch (err) {
         console.error('[SearchBar] error fetching suggestions', err);
         setSuggestions([]);
-      } finally {
-        setIsLoadingSuggestions(false);
       }
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [value]);
+  }, [value, state.geolocation]); // Aggiunto state.geolocation come dipendenza
 
   const handleSubmit = () => {
     if (onSearchPress) onSearchPress();

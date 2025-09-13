@@ -1,13 +1,13 @@
 import httpClient from '../../../app/_services/httpClient';
 import { PropertyDetail, DashboardStats, PropertyDTO } from '../../../components/Agent/PropertyDashboard/types';
-import { PropertyFilters } from '../../../components/Buyer/SearchIntegration/types';
+import { PropertyFilters, Geolocation } from '../../../components/Buyer/SearchIntegration/types';
 import { mockDelay, MOCK_AGENT_STATS, MOCK_PROPERTIES, MOCK_FEATURED_PROPERTIES } from '../../../app/_services/__mocks__/mockData';
 
 // Definisce i path relativi degli endpoint API per la gestione delle proprietà
 const propertyEndpoints = {
   agentStats: '/agent/stats',
   agentProperties: '/agent/properties',
-  searchProperties: '/properties/search/',
+  searchProperties: '/properties/search',
   featuredProperties: '/properties/featured',
   propertyDetails: '/properties/details',
   createProperty: '/properties/create',
@@ -64,7 +64,7 @@ export const getAgentProperties = async (params?: any): Promise<PropertyDetail[]
  * @returns La risposta dell'API con i risultati della ricerca.
  */
 export const searchProperties = async (
-  params: { query?: string; filters?: PropertyFilters }
+  params: { query?: string; filters?: PropertyFilters; geolocation?: Geolocation; selectedMainCategory?: keyof Omit<PropertyFilters, 'general'> | null }
 ): Promise<PropertyDetail[]> => {
   console.log(`[PropertyApiService] searchProperties called with:`, {
     query: params.query,
@@ -160,24 +160,126 @@ export const searchProperties = async (
     return mockDelay(results);
   }
 
-  const backendParams: any = {};
-  if (params.query) backendParams.q = params.query;
-  if (params.filters) {
-    Object.assign(backendParams, params.filters.general);
-    if (params.filters.general.priceRange) {
-      if (params.filters.general.priceRange.min !== undefined ) {
-        backendParams.minPrice = params.filters.general.priceRange.min;
-      }
-
-      if (params.filters.general.priceRange.max !== undefined) {
-        backendParams.maxPrice = params.filters.general.priceRange.max;
+  // Costruisce il payload secondo la struttura DTO del backend
+  const searchPayload: any = {};
+  
+  // Aggiunge la query al payload se presente
+  if (params.query) {
+    searchPayload.query = params.query;
+  }
+  
+  // Aggiunge i filtri generali
+  if (params.filters?.general) {
+    const general = params.filters.general;
+    
+    // Mappa i campi obbligatori per la ricerca geografica
+    if (params.geolocation) {
+      searchPayload.centerLatitude = params.geolocation.lat;
+      searchPayload.centerLongitude = params.geolocation.lon;
+      
+      if (general.searchRadiusKm) {
+        // Converti km in metri (1km = 1000m)
+        searchPayload.radiusInMeters = general.searchRadiusKm.max * 1000;
+      } else {
+        // Default radius se non specificato
+        searchPayload.radiusInMeters = 20000; // 20km default
       }
     }
     
+    // Mappa i campi comuni a tutte le proprietà
+    if (general.contract) {
+      searchPayload.contract = general.contract.toUpperCase(); // SALE/RENT in maiuscolo
+    }
+    
+    if (general.priceRange) {
+      if (general.priceRange.min !== undefined) {
+        searchPayload.minPrice = general.priceRange.min;
+      }
+      if (general.priceRange.max !== undefined) {
+        searchPayload.maxPrice = general.priceRange.max;
+      }
+    }
+    
+    if (general.size) {
+      if (general.size.min !== undefined) {
+        searchPayload.minArea = general.size.min;
+      }
+      if (general.size.max !== undefined) {
+        searchPayload.maxArea = general.size.max;
+      }
+    }
   }
-  console.log("searching with filters: " + JSON.stringify(backendParams));
-  const response = await httpClient.post(propertyEndpoints.searchProperties + params.query, { ...backendParams, params: { query: params.query  } });
-  const DTOs: PropertyDTO[] = response.data;
+  
+  // Aggiunge filtri specifici per categoria
+  if (params.filters && params.selectedMainCategory) {
+    const category = params.selectedMainCategory;
+    const categoryFilters = params.filters[category];
+    
+    if (categoryFilters) {
+      // Filtri comuni a Commercial, Residential, Garage
+      // Gestione type-safe per i filtri specifici di categoria
+      if (category === 'residential') {
+        const resFilters = categoryFilters as PropertyFilters['residential'];
+        if (resFilters.minNumberOfFloors !== undefined) {
+          searchPayload.minNumberOfFloors = resFilters.minNumberOfFloors;
+        }
+        if (resFilters.minNumberOfRooms !== undefined) {
+          searchPayload.minNumberOfRooms = resFilters.minNumberOfRooms;
+        }
+        if (resFilters.minNumberOfBathrooms !== undefined) {
+          searchPayload.minNumberOfBathrooms = resFilters.minNumberOfBathrooms;
+        }
+        if (resFilters.minParkingSpaces !== undefined) {
+          searchPayload.minParkingSpaces = resFilters.minParkingSpaces;
+        }
+        if (resFilters.mustHaveElevator !== undefined) {
+          searchPayload.mustHaveElevator = resFilters.mustHaveElevator;
+        }
+      }
+      else if (category === 'commercial') {
+        const comFilters = categoryFilters as PropertyFilters['commercial'];
+        if (comFilters.minNumberOfFloors !== undefined) {
+          searchPayload.minNumberOfFloors = comFilters.minNumberOfFloors;
+        }
+        if (comFilters.minNumberOfRooms !== undefined) {
+          searchPayload.minNumberOfRooms = comFilters.minNumberOfRooms;
+        }
+        if (comFilters.minNumberOfBathrooms !== undefined) {
+          searchPayload.minNumberOfBathrooms = comFilters.minNumberOfBathrooms;
+        }
+        if (comFilters.mustHaveWheelchairAccess !== undefined) {
+          searchPayload.mustHaveWheelchairAccess = comFilters.mustHaveWheelchairAccess;
+        }
+        if (comFilters.minNumeroVetrine !== undefined) {
+          searchPayload.minNumeroVetrine = comFilters.minNumeroVetrine;
+        }
+      }
+      else if (category === 'garage') {
+        const garageFilters = categoryFilters as PropertyFilters['garage'];
+        if (garageFilters.minNumberOfFloors !== undefined) {
+          searchPayload.minNumberOfFloors = garageFilters.minNumberOfFloors;
+        }
+        if (garageFilters.mustHaveSurveillance !== undefined) {
+          searchPayload.mustHaveSurveillance = garageFilters.mustHaveSurveillance;
+        }
+      }
+      else if (category === 'land') {
+        const landFilters = categoryFilters as PropertyFilters['land'];
+        if (landFilters.mustBeAccessibleFromStreet !== undefined) {
+          searchPayload.mustBeAccessibleFromStreet = landFilters.mustBeAccessibleFromStreet;
+        }
+      }
+    }
+  }
+  
+  console.log("[DEBUG] Search payload:", JSON.stringify(searchPayload, null, 2));
+  console.log("[DEBUG] Calling POST:", propertyEndpoints.searchProperties);
+  
+  const response = await httpClient.post(propertyEndpoints.searchProperties, searchPayload);
+  console.log("[DEBUG] API Response:", JSON.stringify(response.data, null, 2));
+  
+  // La risposta API ha struttura paginata: { content: PropertyDTO[], ... }
+  const DTOs: PropertyDTO[] = response.data.content || [];
   const ret = await Promise.all(DTOs.map((value: PropertyDTO) => PropertyDTO_to_PropertyDetail(value)));
   return ret;
 };

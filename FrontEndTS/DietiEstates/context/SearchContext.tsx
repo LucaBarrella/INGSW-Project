@@ -217,6 +217,7 @@ export const searchReducer = (state: SearchState, action: SearchAction): SearchS
 const SEARCH_QUERY_KEY = 'searchQuery';
 const FILTERS_KEY = 'filters';
 const SELECTED_MAIN_CATEGORY_KEY = 'selectedMainCategoryInPanel';
+const GEOLOCATION_KEY = 'geolocation';
 
 // 3. Creare il Provider (SearchProvider)
 export const SearchProvider = ({ children }: { children: ReactNode }) => {
@@ -232,7 +233,9 @@ export const SearchProvider = ({ children }: { children: ReactNode }) => {
         const storedFilters = await AsyncStorage.getItem(FILTERS_KEY);
         const storedSelectedCategory = await AsyncStorage.getItem(SELECTED_MAIN_CATEGORY_KEY);
 
-        console.log('[SearchContext] Raw from AsyncStorage:', { storedQuery, storedFilters, storedSelectedCategory });
+        const storedGeolocation = await AsyncStorage.getItem(GEOLOCATION_KEY);
+        
+        console.log('[SearchContext] Raw from AsyncStorage:', { storedQuery, storedFilters, storedSelectedCategory, storedGeolocation });
 
         const loadedState: Partial<SearchState> = {};
         let successfullyParsedFilters = false;
@@ -266,6 +269,17 @@ export const SearchProvider = ({ children }: { children: ReactNode }) => {
         if (storedSelectedCategory !== null) {
           loadedState.selectedMainCategoryInPanel = storedSelectedCategory as keyof Omit<PropertyFilters, 'general'>;
           console.log('[SearchContext] Loaded selectedMainCategoryInPanel:', storedSelectedCategory);
+        }
+        
+        if (storedGeolocation !== null) {
+          try {
+            const parsedGeolocation = JSON.parse(storedGeolocation);
+            loadedState.geolocation = parsedGeolocation;
+            console.log('[SearchContext] Loaded geolocation:', parsedGeolocation);
+          } catch (e) {
+            console.error("[SearchContext] Errore nel parsing della geolocalizzazione da AsyncStorage", e);
+            await AsyncStorage.removeItem(GEOLOCATION_KEY);
+          }
         }
 
         if (Object.keys(loadedState).length > 0) {
@@ -336,6 +350,17 @@ export const SearchProvider = ({ children }: { children: ReactNode }) => {
              await AsyncStorage.removeItem(SELECTED_MAIN_CATEGORY_KEY);
              console.log('[SearchContext] Removed selectedMainCategoryInPanel (back to default null).');
         }
+        
+        // Salva geolocation
+        const geolocationString = JSON.stringify(state.geolocation);
+        const initialGeolocationString = JSON.stringify(initialSearchState.geolocation);
+        if (geolocationString !== initialGeolocationString || !AsyncStorage.getItem(GEOLOCATION_KEY)) {
+            await AsyncStorage.setItem(GEOLOCATION_KEY, geolocationString);
+            console.log('[SearchContext] Saved geolocation:', geolocationString);
+        } else if (geolocationString === initialGeolocationString) {
+            await AsyncStorage.removeItem(GEOLOCATION_KEY);
+            console.log('[SearchContext] Removed geolocation (back to default null).');
+        }
 
       } catch (error) {
         console.error("[SearchContext] Errore nel salvataggio dello stato in AsyncStorage", error);
@@ -344,7 +369,7 @@ export const SearchProvider = ({ children }: { children: ReactNode }) => {
     };
 
     saveState();
-  }, [state.searchQuery, state.filters, state.selectedMainCategoryInPanel, state.isLoadingFromStorage]);
+  }, [state.searchQuery, state.filters, state.selectedMainCategoryInPanel, state.geolocation, state.isLoadingFromStorage]);
 
   const setGeolocation = (g: Geolocation | null) => {
     dispatch({ type: 'SET_GEOLOCATION', payload: g });
