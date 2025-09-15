@@ -2,7 +2,6 @@ import axios, { AxiosError, InternalAxiosRequestConfig, AxiosInstance } from 'ax
 import ApiError from './errors/ApiError';
 import * as SecureStore from 'expo-secure-store';
 import { getRefreshToken, saveRefreshToken, saveToken } from './token.service';
-import { refresh } from '@/src/data/api/AuthApiService';
 // Importa il flag MOCK (potrebbe causare dipendenza circolare, vedi nota sotto)
 // import { USE_MOCK_API } from './api.service'; // <-- ATTENZIONE: Possibile dipendenza circolare
 
@@ -139,12 +138,19 @@ const httpClient: AxiosInstance = (() => {
               userMessage = 'Accesso negato. Non hai i permessi per questa operazione.';
             case 498:
               if (!error.request.responseURL.endsWith("/refresh")) {
-                const newToken = await refresh();
-                saveToken(newToken.accessToken);
-                saveRefreshToken(newToken.refreshToken);
-                return httpClient.request(error.config!);
-              }
-              else {
+                // Implementazione diretta della logica di refresh per evitare dipendenze circolari
+                try {
+                  const refreshToken = await getRefreshToken();
+                  const response = await httpClient.post('/auth/refresh', { refreshToken });
+                  const newToken = response.data;
+                  saveToken(newToken.accessToken);
+                  saveRefreshToken(newToken.refreshToken);
+                  return httpClient.request(error.config!);
+                } catch (refreshError) {
+                  console.error('Errore durante il refresh del token:', refreshError);
+                  // TODO navigate to homepage in caso di errore di refresh
+                }
+              } else {
                 // TODO navigate to homepage
               }
               break;
