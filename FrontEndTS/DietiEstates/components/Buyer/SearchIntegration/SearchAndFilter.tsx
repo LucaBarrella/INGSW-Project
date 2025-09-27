@@ -148,7 +148,6 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
       minNumberOfRooms: undefined,
       minNumberOfBathrooms: undefined,
       mustHaveWheelchairAccess: false,
-      minNumeroVetrine: undefined,
       constructionYear: "",
     };
     const defaultGarageFilters = {

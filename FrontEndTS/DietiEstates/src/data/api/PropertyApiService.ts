@@ -250,9 +250,6 @@ export const searchProperties = async (
         if (comFilters.mustHaveWheelchairAccess !== undefined) {
           searchPayload.mustHaveWheelchairAccess = comFilters.mustHaveWheelchairAccess;
         }
-        if (comFilters.minNumeroVetrine !== undefined) {
-          searchPayload.minNumeroVetrine = comFilters.minNumeroVetrine;
-        }
       }
       else if (category === 'garage') {
         const garageFilters = categoryFilters as PropertyFilters['garage'];

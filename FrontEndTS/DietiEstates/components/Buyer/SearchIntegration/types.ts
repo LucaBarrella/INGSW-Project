@@ -91,7 +91,6 @@ export interface PropertyFilters {
     minNumberOfRooms?: number;
     minNumberOfBathrooms?: number;
     mustHaveWheelchairAccess: boolean;
-    minNumeroVetrine?: number;
     constructionYear: string | number;
   };
   garage: {

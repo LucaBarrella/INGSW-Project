@@ -51,7 +51,6 @@ export const initialSearchState: SearchState = {
       minNumberOfRooms: undefined,
       minNumberOfBathrooms: undefined,
       mustHaveWheelchairAccess: false,
-      minNumeroVetrine: undefined,
       constructionYear: '',
     },
     land: {
