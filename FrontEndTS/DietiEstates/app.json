@@ -5,18 +5,19 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo.jpeg",
-    "scheme": "myapp",
+    "scheme": "dietiestates",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true
     },
     "android": {
+      "googleServicesFile": "google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo.jpeg",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.fabbest.DietiEstates"
+      "package": "com.fabbest.dietiestates"
     },
     "web": {
       "bundler": "metro",

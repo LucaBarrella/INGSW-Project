@@ -4,12 +4,14 @@ import { saveRefreshToken, saveToken } from './token.service';
 import React from 'react';
 import * as Google from 'expo-auth-session/providers/google';
 import { AuthSessionResult } from 'expo-auth-session';
+import { Router } from 'expo-router';
 
 export const updateTokensByThirdPartyLogin = async (token: string) => {
-    return await httpClient.post('/authWithGoogle', { "token": token });
+    return await httpClient.post('/auth/google', { "token": token });
 }
 
-export const loginWithGoogle = (response: { type: string; params: { id_token: string; access_token: string }; error: any; }, router: any) => {
+export const loginWithGoogle = (response: { type: string; params: { id_token: string; access_token: string }; error: any; }, router: Router) => {
+  Alert.alert(JSON.stringify(response));
   if (response?.type === 'success') {
     const { access_token } = response.params;
     const { id_token } = response.params;
@@ -18,12 +20,17 @@ export const loginWithGoogle = (response: { type: string; params: { id_token: st
         const data = JSON.parse(response?.data);
         await saveToken(data.accessToken);
         await saveRefreshToken(data.refreshToken);
-        router.replace('/(protected)/HomePage');
+        Alert.alert("redirecting...");
+        router.replace('/(protected)/(buyer)/(tabs)/home');
       }
       else {
-        Alert.alert("Autenticazione fallita", JSON.parse(response?.data).message);
+        Alert.prompt("Autenticazione fallita", JSON.parse(response?.data).message);
+        router.back();
       }
     }, (error) => {
+      Alert.prompt(JSON.stringify(error));
+      console.log("UWUFUFU");
+      console.log(JSON.stringify(error));
       if (error.status == 404) {
         fetch('https://www.googleapis.com/userinfo/v2/me', {
           headers: { Authorization: `Bearer ${access_token}` },
@@ -43,18 +50,22 @@ export const loginWithGoogle = (response: { type: string; params: { id_token: st
               }
               else {
                 Alert.alert("Registrazione fallita", JSON.parse(response?.data).message);
+                router.back();
               }
             }, (error) => {
               Alert.alert("Registrazione fallita", JSON.parse(error?.data).message);
+              router.back();
             });
           })
           .catch(error => {
             console.error('Error fetching user data:', error);
             Alert.alert("Registrazione fallita", "Qualcosa è andato storto, controlla la connessione e riprova.");
+            router.back();
           });
       }
       else {
         Alert.alert("Registrazione fallita", JSON.parse(error?.data).message);
+        router.back();
       }
     })
   }
@@ -72,22 +83,22 @@ export default function useGoogleAuth(useEffectCallback: { (response: any): void
     webClientId: WEB_CLIENT_ID,
     androidClientId: ANDROID_CLIENT_ID,
     scopes: ['profile', 'email'],
-    flowName: "3",
     useProxy: true
   });
 
   React.useEffect(()=>{useEffectCallback(response)}, [response]);
 
-  const signIn = async () => {
+  const googleSignIn = async () => {
     try {
       const result = await promptAsync();
       return result;
     } catch (error) {
+      Alert.alert("error! " + JSON.stringify(error));
       return null;
     }
   };
 
   return {
-    signIn
+    googleSignIn
   };
 }

@@ -1,4 +1,4 @@
-package com.fabbest.DietiEstates
+package com.fabbest.dietiestates
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

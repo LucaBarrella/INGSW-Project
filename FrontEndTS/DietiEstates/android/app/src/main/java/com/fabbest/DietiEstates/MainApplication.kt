@@ -1,4 +1,4 @@
-package com.fabbest.DietiEstates
+package com.fabbest.dietiestates
 
 import android.app.Application
 import android.content.res.Configuration

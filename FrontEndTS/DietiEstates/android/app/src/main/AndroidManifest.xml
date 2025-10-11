@@ -26,6 +26,9 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="myapp"/>
+        <data android:scheme="com.dieti.dietiestates"/>
+        <data android:scheme="com.dieti.dietiestates25" />
+        <data android:scheme="com.fabbest.dietiestates" />
       </intent-filter>
     </activity>
   </application>

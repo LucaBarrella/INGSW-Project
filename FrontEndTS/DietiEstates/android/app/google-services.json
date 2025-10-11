@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "68500182941",
+    "project_id": "third-oarlock-449614-m8",
+    "storage_bucket": "third-oarlock-449614-m8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:68500182941:android:9df37bfcd51289ac4c8174",
+        "android_client_info": {
+          "package_name": "com.dieti.dietiestates25"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "68500182941-19rccqu4iigg9mcj062rf3t9blgjg5h5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDc9bNHfAiNyJ6Uv6swIohZx-02GpP2O7o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "68500182941-19rccqu4iigg9mcj062rf3t9blgjg5h5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:68500182941:android:5caf50a9b5b429154c8174",
+        "android_client_info": {
+          "package_name": "com.fabbest.dietiestates"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "68500182941-19rccqu4iigg9mcj062rf3t9blgjg5h5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDc9bNHfAiNyJ6Uv6swIohZx-02GpP2O7o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "68500182941-19rccqu4iigg9mcj062rf3t9blgjg5h5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
