@@ -2,7 +2,6 @@ import httpClient from '../../../app/_services/httpClient';
 import { LoginCredentials } from '../../../types/UserCredentials';
 import { ApiResponseToken } from './ResponseTokenService';
 import { mockDelay, MOCK_TOKEN_RESPONSE } from '../../../app/_services/__mocks__/mockData';
-import { getRefreshToken } from '@/app/_services/token.service';
 
 // Definisce i path relativi degli endpoint API per l'autenticazione
 const authEndpoints = {

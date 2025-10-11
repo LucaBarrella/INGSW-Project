@@ -9,6 +9,7 @@ import { Provider } from '@/types/Provider';
 import ThemedButton from './ThemedButton';
 import { LabelInput } from './LabelInput';
 import { useRouter } from 'expo-router';
+import useGoogleAuth, { loginWithGoogle } from '@/app/_services/thirdPartyAuth';
 
 export type LoginFormProps = ViewProps & {
   lightColor?: string;
@@ -25,6 +26,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ lightColor, darkColor, ...props }
 
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
+
+  const googleAuth = useGoogleAuth((response) => { loginWithGoogle(response, router); });
 
   React.useEffect(() => {
     if (error) {
@@ -94,7 +97,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ lightColor, darkColor, ...props }
       <>
         <ThemedText className="text-base mt-3 mb-3 text-center" style={{ color: labelColor }}>o continua con:</ThemedText>
         <View className="items-center mb-3">
-          <SocialButton provider={Provider.Google} onPress={() => console.log('Login con Google')} lightColor='#FFFFFF' darkColor='#FFFFFF' />
+          <SocialButton provider={Provider.Google} onPress={googleAuth.signIn} lightColor='#FFFFFF' darkColor='#FFFFFF' />
         </View>
         <View className="items-center mb-3">
           <SocialButton provider={Provider.Meta} onPress={() => console.log('Login con Meta')} lightColor='#FFFFFF' darkColor='#1877F2' />

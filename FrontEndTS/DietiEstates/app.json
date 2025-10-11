@@ -15,7 +15,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo.jpeg",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.fabbest.DietiEstates"
     },
     "web": {
       "bundler": "metro",
@@ -34,10 +35,17 @@
         }
       ],
       "expo-localization",
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "b4a11941-2cf6-436b-9d1f-b9d5a4afe477"
+      }
     }
   }
 }
