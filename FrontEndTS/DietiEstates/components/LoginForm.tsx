@@ -9,7 +9,7 @@ import { Provider } from '@/types/Provider';
 import ThemedButton from './ThemedButton';
 import { LabelInput } from './LabelInput';
 import { useRouter } from 'expo-router';
-import useGoogleAuth, { loginWithGoogle } from '@/app/_services/thirdPartyAuth';
+import useGoogleAuth from '@/app/_services/thirdPartyAuth';
 
 export type LoginFormProps = ViewProps & {
   lightColor?: string;
@@ -27,7 +27,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ lightColor, darkColor, ...props }
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
 
-  const { googleSignIn } = useGoogleAuth((response) => { loginWithGoogle(response, router); });
+  const { googleSignIn } = useGoogleAuth(router);
 
   React.useEffect(() => {
     if (error) {
