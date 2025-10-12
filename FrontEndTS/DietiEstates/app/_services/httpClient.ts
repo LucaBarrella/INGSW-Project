@@ -36,8 +36,8 @@ const TOKEN_KEY = 'user_auth_token';
 // Fallback temporaneo se le variabili non sono in app.json/extra
 // TODO: Rimuovere questo fallback e configurare correttamente app.json/extra
 const baseURL = __DEV__
-  ? 'https://ropesthrills-dietiestates25.hf.space' // URL di sviluppo
-  : 'https://ropesthrills-dietiestates25.hf.space'; // URL di produzione
+  ? 'https://thefabbest-dietiestates25.hf.space' // URL di sviluppo
+  : 'https://thefabbest-dietiestates25.hf.space'; // URL di produzione
 
 if (!baseURL && !USE_MOCK_API_HTTP) { // Controlla baseURL solo se non siamo in mock http
   console.error(

@@ -7,70 +7,31 @@ import { AuthSessionResult } from 'expo-auth-session';
 import { Router } from 'expo-router';
 
 export const updateTokensByThirdPartyLogin = async (token: string) => {
-    return await httpClient.post('/auth/google', { "token": token });
+  return await httpClient.post('/auth/google', { "idToken": token });
 }
 
 export const loginWithGoogle = (response: { type: string; params: { id_token: string; access_token: string }; error: any; }, router: Router) => {
-  Alert.alert(JSON.stringify(response));
   if (response?.type === 'success') {
-    const { access_token } = response.params;
     const { id_token } = response.params;
     updateTokensByThirdPartyLogin(id_token).then(async (response) => {
       if (response.status == 200) {
-        const data = JSON.parse(response?.data);
+        const data = response?.data;
         await saveToken(data.accessToken);
         await saveRefreshToken(data.refreshToken);
-        Alert.alert("redirecting...");
         router.replace('/(protected)/(buyer)/(tabs)/home');
       }
       else {
-        Alert.prompt("Autenticazione fallita", JSON.parse(response?.data).message);
-        router.back();
+        Alert.alert("Login fallito", "Qualcosa è andato storto, controlla i dati inseriti e riprova.");
+        router.replace('/(auth)/login');
       }
-    }, (error) => {
-      Alert.prompt(JSON.stringify(error));
-      console.log("UWUFUFU");
-      console.log(JSON.stringify(error));
-      if (error.status == 404) {
-        fetch('https://www.googleapis.com/userinfo/v2/me', {
-          headers: { Authorization: `Bearer ${access_token}` },
-        })
-          .then(response => response.json())
-          .then(userData => {
-            const password = "";
-            const email = userData.email;
-            const name = userData.given_name;
-            const surname = userData.family_name;
-            // TODO should ask for username and then sign up.
-            const username = email.split('@')[0] + Math.floor(Math.random() * 1000);
-            httpClient.post('/register', { username: username, name: name, surname: surname, email: email, password: password, id_token: id_token }).then((response) => {
-              if (response.status == 201) {
-                Alert.alert("Registrazione avvenuta con successo", "Ora puoi effettuare il login.");
-                router.push({ pathname: "/(auth)/login", params: { email: email, password: password } });
-              }
-              else {
-                Alert.alert("Registrazione fallita", JSON.parse(response?.data).message);
-                router.back();
-              }
-            }, (error) => {
-              Alert.alert("Registrazione fallita", JSON.parse(error?.data).message);
-              router.back();
-            });
-          })
-          .catch(error => {
-            console.error('Error fetching user data:', error);
-            Alert.alert("Registrazione fallita", "Qualcosa è andato storto, controlla la connessione e riprova.");
-            router.back();
-          });
-      }
-      else {
-        Alert.alert("Registrazione fallita", JSON.parse(error?.data).message);
-        router.back();
-      }
-    })
+    }).catch((error) => {
+      Alert.alert("Login fallito", "Qualcosa è andato storto, controlla la connessione e riprova.");
+      router.replace('/(auth)/login');
+    });
   }
   else if (response?.type === 'error') {
-    console.error("Auth error:", response.error);
+    Alert.alert("Login fallito", "Non siamo riusciti a raggiungere il servizio di autenticazione, riprova più tardi.");
+    router.replace('/(auth)/login');
   }
 }
 
