@@ -10,7 +10,6 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 const iconMap: Record<string, React.ComponentProps<typeof MaterialIcons>['name']> = {
   home: 'home',
   visits: 'calendar-today',
-  favorites: 'favorite',
   offers: 'receipt',
   profile: 'person',
 };
@@ -61,10 +60,10 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
               target: route.key,
             });
           };
-
+ 
           const iconName = iconMap[route.name as keyof typeof iconMap];
           const color = isFocused ? activeTintColor : inactiveTintColor;
-
+ 
           return (
             <TouchableOpacity
               key={route.key}

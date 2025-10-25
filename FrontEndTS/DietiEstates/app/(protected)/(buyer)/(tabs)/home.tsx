@@ -6,7 +6,6 @@ import { ThemedText } from '@/components/ThemedText';
 import { BuyerPropertyCard } from '@/components/Buyer/BuyerPropertyCard';
 import { CategoryButton } from '@/components/Buyer/CategoryButton';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { useFavorites } from '@/hooks/useFavorites';
 import { SearchAndFilter, Categories } from '@/components/Buyer/SearchIntegration';
 import ApiService from '@/app/_services/api.service'; // Importa ApiService
 import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types'; // Usa il tipo unificato
@@ -39,7 +38,6 @@ export default function HomeTab() {
   const router = useRouter();
   const backgroundColor = useThemeColor({}, 'background');
   const errorColor = useThemeColor({}, 'tint'); // Placeholder per colore errore
-  const { isFavorite, toggleFavorite } = useFavorites();
   const [featuredProperties, setFeaturedProperties] = useState<PropertyDetail[]>([]); // Usa il tipo unificato
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -163,8 +161,6 @@ export default function HomeTab() {
                     <BuyerPropertyCard
                       property={item}
                       onPress={() => handlePropertyPress(item.id)}
-                      isFavorite={isFavorite(String(item.id))}
-                      onToggleFavorite={() => toggleFavorite(item)}
                     />
                   </ThemedView>
                 )}
@@ -186,8 +182,6 @@ export default function HomeTab() {
                 <BuyerPropertyCard
                   property={item}
                   onPress={() => handlePropertyPress(item.id)}
-                  isFavorite={isFavorite(String(item.id))}
-                  onToggleFavorite={() => toggleFavorite(item)}
                 />
               </ThemedView>
             ))

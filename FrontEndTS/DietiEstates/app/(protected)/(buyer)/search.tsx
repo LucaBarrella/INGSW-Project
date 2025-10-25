@@ -7,7 +7,6 @@ import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
 import ApiService from '@/app/_services/api.service';
-import { useFavorites } from '@/hooks/useFavorites';
 import { SearchResultsView } from '@/components/Buyer/SearchResults/SearchResultsView';
 
 export default function SearchResultsScreen() {
@@ -16,7 +15,6 @@ export default function SearchResultsScreen() {
   const { state, dispatch } = useSearch();
   const [isLoading, setIsLoading] = useState(true); // Mantenuto per il caricamento dei dati API
   const [properties, setProperties] = useState<PropertyDetail[]>([]);
-  const { isFavorite, toggleFavorite } = useFavorites();
   const [error, setError] = useState<string | null>(null);
 
   // Effetto per sincronizzare i parametri URL con il SearchContext
@@ -209,8 +207,6 @@ export default function SearchResultsScreen() {
           properties={properties}
           // onSearch non è più necessaria, SearchAndFilter aggiorna il context
           onPropertyPress={handlePropertyPress}
-          isFavorite={isFavorite}
-          onToggleFavorite={toggleFavorite}
         />
       )}
     </ThemedView>

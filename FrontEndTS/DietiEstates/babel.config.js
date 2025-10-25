@@ -69,8 +69,6 @@ module.exports = function (api) {
             'material-symbols:shield-person',
             'material-symbols:map-outline-rounded',
             'material-symbols:list-alt-outline-rounded',
-            'material-symbols:favorite-rounded',
-            'material-symbols:favorite-outline-rounded',
             'material-symbols:help',
             'material-symbols:error-outline', // Aggiunta per gestione errori meteo
             'material-symbols:hourglass-empty', // Aggiunta per indicatore caricamento meteo

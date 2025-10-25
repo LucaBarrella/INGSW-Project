@@ -31,12 +31,6 @@ export default function BuyerTabLayout() {
         }}
       />
       <Tabs.Screen
-        name="favorites"
-        options={{
-          title: t('buyer.tabs.favorites'),
-        }}
-      />
-      <Tabs.Screen
         name="offers"
         options={{
           title: t('buyer.tabs.offers'),

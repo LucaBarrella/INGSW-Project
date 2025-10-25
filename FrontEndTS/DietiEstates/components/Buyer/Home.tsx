@@ -20,7 +20,6 @@ const categories: CategoryItem[] = [
 
 const tabs: TabItem[] = [
   { icon: "⌂", label: "Home", onPress: () => {} },
-  { icon: "♥", label: "Preferiti", onPress: () => {} },
   { icon: "☷", label: "Prenotazioni", onPress: () => {} },
   { icon: "◯", label: "Profilo", onPress: () => {} },
 ];

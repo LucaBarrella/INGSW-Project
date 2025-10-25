@@ -4,7 +4,6 @@ import { ActivityIndicator } from 'react-native';
 import HomeTab from '../home'; // Importa il componente della schermata
 import ApiService from '@/app/_services/api.service'; // Importa il servizio da mockare
 import { useRouter } from 'expo-router'; // Importa hook usati
-import { useFavorites } from '@/hooks/useFavorites'; // Importa hook usati
 import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types'; // Import type
 
 // Mock del modulo ApiService
@@ -19,13 +18,6 @@ jest.mock('expo-router', () => ({
   })),
 }));
 
-// Mock del hook useFavorites
-jest.mock('@/hooks/useFavorites', () => ({
-  useFavorites: jest.fn(() => ({
-    isFavorite: jest.fn(() => false), // Default: non è preferito
-    toggleFavorite: jest.fn(),
-  })),
-}));
 
 // Mock di componenti figli complessi per interazione usando componenti RN
 jest.mock('@/components/Buyer/SearchIntegration', () => ({
@@ -54,17 +46,14 @@ jest.mock('@/components/Buyer/CategoryButton', () => ({ CategoryButton: ({ label
     );
 }}));
 // Mock BuyerPropertyCard per permettere il click e vedere i dati usando componenti RN
-jest.mock('@/components/Buyer/BuyerPropertyCard', () => ({ BuyerPropertyCard: ({ property, onPress, isFavorite, onToggleFavorite }: any) => {
+jest.mock('@/components/Buyer/BuyerPropertyCard', () => ({ BuyerPropertyCard: ({ property, onPress }: any) => {
     // Import qui dentro
     const { View: MockView, Text: MockText, TouchableOpacity: MockTouchableOpacity } = require('react-native');
     return (
       <MockView testID={`prop-${property.id}`}>
-        <MockText>{property.title} - Fav: {isFavorite ? 'Yes' : 'No'}</MockText>
+        <MockText>{property.title}</MockText>
         <MockTouchableOpacity testID={`prop-details-${property.id}`} onPress={onPress}>
           <MockText>Details</MockText>
-        </MockTouchableOpacity>
-        <MockTouchableOpacity testID={`prop-fav-${property.id}`} onPress={onToggleFavorite}>
-          <MockText>ToggleFav</MockText>
         </MockTouchableOpacity>
       </MockView>
     );
@@ -79,17 +68,12 @@ const mockFeaturedProperties: PropertyDetail[] = [
 describe('HomeTab Component', () => {
   const mockGetFeaturedProperties = ApiService.getFeaturedProperties as jest.Mock;
   const mockUseRouter = useRouter as jest.Mock;
-  const mockUseFavorites = useFavorites as jest.Mock;
   const mockPush = jest.fn(); // Mock specifico per router.push
 
   beforeEach(() => {
     // Resetta i mock prima di ogni test
     mockGetFeaturedProperties.mockClear();
     mockUseRouter.mockReturnValue({ push: mockPush }); // Assicura che push sia mockato
-    mockUseFavorites.mockReturnValue({ // Resetta anche il mock di useFavorites
-        isFavorite: jest.fn(() => false),
-        toggleFavorite: jest.fn(),
-    });
     mockPush.mockClear();
     jest.useFakeTimers(); // Ripristina l'uso dei fake timers
   });
@@ -116,11 +100,6 @@ describe('HomeTab Component', () => {
     // Usa findByText con una RegExp per matchare l'inizio della stringa
     await findByText(new RegExp(`^${mockFeaturedProperties[0].title}`));
     await findByText(new RegExp(`^${mockFeaturedProperties[1].title}`));
-
-    // Verifica che isFavorite sia stato chiamato per ogni proprietà (dopo che sono state renderizzate)
-    // Usa String() perché l'errore indica che viene passato come stringa
-    expect(mockUseFavorites().isFavorite).toHaveBeenCalledWith(String(mockFeaturedProperties[0].id));
-    expect(mockUseFavorites().isFavorite).toHaveBeenCalledWith(String(mockFeaturedProperties[1].id));
 
     // Verifica che l'API sia stata chiamata
     expect(mockGetFeaturedProperties).toHaveBeenCalledTimes(1); // Assicurati che mockGetFeaturedProperties sia nello scope
@@ -208,29 +187,6 @@ describe('HomeTab Component', () => {
     });
   });
 
-  it('dovrebbe chiamare toggleFavorite quando si preme il pulsante preferito', async () => {
-    mockGetFeaturedProperties.mockResolvedValue(mockFeaturedProperties);
-
-    // Renderizza il componente e ottieni findByText
-    const { getByText, getByTestId, findByText } = render(<HomeTab />);
-
-    // Attende che la card sia renderizzata usando findByText con RegExp
-    await findByText(new RegExp(`^${mockFeaturedProperties[0].title}`));
-
-    // Avanza i timer (se necessario per effetti post-rendering della card)
-    jest.runAllTimers();
-
-    // Ora che la card è presente, trova il pulsante ToggleFav
-    const favButton = getByTestId(`prop-fav-${mockFeaturedProperties[0].id}`);
-    // fireEvent che causa aggiornamento stato (tramite hook) -> usare act?
-    // In questo caso, toggleFavorite è mockato, quindi l'aggiornamento di stato
-    // non avviene realmente nel test. Non è strettamente necessario act.
-    fireEvent.press(favButton);
-
-    // Verifica che toggleFavorite sia stato chiamato con l'oggetto proprietà corretto
-    expect(mockUseFavorites().toggleFavorite).toHaveBeenCalledTimes(1);
-    expect(mockUseFavorites().toggleFavorite).toHaveBeenCalledWith(mockFeaturedProperties[0]);
-  });
 
   // TODO: Questo test fallisce perché mockPush non viene chiamato. Da investigare.
   /*

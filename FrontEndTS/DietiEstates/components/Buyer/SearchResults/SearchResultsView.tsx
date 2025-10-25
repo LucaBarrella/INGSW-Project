@@ -13,16 +13,12 @@ interface SearchResultsViewProps {
   properties: PropertyDetail[];
   // onSearch: (query: string) => void; // Rimosso
   onPropertyPress: (propertyId: number) => void;
-  isFavorite: (id: string) => boolean;
-  onToggleFavorite: (property: PropertyDetail) => void;
 }
 
 export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
   properties,
   // onSearch, // Rimosso
   onPropertyPress,
-  isFavorite,
-  onToggleFavorite,
 }) => {
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const tint = useThemeColor({}, 'tint');
@@ -69,8 +65,6 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
             <BuyerPropertyCard
               property={item}
               onPress={() => onPropertyPress(item.id)}
-              isFavorite={isFavorite(String(item.id))}
-              onToggleFavorite={() => onToggleFavorite(item)}
             />
           )}
           ListEmptyComponent={() => (
