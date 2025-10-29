@@ -5,6 +5,13 @@
 \usepackage[italian]{babel}
 \usepackage{svg}
 
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{tabularx}
+
+
 \Universita{Università degli Studi di Napoli Federico II}
 \Facolta{Scuola Politecnica e delle Scienze di Base}
 \Dipartimento{Dipartimento di Ingegneria Elettrica e Tecnologie dell'Informazione}
@@ -12,6 +19,7 @@
 \Materia{Progetto di Ingegneria del Software}
 \AnnoAccademico{Anno Accademico 2024--2025}
 \Titolo{DietiEstates25}
+\Studente{Luca Barrella}
 \Studente{Fabrizio Apuzzo}
 \Studente{Maria Della Valle}
 \StudenteLabel{Studenti}
@@ -77,6 +85,7 @@ Utilizzatori principali dei servizi offerti da DietiEstates25, i clienti si conf
 \end{figure}
 
 \cleardoublepage
+
 \subsection{Agenti immobiliari}
 Un altro segmento significativo dell'utenza della piattaforma è rappresentato dagli agenti immobiliari, professionisti del settore, ingaggiati dalle agenzie che hanno scelto DietiEstates25. Dotati di una conoscenza approfondita degli immobili loro affidati, questi operatori interagiscono con i potenziali clienti attraverso il sistema di gestione delle offerte.
 
@@ -87,6 +96,7 @@ Un altro segmento significativo dell'utenza della piattaforma è rappresentato d
 \end{figure}
 
 \clearpage
+
 \subsection{Amministratori}
 La categoria con più privilegi è costituita dai gestori delle agenzie immobiliari. Dotati di accesso a funzionalità avanzate, hanno la possibilità di abilitare altri gestori e agenti immobiliari all'utilizzo della piattaforma.
 
@@ -102,28 +112,36 @@ Individuati gli utenti target, si descrivono e schematizzano di seguito le funzi
 \subsection{Descrizione dei casi d'uso}
 Gli \textbf{utenti} sono i principali attori della piattaforma, se ancora sono \textbf{non registrati} hanno la possiilità di:
 \begin{itemize}
-    \item \textbf{Registrarsi}: L'utente compila un form con le informazioni richieste per la creazione di un account e il sistema verifica la validità dei dati inseriti, creando il nuovo profilo.
+    \item \textbf{Registrarsi}: L'utente compila un form con le informazioni richieste per la creazione di un account e il sistema verifica la validità dei dati inseriti, creando il nuovo profilo. Alternativamente l'utente può registrarsi tramite un servizio di terze parti (es. Google).
 \end{itemize}
 Una volta \textbf{registrati}, possono:
 \begin{itemize}
-    \item \textbf{Autenticarsi}: L'utente inserisce le proprie credenziali nel form di login. Il sistema verifica la correttezza delle informazioni e, in caso positivo, concede l'accesso alla sua area riservata.
+    \item \textbf{Autenticarsi}: L'utente inserisce le proprie credenziali nel form di login. Il sistema verifica la correttezza delle informazioni e, in caso positivo, concede l'accesso alla sua area riservata. Alternativamente, l'utente può autenticarsi usando lo stesso servizio di terze parti con cui si è registrato.
     \item \textbf{Ricercare immobili}: L'utente utilizza i filtri disponibili per cercare immobili. Il sistema elabora la richiesta e presenta i risultati corrispondenti ai parametri specificati.
-    \item \textbf{Fare un'offerta su un immobile}: L'utente, selezionato un immobile, fa un'offerta per acquistarlo. Il sistema registra l'offerta.
-    \item \textbf{Accettare un'offerta}: L'utente visualizza l'offerta ricevuta riguardo un immobile e la accetta. Il sistema aggiorna lo stato dell'offerta.
-    \item \textbf{Rifiutare un'offerta}: L'utente esamina l'offerta ricevuta e la rifiuta. Il sistema aggiorna lo stato dell'offerta.
-    \item \textbf{Fare una controproposta ad un'offerta}: L'utente, in risposta ad un'offerta ricevuta, formula una controproposta. Il sistema registra la controproposta.
+    \item \textbf{Prenotare una visita}: L'utente seleziona un immobile e sceglie una data e un orario per la visita nelle successive due settimane, compatibilmente con le disponibilità dell'agente. Il sistema registra la prenotazione e invia una notifica all'agente immobiliare.
+    \item \textbf{Fare un'offerta su un immobile}: L'utente, selezionato un immobile, fa un'offerta per acquistarlo. Il sistema registra l'offerta e notifica l'agente immobiliare che ha caricato l'immobile.
+    \item \textbf{Accettare una controproposta}: L'utente visualizza la controproposta ricevuta riguardo un'offerta fatta in precedenza e la accetta. Il sistema aggiorna lo stato dell'offerta e invia una notifica e-mail all'agente immobiliare che ha inviato la controproposta.
+    \item \textbf{Rifiutare una controproposta}: L'utente esamina la controproposta ricevuta riguardo un'offerta fatta in precedenza e la rifiuta. Il sistema aggiorna lo stato dell'offerta e notifica l'agente immobiliare che ha inviato la controproposta.
+    \item \textbf{Fare una controproposta ad una controproposta TODO}: 
     \item \textbf{Visualizzare storico offerte}: L'utente accede a una sezione dove può consultare l'elenco cronologico di tutte le offerte effettuate o ricevute, con i relativi dettagli.
+    \item \textbf{Visualizzare proprietà visitate di recente}: L'utente può ritrovare velocemente gli annunci visualizzati di recente, facilitando il ritorno a quelli di interesse.
 \end{itemize}
 Gli \textbf{agenti immobiliari}, oltre alle funzionalità degli \textbf{utenti}, possono:
 \begin{itemize}
     \item \textbf{Caricare nuovi immobili}: L'agente immobiliare inserisce le immagini e le informazioni relative ad un immobile da vendere tramite un apposito form. Il sistema convalida le informazioni e pubblica l'annuncio sulla piattaforma.
     \item \textbf{Inserire un'offerta dall'esterno}: L'agente immobiliare registra manualmente un'offerta ricevuta all'esterno della piattaforma. Il sistema la registra nello storico.
+    \item \textbf{Accettare una richiesta di prenotazione per la visita}: L'agente immobiliare visualizza le proposte di prenotazione e accetta una di esse. Il sistema aggiorna lo stato della visita e invia una notifica all'utente che l'ha richiesta.
+    \item \textbf{Rifiutare una richiesta di prenotazione per la visita}: L'agente immobiliare esamina le proposte di prenotazione e rifiuta una di esse. Il sistema aggiorna lo stato della visita e notifica l'utente che l'ha richiesta.
+    \item \textbf{Accettare un'offerta}: L'agente immobiliare visualizza le offerte ricevute per un immobile e accetta una di esse. Il sistema aggiorna lo stato dell'offerta e invia una notifica all'utente che l'ha fatta.
+    \item \textbf{Rifiutare un'offerta}: L'agente immobiliare esamina le offerte ricevute per un immobile e rifiuta una di esse. Il sistema aggiorna lo stato dell'offerta e notifica l'utente che l'ha fatta.
+    \item \textbf{Fare una controproposta ad un'offerta}: L'agente immobiliare seleziona un'offerta ricevuta e propone una controproposta. Il sistema registra la controproposta e invia una notifica all'utente che ha fatto l'offerta originale.
 \end{itemize}
-Infine, i \textbf{gestori} hanno ancora ulteriori funzionalità, quali:
+Infine, i \textbf{gestori}, oltre alle funzionalità degli \textbf{utenti}, possono:
 \begin{itemize}
     \item \textbf{Modificare la password di amministrazione}: Il gestore accede alle impostazioni dell'account e modifica la propria password. Il sistema verifica e salva la nuova password.
     \item \textbf{Creare account di supporto amministrazione}: Il gestore crea un nuovo account per nuovi amministratori. Il sistema genera le credenziali e imposta i permessi relativi.
     \item \textbf{Creare account per agenti immobiliari}: Il gestore crea un profilo per un nuovo agente immobiliare. Il sistema genera le credenziali e imposta i permessi relativi.
+    \item \textbf{Promuovere un utente esistente a agente immobiliare o gestore}: Il gestore seleziona un utente registrato e ne modifica il ruolo, assegnandogli i permessi di agente immobiliare oppure quelli di gestore. Il sistema aggiorna il profilo dell'utente di conseguenza.
 \end{itemize}
 
 \subsection{Diagramma dei casi d'uso}
@@ -131,6 +149,7 @@ Tutti i casi d'uso individuati possono essere riassunti in un \textit{Use Case D
 %TODO inserire diagramma
 
 \newpage
+
 \section{Descrizione dei requisiti non funzionali e di dominio}
 Descritti i requisiti funzionali di DietiEstates25, è necessario specificare i requisiti non funzionali e i requisiti di dominio, altrettanto importanti.
 
@@ -139,20 +158,20 @@ I requisiti non funzionali fanno riferimento a caratteristiche del sistema come 
 Il Committente richiede che l'applicazione sia performante ed affidabile, attraverso cui gli utenti possano fruire delle funzionalità in modo intuitivo, rapido e piacevole. Tali richieste possono essere suddivise in più sezioni e tradotte nel seguente modo.
 %TODO vedere come funziona l'applicazione e modificare di conseguenza
 \subsubsection{Requisiti di performance}
-La performance riguarda la capacità del sistema di elaborare e restituire informazioni in modo rapido, efficiente e fluido, garantendo tempi di risposta minimi. Si individuano e rispettano i seguenti requisiti:
+La performance riguarda la capacità del sistema di elaborare e restituire informazioni in modo rapido, efficiente e fluido, garantendo tempi di risposta minimi. Assumendo condizioni di connettività ad internet ottimali, si individuano e rispettano i seguenti requisiti:
 \begin{itemize}
     \item L'applicazione deve garantire un caricamento delle pagine rapido e immediato, non superiore a TODO secondi.
     \item Il sistema deve restituire risultati alla ricerca di immobili in modo istantaneo, con un tempo massimo di TODO secondi.
     \item L'applicazione deve supportare contemporaneamente almeno TODO utenti senza cali di prestazioni.
     \item Il caricamento dedegli immobili deve avvenire velocemente, entro TODO secondi dalla conferma.
 \end{itemize}
-%TODO specifica che si è in condizioni normali di connettività internet etc
+
 \subsubsection{Requisiti di affidabilità}
 L'affidabilità misura la capacità del sistema di funzionare correttamente e continuativamente, gestendo eventuali errori senza perdita di dati o interruzione del servizio. Si individuano rispettano i seguenti requisiti:
 \begin{itemize}
-    \item L'applicazione deve garantire una disponibilità del servizio pressoché totale, con un uptime non inferiore al 99.TODO\%.
+    \item L'applicazione deve garantire una disponibilità del servizio pressoché totale, con un uptime non inferiore al 99.5\%.
     \item In caso di malfunzionamento, il sistema deve ripristinarsi completamente in meno di TODO secondi.
-    \item Il sistema deve gestire eventuali errori in modo trasparente, senza mai interrompere l'esperienza di navigazione dell'utente.
+    \item Il sistema deve gestire eventuali errori in modo trasparente, senza interrompere l'esperienza di navigazione dell'utente se non in casi di malfunzionamento critico.
     \item L'applicazione deve possedere meccanismi di ripristino che consentano il recupero completo dei dati in caso di guasto.
 \end{itemize}
 
@@ -168,10 +187,11 @@ L'usabilità valuta la facilità di utilizzo dell'applicazione, misurando quanto
 \subsubsection{Requisiti di sicurezza}
 La sicurezza riguarda la protezione del sistema e dei dati degli utenti da manomissioni e violazioni della privacy. Si individuano rispettano i seguenti requisiti:
 \begin{itemize}
-    \item L'applicazione deve implementare una crittografia end-to-end che protegga totalmente i dati personali degli utenti.
+    \item L'applicazione deve implementare una comunicazione sicura che protegga totalmente i dati personali degli utenti.
     \item Il sistema deve possedere protezioni avanzate contro ogni tipo di attacco informatico.
+    \item L'applicazione deve conservare le password degli utenti in forma crittografata e sicura anche in caso di violazione dei dati.
     \item Il sistema deve essere totalmente conforme alle normative GDPR per la protezione dei dati personali.
-    \item L'applicazione deve chiudere automaticamente le sessioni dopo TODO minuti di inattività per prevenire accessi non autorizzati.
+    \item L'applicazione deve chiudere automaticamente le sessioni dopo 15 minuti di inattività per prevenire accessi non autorizzati.
 \end{itemize}
 
 \subsection{Requisiti di dominio}
@@ -187,6 +207,148 @@ I requisiti di dominio di DietiEstates25 sono specifiche derivanti dalla conosce
     \item Il sistema conserverà uno storico base delle versioni delle offerte, permettendone la tracciabilità. %TODO? permettere la tracciabilità delle modifiche degli ANNUNCI
 \end{itemize}
 
+\section{Esempi di casi d'uso}
+Per illustrare meglio il funzionamento del sistema, si formalizzano di seguito alcuni esempi di casi d'uso, secondo una descrizione testuale strutturata, realizzata utilizzando i template di Cockburn, e secondo la prototipazione visuale via Mock-up delle relative interfacce utente, tramite lo strumento di rapid prototyping Figma.
+
+\subsection{Caso d'uso \#1:}
+
+\subsubsection{Template di Cockburn}
+\begin{table}[H]
+
+    \def\arraystretch{1.5} 
+    
+    \begin{tabularx}{\linewidth}{|l|X|X|X|}
+    
+    \hline Use Case \#N & \multicolumn{3}{l|}{Name} \\ 
+    \hline Goal in Context & \multicolumn{3}{>{\hsize=\dimexpr 3\hsize+4\tabcolsep+2\arrayrulewidth\relax}X|}{%
+    This is a very long line. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.%
+    } \\ 
+    \hline Preconditions & \multicolumn{3}{l|}{} \\ 
+    \hline Success End Conditions & \multicolumn{3}{l|}{} \\ 
+    \hline Failed End Conditions & \multicolumn{3}{l|}{} \\ 
+    \hline Primary Actor & \multicolumn{3}{l|}{} \\ 
+    \hline Trigger & \multicolumn{3}{l|}{} \\ 
+    
+    \hline \multirow{2}{*}{Description} & Step & User Action & System \\ 
+    \cline{2-4} & & & \\ 
+    \hline \multirow{2}{*}{Extensions} & Step & User Action & System \\ 
+    \cline{2-4} & & & \\ 
+    \hline \multirow{2}{*}{Subvariations} & Step & User Action & System \\ 
+    \cline{2-4} & & & \\ 
+    \hline Notes & \multicolumn{3}{l|}{} \\ 
+    \hline
+
+    \end{tabularx}
+    
+\end{table}
+
+\subsubsection{Mock-up}
+
+\subsection{Caso d'uso \#2:}
+
+\subsubsection{Template di Cockburn}
+
+\begin{table}[H]
+
+    \def\arraystretch{1.5} 
+    
+    \begin{tabularx}{\linewidth}{|l|X|X|X|}
+    
+    \hline Use Case \#N & \multicolumn{3}{l|}{Name} \\ 
+    \hline Goal in Context & \multicolumn{3}{>{\hsize=\dimexpr 3\hsize+4\tabcolsep+2\arrayrulewidth\relax}X|}{%
+    This is a very long line. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.%
+    } \\ 
+    \hline Preconditions & \multicolumn{3}{l|}{} \\ 
+    \hline Success End Conditions & \multicolumn{3}{l|}{} \\ 
+    \hline Failed End Conditions & \multicolumn{3}{l|}{} \\ 
+    \hline Primary Actor & \multicolumn{3}{l|}{} \\ 
+    \hline Trigger & \multicolumn{3}{l|}{} \\ 
+    
+    \hline \multirow{2}{*}{Description} & Step & User Action & System \\ 
+    \cline{2-4} & & & \\ 
+    \hline \multirow{2}{*}{Extensions} & Step & User Action & System \\ 
+    \cline{2-4} & & & \\ 
+    \hline \multirow{2}{*}{Subvariations} & Step & User Action & System \\ 
+    \cline{2-4} & & & \\ 
+    \hline Notes & \multicolumn{3}{l|}{} \\ 
+    \hline
+
+    \end{tabularx}
+    
+\end{table}
+
+\subsubsection{Mock-up}
+
+\subsection{Caso d'uso \#3:}
+
+\subsubsection{Template di Cockburn}
+
+\begin{table}[H]
+
+    \def\arraystretch{1.5} 
+    
+    \begin{tabularx}{\linewidth}{|l|X|X|X|}
+    
+    \hline Use Case \#N & \multicolumn{3}{l|}{Name} \\ 
+    \hline Goal in Context & \multicolumn{3}{>{\hsize=\dimexpr 3\hsize+4\tabcolsep+2\arrayrulewidth\relax}X|}{%
+    This is a very long line. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.%
+    } \\ 
+    \hline Preconditions & \multicolumn{3}{l|}{} \\ 
+    \hline Success End Conditions & \multicolumn{3}{l|}{} \\ 
+    \hline Failed End Conditions & \multicolumn{3}{l|}{} \\ 
+    \hline Primary Actor & \multicolumn{3}{l|}{} \\ 
+    \hline Trigger & \multicolumn{3}{l|}{} \\ 
+    
+    \hline \multirow{2}{*}{Description} & Step & User Action & System \\ 
+    \cline{2-4} & & & \\ 
+    \hline \multirow{2}{*}{Extensions} & Step & User Action & System \\ 
+    \cline{2-4} & & & \\ 
+    \hline \multirow{2}{*}{Subvariations} & Step & User Action & System \\ 
+    \cline{2-4} & & & \\ 
+    \hline Notes & \multicolumn{3}{l|}{} \\ 
+    \hline
+
+    \end{tabularx}
+    
+\end{table}
+
+\subsubsection{Mock-up}
+
+\subsection{Caso d'uso \#4:}
+
+\subsubsection{Template di Cockburn}
+
+\begin{table}[H]
+
+    \def\arraystretch{1.5} 
+    
+    \begin{tabularx}{\linewidth}{|l|X|X|X|}
+    
+    \hline Use Case \#N & \multicolumn{3}{l|}{Name} \\ 
+    \hline Goal in Context & \multicolumn{3}{>{\hsize=\dimexpr 3\hsize+4\tabcolsep+2\arrayrulewidth\relax}X|}{%
+    This is a very long line. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.%
+    } \\ 
+    \hline Preconditions & \multicolumn{3}{l|}{} \\ 
+    \hline Success End Conditions & \multicolumn{3}{l|}{} \\ 
+    \hline Failed End Conditions & \multicolumn{3}{l|}{} \\ 
+    \hline Primary Actor & \multicolumn{3}{l|}{} \\ 
+    \hline Trigger & \multicolumn{3}{l|}{} \\ 
+    
+    \hline \multirow{2}{*}{Description} & Step & User Action & System \\ 
+    \cline{2-4} & & & \\ 
+    \hline \multirow{2}{*}{Extensions} & Step & User Action & System \\ 
+    \cline{2-4} & & & \\ 
+    \hline \multirow{2}{*}{Subvariations} & Step & User Action & System \\ 
+    \cline{2-4} & & & \\ 
+    \hline Notes & \multicolumn{3}{l|}{} \\ 
+    \hline
+
+    \end{tabularx}
+    
+\end{table}
+
+\subsubsection{Mock-up}
+
 \section{Glossario}
 Sono di seguito definiti alcuni termini che sono stati utilizzati nel corso del capitolo.
 %TODO fare riferimenti nel testo
@@ -198,5 +360,69 @@ Sono di seguito definiti alcuni termini che sono stati utilizzati nel corso del 
 
 
 \chapter{Progettazione del Sistema}
+\section{Obiettivi di Progettazione}
+TODO
+Tra gli attributi di qualità del software, il sistema è stato progettato per garantire la piena \textbf{funzionalità} e \textbf{usabilità} da parte degli utenti finali, senza mai ignorare la \textbf{manutenibilità} e la \textbf{scalabilità}. L'\textbf{affidabilità}, l'\textbf{efficienza}, la \textbf{sicurezza} e l'\textbf{accessibilità}, seppur importanti e non trascurate, non sono state considerate altrettanto cruciali nella fase di progettazione.
+
+\section{Architettura del Sistema}
+Il sistema è stato progettato seguendo un'architettura a tre livelli: livello di presentazione, livello logico e livello di dati. Ogni livello è stato progettato per essere indipendente dagli altri, consentendo una maggiore flessibilità e facilità di manutenzione.\\\
+Il livello di presentazione è responsabile dell'interfaccia utente e della gestione delle interazioni con l'utente. È stato progettato per essere intuitivo e facile da usare, con un design responsivo che si adatta a diversi dispositivi e che garantisce accessibilità.\\
+Il livello logico gestisce la logica di business del sistema, elaborando le richieste degli utenti e interagendo con il livello di dati. È stato progettato per essere scalabile e modulare, consentendo l'aggiunta di nuove funzionalità senza influire sulle parti esistenti del sistema.\\
+Il livello di dati è responsabile della gestione e dell'archiviazione delle informazioni. È stato progettato per garantire l'integrità e la sicurezza dei dati, con prestazioni ragionevoli e una struttura scalabile, in modo da supportare la crescita del sistema.\\
+Inoltre, sono state adottate tecnologie moderne e best practice di sviluppo software per garantire che il sistema sia robusto, sicuro e performante. Tra queste, l'uso di framework professionali per lo sviluppo, la gestione del versionamento del codice e l'implementazione di test automatici per garantire la qualità del software.\\
+Di seguito, vengono illustrate in dettaglio le scelte progettuali adottate per ciascun livello del sistema.
+
+\subsection{Front-End}
+Il front-end è realizzato in \textbf{React Native} per garantire un'esperienza utente fluida e reattiva, perfettamente adattabile a dispositivi e sistemi operativi diversi, con un look nativo e ben integrato con l'ambiente operativo.\\
+React-Native permette e promuove inoltre lo sviluppo di interfacce utente modulari e riutilizzabili, facilitando la manutenzione e l'evoluzione del codice nel tempo.\\
+Il linguaggio scelto è \textbf{TypeScript}, che si integra perfettamente con React Native e offre buone garanzie in termini di manutenzione del codice, modularità e riduzione degli errori grazie al suo sistema di tipi statici; È inoltre un linguaggio tra i più popolari.
+
+\subsection{Back-End}
+Il back-end è sviluppato in \textbf{Java} utilizzando il framework \textbf{Spring Boot}, che fornisce un'architettura solida, scalabile e modulare per la gestione delle richieste e l'elaborazione della logica di business.\\
+Spring Boot semplifica notevolmente lo sviluppo, offrendo funzionalità integrate per la gestione delle dipendenze, la configurazione automatica e la sicurezza, consentendo di concentrare l'attenzione sulla logica applicativa piuttosto che sugli aspetti infrastrutturali.\\
+Il framework supporta nativamente la realizzazione di \textbf{API RESTful}, utilizzate per la comunicazione tra il front-end, sviluppato in \textbf{React Native}, e il back-end.
+
+Per la persistenza dei dati, viene impiegato un database relazionale \textbf{PostgreSQL}, integrato attraverso \textbf{Hibernate} come framework ORM (Object-Relational Mapping). Quest'ultimo, in combinazione con la \textbf{Jakarta Persistence API (JPA)}, fornisce un'interfaccia standard e astratta per la gestione della persistenza, semplificando le operazioni di lettura e scrittura sul database e garantendo coerenza tra modello applicativo e modello relazionale.
+
+Il sistema di sicurezza è gestito tramite \textbf{Spring Security}, che consente di implementare meccanismi di autenticazione e autorizzazione robusti e configurabili, proteggendo le API da accessi non autorizzati.
+
+Per quanto riguarda il deployment, l'applicazione è containerizzata tramite \textbf{Docker}, che permette di isolare l'ambiente di esecuzione e garantire portabilità e coerenza tra i diversi ambienti di sviluppo, test e produzione. I container vengono distribuiti e gestiti su \textbf{Microsoft Azure}, che assicura scalabilità, affidabilità e continuità del servizio.\\
+Per la gestione e la memorizzazione dei contenuti multimediali, come immagini o file, viene utilizzato \textbf{Azure Blob Storage}, una soluzione di archiviazione a oggetti altamente scalabile e sicura, integrata con il back-end per la gestione efficiente dei file.
+
+Infine, \textbf{JUnit} viene utilizzato per l'esecuzione di test automatici, al fine di garantire la qualità del codice e la stabilità del sistema durante lo sviluppo e l'integrazione continua.
+
+\subsection{Database}
+Il database è progettato per essere scalabile e performante, utilizzando PostgreSQL.\\
+PostgreSQL è scelto per la sua robustezza, e l'ottimo supporto alla gestione dei dati geospaziali (indispensabili per alcune funzionalità dell'applicazione).\\
+La struttura del database è progettata per ottimizzare le prestazioni delle query senza mai compromettere l'integrità dei dati, anche impiegando l'indicizzazione.\\
+Inoltre, sono implementate misure di sicurezza per proteggere i dati sensibili, come l'hashing dinamico delle password (tramite \textbf{BCrypt}).
+
+
 \chapter{Testing e Valutazione dell'Usabilità}
+Per garantire la qualità del sistema DietiEstates25, sono stati implementati test automatici e condotte valutazioni di usabilità.\\
+I test automatici sono stati realizzati utilizzando JUnit per il back-end e TODO per il front-end, coprendo le funzionalità principali e verificando la correttezza del comportamento del sistema.\\
+La valutazione dell'usabilità è stata condotta attraverso ispezioni sistematiche e test con utenti volontari interessati all'applicazione.\\
+Inoltre sono stati impiegati SonarQube per l'analisi della qualità del codice, individuando potenziali problemi e aree di miglioramento.\\
+I risultati dei test automatici e delle valutazioni di usabilità sono stati analizzati per identificare eventuali problemi e apportare le necessarie correzioni al sistema, al fine di garantire un'esperienza utente fluida, intuitiva, accessibile mantenendo un elevato livello di affidabilità.\\
+Di seguito, vengono presentati i dettagli dei test automatici e della valutazione dell'usabilità condotta.
+
+\section{Test Automatici}
+I test automatici sono stati implementati per garantire la qualità del codice e il corretto funzionamento delle funzionalità principali.\\
+TODO
+
+\section{Valutazione dell'Usabilità}
+La valutazione dell'usabilità è stata condotta attraverso ispezioni sistematiche e test con utenti volontari.\\
+I test con utenti volontari hanno coinvolto sessioni di utilizzo dell'applicazione, durante le quali sono stati raccolti feedback e osservazioni sul comportamento degli utenti.\\
+Le informazioni ottenute sono state utilizzate per identificare aree di miglioramento e ottimizzare l'esperienza utente complessiva.\\
+
+\section{SonarQube}
+SonarQube è stato utilizzato per l'analisi della qualità del codice, individuando potenziali problemi e aree di miglioramento.\\
+L'analisi ha permesso di identificare vulnerabilità, code smells e duplicazioni, contribuendo a mantenere un codice pulito, facilmente manutenibile e scalabile.\\
+I risultati dell'analisi sono stati integrati nel processo di sviluppo, consentendo di apportare le necessarie correzioni e miglioramenti al codice.
+
+\section{Accessibilità}
+TODO
+Per garantire l'accessibilità dell'applicazione, sono state adottate le linee guida WCAG livello AA\@.\\
+Sono stati usati strumenti automatici per verificare la conformità alle linee guida, ad esempio nella scelta dei colori, identificando e correggendo eventuali problemi di accessibilità.\\
+
 \end{document}
