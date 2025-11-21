@@ -1,5 +1,5 @@
 import { OfferDTO } from '../dto/OfferDTO';
-import httpClient from '../../../app/_services/httpClient';
+import httpClient from '../core/httpClient';
 // Definisce i path relativi degli endpoint API per la gestione delle offerte
 // NOTA: Gli endpoint per le offerte non erano presenti nel file api.service.ts originale.
 // Vengono aggiunti qui come esempio. Sarà necessario definirli correttamente con il backend.

@@ -1,5 +1,5 @@
 import { VisitDTO } from '../dto/VisitDTO';
-import httpClient from '../../app/_services/httpClient';
+import httpClient from '../core/httpClient';
 import { PagedVisitsDTO } from '../dto/response/PagedVisitsDTO';
 // Definisce i path relativi degli endpoint API per la gestione delle visite
 // NOTA: Gli endpoint per le visite non erano presenti nel file api.service.ts originale.

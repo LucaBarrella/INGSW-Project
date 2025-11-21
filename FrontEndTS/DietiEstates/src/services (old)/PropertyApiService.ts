@@ -1,5 +1,5 @@
-import httpClient from '../../../app/_services/httpClient';
-import { PropertyDetailDTO, DashboardStats, PropertyDTO } from '../dto/PropertyDetailsDTO';
+import httpClient from '../core/httpClient';
+import { DashboardStats, PropertyDTO } from '../dto/PropertyDetailsDTO';
 import { PropertyFilters, Geolocation } from '../dto/SearchDTO';
 // Definisce i path relativi degli endpoint API per la gestione delle proprietà
 const propertyEndpoints = {

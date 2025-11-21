@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, FlatList } from 'react-native';
+import { View, FlatList, Pressable, StyleSheet } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedIcon } from '@/components/ThemedIcon';
@@ -7,7 +7,7 @@ import { SearchAndFilter } from '../SearchIntegration/SearchAndFilter';
 import { BuyerPropertyCard } from '../BuyerPropertyCard';
 import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { Pressable } from 'react-native';
+import MapView from 'react-native-maps';
 
 interface SearchResultsViewProps {
   properties: PropertyDetail[];
@@ -76,10 +76,20 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
           )}
         />
       ) : (
-        <ThemedView className="flex-1 items-center justify-center">
-          <ThemedText>Visualizzazione mappa in arrivo...</ThemedText>
-        </ThemedView>
+        <View style={styles.container}>
+          <MapView style={styles.map} />
+        </View>
       )}
     </ThemedView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  map: {
+    width: '100%',
+    height: '100%',
+  },
+});

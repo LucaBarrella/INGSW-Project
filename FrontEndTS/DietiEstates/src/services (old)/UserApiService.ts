@@ -1,4 +1,4 @@
-import httpClient from '../../../app/_services/httpClient';
+import httpClient from '../core/httpClient';
 import { UserCreationDTO } from '../dto/UserCreationDTO';
 // Definisce i path relativi degli endpoint API per la gestione degli utenti
 const userEndpoints = {
