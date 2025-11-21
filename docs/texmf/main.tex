@@ -120,33 +120,41 @@ Una volta \textbf{registrati}, possono:
     \item \textbf{Ricercare immobili}: L'utente utilizza i filtri disponibili per cercare immobili. Il sistema elabora la richiesta e presenta i risultati corrispondenti ai parametri specificati.
     \item \textbf{Prenotare una visita}: L'utente seleziona un immobile e sceglie una data e un orario per la visita nelle successive due settimane, compatibilmente con le disponibilità dell'agente. Il sistema registra la prenotazione e invia una notifica all'agente immobiliare.
     \item \textbf{Fare un'offerta su un immobile}: L'utente, selezionato un immobile, fa un'offerta per acquistarlo. Il sistema registra l'offerta e notifica l'agente immobiliare che ha caricato l'immobile.
-    \item \textbf{Accettare una controproposta}: L'utente visualizza la controproposta ricevuta riguardo un'offerta fatta in precedenza e la accetta. Il sistema aggiorna lo stato dell'offerta e invia una notifica e-mail all'agente immobiliare che ha inviato la controproposta.
-    \item \textbf{Rifiutare una controproposta}: L'utente esamina la controproposta ricevuta riguardo un'offerta fatta in precedenza e la rifiuta. Il sistema aggiorna lo stato dell'offerta e notifica l'agente immobiliare che ha inviato la controproposta.
-    \item \textbf{Fare una controproposta ad una controproposta TODO}: 
+    \item \textbf{Accettare un'offerta}: L'utente visualizza la controproposta ricevuta riguardo un'offerta fatta in precedenza e la accetta. Il sistema aggiorna lo stato dell'offerta e invia una notifica e-mail all'agente immobiliare che ha inviato la controproposta.
+    \item \textbf{Rifiutare un'offerta}: L'utente esamina la controproposta ricevuta riguardo un'offerta fatta in precedenza e la rifiuta. Il sistema aggiorna lo stato dell'offerta e notifica l'agente immobiliare che ha inviato la controproposta.
+    \item \textbf{Fare una controproposta ad un'offerta}: L'utente seleziona un'offerta ricevuta dall'agente immobiliare e propone una controproposta. Il sistema registra la controproposta e invia una notifica all'agente immobiliare.
     \item \textbf{Visualizzare storico offerte}: L'utente accede a una sezione dove può consultare l'elenco cronologico di tutte le offerte effettuate o ricevute, con i relativi dettagli.
-    \item \textbf{Visualizzare proprietà visitate di recente}: L'utente può ritrovare velocemente gli annunci visualizzati di recente, facilitando il ritorno a quelli di interesse.
 \end{itemize}
 Gli \textbf{agenti immobiliari}, oltre alle funzionalità degli \textbf{utenti}, possono:
 \begin{itemize}
-    \item \textbf{Caricare nuovi immobili}: L'agente immobiliare inserisce le immagini e le informazioni relative ad un immobile da vendere tramite un apposito form. Il sistema convalida le informazioni e pubblica l'annuncio sulla piattaforma.
+    \item \textbf{Caricare un annuncio}: L'agente immobiliare inserisce le immagini e le informazioni relative ad un immobile da vendere tramite un apposito form. Il sistema convalida le informazioni e pubblica l'annuncio sulla piattaforma.
+    \item \textbf{Cancellare un annuncio}: L'agente immobiliare seleziona un annuncio esistente e ne richiede la cancellazione. Il sistema rimuove l'annuncio dalla piattaforma.
+    \item \textbf{Modificare un annuncio}: L'agente immobiliare seleziona un annuncio esistente e apporta le modifiche desiderate tramite un form. Il sistema aggiorna l'annuncio con le nuove informazioni. %TODO check se è stato implementato
     \item \textbf{Inserire un'offerta dall'esterno}: L'agente immobiliare registra manualmente un'offerta ricevuta all'esterno della piattaforma. Il sistema la registra nello storico.
     \item \textbf{Accettare una richiesta di prenotazione per la visita}: L'agente immobiliare visualizza le proposte di prenotazione e accetta una di esse. Il sistema aggiorna lo stato della visita e invia una notifica all'utente che l'ha richiesta.
     \item \textbf{Rifiutare una richiesta di prenotazione per la visita}: L'agente immobiliare esamina le proposte di prenotazione e rifiuta una di esse. Il sistema aggiorna lo stato della visita e notifica l'utente che l'ha richiesta.
-    \item \textbf{Accettare un'offerta}: L'agente immobiliare visualizza le offerte ricevute per un immobile e accetta una di esse. Il sistema aggiorna lo stato dell'offerta e invia una notifica all'utente che l'ha fatta.
-    \item \textbf{Rifiutare un'offerta}: L'agente immobiliare esamina le offerte ricevute per un immobile e rifiuta una di esse. Il sistema aggiorna lo stato dell'offerta e notifica l'utente che l'ha fatta.
-    \item \textbf{Fare una controproposta ad un'offerta}: L'agente immobiliare seleziona un'offerta ricevuta e propone una controproposta. Il sistema registra la controproposta e invia una notifica all'utente che ha fatto l'offerta originale.
 \end{itemize}
 Infine, i \textbf{gestori}, oltre alle funzionalità degli \textbf{utenti}, possono:
 \begin{itemize}
     \item \textbf{Modificare la password di amministrazione}: Il gestore accede alle impostazioni dell'account e modifica la propria password. Il sistema verifica e salva la nuova password.
     \item \textbf{Creare account di supporto amministrazione}: Il gestore crea un nuovo account per nuovi amministratori. Il sistema genera le credenziali e imposta i permessi relativi.
     \item \textbf{Creare account per agenti immobiliari}: Il gestore crea un profilo per un nuovo agente immobiliare. Il sistema genera le credenziali e imposta i permessi relativi.
-    \item \textbf{Promuovere un utente esistente a agente immobiliare o gestore}: Il gestore seleziona un utente registrato e ne modifica il ruolo, assegnandogli i permessi di agente immobiliare oppure quelli di gestore. Il sistema aggiorna il profilo dell'utente di conseguenza.
+    \item \textbf{Promuovere un utente esistente a agente immobiliare o gestore}: Il gestore seleziona un utente registrato e ne modifica il ruolo, assegnandogli i permessi di agente immobiliare oppure quelli di gestore. Il sistema aggiorna il profilo dell'utente di conseguenza. %TODO check se è stato implementato
 \end{itemize}
 
 \subsection{Diagramma dei casi d'uso}
 Tutti i casi d'uso individuati possono essere riassunti in un \textit{Use Case Diagram} UML\@.
-%TODO inserire diagramma
+%TODO aggiornare diagramma!!!
+%TODO rimuovere watermark
+
+\newpage
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.90\textwidth, trim=1cm 1cm 5cm 1cm, clip]{diagram/UseCaseDiagram.pdf}
+    \caption{Use Case Diagram UML}
+    \label{fig:usecase}
+\end{figure}
 
 \newpage
 

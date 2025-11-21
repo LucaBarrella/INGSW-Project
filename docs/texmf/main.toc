@@ -10,35 +10,35 @@
 \contentsline {section}{\numberline {1.2}Modellazione dei casi d'uso}{10}{}%
 \contentsline {subsection}{\numberline {1.2.1}Descrizione dei casi d'uso}{10}{}%
 \contentsline {subsection}{\numberline {1.2.2}Diagramma dei casi d'uso}{12}{}%
-\contentsline {section}{\numberline {1.3}Descrizione dei requisiti non funzionali e di dominio}{13}{}%
-\contentsline {subsection}{\numberline {1.3.1}Requisiti non funzionali}{13}{}%
-\contentsline {subsubsection}{Requisiti di performance}{13}{}%
-\contentsline {subsubsection}{Requisiti di affidabilità}{13}{}%
-\contentsline {subsubsection}{Requisiti di usabilità}{13}{}%
-\contentsline {subsubsection}{Requisiti di sicurezza}{14}{}%
-\contentsline {subsection}{\numberline {1.3.2}Requisiti di dominio}{14}{}%
-\contentsline {section}{\numberline {1.4}Esempi di casi d'uso}{15}{}%
-\contentsline {subsection}{\numberline {1.4.1}Caso d'uso \#1:}{15}{}%
-\contentsline {subsubsection}{Template di Cockburn}{15}{}%
-\contentsline {subsubsection}{Mock-up}{16}{}%
-\contentsline {subsection}{\numberline {1.4.2}Caso d'uso \#2:}{16}{}%
+\contentsline {section}{\numberline {1.3}Descrizione dei requisiti non funzionali e di dominio}{14}{}%
+\contentsline {subsection}{\numberline {1.3.1}Requisiti non funzionali}{14}{}%
+\contentsline {subsubsection}{Requisiti di performance}{14}{}%
+\contentsline {subsubsection}{Requisiti di affidabilità}{14}{}%
+\contentsline {subsubsection}{Requisiti di usabilità}{14}{}%
+\contentsline {subsubsection}{Requisiti di sicurezza}{15}{}%
+\contentsline {subsection}{\numberline {1.3.2}Requisiti di dominio}{15}{}%
+\contentsline {section}{\numberline {1.4}Esempi di casi d'uso}{16}{}%
+\contentsline {subsection}{\numberline {1.4.1}Caso d'uso \#1:}{16}{}%
 \contentsline {subsubsection}{Template di Cockburn}{16}{}%
 \contentsline {subsubsection}{Mock-up}{17}{}%
-\contentsline {subsection}{\numberline {1.4.3}Caso d'uso \#3:}{17}{}%
+\contentsline {subsection}{\numberline {1.4.2}Caso d'uso \#2:}{17}{}%
 \contentsline {subsubsection}{Template di Cockburn}{17}{}%
 \contentsline {subsubsection}{Mock-up}{18}{}%
-\contentsline {subsection}{\numberline {1.4.4}Caso d'uso \#4:}{18}{}%
+\contentsline {subsection}{\numberline {1.4.3}Caso d'uso \#3:}{18}{}%
 \contentsline {subsubsection}{Template di Cockburn}{18}{}%
-\contentsline {subsubsection}{Mock-up}{18}{}%
-\contentsline {section}{\numberline {1.5}Glossario}{18}{}%
-\contentsline {chapter}{\numberline {2}Progettazione del Sistema}{19}{}%
-\contentsline {section}{\numberline {2.1}Obiettivi di Progettazione}{19}{}%
-\contentsline {section}{\numberline {2.2}Architettura del Sistema}{19}{}%
-\contentsline {subsection}{\numberline {2.2.1}Front-End}{19}{}%
-\contentsline {subsection}{\numberline {2.2.2}Back-End}{20}{}%
-\contentsline {subsection}{\numberline {2.2.3}Database}{20}{}%
-\contentsline {chapter}{\numberline {3}Testing e Valutazione dell'Usabilità}{21}{}%
-\contentsline {section}{\numberline {3.1}Test Automatici}{21}{}%
-\contentsline {section}{\numberline {3.2}Valutazione dell'Usabilità}{21}{}%
-\contentsline {section}{\numberline {3.3}SonarQube}{21}{}%
-\contentsline {section}{\numberline {3.4}Accessibilità}{22}{}%
+\contentsline {subsubsection}{Mock-up}{19}{}%
+\contentsline {subsection}{\numberline {1.4.4}Caso d'uso \#4:}{19}{}%
+\contentsline {subsubsection}{Template di Cockburn}{19}{}%
+\contentsline {subsubsection}{Mock-up}{19}{}%
+\contentsline {section}{\numberline {1.5}Glossario}{19}{}%
+\contentsline {chapter}{\numberline {2}Progettazione del Sistema}{21}{}%
+\contentsline {section}{\numberline {2.1}Obiettivi di Progettazione}{21}{}%
+\contentsline {section}{\numberline {2.2}Architettura del Sistema}{21}{}%
+\contentsline {subsection}{\numberline {2.2.1}Front-End}{21}{}%
+\contentsline {subsection}{\numberline {2.2.2}Back-End}{22}{}%
+\contentsline {subsection}{\numberline {2.2.3}Database}{22}{}%
+\contentsline {chapter}{\numberline {3}Testing e Valutazione dell'Usabilità}{23}{}%
+\contentsline {section}{\numberline {3.1}Test Automatici}{23}{}%
+\contentsline {section}{\numberline {3.2}Valutazione dell'Usabilità}{23}{}%
+\contentsline {section}{\numberline {3.3}SonarQube}{23}{}%
+\contentsline {section}{\numberline {3.4}Accessibilità}{24}{}%
