@@ -1,6 +1,4 @@
 import { useState, useCallback } from 'react';
-import ApiService from '@/app/_services/api.service';
-import HistoryStorageService from '@/app/_services/history.service';
 import type { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
 
 const PAGE_LIMIT = 10;
@@ -26,13 +24,11 @@ export default function useInfiniteHistory(): UseInfiniteHistoryState {
   const [hasMore, setHasMore] = useState<boolean>(true);
 
   const fetchPropertiesByIds = useCallback(async (ids: number[]) => {
-    // Recupera i dettagli di ciascun immobile (seriale in parallelo)
-    const requests = ids.map((id) => ApiService.getPropertyDetails(id));
-    const results = await Promise.allSettled(requests);
-    const successful = results
-      .filter((r): r is PromiseFulfilledResult<PropertyDetail> => r.status === 'fulfilled')
-      .map((r) => r.value);
-    return successful;
+    // TODO: Implementare la nuova logica per il recupero dei dettagli delle proprietà.
+    // Per ora, simulo un array vuoto o dati di esempio.
+    console.log('[useInfiniteHistory] fetchPropertiesByIds: Simulazione di recupero dettagli proprietà per ID:', ids);
+    await new Promise(resolve => setTimeout(resolve, 300)); // Simula un ritardo di rete
+    return []; // Restituisce un array vuoto
   }, []);
 
   const loadInitialHistory = useCallback(async () => {
@@ -40,7 +36,11 @@ export default function useInfiniteHistory(): UseInfiniteHistoryState {
     setError(null);
     setCurrentPage(1);
     try {
-      const ids = await HistoryStorageService.getHistory(1, PAGE_LIMIT);
+      // TODO: Implementare la nuova logica per il recupero della cronologia.
+      // Per ora, simulo un array vuoto o ID di esempio.
+      console.log('[useInfiniteHistory] loadInitialHistory: Simulazione di recupero ID cronologia.');
+      await new Promise(resolve => setTimeout(resolve, 200)); // Simula un ritardo di rete
+      const ids: number[] = []; // Array vuoto per simulare nessun elemento
       if (!ids || ids.length === 0) {
         setProperties([]);
         setHasMore(false);
@@ -63,7 +63,11 @@ export default function useInfiniteHistory(): UseInfiniteHistoryState {
     setError(null);
     try {
       const nextPage = currentPage + 1;
-      const ids = await HistoryStorageService.getHistory(nextPage, PAGE_LIMIT);
+      // TODO: Implementare la nuova logica per il recupero della cronologia.
+      // Per ora, simulo un array vuoto o ID di esempio.
+      console.log('[useInfiniteHistory] loadMoreHistory: Simulazione di recupero ID cronologia per pagina', nextPage);
+      await new Promise(resolve => setTimeout(resolve, 200)); // Simula un ritardo di rete
+      const ids: number[] = []; // Array vuoto per simulare nessun elemento
       if (!ids || ids.length === 0) {
         setHasMore(false);
         return;

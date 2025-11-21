@@ -13,6 +13,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { SearchProvider } from '../context/SearchContext'; // Importa il SearchProvider
 import { AuthProvider } from '../context/AuthContext';
+import { authService } from '../src/compositionRoot';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -45,7 +46,7 @@ export default function RootLayout() {
       <ActionSheetProvider>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <SearchProvider>
-            <AuthProvider>
+            <AuthProvider authService={authService as any}>
               <Stack screenOptions={{ headerShown: false }}>
                 {STACK_SCREENS.map(screen => (
                   <Stack.Screen

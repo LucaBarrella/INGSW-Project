@@ -6,7 +6,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedIcon } from '@/components/ThemedIcon';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { LANGUAGE_KEY } from '@/app/_utils/i18n';
+import { LANGUAGE_KEY } from '@/src/utils/i18n';
 
 interface SettingOptionProps {
   title: string;

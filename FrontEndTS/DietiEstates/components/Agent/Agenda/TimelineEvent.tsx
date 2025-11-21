@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState, useCallback } from 'react';
 import { LayoutChangeEvent } from 'react-native';
-import { Appointment } from '../../../types/agenda';
+import { Appointment } from '../../../src/dto/agenda';
 import SingleVisitCard from './cards/SingleVisitCard';
 import GroupVisitCard from './cards/GroupVisitCard';
 import ConflictBlock from './cards/ConflictBlock';

@@ -6,30 +6,21 @@ import UserCreationForm from '@/components/UserCreationForm';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { TabHeader } from '@/components/TabHeader';
-import { useUsersViewModel } from '@/src/presentation/hooks/useUsersViewModel';
+// import { useUsersViewModel } from '@/src/hooks/useUsersViewModel';
 
 export default function AddAdminScreen() {
   const { t } = useTranslation();
   const [error, setError] = useState<string>('');
   const router = useRouter();
 
-  const { createAdmin, loading, error: viewModelError } = useUsersViewModel();
+  // const { createAdmin, loading, error: viewModelError } = useUsersViewModel();
+  const loading = false;
+  const viewModelError = null;
 
   const handleCreateAdmin = async (data: any) => {
     // TODO: Definire un tipo specifico per i dati dell'admin (es. AdminCreationData)
-    try {
-      console.log('Creating admin with data:', data); // Log per debug
-      // Utilizza la funzione del ViewModel
-      await createAdmin(data);
-
-      // Successo: torna indietro
-      console.log('Admin created successfully');
-      router.back();
-    } catch (err) {
-      console.error('Error creating admin:', err);
-      // Mostra l'errore restituito dal ViewModel
-      setError(err instanceof Error ? err.message : t('admin.screens.addAdmin.error'));
-    }
+    console.log('Admin creation temporarily disabled.');
+    setError('Admin creation is temporarily disabled.');
   };
 
   return (

@@ -7,7 +7,7 @@ import { BuyerPropertyCard } from '@/components/Buyer/BuyerPropertyCard';
 import { CategoryButton } from '@/components/Buyer/CategoryButton';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { SearchAndFilter, Categories } from '@/components/Buyer/SearchIntegration';
-import ApiService from '@/app/_services/api.service'; // Importa ApiService
+// import ApiService from '@/src/services/api.service'; // Importa ApiService
 import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types'; // Usa il tipo unificato
 import useInfiniteHistory from '@/hooks/useInfiniteHistory';
 import HistoryPlaceholder from '@/components/Buyer/HistoryPlaceholder';
@@ -83,16 +83,10 @@ export default function HomeTab() {
     setIsLoading(true);
     setError(null);
     try {
-      console.log('Fetching featured properties...');
-      const data = await ApiService.getFeaturedProperties();
-      // TODO: Adattare 'data' alla struttura attesa PropertyDetail[]
-      // Esempio: const adaptedData = data.map(item => ({ ...item, price: String(item.price), id: Number(item.id) }));
-      console.log(data);
-      setFeaturedProperties(data || []);
-    } catch (err) {
-      console.error("Error fetching featured properties:", err);
-      setError("Impossibile caricare gli immobili in evidenza."); // Messaggio di errore generico
+      console.log("Fetching featured properties is temporarily disabled.");
       setFeaturedProperties([]);
+    } catch (err) {
+      setError("Could not load featured properties.");
     } finally {
       setIsLoading(false);
     }

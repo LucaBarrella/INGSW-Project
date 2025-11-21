@@ -6,7 +6,7 @@ import { useAuth } from '../../../../context/AuthContext';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { TabHeader } from '@/components/TabHeader';
-import ApiService from '@/app/_services/api.service';
+// import ApiService from '@/src/services/api.service';
 // useThemeColor è importato ma potrebbe non essere più usato direttamente qui se i componenti figli lo gestiscono
 // import { useThemeColor } from '@/hooks/useThemeColor';
 import { UserInfoCard } from '@/components/Profile/UserInfoCard';
@@ -28,7 +28,7 @@ type AgentProfile = {
 export default function ProfileScreen() {
   const { t } = useTranslation();
   const router = useRouter(); // Inizializza router
-  const { signOut } = useAuth();
+  const { logout } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [profile, setProfile] = useState<AgentProfile | null>(null);
@@ -38,18 +38,21 @@ export default function ProfileScreen() {
   }, []);
 
   const fetchProfile = async () => {
-    setIsLoading(true); // Assicura che isLoading sia true all'inizio
-    setError(null); // Resetta errori precedenti
+    setIsLoading(true);
+    setError(null);
     try {
-      // Usa la nuova funzione da ApiService
-      const data = await ApiService.getAgentProfile();
-      setProfile(data);
+      // Funzionalità temporaneamente disabilitata, in attesa della migrazione del servizio
+      console.log("Fetch profile is temporarily disabled. Using mock data.");
+      setProfile({
+        fullName: "Mario Rossi",
+        email: "mario.rossi@agent.com",
+        licenseNumber: "12345-ABC",
+        specialization: "Residenziale",
+        experienceYears: 10,
+        officeAddress: "Via Roma 1, Milano",
+      });
     } catch (err: any) {
-      console.error('Errore fetch profilo agente:', err);
-      const errorMessage = err.response?.data?.message || err.message || t('agent.profile.fetchError'); // Usa traduzione per errore generico
-      setError(errorMessage);
-      // Considera se mostrare dati mock in caso di errore o solo il messaggio
-      // setProfile({ ... }); // Rimuovi o commenta se non vuoi mock in caso di errore reale
+      setError("Could not load profile.");
     } finally {
       setIsLoading(false);
     }
@@ -58,7 +61,7 @@ export default function ProfileScreen() {
   // Funzione per il logout
   const handleLogout = async () => {
     try {
-      await signOut();
+      await logout();
     } catch (error) {
       console.error('Errore durante il logout agente:', error);
       Alert.alert(t('common.error'), t('logout.error')); // Assumendo traduzioni esistenti

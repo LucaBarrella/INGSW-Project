@@ -6,9 +6,21 @@ import { ComponentProps } from 'react';
 type IconName = ComponentProps<typeof Ionicons>['name'];
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { Offer } from '@/app/_services/__mocks__/offersMockData';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
+
+// Definisce il tipo Offer locale (era importato da __mocks__/offersMockData)
+export interface Offer {
+  id: string;
+  address: string;
+  amount: string;
+  date: string;
+  status: 'accettata' | 'rifiutata' | 'in attesa';
+  imageUrl: string;
+  actionText: string;
+  actionIcon: IconName;
+  actionDescription: string;
+}
 
 interface OfferCardProps {
   offer: Offer;

@@ -1,34 +1,23 @@
 import React, { useState } from 'react';
 import { SafeAreaView, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useRouter } from 'expo-router';
 import UserCreationForm from '@/components/UserCreationForm';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { TabHeader } from '@/components/TabHeader';
-import { useUsersViewModel } from '@/src/presentation/hooks/useUsersViewModel';
+// import { useUsersViewModel } from '@/src/hooks/useUsersViewModel';
 
 export default function AddAgentScreen() {
   const { t } = useTranslation();
   const [error, setError] = useState<string>('');
-  const router = useRouter();
-  const { createAgent, loading, error: viewModelError } = useUsersViewModel();
+  // const { createAgent, loading, error: viewModelError } = useUsersViewModel();
+  const loading = false;
+  const viewModelError = null;
 
   const handleCreateAgent = async (data: any) => {
     // TODO: Definire un tipo specifico per i dati dell'agente (es. AgentCreationData)
-    try {
-      console.log('Creating agent with data:', data); // Log per debug
-      // Utilizza la funzione del ViewModel
-      await createAgent(data);
-
-      // Successo: torna indietro
-      console.log('Agent created successfully');
-      router.back();
-    } catch (err) {
-      console.error('Error creating agent:', err);
-      // Mostra l'errore restituito dal ViewModel
-      setError(err instanceof Error ? err.message : t('admin.screens.addAgent.error'));
-    }
+    console.log('Agent creation temporarily disabled.');
+    setError('Agent creation is temporarily disabled.');
   };
 
   return (

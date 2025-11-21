@@ -3,7 +3,7 @@ import { TouchableOpacity, TouchableOpacityProps, Text } from 'react-native';
 import { ThemedText } from './ThemedText';
 import { ThemedIcon } from './ThemedIcon';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { Provider } from '@/types/Provider'; // Importa l'enum Provider
+import { Provider } from '@/src/dto/Provider'; // Importa l'enum Provider
 
 interface SocialButtonProps extends TouchableOpacityProps {
   provider: Provider;

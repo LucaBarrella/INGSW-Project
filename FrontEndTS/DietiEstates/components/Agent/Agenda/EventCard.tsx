@@ -1,5 +1,5 @@
 import React from 'react';
-import { Appointment } from '../../../types/agenda';
+import { Appointment } from '../../../src/dto/agenda';
 import SingleVisitCard from './cards/SingleVisitCard';
 import GroupVisitCard from './cards/GroupVisitCard';
 

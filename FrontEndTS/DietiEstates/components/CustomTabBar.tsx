@@ -42,6 +42,7 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
           const isFocused = state.index === index;
 
           const onPress = async () => {
+            console.log('CustomTabBar: Haptics.impactAsync called on tab press for route:', route.name);
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             const event = navigation.emit({
               type: 'tabPress',

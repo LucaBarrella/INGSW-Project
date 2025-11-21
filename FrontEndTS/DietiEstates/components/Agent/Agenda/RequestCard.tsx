@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Platform } from 'react-native';
-import { VisitRequest } from '../../../types/agenda';
+import { VisitRequest } from '../../../src/dto/agenda';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';

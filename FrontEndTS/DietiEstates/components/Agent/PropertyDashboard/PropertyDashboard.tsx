@@ -9,7 +9,6 @@ import { IconButtonCard } from "@/components/IconButtonCard";
 import { useTranslation } from "react-i18next";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { DashboardStats, PropertyDetail, DateRange } from "./types"; // Assumiamo che questi tipi siano corretti o li adatteremo
-import ApiService from "@/app/_services/api.service"; // Importa ApiService
 
 const PropertyDashboard: React.FC = () => {
   const { t } = useTranslation();
@@ -68,11 +67,21 @@ const PropertyDashboard: React.FC = () => {
       console.log('Fetching stats with params:', params);
       // TODO: Assicurarsi che l'API getAgentStats accetti startDate e endDate
       // Se non li accetta, rimuovere i params dalla chiamata
-      const statsData = await ApiService.getAgentStats(/* params */);
-      // TODO: Adattare statsData alla struttura attesa da DashboardStats
-      // TODO: Adattare statsData alla struttura attesa da DashboardStats
+      // TODO: Implementare la nuova logica per il recupero delle statistiche.
+      // Per ora, simulo dati.
+      const statsData: DashboardStats = {
+        totalProperties: 100,
+        soldProperties: 50,
+        rentedProperties: 30,
+        activeListings: 20,
+        averagePrice: 250000,
+        monthlyViews: 10000,
+        totalBookings: 200,
+        averageBookingsPerProperty: 2,
+      };
       console.log("Stats data received:", statsData); // Log dati ricevuti
-      setDashboardStats(statsData || { /* valori di default in caso di null */ });
+      setDashboardStats(statsData);
+      await new Promise(resolve => setTimeout(resolve, 500)); // Simula ritardo API
     } catch (err) {
       console.error("!!! CATCH Error fetching agent stats:", err); // Log errore più evidente
       setError(t('errors.fetchStatsError')); // Messaggio di errore generico
@@ -103,12 +112,13 @@ const PropertyDashboard: React.FC = () => {
         endDate: currentDateRange.endDate.toISOString().split('T')[0],     // Formato YYYY-MM-DD
         // Aggiungere qui altri parametri se necessari (es. sort, pagination)
       };
+      // TODO: Implementare la nuova logica per il recupero delle proprietà.
+      // Per ora, simulo dati vuoti.
       console.log('Fetching properties with params:', params);
-      const propertiesData = await ApiService.getAgentProperties(params);
-      // TODO: Adattare propertiesData alla struttura attesa da PropertyDetail[]
-      // TODO: Adattare propertiesData alla struttura attesa da PropertyDetail[]
+      const propertiesData: PropertyDetail[] = [];
       console.log("Properties data received:", propertiesData); // Log dati ricevuti
-      setPropertyDetails(propertiesData || []);
+      setPropertyDetails(propertiesData);
+      await new Promise(resolve => setTimeout(resolve, 500)); // Simula ritardo API
     } catch (err) {
       console.error("!!! CATCH Error fetching agent properties:", err); // Log errore più evidente
       setError(t('errors.fetchPropertiesError')); // Messaggio di errore generico

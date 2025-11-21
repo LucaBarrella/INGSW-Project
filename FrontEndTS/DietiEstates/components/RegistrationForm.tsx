@@ -6,25 +6,18 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import { LabelInput } from './LabelInput';
 import ThemedButton from './ThemedButton';
 import { SocialButton } from './SocialButton';
-import { Provider } from '@/types/Provider';
+import { Provider } from '@/src/dto/Provider';
 import { useRouter } from 'expo-router';
-import { useAuth } from '@/context/AuthContext';
-
-interface RegistrationFormData {
-  username: string | undefined;
+import { useAuth } from '../context/AuthContext';
+import { User } from '@/src/entity/User'; // Importa l'interfaccia User
+ 
+type RegistrationFormData = {
+  username: string;
   name: string;
   surname: string;
   email: string;
   password: string;
-}
-
-interface ValidationErrors {
-  username?: string;
-  name?: string;
-  surname?: string;
-  email?: string;
-  password?: string;
-}
+};
 
 export type RegistrationFormProps = ViewProps & {
   lightColor?: string;
@@ -40,7 +33,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
     password: '',
   });
 
-  const [errors, setErrors] = useState<ValidationErrors>({});
   const router = useRouter();
 
   const background = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
@@ -48,78 +40,33 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
   const cardBackground = useThemeColor({ light: lightColor, dark: darkColor }, 'loginCardBackground');
   const labelColor = useThemeColor({ light: lightColor, dark: darkColor }, 'loginCardLabel');
 
-  const validateForm = (): boolean => {
-    const newErrors: ValidationErrors = {};
-    let isValid = true;
-
-    if (!formData.name.trim()) {
-      newErrors.name = 'Il nome è obbligatorio';
-      isValid = false;
-    }
-
-    if (!formData.surname.trim()) {
-      newErrors.surname = 'Il cognome è obbligatorio';
-      isValid = false;
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = 'L\'email è obbligatoria';
-      isValid = false;
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Inserisci un indirizzo email valido';
-      isValid = false;
-    }
-
-    if (!formData.password) {
-      newErrors.password = 'La password è obbligatoria';
-      isValid = false;
-    } else {
-      // Validazione della password con tutti i requisiti
-      if (formData.password.length < 8) {
-        newErrors.password = 'La password deve essere di almeno 8 caratteri';
-        isValid = false;
-      }
-      
-      if (!/[A-Z]/.test(formData.password)) {
-        newErrors.password = (newErrors.password || '') + (newErrors.password ? '\n' : '') + 'La password deve contenere almeno una lettera maiuscola';
-        isValid = false;
-      }
-      
-      if (!/[a-z]/.test(formData.password)) {
-        newErrors.password = (newErrors.password || '') + (newErrors.password ? '\n' : '') + 'La password deve contenere almeno una lettera minuscola';
-        isValid = false;
-      }
-      
-      if (!/[0-9]/.test(formData.password)) {
-        newErrors.password = (newErrors.password || '') + (newErrors.password ? '\n' : '') + 'La password deve contenere almeno un numero';
-        isValid = false;
-      }
-      
-      if (!/[@#$%^&+=]/.test(formData.password)) {
-        newErrors.password = (newErrors.password || '') + (newErrors.password ? '\n' : '') + 'La password deve contenere almeno un carattere speciale (@#$%^&+=)';
-        isValid = false;
-      }
-    }
-
-    setErrors(newErrors);
-    return isValid;
-  };
-
-  const { signUp, error, clearError } = useAuth();
+  const { register, error, validationErrors, resetValidationErrors, handlePostAuthNavigation } = useAuth();
 
   React.useEffect(() => {
-    if (error) {
-      clearError();
-    }
+    // La gestione degli errori ora è centralizzata nel context, non è più necessario clearError() qui
   }, [formData.email, formData.password, formData.name, formData.surname, formData.username]);
 
   const handleSubmit = async () => {
-    if (!validateForm()) {
-      return;
-    }
-
+    console.log("Validation Errors before submit:", validationErrors); // Aggiunto log
+    // Ora la validazione è gestita dentro useAuthHook.register.
     try {
-      await signUp({ email: formData.email, password: formData.password, name: formData.name, username: formData.username, surname: formData.surname });
+      const success = await register({
+        email: formData.email,
+        password: formData.password,
+        name: formData.name,
+        surname: formData.surname,
+        username: formData.username,
+      });
+
+      if (success) {
+        // La navigazione è gestita da handlePostAuthNavigation
+        // Dopo un successo, lo stato isAuthenticated in useAuthHook dovrebbe essere true
+        // e user dovrebbe contenere i dati dell'utente registrato.
+        // Chiamiamo handlePostAuthNavigation con l'utente appena registrato.
+        // Per ora, useremo un placeholder per l'utente, poiché register non lo restituisce direttamente.
+        // Questo dovrà essere raffinato quando il backend restituirà l'oggetto User completo.
+        handlePostAuthNavigation({} as User); // Placeholder
+      }
     } catch (err) {
       console.error('Errore nel componente RegistrationForm durante la registrazione:', err);
     }
@@ -146,12 +93,11 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
         inputBackgroundColor={background}
         value={formData.name}
         onChangeText={(text) => {
-          setFormData(prev => ({ ...prev, name: text }));
-          if (errors.name) {
-            setErrors(prev => ({ ...prev, name: undefined }));
-          }
+          setFormData((prev: RegistrationFormData) => ({ ...prev, name: text }));
+          resetValidationErrors('name');
         }}
-        error={!!errors.name}
+        error={!!validationErrors.name}
+        errorMessage={validationErrors.name}
         className="mb-6"
       />
 
@@ -165,12 +111,11 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
         inputBackgroundColor={background}
         value={formData.surname}
         onChangeText={(text) => {
-          setFormData(prev => ({ ...prev, surname: text }));
-          if (errors.surname) {
-            setErrors(prev => ({ ...prev, surname: undefined }));
-          }
+          setFormData((prev: RegistrationFormData) => ({ ...prev, surname: text }));
+          resetValidationErrors('surname');
         }}
-        error={!!errors.surname}
+        error={!!validationErrors.surname}
+        errorMessage={validationErrors.surname}
         className="mb-6"
       />
 
@@ -184,12 +129,11 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
         inputBackgroundColor={background}
         value={formData.email}
         onChangeText={(text) => {
-          setFormData(prev => ({ ...prev, email: text }));
-          if (errors.email) {
-            setErrors(prev => ({ ...prev, email: undefined }));
-          }
+          setFormData((prev: RegistrationFormData) => ({ ...prev, email: text }));
+          resetValidationErrors('email');
         }}
-        error={!!errors.email}
+        error={!!validationErrors.email}
+        errorMessage={validationErrors.email}
         className="mb-6"
         autoCapitalize="none"
       />
@@ -204,12 +148,11 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
         inputBackgroundColor={background}
         value={formData.username}
         onChangeText={(text) => {
-          setFormData(prev => ({ ...prev, username: text }));
-          if (errors.username) {
-            setErrors(prev => ({ ...prev, username: undefined }));
-          }
+          setFormData((prev: RegistrationFormData) => ({ ...prev, username: text }));
+          resetValidationErrors('username');
         }}
-        error={!!errors.username}
+        error={!!validationErrors.username}
+        errorMessage={validationErrors.username}
         className="mb-6"
         autoCapitalize="none"
       />
@@ -224,18 +167,17 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
         inputBackgroundColor={background}
         value={formData.password}
         onChangeText={(text) => {
-          setFormData(prev => ({ ...prev, password: text }));
-          if (errors.password) {
-            setErrors(prev => ({ ...prev, password: undefined }));
-          }
+          setFormData((prev: RegistrationFormData) => ({ ...prev, password: text }));
+          resetValidationErrors('password');
         }}
-        error={!!errors.password}
-        errorMessage={errors.password}
+        error={!!validationErrors.password}
+        errorMessage={validationErrors.password}
         className="mb-6"
       />
 
-      <ThemedButton
-        title="Registrati"
+ 
+       <ThemedButton
+         title="Registrati"
         onPress={handleSubmit}
         borderRadius={8}
         className="min-h-[40px]"
@@ -246,16 +188,10 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
       <View className="items-center mb-3">
         <SocialButton provider={Provider.Google} onPress={() => console.log('Login con Google')} lightColor='#FFFFFF' darkColor='#FFFFFF' />
       </View>
-      <View className="items-center mb-3">
-        <SocialButton provider={Provider.Meta} onPress={() => console.log('Login con Meta')} lightColor='#FFFFFF' darkColor='#1877F2' />
-      </View>
-      <View className="items-center mb-3">
-        <SocialButton provider={Provider.GitHub} onPress={() => console.log('Login con GitHub')} lightColor='#FFFFFF' darkColor='#333333' />
-      </View>
 
       <View className="flex-row justify-center mt-3">
         <ThemedText style={{ color: labelColor }}>Have an account already? </ThemedText>
-        <TouchableOpacity onPress={() => router.push('/(auth)/(buyer)/login')}> 
+        <TouchableOpacity onPress={() => router.push('./login')}> 
           <ThemedText className="text-blue-500 underline font-bold" style={{ color: labelColor }}>
             Sign in
           </ThemedText>

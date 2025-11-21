@@ -11,9 +11,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Gallery from 'react-native-awesome-gallery';
 import VisitSchedulerPanel from '../../../components/Buyer/VisitSchedulerPanel';
 import OfferPanel from '../../../components/Offer/OfferPanel';
-import { usePropertiesViewModel } from '@/src/presentation/hooks/usePropertiesViewModel';
-import { Property } from '@/src/domain/Property';
-import HistoryStorageService from '@/app/_services/history.service';
+import { Property } from '@/src/entity/Property';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -35,22 +33,6 @@ const PropertyDetailScreen: React.FC = () => {
   const scrollViewRef = useRef<ScrollView>(null);
   const { t } = useTranslation();
 
-  const {
-    properties,
-    loading,
-    error,
-    fetchPropertyById
-  } = usePropertiesViewModel();
-  
-  if (!fetchingProperty && property === undefined && propertyId) {
-    setFetchingProperty(true);
-    fetchPropertyById(propertyId as string).then(
-      (newProp) => {
-        setProperty(newProp || undefined);
-        setFetchingProperty(false);
-      }
-    );
-  }
 
 
   const handleBack = () => {
@@ -125,18 +107,10 @@ const PropertyDetailScreen: React.FC = () => {
 
   const styles = createStyles(themeColors);
 
-  if (loading) {
+  if (!property) {
     return (
       <ThemedView style={styles.centeredContainer}>
-        <ThemedText style={styles.loadingText}>Caricamento...</ThemedText>
-      </ThemedView>
-    );
-  }
-
-  if (error || !property) {
-    return (
-      <ThemedView style={styles.centeredContainer}>
-        <ThemedText style={styles.errorText}>{error || 'Immobile non trovato'}</ThemedText>
+        <ThemedText style={styles.errorText}>Immobile non trovato</ThemedText>
         <TouchableOpacity style={styles.backButtonError} onPress={handleBack}>
           <ThemedText style={styles.backButtonText}>Torna indietro</ThemedText>
         </TouchableOpacity>

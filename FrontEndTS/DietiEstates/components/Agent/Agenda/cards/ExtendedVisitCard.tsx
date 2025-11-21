@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { Appointment } from '../../../../types/agenda';
+import { Appointment } from '../../../../src/dto/agenda';
 import { BlurView } from 'expo-blur';
 import { useThemeColor } from '@/hooks/useThemeColor';
 

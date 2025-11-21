@@ -1,7 +1,6 @@
 import React from 'react';
 import { ScrollView, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useAuth } from '../../../../context/AuthContext';
 import { ThemedView } from '@/components/ThemedView';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { useTranslation } from 'react-i18next';
@@ -14,13 +13,12 @@ export default function AdminProfileTab() {
   const router = useRouter();
   const { t } = useTranslation();
   const backgroundColor = useThemeColor({}, 'background');
-  const { signOut } = useAuth();
 
-  // TODO: Replace with real admin data from context/state
-  const mockAdmin = {
-    name: 'Admin User', // Nome aggiornato per test
-    email: 'admin@dietiestates.com',
-    role: 'Amministratore'
+  // TODO DA SISTEMARE: Implementare recupero dati admin reali dal server
+  const adminData = {
+    name: 'DA SISTEMARE', // Implementare recupero nome admin dal server
+    email: 'DA SISTEMARE', // Implementare recupero email admin dal server
+    role: 'DA SISTEMARE' // Implementare recupero ruolo admin dal server
   };
 
   // Definizione delle opzioni del profilo
@@ -44,7 +42,6 @@ export default function AdminProfileTab() {
       icon: 'material-symbols:logout', // Icona specificata nel punto 3
       onPress: async () => {
         try {
-          await signOut();
         } catch (error) {
           console.error('Errore durante il logout:', error);
           Alert.alert(
@@ -71,9 +68,9 @@ export default function AdminProfileTab() {
         showsVerticalScrollIndicator={false}
       >
         <UserInfoCard
-          name={mockAdmin.name}
-          email={mockAdmin.email}
-          role={mockAdmin.role}
+          name={adminData.name}
+          email={adminData.email}
+          role={adminData.role}
           // iconName non specificato, userà il default "mdi:account-circle"
           iconLabel="User Profile Icon" // Etichetta generica
         />

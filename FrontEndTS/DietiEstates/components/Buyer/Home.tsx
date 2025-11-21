@@ -6,8 +6,8 @@ import { CategoryButton } from "./CategoryButton";
 import { LocationCard } from "./LocationCard";
 import { TabBar } from "./TabBar";
 import { Location, CategoryItem, TabItem } from "./types";
-import { getFeaturedProperties } from "@/app/_services/api.service";
-import ApiError from "@/app/_services/errors/ApiError";
+import { getFeaturedProperties } from "@/src/services/api.service";
+import ApiError from "@/src/services/errors/ApiError";
 import { PropertyDetail } from "@/components/Agent/PropertyDashboard/types";
 import { useTranslation } from "react-i18next";
 
