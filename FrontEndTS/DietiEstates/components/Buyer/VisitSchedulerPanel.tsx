@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import AnimatedSlideUpPanel from '../common/AnimatedSlideUpPanel';
-import { getMeteoForTheDay, getTimeFromIndex, getEmojiFromMeteoCode } from '@/src/data/api/OpenMeteoApiService';
-import { Property } from '@/src/domain/Property';
+import { getMeteoForTheDay, getTimeFromIndex, getEmojiFromMeteoCode } from '../../src/services (old)/OpenMeteoApiService';
+import { Property } from '@/src/entity/Property';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedIcon } from '@/components/ThemedIcon';
 
@@ -38,12 +38,7 @@ const getDaysInMonth = (date: Date, availableDates: string[]) => {
   return days;
 };
 
-// --- Mock Data ---
-const MOCK_AVAILABLE_DATES = [
-    "2025-08-05", "2025-08-06", "2025-08-07", "2025-08-08",
-    "2025-08-11", "2025-08-12", "2025-08-13", "2025-08-18", "2025-08-19",
-    "2025-09-02", "2025-09-03", "2025-09-10", "2025-09-11", "2025-09-12",
-];
+// --- Available Times ---
 const availableTimes = [
   '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '14:00', '14:30'
 ];
@@ -69,7 +64,7 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
   isVisible,
   onClose,
   property,
-  availableDates = MOCK_AVAILABLE_DATES,
+  availableDates = [],
 }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [days, setDays] = useState<Day[]>([]);
@@ -89,6 +84,12 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
 
   // --- Effects ---
   useEffect(() => {
+    // Only process if we have available dates
+    if (availableDates.length === 0) {
+      setDays([]);
+      return;
+    }
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 

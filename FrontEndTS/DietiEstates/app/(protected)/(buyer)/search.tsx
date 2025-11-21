@@ -6,7 +6,6 @@ import { PropertyFilters, RESIDENTIAL_CATEGORIES, COMMERCIAL_CATEGORIES, LAND_CA
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
-import ApiService from '@/app/_services/api.service';
 import { SearchResultsView } from '@/components/Buyer/SearchResults/SearchResultsView';
 
 export default function SearchResultsScreen() {
@@ -109,18 +108,12 @@ export default function SearchResultsScreen() {
         filters: JSON.stringify(filtersToUse, null, 2)
       });
       
-      const results = await ApiService.searchProperties({
-        query: queryToUse,
-        filters: filtersToUse,
-        geolocation: state.geolocation || undefined,
-        selectedMainCategory: state.selectedMainCategoryInPanel
-      });
-      
-      console.log('[SearchScreen] fetchProperties: API call successful. Results received:', {
-        count: results?.length || 0,
-        firstResult: results?.[0] || null
-      });
-      setProperties(results || []);
+      // TODO: Implementare la nuova logica di chiamata API per la ricerca delle proprietà.
+      // Per ora, simulo un risultato vuoto per evitare errori.
+      console.log('[SearchScreen] fetchProperties: Simulazione di chiamata API. Nessun risultato.');
+      setProperties([]);
+      // Simulo anche un ritardo per rappresentare una chiamata API
+      await new Promise(resolve => setTimeout(resolve, 500));
     } catch (err) {
       console.error('[SearchScreen] fetchProperties: Error fetching properties:', err);
       const errorMessage = err instanceof Error ? err.message : "Impossibile caricare i risultati della ricerca. Riprova più tardi.";

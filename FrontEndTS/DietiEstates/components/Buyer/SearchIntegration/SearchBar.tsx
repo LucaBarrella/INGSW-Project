@@ -7,7 +7,6 @@ import { SearchBarProps, PhotonFeature } from './types';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { useSearch } from '@/context/SearchContext';
-import { getAutocompleteSuggestions } from '@/app/_services/photon.service';
 
 /**
  * SearchBar con autocomplete Photon:
@@ -113,47 +112,11 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     }
     const timer = setTimeout(async () => {
       try {
-        console.log('[SearchBar] Calling Photon API for query:', q);
-        const s = await getAutocompleteSuggestions(q, 6);
-        setSuggestions(s);
+        // TODO: Implementare la nuova logica per i suggerimenti di autocompletamento.
+        // Per ora, disabilito i suggerimenti.
+        console.log('[SearchBar] Autocomplete suggestions temporarily disabled.');
+        setSuggestions([]);
         lastQueryRef.current = q;
-        
-        // Salva nella cache persistente con algoritmo LFU
-        suggestionsCache.current.set(q, s);
-        accessFrequency.current.set(q, 1); // Inizializza contatore accessi
-        
-        // Gestione limite cache con algoritmo LFU (Least Frequently Used)
-        if (suggestionsCache.current.size > 100) {
-          // Trova la voce con il minor numero di accessi
-          let minKey = '';
-          let minCount = Infinity;
-          
-          for (const [key, count] of accessFrequency.current.entries()) {
-            if (count < minCount) {
-              minCount = count;
-              minKey = key;
-            }
-          }
-          
-          // Rimuovi la voce meno utilizzata
-          if (minKey) {
-            suggestionsCache.current.delete(minKey);
-            accessFrequency.current.delete(minKey);
-            console.log('[SearchBar] LFU: Removed least frequently used entry:', minKey);
-          }
-        }
-        
-        // Salva la cache aggiornata in AsyncStorage
-        try {
-          const cacheArray = Array.from(suggestionsCache.current.entries());
-          await AsyncStorage.setItem('photonSuggestionsCache', JSON.stringify(cacheArray));
-          const cacheSizeKB = Math.round(JSON.stringify(cacheArray).length / 1024);
-          console.log('[SearchBar] Cache saved to AsyncStorage:', suggestionsCache.current.size, 'entries (~' + cacheSizeKB + ' KB)');
-        } catch (error) {
-          console.error('[SearchBar] Error saving cache to AsyncStorage:', error);
-        }
-        
-        console.log('[SearchBar] Photon response received and cached, suggestions count:', s.length);
       } catch (err) {
         console.error('[SearchBar] error fetching suggestions', err);
         setSuggestions([]);
@@ -258,32 +221,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           </View>
         </View>
 
-        {suggestions.length > 0 && (
-          <ThemedView className="mt-3 bg-white rounded-lg border border-gray-200">
-            <FlatList
-              data={suggestions}
-              keyExtractor={(item, index) => {
-                // Generate unique key combining available identifiers
-                const id = item.id || '';
-                const osmId = item.properties?.osm_id ? String(item.properties.osm_id) : '';
-                const label = item.label || '';
-                return `${id}-${osmId}-${label}-${index}`;
-              }}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => handleSelectSuggestion(item)}
-                  className="px-4 py-3 border-b border-gray-100"
-                  activeOpacity={0.7}
-                >
-                  <ThemedText className="text-sm">{item.label}</ThemedText>
-                  {item.properties?.city && (
-                    <ThemedText className="text-xs text-gray-500">{item.properties.city}</ThemedText>
-                  )}
-                </TouchableOpacity>
-              )}
-            />
-          </ThemedView>
-        )}
+        {/* I suggerimenti di autocompletamento sono temporaneamente disabilitati. */}
 
       </ThemedView>
     </ThemedView>

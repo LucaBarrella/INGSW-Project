@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Appointment } from '../../../../types/agenda';
+import { Appointment } from '../../../../src/dto/agenda';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 interface ConflictBlockProps {

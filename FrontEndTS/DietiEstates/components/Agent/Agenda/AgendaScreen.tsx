@@ -1,7 +1,6 @@
 import React, { useReducer, useEffect, useState } from 'react';
 import { View, ActivityIndicator, Text, ScrollView } from 'react-native';
-import { Appointment, VisitRequest } from '../../../types/agenda';
-import { agendaService } from '../../../app/_services/agenda.service';
+import { Appointment, VisitRequest } from '../../../src/dto/agenda';
 import AgendaHeader from './AgendaHeader';
 import ConfirmedSchedule from './ConfirmedSchedule';
 import PendingRequests from './PendingRequests';
@@ -106,10 +105,10 @@ const AgendaScreen = () => {
   useEffect(() => {
     const fetchAgendaData = async () => {
       try {
-        const [appointments, visitRequests] = await Promise.all([
-          agendaService.getAppointments(),
-          agendaService.getVisitRequests(),
-        ]);
+        // TODO: Implementare la nuova logica per il recupero degli appuntamenti e delle richieste di visita.
+        // Per ora, simulo dati vuoti.
+        const appointments: Appointment[] = [];
+        const visitRequests: VisitRequest[] = [];
         dispatch({ type: 'SET_INITIAL_DATA', payload: { appointments, visitRequests } });
       } catch (error) {
         console.error("Errore nel recupero dei dati dell'agenda:", error);

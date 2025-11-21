@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { VisitRequest } from '../../../types/agenda';
+import { VisitRequest } from '../../../src/dto/agenda';
 
 interface GroupOpportunityCardProps {
   groupRequest: VisitRequest;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Appointment } from '../../../types/agenda';
+import { Appointment } from '../../../src/dto/agenda';
 import TimelineEvent from './TimelineEvent';
 import { useThemeColor } from '@/hooks/useThemeColor';
 

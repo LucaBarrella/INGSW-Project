@@ -2,12 +2,12 @@ import React from 'react';
 import { render, waitFor, screen, fireEvent } from '@testing-library/react-native'; // Rimosso import findByText
 import { ActivityIndicator } from 'react-native';
 import HomeTab from '../home'; // Importa il componente della schermata
-import ApiService from '@/app/_services/api.service'; // Importa il servizio da mockare
+import ApiService from '@/src/services/api.service'; // Importa il servizio da mockare
 import { useRouter } from 'expo-router'; // Importa hook usati
 import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types'; // Import type
 
 // Mock del modulo ApiService
-jest.mock('@/app/_services/api.service', () => ({
+jest.mock('@/src/services/api.service', () => ({
   getFeaturedProperties: jest.fn(),
 }));
 

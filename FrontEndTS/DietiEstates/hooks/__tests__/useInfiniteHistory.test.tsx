@@ -2,12 +2,12 @@ import React from 'react';
 import { Text } from 'react-native';
 import { render, waitFor } from '@testing-library/react-native';
 import useInfiniteHistory from '@/hooks/useInfiniteHistory';
-import HistoryStorageService from '@/app/_services/history.service';
-import ApiService from '@/app/_services/api.service';
+import HistoryStorageService from '@/src/services/history.service';
+import ApiService from '@/src/services/api.service';
 
 // Mock reale servizi con implementazioni controllate
-jest.mock('@/app/_services/history.service');
-jest.mock('@/app/_services/api.service');
+jest.mock('@/src/services/history.service');
+jest.mock('@/src/services/api.service');
 
 const mockedHistory = HistoryStorageService as jest.Mocked<typeof HistoryStorageService>;
 const mockedApi = ApiService as unknown as { getPropertyDetails: jest.Mock };

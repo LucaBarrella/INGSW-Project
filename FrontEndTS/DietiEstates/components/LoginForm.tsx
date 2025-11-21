@@ -1,15 +1,14 @@
 import React from 'react';
-import { TouchableOpacity, View, Alert, type ViewProps, Text } from 'react-native';
+import { TouchableOpacity, View, type ViewProps, Text } from 'react-native';
 import { useAuth } from '@/context/AuthContext';
 import { ThemedView } from './ThemedView';
 import { ThemedText } from './ThemedText';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { SocialButton } from './SocialButton';
-import { Provider } from '@/types/Provider';
+import { Provider } from '@/src/dto/Provider';
 import ThemedButton from './ThemedButton';
 import { LabelInput } from './LabelInput';
-import { useRouter } from 'expo-router';
-import useGoogleAuth from '@/app/_services/thirdPartyAuth';
+import { useGoogleAuth } from '@/src/hooks/useGoogleAuth';
 
 export type LoginFormProps = ViewProps & {
   lightColor?: string;
@@ -17,8 +16,7 @@ export type LoginFormProps = ViewProps & {
 };
 
 const LoginForm: React.FC<LoginFormProps> = ({ lightColor, darkColor, ...props }) => {
-  const router = useRouter();
-  const { signIn, error, clearError } = useAuth();
+  const { login, error: authError, loginWithProvider, navigateToRegister, validationErrors, resetValidationErrors } = useAuth();
   const background = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
   const text = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
   const cardBackground = useThemeColor({ light: lightColor, dark: darkColor }, 'loginCardBackground');
@@ -27,27 +25,24 @@ const LoginForm: React.FC<LoginFormProps> = ({ lightColor, darkColor, ...props }
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
 
-  const { googleSignIn } = useGoogleAuth(router);
+  const { promptAsync, idToken, error: googleError } = useGoogleAuth();
 
   React.useEffect(() => {
-    if (error) {
-      // Clear the error when the component mounts or if the user starts typing
-      clearError();
+    if (idToken) {
+      loginWithProvider('google', idToken);
     }
+  }, [idToken]);
+
+  React.useEffect(() => {
+    // L'errore viene ora gestito centralmente
   }, [email, password]);
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('Errore', 'Per favore, compila tutti i campi richiesti.');
-      return;
-    }
-    try {
-      // Nuovo signIn unificato: non richiede più userType
-      await signIn({ email, password });
-    } catch (err) {
-      console.error('Errore nel componente LoginForm durante il login:', err);
-    }
+    await login({ email, password });
   };
+
+  // authError viene fornito come stringa dall'hook; manteniamo compatibilità con altri error shapes
+  const error = authError || googleError || null;
 
   return (
     <ThemedView className="transform scale-90 md:scale-100 max-w-md p-8 rounded-2xl w-10/12 shadow-lg mt-[12%] mb-[10%]" style={{ backgroundColor: cardBackground }} {...props}>
@@ -72,7 +67,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ lightColor, darkColor, ...props }
         inputBackgroundColor={background}
         className="mb-6"
         value={email}
-        onChangeText={setEmail}
+        onChangeText={(text) => {
+          setEmail(text);
+          resetValidationErrors?.('email');
+        }}
+        error={!!validationErrors.email}
+        errorMessage={validationErrors.email}
       />
 
       <LabelInput
@@ -83,7 +83,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ lightColor, darkColor, ...props }
         inputBackgroundColor={background}
         className="mb-6"
         value={password}
-        onChangeText={setPassword}
+        onChangeText={(text) => {
+          setPassword(text);
+          resetValidationErrors?.('password');
+        }}
+        error={!!validationErrors.password}
+        errorMessage={validationErrors.password}
       />
 
       <ThemedButton
@@ -97,17 +102,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ lightColor, darkColor, ...props }
       <>
         <ThemedText className="text-base mt-3 mb-3 text-center" style={{ color: labelColor }}>o continua con:</ThemedText>
         <View className="items-center mb-3">
-          <SocialButton provider={Provider.Google} onPress={googleSignIn} lightColor='#FFFFFF' darkColor='#FFFFFF' />
-        </View>
-        <View className="items-center mb-3">
-          <SocialButton provider={Provider.Meta} onPress={() => console.log('Login con Meta')} lightColor='#FFFFFF' darkColor='#1877F2' />
-        </View>
-        <View className="items-center mb-3">
-          <SocialButton provider={Provider.GitHub} onPress={() => console.log('Login con GitHub')} lightColor='#FFFFFF' darkColor='#333333' />
+          <SocialButton provider={Provider.Google} onPress={() => promptAsync()} lightColor='#FFFFFF' darkColor='#FFFFFF' />
         </View>
         <View className="flex-row justify-center mt-3">
           <ThemedText style={{ color: labelColor }}>Non hai un account? </ThemedText>
-          <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
+          <TouchableOpacity onPress={navigateToRegister}>
             <ThemedText className="text-blue-500 underline font-bold" style={{ color: labelColor }}>
               Registrati
             </ThemedText>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScrollView, Alert } from 'react-native'; // Rimosso TouchableOpacity se non più usato direttamente
-import { useRouter } from 'expo-router';
+
 import { useAuth } from '../../../../context/AuthContext';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
@@ -11,15 +11,14 @@ import { ProfileOptionsGroup } from '@/components/Profile/ProfileOptionsGroup';
 import { ProfileOptionRowProps } from '@/components/Profile/ProfileOptionRow'; // Per il tipo delle opzioni
 
 export default function ProfileTab() {
-  const router = useRouter();
   const backgroundColor = useThemeColor({}, 'background');
-  const { signOut } = useAuth();
+  const { logout } = useAuth();
   // borderColor non è più usato direttamente qui se ProfileOptionsGroup e UserInfoCard lo gestiscono internamente
 
-  // TODO: Replace with real user data
-  const mockUser = {
-    name: 'Mario Rossi',
-    email: 'mario.rossi@example.com',
+  // TODO DA SISTEMARE: Implementare recupero dati utente reali dal server
+  const userData = {
+    name: 'DA SISTEMARE', // Implementare recupero nome utente dal server
+    email: 'DA SISTEMARE', // Implementare recupero email utente dal server
   };
 
   // Adattato il tipo per ProfileOptionsGroup
@@ -48,7 +47,7 @@ export default function ProfileTab() {
       icon: 'mdi:logout',
       onPress: async () => { // Trasformato in async
         try {
-          await signOut();
+          await logout();
         } catch (error) {
           console.error('Errore durante il logout:', error);
           Alert.alert('Errore Logout', 'Impossibile completare il logout. Riprova.');
@@ -72,8 +71,8 @@ export default function ProfileTab() {
         showsVerticalScrollIndicator={false}
       >
         <UserInfoCard
-          name={mockUser.name}
-          email={mockUser.email}
+          name={userData.name}
+          email={userData.email}
           // iconName e iconLabel usano i default di UserInfoCard
         />
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { FlatList, TouchableOpacity, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { VisitRequest } from '../../../types/agenda';
+import { VisitRequest } from '../../../src/dto/agenda';
 import RequestCard from './RequestCard';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';

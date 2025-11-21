@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { PropertyWithOffers, Offer, OfferStatus } from '@/types/offers';
+import { PropertyWithOffers, Offer, OfferStatus } from '@/src/dto/offers';
 import SingleOfferItem from './SingleOfferItem';
 
 interface PropertyOffersCardProps {
