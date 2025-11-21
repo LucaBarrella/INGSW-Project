@@ -1,24 +1,30 @@
 import React from 'react';
+import { useBuyerVisits } from '@/src/hooks/useBuyerVisits';
+import { VisitDTO } from '@/src/dto/VisitDTO';
 import { ScrollView } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { useAuth } from '@/context/AuthContext';
 
 interface Visit {
   id: string;
-  propertyTitle: string;
-  date: string;
-  time: string;
-  status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
-  address: string;
+  propertyId: string;
+  buyerId: string;
+  agentId: string;
+  scheduledDate: string;
+  status: 'scheduled' | 'completed' | 'cancelled';
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export default function VisitsTab() {
   const backgroundColor = useThemeColor({}, 'background');
   const borderColor = useThemeColor({}, 'border');
+  const { user } = useAuth();
+  const { visits, loading, error } = useBuyerVisits();
 
-  // DA SISTEMARE: Implementare chiamata API reale per ottenere le visite dell'utente
-  const visits: Visit[] = [];
 
   return (
     <ThemedView style={{ flex: 1, backgroundColor }}>
@@ -33,13 +39,24 @@ export default function VisitsTab() {
         contentContainerStyle={{ paddingVertical: 20 }}
         showsVerticalScrollIndicator={false}
       >
-        {visits.length === 0 ? (
-          <ThemedText className="text-center text-gray-500">
-            DA SISTEMARE: Implementare recupero visite reali dal server
-          </ThemedText>
+        {loading ? (
+          <ThemedText className="text-center text-gray-500">Loading visits...</ThemedText>
+        ) : error ? (
+          <ThemedText className="text-center text-red-500">Error: {error.message}</ThemedText>
+        ) : visits && visits.length === 0 ? (
+          <ThemedText className="text-center text-gray-500">No visits found.</ThemedText>
         ) : (
-          // DA SISTEMARE: Implementare rendering delle visite reali
-          <></>
+          <ThemedView>
+            {visits && visits.map((visit: VisitDTO) => (
+              <ThemedView key={visit.id} className="mb-4 p-4 border border-gray-200 rounded-lg">
+                <ThemedText className="text-lg font-semibold">Visit ID: {visit.id}</ThemedText>
+                <ThemedText>Date: {new Date(visit.scheduledDate).toLocaleDateString()}</ThemedText>
+                <ThemedText>Time: {new Date(visit.scheduledDate).toLocaleTimeString()}</ThemedText>
+                <ThemedText>Status: {visit.status}</ThemedText>
+                {visit.notes && <ThemedText>Notes: {visit.notes}</ThemedText>}
+              </ThemedView>
+            ))}
+          </ThemedView>
         )}
       </ScrollView>
     </ThemedView>

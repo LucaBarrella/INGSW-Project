@@ -12,7 +12,7 @@ import { ProfileOptionRowProps } from '@/components/Profile/ProfileOptionRow'; /
 
 export default function ProfileTab() {
   const backgroundColor = useThemeColor({}, 'background');
-  const { signOut } = useAuth();
+  const { logout } = useAuth();
   // borderColor non è più usato direttamente qui se ProfileOptionsGroup e UserInfoCard lo gestiscono internamente
 
   // TODO DA SISTEMARE: Implementare recupero dati utente reali dal server
@@ -47,7 +47,7 @@ export default function ProfileTab() {
       icon: 'mdi:logout',
       onPress: async () => { // Trasformato in async
         try {
-          await signOut();
+          await logout();
         } catch (error) {
           console.error('Errore durante il logout:', error);
           Alert.alert('Errore Logout', 'Impossibile completare il logout. Riprova.');

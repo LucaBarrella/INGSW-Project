@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { VisitDTO } from '@/src/dto/VisitDTO';
 import { VisitService } from '@/src/services/VisitService';
 import { IVisitService } from '@/src/services/interfaces/IVisitService';
+import { VisitRepository } from '@/src/repositories/VisitRepository';
 
 interface UseVisitsHook {
   visits: VisitDTO[];
@@ -19,13 +20,13 @@ export const useVisits = (initialBuyerId?: string): UseVisitsHook => {
   const [visits, setVisits] = useState<VisitDTO[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const visitService: IVisitService = new VisitService();
+  const visitService: IVisitService = new VisitService(new VisitRepository());
 
   const fetchVisitsByBuyer = async (buyerId?: string) => {
     setLoading(true);
     setError(null);
     try {
-      const data = await visitService.getVisitsByBuyer(buyerId);
+      const data = (await visitService.getVisitsByBuyer(buyerId)).content;
       setVisits(data);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch visits');

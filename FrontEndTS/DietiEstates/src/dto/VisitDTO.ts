@@ -5,7 +5,7 @@ export interface VisitDTO {
     agentId: string;
     scheduledDate: string;
     status: 'scheduled' | 'completed' | 'cancelled';
-    notes: string;
+    notes?: string;
     createdAt: string;
     updatedAt: string;
   }

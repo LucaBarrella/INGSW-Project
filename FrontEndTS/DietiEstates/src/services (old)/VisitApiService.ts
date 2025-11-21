@@ -55,9 +55,8 @@ export const getVisitsByAgent = async (agentId?: string): Promise<any[]> => {
  * @param buyerId - L'ID dell'acquirente (opzionale, se non fornito usa l'acquirente loggato).
  * @returns La risposta dell'API con la lista delle visite.
  */
-export const getVisitsByBuyer = async (buyerId?: string): Promise<any[]> => {
-  console.log('[VisitApiService] getVisitsByBuyer:', buyerId);
-  const url = buyerId ? `${visitEndpoints.getVisitsByBuyer}?buyerId=${buyerId}` : visitEndpoints.getVisitsByBuyer;
+export const getVisitsByBuyer = async (): Promise<any[]> => {
+  const url = visitEndpoints.getVisitsByBuyer;
   const response = await httpClient.get(url);
   return response.data;
 };
