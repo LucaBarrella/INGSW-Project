@@ -7,7 +7,7 @@ import { SearchAndFilter } from '../SearchIntegration/SearchAndFilter';
 import { BuyerPropertyCard } from '../BuyerPropertyCard';
 import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import MapView from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 
 interface SearchResultsViewProps {
   properties: PropertyDetail[];
@@ -17,7 +17,6 @@ interface SearchResultsViewProps {
 
 export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
   properties,
-  // onSearch, // Rimosso
   onPropertyPress,
 }) => {
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
@@ -42,11 +41,11 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
             }}
           />
         </View>
-        <Pressable 
+        <Pressable
           onPress={toggleViewMode}
           className="pr-6"
         >
-          <ThemedIcon 
+          <ThemedIcon
             icon={viewMode === 'list' ? 'material-symbols:map-outline-rounded' : 'material-symbols:list-alt-outline-rounded'}
             size={24}
             lightColor={tint}
@@ -77,7 +76,16 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
         />
       ) : (
         <View style={styles.container}>
-          <MapView style={styles.map} />
+          <MapView style={styles.map}>
+            {properties.map((property, index) => (
+              <Marker
+                key={index}
+                coordinate={{ latitude: property.latitude!, longitude: property.longitude! }}
+                title={`€${property.price.toLocaleString()}`}
+                description={property.description}
+              />
+            ))}
+          </MapView>
         </View>
       )}
     </ThemedView>
