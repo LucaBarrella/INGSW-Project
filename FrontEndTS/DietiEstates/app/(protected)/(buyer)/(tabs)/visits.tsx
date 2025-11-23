@@ -5,32 +5,18 @@ import { ScrollView } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { useAuth } from '@/context/AuthContext';
-
-interface Visit {
-  id: string;
-  propertyId: string;
-  buyerId: string;
-  agentId: string;
-  scheduledDate: string;
-  status: 'scheduled' | 'completed' | 'cancelled';
-  notes?: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { useTranslation } from 'react-i18next';
 
 export default function VisitsTab() {
   const backgroundColor = useThemeColor({}, 'background');
-  const borderColor = useThemeColor({}, 'border');
-  const { user } = useAuth();
   const { visits, loading, error } = useBuyerVisits();
-
+  const { t } = useTranslation();
 
   return (
     <ThemedView style={{ flex: 1, backgroundColor }}>
       <ThemedView className="p-4 bg-white">
         <ThemedText className="text-xl font-semibold">
-          Le tue Visite
+          {t('your_visits')}
         </ThemedText>
       </ThemedView>
       

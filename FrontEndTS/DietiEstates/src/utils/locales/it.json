@@ -10,6 +10,13 @@
   "selectUserRole": "Seleziona ruolo utente per cercare casa",
   "selectAgentRole": "Seleziona ruolo agente immobiliare",
   "selectAdminRole": "Seleziona ruolo amministratore",
+  "propertiesYouHaveSeen": "Immobili che hai visto",
+  "Filters": "Filtri",
+  "logout": "Esci",
+  "profileTab": "Profilo",
+  "your_visits": "Le tue Visite",
+  "no_offers_available": "Nessuna offerta disponibile",
+  "offers": "Offerte",
 
   "property_status": {
     "UNDER_CONSTRUCTION": "in costruzione",
@@ -25,6 +32,11 @@
     "residential_property": "proprietà residenziale",
     "land": "terreno",
     "garage": "autorimessa"
+  },
+
+  "history_placeholder": {
+    "no_viewed_properties": "Non hai ancora visualizzato immobili.",
+    "when_you_do": "Quando lo farai, compariranno qui."
   },
 
   "admin": {

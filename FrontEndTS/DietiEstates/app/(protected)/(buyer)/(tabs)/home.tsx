@@ -11,31 +11,33 @@ import { SearchAndFilter, Categories } from '@/components/Buyer/SearchIntegratio
 import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types'; // Usa il tipo unificato
 import useInfiniteHistory from '@/hooks/useInfiniteHistory';
 import HistoryPlaceholder from '@/components/Buyer/HistoryPlaceholder';
+import { useTranslation } from 'react-i18next';
 
 const CATEGORIES: Categories = {
   residential: {
-    name: 'Residenziale'
+    name: 'residential_property'
   },
   commercial: {
-    name: 'Commerciale'
+    name: 'commercial_property'
   },
-  industrial: {
-    name: 'Industriale'
+  garage: {
+    name: 'garage'
   },
   land: {
-    name: 'Terreno'
+    name: 'land'
   }
 };
 
 const CATEGORY_ICONS = {
   residential: 'mdi:home',
   commercial: 'mdi:office-building',
-  industrial: 'mdi:factory',
+  garage: 'mdi:garage',
   land: 'mdi:land-fields'
 };
 
 export default function HomeTab() {
   const router = useRouter();
+  const { t } = useTranslation();
   const backgroundColor = useThemeColor({}, 'background');
   const errorColor = useThemeColor({}, 'tint'); // Placeholder per colore errore
   const [featuredProperties, setFeaturedProperties] = useState<PropertyDetail[]>([]); // Usa il tipo unificato
@@ -119,7 +121,7 @@ export default function HomeTab() {
             <View key={key} className="w-[48%]">
               <CategoryButton
                 icon={CATEGORY_ICONS[key as keyof typeof CATEGORY_ICONS]}
-                label={category.name}
+                label={t("property_category." + category.name)}
                 onPress={() => handleCategoryPress(key)}
               />
             </View>
@@ -127,7 +129,7 @@ export default function HomeTab() {
         </View>
 
         <View className="mt-6">
-          <ThemedText className="text-xl font-semibold mb-4">Immobili che hai visto</ThemedText>
+          <ThemedText className="text-xl font-semibold mb-4">{t('propertiesYouHaveSeen')}</ThemedText>
 
           {historyIsLoading ? (
             <ActivityIndicator size="large" className="my-4" />

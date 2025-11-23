@@ -14,7 +14,7 @@ module.exports = function (api) {
             'ion:chevron-forward',
 
             // Icone Material Symbols usate in Step1 e Step5
-            'material-symbols:factory-outline',
+            'material-symbols:garage-outline',
             'material-symbols:landscape-outline',
             'material-symbols:close-rounded',
             'material-symbols:add-photo-alternate-outline-rounded',
@@ -111,7 +111,7 @@ module.exports = function (api) {
             'mdi:home',
             'mdi:land-fields',
             'mdi:office-building',
-            'mdi:factory',
+            'mdi:garage',
 
 
 

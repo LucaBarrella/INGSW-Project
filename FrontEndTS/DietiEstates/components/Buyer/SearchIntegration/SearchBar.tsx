@@ -7,6 +7,7 @@ import { SearchBarProps, PhotonFeature } from './types';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { useSearch } from '@/context/SearchContext';
+import { useTranslation } from 'react-i18next';
 
 /**
  * SearchBar con autocomplete Photon:
@@ -27,6 +28,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const textColor = useThemeColor({}, 'text');
   const backgroundColor = useThemeColor({}, 'propertyCardBackground');
   const accentColor = useThemeColor({}, 'buttonBackground');
+  const { t } = useTranslation();
 
   const { state, setGeolocation } = useSearch();
 
@@ -207,7 +209,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                 className="font-medium text-sm"
                 style={{ color: useThemeColor({}, 'buttonTextColor') }}
               >
-                Filters
+                {t('Filters')}
               </ThemedText>
 
               {activeFiltersCount > 0 && (

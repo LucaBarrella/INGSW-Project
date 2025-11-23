@@ -9,10 +9,12 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import { UserInfoCard } from '@/components/Profile/UserInfoCard';
 import { ProfileOptionsGroup } from '@/components/Profile/ProfileOptionsGroup';
 import { ProfileOptionRowProps } from '@/components/Profile/ProfileOptionRow'; // Per il tipo delle opzioni
+import { useTranslation } from 'react-i18next';
 
 export default function ProfileTab() {
   const backgroundColor = useThemeColor({}, 'background');
   const { logout } = useAuth();
+  const { t } = useTranslation();
   // borderColor non è più usato direttamente qui se ProfileOptionsGroup e UserInfoCard lo gestiscono internamente
 
   // TODO DA SISTEMARE: Implementare recupero dati utente reali dal server
@@ -43,7 +45,7 @@ export default function ProfileTab() {
     },
     {
       id: 'logout',
-      title: 'Esci',
+      title: t('logout'),
       icon: 'mdi:logout',
       onPress: async () => { // Trasformato in async
         try {
@@ -61,7 +63,7 @@ export default function ProfileTab() {
       <ThemedView className="p-4">
         {/* Se si vuole mantenere lo sfondo bianco per l'header, ripristinare bg-white qui o gestire tramite tema */}
         <ThemedText className="text-xl font-semibold">
-          Profilo
+          {t('profileTab')}
         </ThemedText>
       </ThemedView>
 
