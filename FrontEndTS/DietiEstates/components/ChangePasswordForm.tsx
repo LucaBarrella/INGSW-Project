@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, StyleSheet, type ViewProps } from 'react-native';
+import { Alert, type ViewProps } from 'react-native';
 import { ThemedView } from './ThemedView';
 import { LabelInput } from './LabelInput';
 import ThemedButton from './ThemedButton';
@@ -145,7 +145,5 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
     </ThemedView>
   );
 };
-
-const styles = StyleSheet.create({});
 
 export default ChangePasswordForm;

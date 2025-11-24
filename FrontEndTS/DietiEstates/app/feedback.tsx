@@ -4,6 +4,7 @@ import FeedbackScreen from '@/components/FeedbackScreen';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import ThemedButton from '@/components/ThemedButton';
+import { t } from 'i18next';
 
 type FeedbackStatus = 'success' | 'error' | 'info';
 
@@ -46,8 +47,8 @@ export default function FeedbackRoute() {
      // Optionally render a default error message or navigate back immediately
      return (
         <ThemedView className="flex-1 items-center justify-center p-8">
-            <ThemedText>Errore: Parametri mancanti per la schermata di feedback.</ThemedText>
-            <ThemedButton title="Indietro" onPress={() => router.back()} />
+            <ThemedText>{t('feedback.missingParams')}</ThemedText>
+            <ThemedButton title={t('feedback.backButton')} onPress={() => router.back()} />
         </ThemedView>
      );
   }

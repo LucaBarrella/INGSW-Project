@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, Alert } from 'react-native'; // Rimosso TouchableOpacity, ThemedButton
+import { ScrollView, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../../../context/AuthContext';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { TabHeader } from '@/components/TabHeader';
-// import ApiService from '@/src/services/api.service';
-// useThemeColor è importato ma potrebbe non essere più usato direttamente qui se i componenti figli lo gestiscono
-// import { useThemeColor } from '@/hooks/useThemeColor';
 import { UserInfoCard } from '@/components/Profile/UserInfoCard';
 import { ProfileOptionsGroup } from '@/components/Profile/ProfileOptionsGroup';
 import { ProfileOptionRowProps } from '@/components/Profile/ProfileOptionRow';
@@ -22,8 +19,6 @@ type AgentProfile = {
   experienceYears: number;
   officeAddress: string;
 };
-
-// InfoRow non è più necessaria
 
 export default function ProfileScreen() {
   const { t } = useTranslation();
@@ -71,7 +66,7 @@ export default function ProfileScreen() {
   if (isLoading) {
     return (
       <ThemedView className="flex-1 justify-center items-center">
-        <ThemedText>Loading...</ThemedText>
+        <ThemedText>{t('loading')}</ThemedText>
       </ThemedView>
     );
   }

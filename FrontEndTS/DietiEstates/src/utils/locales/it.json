@@ -17,6 +17,7 @@
   "your_visits": "Le tue Visite",
   "no_offers_available": "Nessuna offerta disponibile",
   "offers": "Offerte",
+  "loading": "Caricamento...",
 
   "property_status": {
     "UNDER_CONSTRUCTION": "in costruzione",
@@ -37,6 +38,11 @@
   "history_placeholder": {
     "no_viewed_properties": "Non hai ancora visualizzato immobili.",
     "when_you_do": "Quando lo farai, compariranno qui."
+  },
+
+  "feedback": {
+    "missingParams": "Errore: Parametri mancanti per la schermata di feedback.",
+    "backButton": "Indietro"
   },
 
   "admin": {
