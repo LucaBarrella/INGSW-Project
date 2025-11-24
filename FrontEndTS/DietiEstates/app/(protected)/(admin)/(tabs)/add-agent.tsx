@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
 import { SafeAreaView, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useManagerHook } from '@/src/hooks/useManagerHook';
 import UserCreationForm from '@/components/UserCreationForm';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { TabHeader } from '@/components/TabHeader';
+import { ManagerService } from '@/src/services/ManagerService';
+import { managerRepository } from '@/src/repositories/ManagerRepository';
 
 export default function AddAgentScreen() {
   const { t } = useTranslation();
   const [error, setError] = useState<string>('');
+  const { handleCreateAgent } = useManagerHook(new ManagerService(new managerRepository()));
   const loading = false;
   const viewModelError = null;
-
-  const handleCreateAgent = async (data: any) => {
-    // TODO: Definire un tipo specifico per i dati dell'agente (es. AgentCreationData)
-    console.log('Agent creation temporarily disabled.');
-    setError('Agent creation is temporarily disabled.');
-  };
 
   return (
     <ThemedView className="flex-1">
@@ -32,7 +30,7 @@ export default function AddAgentScreen() {
           ) : null}
           <UserCreationForm
             userType="agent"
-            onSubmit={handleCreateAgent}
+            onSubmit={(data) => handleCreateAgent(data, setError)}
             isLoading={loading}
           />
         </ThemedView>

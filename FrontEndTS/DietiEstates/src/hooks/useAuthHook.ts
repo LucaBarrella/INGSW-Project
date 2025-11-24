@@ -111,6 +111,8 @@ export const useAuthHook = (authService: IAuthService) => {
   }, []);
 
   const handlePostAuthNavigation = useCallback((user: User | null) => {
+    console.log('Handling post-auth navigation for user:', JSON.stringify(user));
+    console.log('User roles:', user?.roles);
     if (!user?.roles || user.roles.length === 0) {
       router.replace('/(auth)/select-role');
       return;
@@ -120,16 +122,19 @@ export const useAuthHook = (authService: IAuthService) => {
       router.replace('/(auth)/select-role');
       return;
     }
+    console.log(user.roles[0]);
+    console.log(user.roles[0]=== 'ROLE_MANAGER');
 
     switch (user.roles[0]) {
-      case 'buyer':
+      case 'ROLE_BUYER':
         router.replace('/(protected)/(buyer)/(tabs)/home');
         break;
-      case 'agent':
+      case 'ROLE_AGENT':
         router.replace('/(protected)/(agent)/(tabs)/home');
         break;
-      case 'admin':
-        router.replace('/(protected)/(admin)/home');
+      case 'ROLE_MANAGER':
+        console.log('Navigating to admin home');
+        router.replace('/(protected)/(admin)/(tabs)/profile');
         break;
       default:
         router.replace('/(auth)/select-role');

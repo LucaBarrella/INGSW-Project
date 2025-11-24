@@ -6,20 +6,14 @@ import ThemedButton from './ThemedButton';
 import { ThemedView } from './ThemedView';
 import { ConfirmationDialog } from './ConfirmationDialog';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { SignupRequestAgent } from '@/src/dto/request/SignupRequestAgent.dto';
+
 
 type UserType = 'admin' | 'agent';
 
-interface UserFormData {
-  name: string;
-  surname: string;
-  email: string;
-  phone?: string;
-  licenseNumber?: string;
-}
-
 interface UserCreationFormProps extends ViewProps {
   userType: UserType;
-  onSubmit: (data: UserFormData) => Promise<void>;
+  onSubmit: (data: SignupRequestAgent, setError: React.Dispatch<React.SetStateAction<string>>) => Promise<void>;
   isLoading?: boolean;
   lightColor?: string;
   darkColor?: string;
@@ -38,18 +32,20 @@ export default function UserCreationForm({
   const text = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
   const cardBackground = useThemeColor({ light: lightColor, dark: darkColor }, 'loginCardBackground');
   
-  const [formData, setFormData] = useState<UserFormData>({
-    name: '',
-    surname: '',
-    email: '',
-    phone: '',
-    licenseNumber: '',
+  const [formData, setFormData] = useState<SignupRequestAgent>({
+        name: '',
+        surname: '',
+        username: '',
+        email: '',
+        password: '',
+        phone: '',
+        licenseNumber: '',
   });
   // const [error, setError] = useState<string>(''); // Keep error state for potential backend errors
   const [showConfirmation, setShowConfirmation] = useState(false);
   // Remove showError state
 
-  const handleInputChange = (field: keyof UserFormData, value: string): void => {
+  const handleInputChange = (field: keyof SignupRequestAgent, value: string): void => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -70,7 +66,7 @@ export default function UserCreationForm({
 
     if (missingFields.length > 0) {
       const errorMessage = t('forms.errors.fillRequired') + ':\n' + missingFields.join(', ');
-      Alert.alert(t('forms.errors.title'), errorMessage); // Use Alert.alert
+      Alert.alert(t('forms.errors.title'), errorMessage);
       return false;
     }
 
@@ -84,7 +80,9 @@ export default function UserCreationForm({
       setFormData({
         name: '',
         surname: '',
+        username: '',
         email: '',
+        password: '',
         phone: '',
         licenseNumber: '',
       });
