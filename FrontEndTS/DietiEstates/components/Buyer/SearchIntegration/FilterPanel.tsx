@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { ScrollView, TouchableOpacity, Animated, Platform, StyleSheet, Modal, Easing, Dimensions, View, Switch } from "react-native";
-import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { RangeSlider } from "./RangeSlider";
@@ -31,14 +31,12 @@ const categoryStateToConfigMap: Record<string, string> = {
 
 const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onApplyAndNavigate }) => {
   const translateY = useRef(new Animated.Value(2000)).current;
-  const [panelHeight, setPanelHeight] = useState(Dimensions.get('window').height * 0.8);
-  const minHeight = Dimensions.get('window').height * 0.4;
-  const maxHeight = Dimensions.get('window').height * 0.95;
   const overlayOpacity = useRef(new Animated.Value(0)).current;
 
   const { state, dispatch } = useSearch();
   const { filters, selectedMainCategoryInPanel } = state;
 
+  const panelHeight = Dimensions.get('window').height * 0.8;
   const textColor = useThemeColor({}, "text");
   const tintColor = useThemeColor({}, "tint");
   const tabIconDefault = useThemeColor({}, "tabBarBackground");
@@ -205,152 +203,141 @@ if (categoryKey) {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.5)', opacity: overlayOpacity }]}>
           <TouchableOpacity style={StyleSheet.absoluteFill} onPress={hidePanel} activeOpacity={1} />
-          <GestureDetector gesture={Gesture.Pan()
-            .onUpdate((event) => {
-              translateY.setValue(event.translationY);
-            })
-            .onEnd((event) => {
-              let newHeight = panelHeight - event.translationY;
-              newHeight = Math.max(minHeight, Math.min(maxHeight, newHeight));
-              setPanelHeight(newHeight);
-              translateY.setValue(0);
-            })
-          }>
-            <Animated.View style={[{
-              position: 'absolute', bottom: 0, left: 0, right: 0, height: panelHeight,
-              backgroundColor: backgroundPrimary, borderTopLeftRadius: 30, borderTopRightRadius: 30,
-              transform: [{ translateY }], ...Platform.select({ ios: { shadowColor: '#000', shadowOffset: { width: 0, height: -3 }, shadowOpacity: 0.2, shadowRadius: 8 }, android: { elevation: 8 } })
-            }]}>
-              <ThemedView className="items-center pt-2 rounded-t-2xl" style={{ backgroundColor: tabIconDefault }}>
-                <ThemedView className="w-12 h-1 rounded-full mb-2" style={{ backgroundColor: textColor }} />
-              </ThemedView>
+        
+          <Animated.View style={[{
+            position: 'absolute', bottom: 0, left: 0, right: 0, height: panelHeight,
+            backgroundColor: backgroundPrimary, borderTopLeftRadius: 30, borderTopRightRadius: 30,
+            transform: [{ translateY }], ...Platform.select({ ios: { shadowColor: '#000', shadowOffset: { width: 0, height: -3 }, shadowOpacity: 0.2, shadowRadius: 8 }, android: { elevation: 8 } })
+          }]}>
+            <ThemedView className="items-center pt-2 rounded-t-2xl" style={{ backgroundColor: tabIconDefault }}>
+              <ThemedView className="w-12 h-1 rounded-full mb-2" style={{ backgroundColor: textColor }} />
+            </ThemedView>
 
-              <ThemedView className="flex-row justify-between items-center px-4 pb-4" style={{ backgroundColor: tabIconDefault }}>
-                <ThemedView className="flex-row items-center" style={{ backgroundColor: tabIconDefault }}>
-                  <Ionicons name="funnel" size={24} color={tintColor} />
-                  <ThemedView className="ml-3" style={{ backgroundColor: tabIconDefault }}>
-                    <ThemedText className="text-lg font-semibold" style={{ color: textColor }}>Filtri</ThemedText>
-                    <ThemedText className="text-sm" style={{ color: textColor }}>
-                      {selectedMainCategoryInPanel ? String(selectedMainCategoryInPanel) : "Seleziona una categoria"}
-                    </ThemedText>
-                  </ThemedView>
-                </ThemedView>
-
-                <ThemedView className="flex-row items-center" style={{ backgroundColor: tabIconDefault }}>
-                  <TouchableOpacity onPress={() => handleReset(true)} className="mr-4 py-2 px-3">
-                    <ThemedText style={{ color: tintColor }}>Reset</ThemedText>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={hidePanel} className="p-1">
-                    <Ionicons name="close" size={24} color={textColor} />
-                  </TouchableOpacity>
+            <ThemedView className="flex-row justify-between items-center px-4 pb-4" style={{ backgroundColor: tabIconDefault }}>
+              <ThemedView className="flex-row items-center" style={{ backgroundColor: tabIconDefault }}>
+                <Ionicons name="funnel" size={24} color={tintColor} />
+                <ThemedView className="ml-3" style={{ backgroundColor: tabIconDefault }}>
+                  <ThemedText className="text-lg font-semibold" style={{ color: textColor }}>Filtri</ThemedText>
+                  <ThemedText className="text-sm" style={{ color: textColor }}>
+                    {selectedMainCategoryInPanel ? String(selectedMainCategoryInPanel) : "Seleziona una categoria"}
+                  </ThemedText>
                 </ThemedView>
               </ThemedView>
 
-              <ScrollView className="flex-1 p-4">
-                <ThemedView className="mb-6">
-                  {/* Filtri generali */}
-                  <ThemedText className="text-lg font-semibold mb-4" style={{ color: textColor }}>Filtri Generali</ThemedText>
-                  {renderControl(ALL_FILTERS.contract)}
-                  {renderControl(ALL_FILTERS.priceRange)}
-                  {renderControl(ALL_FILTERS.size)}
-                  {renderControl(ALL_FILTERS.searchRadiusKm)}
-                </ThemedView>
-
-                {!selectedMainCategoryInPanel ? (
-                  <ThemedView className="grid grid-cols-2 gap-4">
-                    {availableCategories.map((catKey) => (
-                      <TouchableOpacity
-                        key={catKey}
-                        onPress={() => {
-                          // mappiamo la chiave config uppercase al corrispondente stato (reverse map)
-                          const stateKey = Object.keys(categoryStateToConfigMap).find(k => categoryStateToConfigMap[k] === catKey);
-                          selectCategory(stateKey as any);
-                        }}
-                        className="p-4 rounded-lg"
-                        style={{ backgroundColor: loginCardBackground }}
-                      >
-                        <ThemedText className="font-medium" style={{ color: textColor }}>
-                          {catKey}
-                        </ThemedText>
-                      </TouchableOpacity>
-                    ))}
-                  </ThemedView>
-                ) : (
-                  <ThemedView>
-                    <TouchableOpacity onPress={() => selectCategory(null)} className="flex-row items-center mb-4 px-3 py-2 self-start rounded-lg" style={{ backgroundColor: loginCardBackground }}>
-                      <Ionicons name="swap-horizontal" size={20} color={tintColor} />
-                      <ThemedText style={{ color: tintColor, marginLeft: 4 }}>Cambia Categoria</ThemedText>
-                    </TouchableOpacity>
-    
-                    {/* Selettore sottocategoria (es. Appartamento, Loft, ...) */}
-                    {(() => {
-                      // Usa direttamente selectedMainCategoryInPanel (già 'residential'|'commercial'|'industrial'|'land')
-                      const stateKey = selectedMainCategoryInPanel as keyof typeof categoryStateToConfigMap | undefined;
-                      // Debug: log stato corrente per investigare perché le opzioni non compaiono
-                      // eslint-disable-next-line no-console
-                      console.log('[FilterPanel] selectedMainCategoryInPanel:', selectedMainCategoryInPanel, 'selectedCategoryConfigKey:', selectedCategoryConfigKey, 'resolved stateKey:', stateKey);
-                      if (!stateKey) return null;
-    
-                      const optionsMap: Record<string, string[]> = {
-                        residential: RESIDENTIAL_CATEGORIES as unknown as string[],
-                        commercial: COMMERCIAL_CATEGORIES as unknown as string[],
-                        industrial: COMMERCIAL_CATEGORIES as unknown as string[], // industrial maps to commercial set
-                        garage: GARAGE_CATEGORIES as unknown as string[],
-                        land: LAND_CATEGORIES as unknown as string[],
-                      };
-    
-                      const opts = optionsMap[stateKey] || [];
-                      // Debug: log opzioni trovate
-                      // eslint-disable-next-line no-console
-                      console.log('[FilterPanel] category options for', stateKey, opts);
-                      if (opts.length === 0) return null;
-    
-                      const currentValue = ((filters as any)[stateKey] || {}).category;
-    
-                      return (
-                        <ThemedView className="mb-4">
-                          <ThemedText className="text-sm mb-2" style={{ color: textColor }}>
-                            Tipo ({String(stateKey)})
-                          </ThemedText>
-                          <SegmentedControl
-                            options={opts.map(o => ({ label: String(o), value: o }))}
-                            value={currentValue}
-                            onChange={(v: any) => {
-                              // aggiorna la proprietà 'category' della categoria selezionata
-                              updateCategoryFilter(stateKey as any, { category: v });
-                            }}
-                          />
-                        </ThemedView>
-                      );
-                    })()}
-    
-                    {/* Render dinamico dei filtri per la categoria selezionata */}
-                    {filtersToRender.map((key: string) => {
-                      const def: FilterDefinition = (ALL_FILTERS as any)[key];
-                      if (!def) return null;
-                      // Per i controlli della categoria passiamo la chiave di stato direttamente
-                      const stateKey = selectedMainCategoryInPanel as keyof typeof categoryStateToConfigMap | undefined;
-                      return renderControl(def, stateKey);
-                    })}
-                  </ThemedView>
-                )}
-              </ScrollView>
-
-              <ThemedView className="px-4 pt-4 pb-8 border-t border-gray-200 dark:border-gray-700" style={{ backgroundColor: backgroundPrimary }}>
-                <TouchableOpacity
-                  onPress={() => {
-                    hidePanel();
-                    if (onApplyAndNavigate) onApplyAndNavigate();
-                  }}
-                  className="p-4 rounded-lg items-center flex-row justify-center"
-                  style={{ backgroundColor: buttonBackground }}
-                >
-                  <Ionicons name="search" size={20} color={buttonTextColor} style={{ marginRight: 8 }} />
-                  <ThemedText className="text-white font-semibold" style={{ color: buttonTextColor }}>Cerca</ThemedText>
+              <ThemedView className="flex-row items-center" style={{ backgroundColor: tabIconDefault }}>
+                <TouchableOpacity onPress={() => handleReset(true)} className="mr-4 py-2 px-3">
+                  <ThemedText style={{ color: tintColor }}>Reset</ThemedText>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={hidePanel} className="p-1">
+                  <Ionicons name="close" size={24} color={textColor} />
                 </TouchableOpacity>
               </ThemedView>
-            </Animated.View>
-          </GestureDetector>
+            </ThemedView>
+
+            <ScrollView className="flex-1 p-4">
+              <ThemedView className="mb-6">
+                {/* Filtri generali */}
+                <ThemedText className="text-lg font-semibold mb-4" style={{ color: textColor }}>Filtri Generali</ThemedText>
+                {renderControl(ALL_FILTERS.contract)}
+                {renderControl(ALL_FILTERS.priceRange)}
+                {renderControl(ALL_FILTERS.size)}
+                {renderControl(ALL_FILTERS.searchRadiusKm)}
+              </ThemedView>
+
+              {!selectedMainCategoryInPanel ? (
+                <ThemedView className="grid grid-cols-2 gap-4">
+                  {availableCategories.map((catKey) => (
+                    <TouchableOpacity
+                      key={catKey}
+                      onPress={() => {
+                        // mappiamo la chiave config uppercase al corrispondente stato (reverse map)
+                        const stateKey = Object.keys(categoryStateToConfigMap).find(k => categoryStateToConfigMap[k] === catKey);
+                        selectCategory(stateKey as any);
+                      }}
+                      className="p-4 rounded-lg"
+                      style={{ backgroundColor: loginCardBackground }}
+                    >
+                      <ThemedText className="font-medium" style={{ color: textColor }}>
+                        {catKey}
+                      </ThemedText>
+                    </TouchableOpacity>
+                  ))}
+                </ThemedView>
+              ) : (
+                <ThemedView>
+                  <TouchableOpacity onPress={() => selectCategory(null)} className="flex-row items-center mb-4 px-3 py-2 self-start rounded-lg" style={{ backgroundColor: loginCardBackground }}>
+                    <Ionicons name="swap-horizontal" size={20} color={tintColor} />
+                    <ThemedText style={{ color: tintColor, marginLeft: 4 }}>Cambia Categoria</ThemedText>
+                  </TouchableOpacity>
+  
+                  {/* Selettore sottocategoria (es. Appartamento, Loft, ...) */}
+                  {(() => {
+                    // Usa direttamente selectedMainCategoryInPanel (già 'residential'|'commercial'|'industrial'|'land')
+                    const stateKey = selectedMainCategoryInPanel as keyof typeof categoryStateToConfigMap | undefined;
+                    // Debug: log stato corrente per investigare perché le opzioni non compaiono
+                    // eslint-disable-next-line no-console
+                    console.log('[FilterPanel] selectedMainCategoryInPanel:', selectedMainCategoryInPanel, 'selectedCategoryConfigKey:', selectedCategoryConfigKey, 'resolved stateKey:', stateKey);
+                    if (!stateKey) return null;
+  
+                    const optionsMap: Record<string, string[]> = {
+                      residential: RESIDENTIAL_CATEGORIES as unknown as string[],
+                      commercial: COMMERCIAL_CATEGORIES as unknown as string[],
+                      industrial: COMMERCIAL_CATEGORIES as unknown as string[], // industrial maps to commercial set
+                      garage: GARAGE_CATEGORIES as unknown as string[],
+                      land: LAND_CATEGORIES as unknown as string[],
+                    };
+  
+                    const opts = optionsMap[stateKey] || [];
+                    // Debug: log opzioni trovate
+                    // eslint-disable-next-line no-console
+                    console.log('[FilterPanel] category options for', stateKey, opts);
+                    if (opts.length === 0) return null;
+  
+                    const currentValue = ((filters as any)[stateKey] || {}).category;
+  
+                    return (
+                      <ThemedView className="mb-4">
+                        <ThemedText className="text-sm mb-2" style={{ color: textColor }}>
+                          Tipo ({String(stateKey)})
+                        </ThemedText>
+                        <SegmentedControl
+                          options={opts.map(o => ({ label: String(o), value: o }))}
+                          value={currentValue}
+                          onChange={(v: any) => {
+                            // aggiorna la proprietà 'category' della categoria selezionata
+                            updateCategoryFilter(stateKey as any, { category: v });
+                          }}
+                        />
+                      </ThemedView>
+                    );
+                  })()}
+  
+                  {/* Render dinamico dei filtri per la categoria selezionata */}
+                  {filtersToRender.map((key: string) => {
+                    const def: FilterDefinition = (ALL_FILTERS as any)[key];
+                    if (!def) return null;
+                    // Per i controlli della categoria passiamo la chiave di stato direttamente
+                    const stateKey = selectedMainCategoryInPanel as keyof typeof categoryStateToConfigMap | undefined;
+                    return renderControl(def, stateKey);
+                  })}
+                </ThemedView>
+              )}
+            </ScrollView>
+
+            <ThemedView className="px-4 pt-4 pb-8 border-t border-gray-200 dark:border-gray-700" style={{ backgroundColor: backgroundPrimary }}>
+              <TouchableOpacity
+                onPress={() => {
+                  hidePanel();
+                  if (onApplyAndNavigate) onApplyAndNavigate();
+                }}
+                className="p-4 rounded-lg items-center flex-row justify-center"
+                style={{ backgroundColor: buttonBackground }}
+              >
+                <Ionicons name="search" size={20} color={buttonTextColor} style={{ marginRight: 8 }} />
+                <ThemedText className="text-white font-semibold" style={{ color: buttonTextColor }}>Cerca</ThemedText>
+              </TouchableOpacity>
+            </ThemedView>
+          </Animated.View>
         </Animated.View>
       </GestureHandlerRootView>
     </Modal>
