@@ -5,12 +5,10 @@ import UserCreationForm from '@/components/UserCreationForm';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { TabHeader } from '@/components/TabHeader';
-// import { useUsersViewModel } from '@/src/hooks/useUsersViewModel';
 
 export default function AddAgentScreen() {
   const { t } = useTranslation();
   const [error, setError] = useState<string>('');
-  // const { createAgent, loading, error: viewModelError } = useUsersViewModel();
   const loading = false;
   const viewModelError = null;
 

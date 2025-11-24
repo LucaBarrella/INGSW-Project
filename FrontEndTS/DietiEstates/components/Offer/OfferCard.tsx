@@ -9,7 +9,6 @@ import { ThemedView } from '@/components/ThemedView';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
 
-// Definisce il tipo Offer locale (era importato da __mocks__/offersMockData)
 export interface Offer {
   id: string;
   address: string;

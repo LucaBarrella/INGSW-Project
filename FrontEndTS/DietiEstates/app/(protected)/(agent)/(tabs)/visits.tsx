@@ -4,6 +4,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { VisitRequestCard } from "@/components/Agent/VisitManagement/VisitRequestCard";
 import { VisitRequest } from "@/components/Agent/VisitManagement/types";
+import { useTranslation } from "react-i18next";
 
 const initialVisitRequests: VisitRequest[] = [
   {
@@ -47,6 +48,8 @@ export default function Visits() {
   const [visitRequests, setVisitRequests] =
     useState<VisitRequest[]>(initialVisitRequests);
 
+  const { t } = useTranslation();
+
   const handleVisitRequest = (
     requestId: number,
     status: "accepted" | "rejected" | "delete"
@@ -70,7 +73,7 @@ export default function Visits() {
           <ScrollView className="p-5 flex-grow">
             <ThemedView className="mb-5">
               <ThemedText type="title" className="text-2xl mb-4 leading-none">
-                Richieste di visita
+                {t('visit_requests')}
               </ThemedText>
               <ThemedView className="flex flex-col gap-4">
                 {visitRequests.map((request) => (
