@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, FlatList, RefreshControl, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { PropertyWithOffers, OfferStatus } from '@/src/dto/offers';
+import { PropertyWithOffers } from '@/src/dto/offers';
 import PropertyOffersCard from './PropertyOffersCard';
 
 interface OffersDashboardScreenProps {

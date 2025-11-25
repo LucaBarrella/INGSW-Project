@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import type { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
+import HistoryStorageService from '@/src/services (old)/history.service';
 
 const PAGE_LIMIT = 10;
 const MAX_IN_MEMORY = 50;
@@ -36,11 +37,7 @@ export default function useInfiniteHistory(): UseInfiniteHistoryState {
     setError(null);
     setCurrentPage(1);
     try {
-      // TODO: Implementare la nuova logica per il recupero della cronologia.
-      // Per ora, simulo un array vuoto o ID di esempio.
-      console.log('[useInfiniteHistory] loadInitialHistory: Simulazione di recupero ID cronologia.');
-      await new Promise(resolve => setTimeout(resolve, 200)); // Simula un ritardo di rete
-      const ids: number[] = []; // Array vuoto per simulare nessun elemento
+      const ids: number[] = await HistoryStorageService.getHistory();
       if (!ids || ids.length === 0) {
         setProperties([]);
         setHasMore(false);
@@ -65,9 +62,7 @@ export default function useInfiniteHistory(): UseInfiniteHistoryState {
       const nextPage = currentPage + 1;
       // TODO: Implementare la nuova logica per il recupero della cronologia.
       // Per ora, simulo un array vuoto o ID di esempio.
-      console.log('[useInfiniteHistory] loadMoreHistory: Simulazione di recupero ID cronologia per pagina', nextPage);
-      await new Promise(resolve => setTimeout(resolve, 200)); // Simula un ritardo di rete
-      const ids: number[] = []; // Array vuoto per simulare nessun elemento
+      const ids: number[] = await HistoryStorageService.getHistory(nextPage, PAGE_LIMIT);
       if (!ids || ids.length === 0) {
         setHasMore(false);
         return;

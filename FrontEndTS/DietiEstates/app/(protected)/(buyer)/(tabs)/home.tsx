@@ -44,7 +44,6 @@ export default function HomeTab() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Hook per la cronologia infinite (PLAN.md)
   const {
     properties,
     isLoading: historyIsLoading,
@@ -138,7 +137,6 @@ export default function HomeTab() {
               {historyError}
             </ThemedText>
           ) : properties && properties.length === 0 ? (
-            // Quando la cronologia è vuota, renderizziamo il placeholder fuori dal FlatList orizzontale
             <View style={{ alignItems: 'center' }}>
               <HistoryPlaceholder />
             </View>
