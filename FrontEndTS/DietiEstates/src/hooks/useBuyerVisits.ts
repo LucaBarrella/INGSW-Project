@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { VisitService } from '../services/VisitService';
 import { VisitRepository } from '../repositories/VisitRepository';
-import { Visit } from '../entity/Visit'; // Assuming Visit entity has scheduledDate as Date
 import { VisitDTO } from '../dto/VisitDTO';
 import { PagedVisitsDTO } from '../dto/response/PagedVisitsDTO';
 

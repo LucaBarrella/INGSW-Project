@@ -1,7 +1,6 @@
 export interface VisitRequest {
   id: number;
-  clientName: string;
+  address: string;
   date: string;
-  status: "pending" | "accepted" | "rejected" | "deleted";
-  propertyId: string;
+  status: "PENDING" | "ACCEPTED" | "REJECTED" | "DELETED";
 }

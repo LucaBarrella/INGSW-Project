@@ -12,4 +12,8 @@ export class VisitService implements IVisitService {
   async getVisitsByBuyer(): Promise<PagedVisitsDTO> {
     return this.visitRepository.getVisitsByBuyer();
   }
+
+  async getVisitsOfCurrentAgent(): Promise<PagedVisitsDTO> {
+    return this.visitRepository.getVisitsOfCurrentAgent();
+  }
 }

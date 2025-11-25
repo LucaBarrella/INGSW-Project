@@ -64,7 +64,7 @@ export const VisitRequestCard: React.FC<VisitRequestCardProps> = ({
       <ThemedView className="flex flex-col gap-4 justify-between items-center p-4 rounded-lg bg-white shadow-md">
         <ThemedView className="w-full">
           <ThemedText className="text-lg font-semibold mb-2">
-            {request.clientName}
+            {request.address}
           </ThemedText>
           <ThemedText className="text-gray-600 mb-1">
             Requested date: {request.date}
@@ -84,7 +84,7 @@ export const VisitRequestCard: React.FC<VisitRequestCardProps> = ({
               style={{ backgroundColor: statusColors.accepted }}
               borderRadius={10}
               className="px-8 py-4 rounded mr-auto"
-              accessibilityLabel={`Accept visit request from ${request.clientName}`}
+              accessibilityLabel={`Accept visit request from ${request.address}`}
             />
             <ThemedButton
               onPress={onReject}
@@ -92,7 +92,7 @@ export const VisitRequestCard: React.FC<VisitRequestCardProps> = ({
               style={{ backgroundColor: statusColors.rejected }}
               borderRadius={10}
               className="px-8 py-4 ml-auto"
-              accessibilityLabel={`Reject visit request from ${request.clientName}`}
+              accessibilityLabel={`Reject visit request from ${request.address}`}
             />
           </ThemedView>
         )}
@@ -109,7 +109,7 @@ export const VisitRequestCard: React.FC<VisitRequestCardProps> = ({
                 paddingVertical: 16,
                 alignItems: "center",
               }}
-              accessibilityLabel={`Delete visit request from ${request.clientName}`}
+              accessibilityLabel={`Delete visit request from ${request.address}`}
             >
               <ThemedText style={{ color: "white", fontWeight: "bold" }}>
                 {deleteCountdown !== null ? `Deleting in ${deleteCountdown}s` : "Delete"}

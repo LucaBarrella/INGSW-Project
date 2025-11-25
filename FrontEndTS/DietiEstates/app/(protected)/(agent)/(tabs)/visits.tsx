@@ -1,60 +1,47 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, SafeAreaView } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { VisitRequestCard } from "@/components/Agent/VisitManagement/VisitRequestCard";
 import { VisitRequest } from "@/components/Agent/VisitManagement/types";
 import { useTranslation } from "react-i18next";
-
-const initialVisitRequests: VisitRequest[] = [
-  {
-    id: 1,
-    clientName: "Marco Rossi",
-    date: "2024-01-15 10:00",
-    status: "pending",
-    propertyId: "prop123",
-  },
-  {
-    id: 2,
-    clientName: "Giulia Bianchi",
-    date: "2024-01-16 15:30",
-    status: "pending",
-    propertyId: "prop456",
-  },
-  {
-    id: 3,
-    clientName: "Alessandro Verdi",
-    date: "2024-01-17 11:00",
-    status: "pending",
-    propertyId: "prop789",
-  },
-  {
-    id: 4,
-    clientName: "Sofia Romano",
-    date: "2024-01-18 14:00",
-    status: "pending",
-    propertyId: "prop321",
-  },
-  {
-    id: 5,
-    clientName: "Luca Ferrari",
-    date: "2024-01-19 16:45",
-    status: "pending",
-    propertyId: "prop654",
-  },
-];
+import { useVisits } from "@/src/hooks/useVisits";
 
 export default function Visits() {
-  const [visitRequests, setVisitRequests] =
-    useState<VisitRequest[]>(initialVisitRequests);
-
+  const [visitRequests, setVisitRequests] = useState<VisitRequest[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const { getVisitsOfCurrentAgent } = useVisits();
   const { t } = useTranslation();
+  
+  useEffect(() => {
+    const fetchVisits = async () => {
+      try {
+        const visits = await getVisitsOfCurrentAgent();
+        if (visits) {
+          const formattedRequests = visits.map((visit, index) => ({
+            id: index + 1,
+            address: visit.address.city+", "+visit.address.street+" "+visit.address.streetNumber,
+            date: new Date(visit.visit.startTime * 1000).toLocaleString(),
+            status: visit.visit.status
+          }));
+          setVisitRequests(formattedRequests);
+        }
+      } catch (error) {
+        console.error("Error fetching visits:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    fetchVisits();
+  }, []); // Empty dependency array = run once on mount
+
+  
   const handleVisitRequest = (
     requestId: number,
-    status: "accepted" | "rejected" | "delete"
+    status: "ACCEPTED" | "REJECTED" | "DELETED" | "PENDING"
   ) => {
-    if (status === "delete") {
+    if (status === "DELETED") {
       setVisitRequests((prevRequests) =>
         prevRequests.filter((request) => request.id !== requestId)
       );
@@ -69,27 +56,30 @@ export default function Visits() {
 
   return (
     <ThemedView className="flex-1 bg-gray-50">
-        <SafeAreaView>
-          <ScrollView className="p-5 flex-grow">
-            <ThemedView className="mb-5">
-              <ThemedText type="title" className="text-2xl mb-4 leading-none">
-                {t('visit_requests')}
-              </ThemedText>
-              <ThemedView className="flex flex-col gap-4">
-                {visitRequests.map((request) => (
-                  <VisitRequestCard
-                    key={request.id}
-                    request={request}
-                    onAccept={() => handleVisitRequest(request.id, "accepted")}
-                    onReject={() => handleVisitRequest(request.id, "rejected")}
-                    onDelete={() => handleVisitRequest(request.id, "delete")}
-                  />
-                ))}
-                  <SafeAreaView className="mb-16" />
-              </ThemedView>
+      <SafeAreaView>
+        <ScrollView className="p-5 flex-grow">
+          <ThemedView className="mb-5">
+            <ThemedText type="title" className="text-2xl mb-4 leading-none">
+              {t('visit_requests')}
+            </ThemedText>
+            
+            {loading && (<ThemedText>{t('loading')}</ThemedText>)}
+
+            <ThemedView className="flex flex-col gap-4">
+              {visitRequests.map((request) => (
+                <VisitRequestCard
+                  key={request.id}
+                  request={request}
+                  onAccept={() => handleVisitRequest(request.id, "ACCEPTED")}
+                  onReject={() => handleVisitRequest(request.id, "REJECTED")}
+                  onDelete={() => handleVisitRequest(request.id, "DELETED")}
+                />
+              ))}
+              <SafeAreaView className="mb-16" />
             </ThemedView>
-          </ScrollView>
-        </SafeAreaView>
-      </ThemedView>
+          </ThemedView>
+        </ScrollView>
+      </SafeAreaView>
+    </ThemedView>
   );
 }

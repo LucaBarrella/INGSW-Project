@@ -8,7 +8,7 @@ const visitEndpoints = {
   // Esempi di endpoint per le visite, da adattare
   scheduleVisit: '/visits/schedule',
   getVisitsByProperty: '/properties/{propertyId}/visits',
-  getVisitsByAgent: '/agent/visits',
+  getVisitsByAgent: '/visits/agent/me',
   getVisitsByBuyer: '/visits/me/',
   getVisitById: '/visits/{visitId}',
   updateVisit: '/visits/{visitId}',
@@ -44,9 +44,9 @@ export const getVisitsByProperty = async (propertyId: string | number): Promise<
  * @param agentId - L'ID dell'agente (opzionale, se non fornito usa l'agente loggato).
  * @returns La risposta dell'API con la lista delle visite.
  */
-export const getVisitsByAgent = async (agentId?: string): Promise<any[]> => {
-  console.log('[VisitApiService] getVisitsByAgent:', agentId);
-  const url = agentId ? `${visitEndpoints.getVisitsByAgent}?agentId=${agentId}` : visitEndpoints.getVisitsByAgent;
+export const getVisitsOfCurrentAgent = async (): Promise<PagedVisitsDTO> => {
+  console.log('[VisitApiService] getVisitsOfCurrentAgent:');
+  const url = visitEndpoints.getVisitsByAgent;
   const response = await httpClient.get(url);
   return response.data;
 };
@@ -109,7 +109,7 @@ export const confirmVisit = async (visitId: string | number): Promise<{ success:
 export default {
   scheduleVisit,
   getVisitsByProperty,
-  getVisitsByAgent,
+  getVisitsOfCurrentAgent,
   getVisitsByBuyer,
   getVisitById,
   updateVisit,

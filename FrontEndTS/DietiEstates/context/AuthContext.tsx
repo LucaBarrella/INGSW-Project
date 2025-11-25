@@ -66,10 +66,7 @@ export const AuthProvider = ({ children, authService }: AuthProviderProps) => {
             // Reindirizza alla dashboard corretta in base al ruolo attivo
             const payloadBase64 = token.split('.')[1];
             const payload = JSON.parse(atob(payloadBase64));
-            if (payload.roles.length > 1) {
-              router.replace('/(auth)/select-role');
-              return;
-            }
+            
             if (payload.roles.includes('ROLE_AGENT')) {
               router.replace('/(protected)/(agent)/(tabs)/home');
             } else {

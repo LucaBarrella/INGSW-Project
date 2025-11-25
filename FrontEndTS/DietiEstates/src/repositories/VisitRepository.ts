@@ -6,4 +6,8 @@ export class VisitRepository implements IVisitRepository {
   async getVisitsByBuyer(): Promise<PagedVisitsDTO> {
     return VisitApiService.getVisitsByBuyer();
   }
+
+  async getVisitsOfCurrentAgent(): Promise<PagedVisitsDTO> {
+    return VisitApiService.getVisitsOfCurrentAgent();
+  }
 }

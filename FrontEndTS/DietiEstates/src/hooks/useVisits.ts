@@ -9,6 +9,7 @@ interface UseVisitsHook {
   loading: boolean;
   error: string | null;
   fetchVisitsByBuyer: (buyerId?: string) => Promise<void>;
+  getVisitsOfCurrentAgent: () => Promise<VisitDTO[]>;
   scheduleVisit: (visitData: Partial<VisitDTO>) => Promise<{ success: boolean; message?: string; id?: string | number }>;
   updateVisit: (visitId: string | number, visitData: Partial<VisitDTO>) => Promise<{ success: boolean; message?: string }>;
   cancelVisit: (visitId: string | number) => Promise<{ success: boolean; message?: string }>;
@@ -118,6 +119,20 @@ export const useVisits = (initialBuyerId?: string): UseVisitsHook => {
     }
   };
 
+  const getVisitsOfCurrentAgent = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = (await visitService.getVisitsOfCurrentAgent()).content;
+      return data;
+    } catch (err: any) {
+      setError(err.message || 'Failed to fetch visits for agent');
+    } finally {
+      setLoading(false);
+    }
+    return [];
+  };
+
   useEffect(() => {
     if (initialBuyerId) {
       fetchVisitsByBuyer(initialBuyerId);
@@ -128,6 +143,7 @@ export const useVisits = (initialBuyerId?: string): UseVisitsHook => {
     visits,
     loading,
     error,
+    getVisitsOfCurrentAgent,
     fetchVisitsByBuyer,
     scheduleVisit,
     updateVisit,
