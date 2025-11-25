@@ -16,4 +16,8 @@ export class VisitService implements IVisitService {
   async getVisitsOfCurrentAgent(): Promise<PagedVisitsDTO> {
     return this.visitRepository.getVisitsOfCurrentAgent();
   }
+
+  async updateVisitStatus(visitId: string | number, status: "CONFIRMED" | "REJECTED" | "CANCELLED" | "PENDING"): Promise<{ success: boolean; message?: string }> {
+    return this.visitRepository.updateVisitStatus(visitId, status);
+  }
 }

@@ -4,7 +4,7 @@ export interface VisitDTO {
     createdAt: [number, number, number, number, number];
     startTime: number;
     endTime: number;
-    status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'DELETED';
+    status: 'PENDING' | 'CONFIRMED' | 'REJECTED' | 'CANCELLED';
   },
   propertyType: 'RESIDENTIAL' | 'COMMERCIAL' | 'LAND' | 'INDUSTRIAL';
   address: {

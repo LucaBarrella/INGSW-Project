@@ -10,4 +10,8 @@ export class VisitRepository implements IVisitRepository {
   async getVisitsOfCurrentAgent(): Promise<PagedVisitsDTO> {
     return VisitApiService.getVisitsOfCurrentAgent();
   }
+
+  async updateVisitStatus(visitId: string | number, status: "CONFIRMED" | "REJECTED" | "CANCELLED" | "PENDING"): Promise<{ success: boolean; message?: string }> {
+    return VisitApiService.updateVisitStatus(visitId, status);
+  }
 }

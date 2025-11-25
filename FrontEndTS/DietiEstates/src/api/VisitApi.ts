@@ -14,6 +14,7 @@ const visitEndpoints = {
   updateVisit: '/visits/{visitId}',
   cancelVisit: '/visits/{visitId}/cancel',
   confirmVisit: '/visits/{visitId}/confirm',
+  updateVisitStatus: '/visits/{visitId}/status',
 } as const;
 
 /**
@@ -82,6 +83,12 @@ export const updateVisit = async (visitId: string | number, visitData: Partial<V
   return response.data;
 };
 
+export const updateVisitStatus = async (visitId: string | number, status: "CONFIRMED" | "REJECTED" | "CANCELLED" | "PENDING"): Promise<{ success: boolean; message?: string }> => {
+  const url = visitEndpoints.updateVisitStatus.replace('{visitId}', visitId.toString());
+  const response = await httpClient.put(url, { status });
+  return response.data;
+};
+
 /**
  * Annulla una visita pianificata.
  * @param visitId - L'ID della visita da annullare.
@@ -113,6 +120,7 @@ export default {
   getVisitsByBuyer,
   getVisitById,
   updateVisit,
+  updateVisitStatus,
   cancelVisit,
   confirmVisit,
 };

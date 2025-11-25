@@ -10,16 +10,15 @@ import { useVisits } from "@/src/hooks/useVisits";
 export default function Visits() {
   const [visitRequests, setVisitRequests] = useState<VisitRequest[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const { getVisitsOfCurrentAgent } = useVisits();
+  const { getVisitsOfCurrentAgent, updateVisitStatus } = useVisits();
   const { t } = useTranslation();
   
-  useEffect(() => {
-    const fetchVisits = async () => {
+  const fetchVisits = async () => {
       try {
         const visits = await getVisitsOfCurrentAgent();
         if (visits) {
-          const formattedRequests = visits.map((visit, index) => ({
-            id: index + 1,
+          const formattedRequests = visits.map((visit) => ({
+            id: visit.visit.id,
             address: visit.address.city+", "+visit.address.street+" "+visit.address.streetNumber,
             date: new Date(visit.visit.startTime * 1000).toLocaleString(),
             status: visit.visit.status
@@ -33,25 +32,22 @@ export default function Visits() {
       }
     };
 
+  useEffect(() => {
     fetchVisits();
-  }, []); // Empty dependency array = run once on mount
+  }, []);
 
   
   const handleVisitRequest = (
-    requestId: number,
-    status: "ACCEPTED" | "REJECTED" | "DELETED" | "PENDING"
+    visitId: number,
+    status: "CONFIRMED" | "REJECTED" | "CANCELLED" | "PENDING"
   ) => {
-    if (status === "DELETED") {
-      setVisitRequests((prevRequests) =>
-        prevRequests.filter((request) => request.id !== requestId)
-      );
-    } else {
-      setVisitRequests((prevRequests) =>
-        prevRequests.map((request) =>
-          request.id === requestId ? { ...request, status } : request
-        )
-      );
-    }
+    updateVisitStatus(visitId, status).then((result) => {
+      if (result.success) {
+        fetchVisits();
+      } else {
+        console.error("Failed to update visit status:", result.message);
+      }
+    });
   };
 
   return (
@@ -70,9 +66,9 @@ export default function Visits() {
                 <VisitRequestCard
                   key={request.id}
                   request={request}
-                  onAccept={() => handleVisitRequest(request.id, "ACCEPTED")}
+                  onAccept={() => handleVisitRequest(request.id, "CONFIRMED")}
                   onReject={() => handleVisitRequest(request.id, "REJECTED")}
-                  onDelete={() => handleVisitRequest(request.id, "DELETED")}
+                  onDelete={() => handleVisitRequest(request.id, "CANCELLED")}
                 />
               ))}
               <SafeAreaView className="mb-16" />

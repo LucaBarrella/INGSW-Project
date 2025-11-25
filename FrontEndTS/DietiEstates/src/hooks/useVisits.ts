@@ -4,20 +4,7 @@ import { VisitService } from '@/src/services/VisitService';
 import { IVisitService } from '@/src/services/interfaces/IVisitService';
 import { VisitRepository } from '@/src/repositories/VisitRepository';
 
-interface UseVisitsHook {
-  visits: VisitDTO[];
-  loading: boolean;
-  error: string | null;
-  fetchVisitsByBuyer: (buyerId?: string) => Promise<void>;
-  getVisitsOfCurrentAgent: () => Promise<VisitDTO[]>;
-  scheduleVisit: (visitData: Partial<VisitDTO>) => Promise<{ success: boolean; message?: string; id?: string | number }>;
-  updateVisit: (visitId: string | number, visitData: Partial<VisitDTO>) => Promise<{ success: boolean; message?: string }>;
-  cancelVisit: (visitId: string | number) => Promise<{ success: boolean; message?: string }>;
-  confirmVisit: (visitId: string | number) => Promise<{ success: boolean; message?: string }>;
-  getVisitById: (visitId: string | number) => Promise<any>;
-}
-
-export const useVisits = (initialBuyerId?: string): UseVisitsHook => {
+export const useVisits = (initialBuyerId?: string) => {
   const [visits, setVisits] = useState<VisitDTO[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -54,11 +41,11 @@ export const useVisits = (initialBuyerId?: string): UseVisitsHook => {
     }
   };
 
-  const updateVisit = async (visitId: string | number, visitData: Partial<VisitDTO>) => {
+  const updateVisitStatus = async (visitId: string | number, status: "CONFIRMED" | "REJECTED" | "CANCELLED" | "PENDING") => {
     setLoading(true);
     setError(null);
     try {
-      const result = await visitService.updateVisit(visitId, visitData);
+      const result = await visitService.updateVisitStatus(visitId, status);
       if (initialBuyerId) {
         fetchVisitsByBuyer(initialBuyerId);
       }
@@ -146,7 +133,7 @@ export const useVisits = (initialBuyerId?: string): UseVisitsHook => {
     getVisitsOfCurrentAgent,
     fetchVisitsByBuyer,
     scheduleVisit,
-    updateVisit,
+    updateVisitStatus,
     cancelVisit,
     confirmVisit,
     getVisitById,

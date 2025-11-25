@@ -23,10 +23,10 @@ export const VisitRequestCard: React.FC<VisitRequestCardProps> = ({
   
   // Pre-compute all theme colors
   const statusColors = {
-    pending: useThemeColor({}, 'visitStatusPending'),
-    accepted: useThemeColor({}, 'visitStatusAccepted'),
-    rejected: useThemeColor({}, 'visitStatusRejected'),
-    deleted: useThemeColor({}, 'visitStatusDeleted')
+    PENDING: useThemeColor({}, 'visitStatusPending'),
+    CONFIRMED: useThemeColor({}, 'visitStatusAccepted'),
+    REJECTED: useThemeColor({}, 'visitStatusRejected'),
+    CANCELLED: useThemeColor({}, 'visitStatusDeleted')
   };
 
   const getStatusColor = (status: VisitRequest["status"]) => {
@@ -76,12 +76,12 @@ export const VisitRequestCard: React.FC<VisitRequestCardProps> = ({
           </ThemedText>
         </ThemedView>
         
-        {request.status === "pending" && (
+        {request.status === "PENDING" && (
           <ThemedView className="flex-row justify-between items-center w-full mt-2">
             <ThemedButton
               onPress={onAccept}
               title="Accept"
-              style={{ backgroundColor: statusColors.accepted }}
+              style={{ backgroundColor: statusColors.CONFIRMED }}
               borderRadius={10}
               className="px-8 py-4 rounded mr-auto"
               accessibilityLabel={`Accept visit request from ${request.address}`}
@@ -89,7 +89,7 @@ export const VisitRequestCard: React.FC<VisitRequestCardProps> = ({
             <ThemedButton
               onPress={onReject}
               title="Reject"
-              style={{ backgroundColor: statusColors.rejected }}
+              style={{ backgroundColor: statusColors.REJECTED }}
               borderRadius={10}
               className="px-8 py-4 ml-auto"
               accessibilityLabel={`Reject visit request from ${request.address}`}
@@ -97,13 +97,13 @@ export const VisitRequestCard: React.FC<VisitRequestCardProps> = ({
           </ThemedView>
         )}
         
-        {request.status !== "pending" && onDelete && (
+        {request.status !== "PENDING" && onDelete && (
           <ThemedView className="w-full mt-2">
             <TouchableOpacity
               onPressIn={handleDeletePressIn}
               onPressOut={handleDeletePressOut}
               style={{
-                backgroundColor: statusColors.deleted,
+                backgroundColor: statusColors.CANCELLED,
                 borderRadius: 10,
                 paddingHorizontal: 32,
                 paddingVertical: 16,
