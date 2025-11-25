@@ -1,7 +1,7 @@
 import { useCallback } from "react"
 import { ManagerService } from "@/src/services/ManagerService"
 import { SignupRequestAgent } from "../dto/request/SignupRequestAgent.dto";
-import { ChangePasswordDTO } from "../dto/request/ChangePassword.dto";
+import { ChangePasswordDTOWithConfirm } from "../dto/request/ChangePasswordWithConfirm.dto";
 
 export const useManagerHook = (managerService : ManagerService) => {
 
@@ -61,7 +61,7 @@ export const useManagerHook = (managerService : ManagerService) => {
         }
     }, [managerService]);
 
-    const handleChangePassword = useCallback(async (data: ChangePasswordDTO, setError: (error: string) => void) => {
+    const handleChangePassword = useCallback(async (data: ChangePasswordDTOWithConfirm, setError: (error: string) => void) => {
         try {
             const response = await managerService.changePassword(data);
             if (response.success !== true) {

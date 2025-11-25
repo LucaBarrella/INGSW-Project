@@ -9,7 +9,7 @@ import { ManagerRepository } from '@/src/repositories/ManagerRepository';
 import { ManagerService } from '@/src/services/ManagerService';
 import { ThemedText } from '@/components/ThemedText';
 import { router } from 'expo-router';
-import { ChangePasswordDTO } from '@/src/dto/request/ChangePassword.dto';
+import { ChangePasswordDTOWithConfirm } from '@/src/dto/request/ChangePasswordWithConfirm.dto';
 
 export default function ChangePasswordScreen() {
   const { t } = useTranslation();
@@ -17,7 +17,7 @@ export default function ChangePasswordScreen() {
 
   const { handleChangePassword } = useManagerHook(new ManagerService(new ManagerRepository()));
 
-  const handle = async (data: ChangePasswordDTO) : Promise<boolean> => {
+  const handle = async (data: ChangePasswordDTOWithConfirm) : Promise<boolean> => {
     try {
       const response = await handleChangePassword(data, setError);
       if (response) {

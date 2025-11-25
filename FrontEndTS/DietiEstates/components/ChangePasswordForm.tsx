@@ -6,13 +6,13 @@ import ThemedButton from './ThemedButton';
 import { ConfirmationDialog } from './ConfirmationDialog';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { useTranslation } from 'react-i18next';
-import { ChangePasswordDTO } from '@/src/dto/request/ChangePassword.dto';
+import { ChangePasswordDTOWithConfirm } from '@/src/dto/request/ChangePasswordWithConfirm.dto';
 
 export type ChangePasswordFormProps = ViewProps & {
   lightColor?: string;
   darkColor?: string;
   userType: 'admin' | 'agent' | 'buyer';
-  onSubmit: (data: ChangePasswordDTO) => Promise<boolean>;
+  onSubmit: (data: ChangePasswordDTOWithConfirm) => Promise<boolean>;
 };
 
 const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
@@ -65,6 +65,7 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
         email: currentEmail,
         oldPassword: currentPassword,
         newPassword: newPassword,
+        confirmNewPassword: confirmPassword,
       });
       
       if (!success) {

@@ -1,6 +1,7 @@
 import { IManagerRepository } from '@/src/repositories/interfaces/IManagerRepository';
 import { IManagerService } from './interfaces/IManagerService';
-import { ChangePasswordDTO } from '../dto/request/ChangePassword.dto';
+import { ChangePasswordDTOWithConfirm } from '../dto/request/ChangePasswordWithConfirm.dto';
+import { t } from 'i18next';
 
 export class ManagerService implements IManagerService {
     private managerRepository: IManagerRepository;
@@ -16,7 +17,10 @@ export class ManagerService implements IManagerService {
         return await this.managerRepository.createManager(managerData);
     }
 
-    async changePassword(data: ChangePasswordDTO): Promise<{ success: boolean; message?: string }> {
+    async changePassword(data: ChangePasswordDTOWithConfirm): Promise<{ success: boolean; message?: string }> {
+        if (data.newPassword !== data.confirmNewPassword) {
+            return { success: false, message:t('forms.errors.passwordsDontMatch') };
+        }
         return await this.managerRepository.changePassword(data);
     }
 }
