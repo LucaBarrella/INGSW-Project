@@ -46,6 +46,22 @@
     "backButton": "Indietro"
   },
 
+  "auth": {
+    "screens": {
+      "login": {
+        "title": "Accedi",
+        "subtitle": "Benvenuto — accedi per continuare",
+        "orContinueWith": "o continua con",
+        "noAccount": "Non hai un account? ",
+        "register": "Registrati"
+      },
+      "signup": {
+        "title": "Registrati",
+        "subtitle": "Crea un account per iniziare"
+      }
+    }
+  },
+  
   "admin": {
     "welcome": "Benvenuto nell'Area Amministratore",
     "changePassword": "Cambia Password",

@@ -15,7 +15,7 @@ interface AddUserProps {
     addingType: 'agent' | 'admin';
 }
 
-export const AddUser: React.FC<AddUserProps> = ({ addingType }) => {
+const AddUser: React.FC<AddUserProps> = ({ addingType }) => {
   const { t } = useTranslation();
   const [error, setError] = useState<string>('');
   const { handleCreateAdmin, handleCreateAgent } = useManagerHook(new ManagerService(new ManagerRepository()));
@@ -70,3 +70,5 @@ export const AddUser: React.FC<AddUserProps> = ({ addingType }) => {
     </ThemedView>
   );
 }
+
+export default AddUser;

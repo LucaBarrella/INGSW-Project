@@ -9,6 +9,7 @@ import { Provider } from '@/src/dto/Provider';
 import ThemedButton from './ThemedButton';
 import { LabelInput } from './LabelInput';
 import { useGoogleAuth } from '@/src/hooks/useGoogleAuth';
+import { t } from 'i18next';
 
 export type LoginFormProps = ViewProps & {
   lightColor?: string;
@@ -47,10 +48,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ lightColor, darkColor, ...props }
   return (
     <ThemedView className="transform scale-90 md:scale-100 max-w-md p-8 rounded-2xl w-10/12 shadow-lg mt-[12%] mb-[10%]" style={{ backgroundColor: cardBackground }} {...props}>
       <ThemedText className="py-5 text-center" style={{ fontSize: 36, color: labelColor }}>
-        Accedi
+        {t('auth.screens.login.title')}
       </ThemedText>
       <ThemedText className="text-lg mb-6 text-center" style={{ color: labelColor }}>
-        Benvenuto — accedi per continuare
+        {t('auth.screens.login.subtitle')}
       </ThemedText>
 
       {error && (
@@ -100,15 +101,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ lightColor, darkColor, ...props }
 
       {/* Pulsanti social sempre visibili (unificazione accesso) */}
       <>
-        <ThemedText className="text-base mt-3 mb-3 text-center" style={{ color: labelColor }}>o continua con:</ThemedText>
+        <ThemedText className="text-base mt-3 mb-3 text-center" style={{ color: labelColor }}>{t('auth.screens.login.orContinueWith')}</ThemedText>
         <View className="items-center mb-3">
           <SocialButton provider={Provider.Google} onPress={() => promptAsync()} lightColor='#FFFFFF' darkColor='#FFFFFF' />
         </View>
         <View className="flex-row justify-center mt-3">
-          <ThemedText style={{ color: labelColor }}>Non hai un account? </ThemedText>
+          <ThemedText style={{ color: labelColor }}>{t('auth.screens.login.noAccount')}</ThemedText>
           <TouchableOpacity onPress={navigateToRegister}>
             <ThemedText className="text-blue-500 underline font-bold" style={{ color: labelColor }}>
-              Registrati
+              {t('auth.screens.login.register')}
             </ThemedText>
           </TouchableOpacity>
         </View>

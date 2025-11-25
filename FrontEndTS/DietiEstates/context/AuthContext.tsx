@@ -5,6 +5,8 @@ import { User } from '../src/entity/User';
 import { useAuthHook, ValidationErrors } from '../src/hooks/useAuthHook';
 import { IAuthService } from '../src/services/interfaces/IAuthService';
 import { SignupRequestDTO } from '../src/dto/request/SignupRequest.dto';
+import { LoginRequestDTO } from '@/src/dto/request/LoginRequest.dto';
+import { getToken } from '@/src/core/auth/TokenManager';
 
 interface AuthContextType {
   user: User | null;
@@ -12,7 +14,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  login: (credentials: any) => Promise<boolean>;
+  login: (credentials: LoginRequestDTO) => Promise<boolean>;
   logout: () => Promise<void>;
   register: (userData: SignupRequestDTO) => Promise<boolean>;
   hasCompletedOnboarding: boolean | null;
@@ -59,9 +61,18 @@ export const AuthProvider = ({ children, authService }: AuthProviderProps) => {
       }
     } else if (isAuthenticated) {
       if (!inProtectedGroup) {
-        // Logica di reindirizzamento specifica per ruolo (se necessaria)
-        // Esempio: const role = user?.roles?.[0];
-        router.replace('/(protected)/(buyer)/(tabs)/home');
+        getToken().then(token => {
+          if (token) {
+            // Reindirizza alla dashboard corretta in base al ruolo attivo
+            const payloadBase64 = token.split('.')[1];
+            const payload = JSON.parse(atob(payloadBase64));
+            if (payload.roles.includes('ROLE_AGENT')) {
+              router.replace('/(protected)/(agent)/(tabs)/home');
+            } else {
+              router.replace('/(protected)/(buyer)/(tabs)/home');
+            }
+          }
+        });
       }
     } else {
       if (!inAuthGroup) {
