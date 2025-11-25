@@ -73,7 +73,10 @@
       "addAgent": {
         "title": "Aggiungi Nuovo Agente",
         "subtitle": "Registra un nuovo agente immobiliare nella piattaforma",
-        "error": "Impossibile aggiungere l'agente"
+        "error": "Impossibile aggiungere l'agente",
+        "successTitle": "Operazione Riuscita",
+        "successMessageAgentCreation": "L'agente è stato creato con successo.",
+        "successMessageAdminCreation": "L'amministratore è stato creato con successo."
       }
     },
     "profile": {

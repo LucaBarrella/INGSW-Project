@@ -10,4 +10,8 @@ export class ManagerService implements IManagerService {
     async createAgent(agentData: any): Promise<{ success: boolean; message?: string; id?: string | number }> {
         return await this.managerRepository.createAgent(agentData);
     }
+
+    async createManager(managerData: any): Promise<{ success: boolean; message?: string; id?: string | number }> {
+        return await this.managerRepository.createManager(managerData);
+    }
 }

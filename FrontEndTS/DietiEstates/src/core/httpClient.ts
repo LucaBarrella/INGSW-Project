@@ -97,7 +97,7 @@ httpClient.interceptors.response.use(
       console.error('Errore configurazione richiesta Axios:', error.message);
     }
 
-    return Promise.reject(new ApiError(statusCode, error.message, userMessage));
+    return Promise.reject(ApiError.from(error, statusCode, userMessage));
   }
 );
 

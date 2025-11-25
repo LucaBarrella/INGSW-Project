@@ -34,7 +34,34 @@ export const useManagerHook = (managerService : ManagerService) => {
         }
     }, [managerService]);
 
+    const handleCreateAdmin = useCallback(async (data: SignupRequestAgent, setError: (error: string) => void) => {
+        if (data.name.trim() === "" || data.surname.trim() === "" || data.username.trim() === "" || data.email.trim() === "") {
+            setError("All fields are required");
+            return;
+        }
+        if (data.password.length < 8) {
+            setError("Password must be at least 8 characters long");
+            return;
+        }
+        if (data.password !== data.confirmPassword) {
+            setError("Passwords do not match");
+            return;
+        }
+        try {
+            const response = await managerService.createManager(data);
+            if (response.success !== true) {
+                setError(response.message || "Failed to create admin");
+                return;
+            }
+            return response;
+        } catch (error: any) {
+            setError(error.message || "An unexpected error occurred.");
+            throw error;
+        }
+    }, [managerService]);
+
     return {
         handleCreateAgent,
+        handleCreateAdmin,
     };
 }

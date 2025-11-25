@@ -127,14 +127,11 @@ export const useAuthHook = (authService: IAuthService) => {
 
     switch (user.roles[0]) {
       case 'ROLE_BUYER':
+      case 'ROLE_MANAGER':
         router.replace('/(protected)/(buyer)/(tabs)/home');
         break;
       case 'ROLE_AGENT':
         router.replace('/(protected)/(agent)/(tabs)/home');
-        break;
-      case 'ROLE_MANAGER':
-        console.log('Navigating to admin home');
-        router.replace('/(protected)/(admin)/(tabs)/profile');
         break;
       default:
         router.replace('/(auth)/select-role');
