@@ -168,6 +168,7 @@
       "passwordChanged": "Password modificata con successo"
     },
     "errors": {
+      "generic": "Ricontrolla tutti i campi e riprova.",
       "fillRequired": "Compila tutti i campi obbligatori",
       "invalidEmail": "Indirizzo email non valido",
       "agentRequiredFields": "Telefono e numero di licenza sono obbligatori per gli agenti",
@@ -176,7 +177,17 @@
       "unknownError": "Si è verificato un errore sconosciuto",
       "passwordsDontMatch": "Le password non coincidono",
       "passwordSame": "La nuova password deve essere diversa da quella attuale",
-      "passwordTooShort": "La password deve essere di almeno 8 caratteri"
+      "passwordTooShort": "La password deve essere di almeno 8 caratteri",
+      "invalid": {
+        "password": "La password deve contenere almeno 8 caratteri, di cui una lettera maiuscola, una minuscola, un numero e un carattere speciale",
+        "email": "Formato email non valido",
+        "phone": "Formato numero di telefono non valido",
+        "licenseNumber": "Formato numero di licenza non valido",
+        "firstName": "Il nome non sembra valido",
+        "lastName": "Il cognome non sembra valido",
+        "username": "Il nome utente non sembra valido",
+        "birthDate": "Data di nascita non valida"
+      }
     }
   }
 }

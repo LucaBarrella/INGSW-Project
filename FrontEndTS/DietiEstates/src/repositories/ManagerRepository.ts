@@ -2,8 +2,9 @@ import { SignupRequestAgent } from "../dto/request/SignupRequestAgent.dto";
 import { IManagerRepository } from "./interfaces/IManagerRepository";
 import { ManagerApi } from "../api/ManagerApi";
 import ApiError from "../core/errors/ApiError";
+import { t } from "i18next";
 
-export class managerRepository implements IManagerRepository {
+export class ManagerRepository implements IManagerRepository {
     private managerApi: ManagerApi;
 
     constructor() {
@@ -12,12 +13,15 @@ export class managerRepository implements IManagerRepository {
 
     handleError(error: any): { success: boolean; message?: string } {
         const err = error as ApiError | any;
-        const details = err?.details ?? err?.response?.data;
-        const message =
-            typeof details === 'string'
-                ? details
-                : details?.message ?? err?.message ?? 'Failed to create agent';
-
+        const fields : string[] =  err.details.fields;
+        let message = "";
+        for (const field of fields) {
+            message += `${t(`forms.errors.invalid.${field}`)}\n`;
+        }
+        if (!message) {
+            message = err.response?.data?.message || t('forms.errors.generic');
+        }
+        
         return { success: false, message };
     }
 

@@ -7,7 +7,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { TabHeader } from '@/components/TabHeader';
 import { ManagerService } from '@/src/services/ManagerService';
-import { managerRepository } from '@/src/repositories/ManagerRepository';
+import { ManagerRepository } from '@/src/repositories/ManagerRepository';
 import { SignupRequestAgent } from '@/src/dto/request/SignupRequestAgent.dto';
 import { router } from 'expo-router';
 
@@ -18,7 +18,7 @@ interface AddUserProps {
 export const AddUser: React.FC<AddUserProps> = ({ addingType }) => {
   const { t } = useTranslation();
   const [error, setError] = useState<string>('');
-  const { handleCreateAdmin, handleCreateAgent } = useManagerHook(new ManagerService(new managerRepository()));
+  const { handleCreateAdmin, handleCreateAgent } = useManagerHook(new ManagerService(new ManagerRepository()));
   const loading = false;
   const viewModelError = null;
 
