@@ -135,9 +135,9 @@ export default function UserCreationForm({
       
       <LabelInput
         label={t('forms.labels.password')}
+        type="password"
         value={formData.password}
         onChangeText={(value: string) => handleInputChange('password', value)}
-        secureTextEntry
         required
         textColor={text}
         lightColor={cardBackground}
@@ -148,9 +148,9 @@ export default function UserCreationForm({
     
       <LabelInput 
         label={t('forms.labels.confirmPassword')}
+        type="password"
         value={formData.confirmPassword}
         onChangeText={(value: string) => handleInputChange('confirmPassword', value)}
-        secureTextEntry
         required
         textColor={text}
         lightColor={cardBackground}

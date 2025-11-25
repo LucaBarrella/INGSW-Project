@@ -3,6 +3,7 @@ import { IManagerRepository } from "./interfaces/IManagerRepository";
 import { ManagerApi } from "../api/ManagerApi";
 import ApiError from "../core/errors/ApiError";
 import { t } from "i18next";
+import { ChangePasswordDTO } from "../dto/request/ChangePassword.dto";
 
 export class ManagerRepository implements IManagerRepository {
     private managerApi: ManagerApi;
@@ -38,6 +39,15 @@ export class ManagerRepository implements IManagerRepository {
         try {
             await this.managerApi.createManager(managerData);
             return { success: true, message: "Manager created successfully" };
+        } catch (error: any) {
+            return this.handleError(error);
+        }
+    }
+
+    async changePassword(data: ChangePasswordDTO): Promise<{ success: boolean; message?: string }> {
+        try {
+            await this.managerApi.changePassword(data);
+            return { success: true, message: "Password changed successfully" };
         } catch (error: any) {
             return this.handleError(error);
         }

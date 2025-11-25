@@ -63,7 +63,9 @@
       "changePassword": {
         "title": "Cambia Password",
         "subtitle": "Aggiorna le credenziali del tuo account in modo sicuro",
-        "error": "Impossibile cambiare la password"
+        "error": "Impossibile cambiare la password",
+        "success": "Password cambiata con successo",
+        "successMessage": "La tua password è stata aggiornata con successo."
       },
       "addAdmin": {
         "title": "Aggiungi Nuovo Amministratore",
@@ -154,6 +156,7 @@
       "confirmPassword": "Conferma Password"
     },
     "placeholders": {
+      "email": "Inserisci la tua email",
       "currentPassword": "Inserisci la password attuale",
       "newPassword": "Inserisci la nuova password",
       "confirmPassword": "Conferma la nuova password"

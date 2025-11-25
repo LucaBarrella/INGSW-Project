@@ -4,27 +4,47 @@ import { useTranslation } from 'react-i18next';
 import { ThemedView } from '@/components/ThemedView';
 import ChangePasswordForm from '@/components/ChangePasswordForm';
 import { TabHeader } from '@/components/TabHeader';
+import { useManagerHook } from '@/src/hooks/useManagerHook';
+import { ManagerRepository } from '@/src/repositories/ManagerRepository';
+import { ManagerService } from '@/src/services/ManagerService';
+import { ThemedText } from '@/components/ThemedText';
+import { router } from 'expo-router';
+import { ChangePasswordDTO } from '@/src/dto/request/ChangePassword.dto';
 
 export default function ChangePasswordScreen() {
   const { t } = useTranslation();
+  const [error, setError] = React.useState<string>('');
 
-  const handleChangePassword = async (data: any) => {
-    console.log('Change password functionality is temporarily disabled.');
-    Alert.alert('Info', 'Change password functionality is temporarily disabled.');
+  const { handleChangePassword } = useManagerHook(new ManagerService(new ManagerRepository()));
+
+  const handle = async (data: ChangePasswordDTO) : Promise<boolean> => {
+    try {
+      const response = await handleChangePassword(data, setError);
+      if (response) {
+        Alert.alert(t('admin.screens.changePassword.successTitle'), t('admin.screens.changePassword.successMessage'));
+        router.back();
+        return true;
+      }
+    } catch (err: any) {
+      setError(err.message || 'An unexpected error occurred.');
+    } finally {
+      return false;
+    }
   };
 
   return (
     <ThemedView className="flex-1">
       <SafeAreaView />
-      <TabHeader 
+      <TabHeader
         title={t('admin.screens.changePassword.title')}
         subtitle={t('admin.screens.changePassword.subtitle')}
       />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="px-4">
         <ThemedView className="flex-1 justify-center items-center py-6">
-          <ChangePasswordForm 
+          {error && <ThemedText className="text-red-500 mb-4">{error}</ThemedText>}
+          <ChangePasswordForm
             userType="admin"
-            onSubmit={handleChangePassword}
+            onSubmit={handle}
           />
         </ThemedView>
       </ScrollView>

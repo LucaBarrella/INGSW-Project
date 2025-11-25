@@ -6,12 +6,13 @@ import ThemedButton from './ThemedButton';
 import { ConfirmationDialog } from './ConfirmationDialog';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { useTranslation } from 'react-i18next';
+import { ChangePasswordDTO } from '@/src/dto/request/ChangePassword.dto';
 
 export type ChangePasswordFormProps = ViewProps & {
   lightColor?: string;
   darkColor?: string;
   userType: 'admin' | 'agent' | 'buyer';
-  onSubmit: (data: { oldPassword: string; newPassword: string }) => Promise<void>;
+  onSubmit: (data: ChangePasswordDTO) => Promise<boolean>;
 };
 
 const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
@@ -28,6 +29,7 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
   
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [currentEmail, setCurrentEmail] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -59,12 +61,18 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
   const handleConfirm = async () => {
     try {
       setLoading(true);
-      await onSubmit({
+      const success = await onSubmit({
+        email: currentEmail,
         oldPassword: currentPassword,
         newPassword: newPassword,
       });
+      
+      if (!success) {
+        return;
+      }
 
       // Reset form on success
+      setCurrentEmail('');
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
@@ -89,6 +97,18 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
       style={{ backgroundColor: cardBackground }}
       {...props}
     >
+      <LabelInput
+        type="email"
+        label={t('forms.labels.email')}
+        textColor={text}
+        lightColor={cardBackground}
+        darkColor={cardBackground}
+        inputBackgroundColor={background}
+        className="mb-6"
+        value={currentEmail}
+        onChangeText={setCurrentEmail}
+        placeholder={t('forms.placeholders.email')}
+      />
       <LabelInput
         type="password"
         label={t('forms.labels.currentPassword')}

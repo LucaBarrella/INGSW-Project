@@ -36,15 +36,15 @@ export const AddUser: React.FC<AddUserProps> = ({ addingType }) => {
     
     
     const handleAdmin = async (data: SignupRequestAgent) => {
-    try {
-        const response = await handleCreateAdmin(data, setError);
-        if (response) {
-        Alert.alert(t('admin.screens.addAdmin.successTitle'), t('admin.screens.addAdmin.successMessageAdminCreation'));
-        router.back();
-        }
-    } catch (err: any) {
-        setError(err.message || 'An unexpected error occurred.');
-    }
+      try {
+          const response = await handleCreateAdmin(data, setError);
+          if (response) {
+            Alert.alert(t('admin.screens.addAdmin.successTitle'), t('admin.screens.addAdmin.successMessageAdminCreation'));
+            router.back();
+          }
+      } catch (err: any) {
+          setError(err.message || 'An unexpected error occurred.');
+      }
     };
 
   return (
