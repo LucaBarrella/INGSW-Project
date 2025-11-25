@@ -112,6 +112,9 @@ module.exports = function (api) {
             'mdi:land-fields',
             'mdi:office-building',
             'mdi:garage',
+            'mdi:account-group',
+            'mdi:shield-account',
+            'mdi:lock-reset',
 
 
 

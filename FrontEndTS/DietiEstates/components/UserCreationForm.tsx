@@ -13,7 +13,7 @@ type UserType = 'admin' | 'agent';
 
 interface UserCreationFormProps extends ViewProps {
   userType: UserType;
-  onSubmit: (data: SignupRequestAgent, setError: React.Dispatch<React.SetStateAction<string>>) => Promise<void>;
+  onSubmit: (data: SignupRequestAgent) => Promise<void>;
   isLoading?: boolean;
   lightColor?: string;
   darkColor?: string;
@@ -38,12 +38,12 @@ export default function UserCreationForm({
         username: '',
         email: '',
         password: '',
+        confirmPassword: '',
         phone: '',
         licenseNumber: '',
   });
-  // const [error, setError] = useState<string>(''); // Keep error state for potential backend errors
+
   const [showConfirmation, setShowConfirmation] = useState(false);
-  // Remove showError state
 
   const handleInputChange = (field: keyof SignupRequestAgent, value: string): void => {
     setFormData(prev => ({
@@ -52,30 +52,10 @@ export default function UserCreationForm({
     }));
   };
 
-  const validateForm = () => {
-    const missingFields = [];
-    
-    if (!formData.name) missingFields.push(t('forms.labels.name'));
-    if (!formData.surname) missingFields.push(t('forms.labels.surname'));
-    if (!formData.email) missingFields.push(t('forms.labels.email'));
-    
-    if (userType === 'agent') {
-      if (!formData.phone) missingFields.push(t('forms.labels.phone'));
-      if (!formData.licenseNumber) missingFields.push(t('forms.labels.licenseNumber'));
-    }
-
-    if (missingFields.length > 0) {
-      const errorMessage = t('forms.errors.fillRequired') + ':\n' + missingFields.join(', ');
-      Alert.alert(t('forms.errors.title'), errorMessage);
-      return false;
-    }
-
-    return true;
-  };
-
   const handleConfirm = async () => {
     try {
       await onSubmit(formData);
+      setShowConfirmation(true);
       // Reset form on success
       setFormData({
         name: '',
@@ -83,6 +63,7 @@ export default function UserCreationForm({
         username: '',
         email: '',
         password: '',
+        confirmPassword: '',
         phone: '',
         licenseNumber: '',
       });
@@ -92,12 +73,6 @@ export default function UserCreationForm({
       Alert.alert(t('forms.errors.title'), error instanceof Error ? error.message : t('forms.errors.unknownError'));
     } finally {
       setShowConfirmation(false);
-    }
-  };
-
-  const handleSubmit = () => {
-    if (validateForm()) {
-      setShowConfirmation(true);
     }
   };
 
@@ -134,11 +109,48 @@ export default function UserCreationForm({
         className="mb-6"
       />
       <LabelInput
+        label={t('forms.labels.username')}
+        value={formData.username}
+        onChangeText={(value: string) => handleInputChange('username', value)}
+        required
+        textColor={text}
+        lightColor={cardBackground}
+        darkColor={cardBackground}
+        inputBackgroundColor={background}
+        className="mb-6"
+      />
+      <LabelInput
         label={t('forms.labels.email')}
         value={formData.email}
         onChangeText={(value: string) => handleInputChange('email', value)}
         keyboardType="email-address"
         autoCapitalize="none"
+        required
+        textColor={text}
+        lightColor={cardBackground}
+        darkColor={cardBackground}
+        inputBackgroundColor={background}
+        className="mb-6"
+      />
+      
+      <LabelInput
+        label={t('forms.labels.password')}
+        value={formData.password}
+        onChangeText={(value: string) => handleInputChange('password', value)}
+        secureTextEntry
+        required
+        textColor={text}
+        lightColor={cardBackground}
+        darkColor={cardBackground}
+        inputBackgroundColor={background}
+        className="mb-6"
+      />
+    
+      <LabelInput 
+        label={t('forms.labels.confirmPassword')}
+        value={formData.confirmPassword}
+        onChangeText={(value: string) => handleInputChange('confirmPassword', value)}
+        secureTextEntry
         required
         textColor={text}
         lightColor={cardBackground}
@@ -175,7 +187,7 @@ export default function UserCreationForm({
         </>
       )}
       <ThemedButton
-        onPress={handleSubmit}
+        onPress={() => onSubmit(formData)}
         disabled={isLoading}
         borderRadius={8}
         className={`min-h-[40px] ${isLoading ? 'opacity-50' : ''}`}

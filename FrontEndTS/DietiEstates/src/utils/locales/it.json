@@ -143,7 +143,9 @@
       "email": "Email",
       "birthDate": "Data di nascita",
       "phone": "Numero di telefono",
-      "licenseNumber": "License Number",
+      "licenseNumber": "Numero di licenza",
+      "username": "Nome utente",
+      "password": "Password",
       "currentPassword": "Password Attuale",
       "newPassword": "Nuova Password",
       "confirmPassword": "Conferma Password"

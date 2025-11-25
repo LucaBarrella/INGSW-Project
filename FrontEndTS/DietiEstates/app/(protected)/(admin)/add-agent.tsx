@@ -8,6 +8,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { TabHeader } from '@/components/TabHeader';
 import { ManagerService } from '@/src/services/ManagerService';
 import { managerRepository } from '@/src/repositories/ManagerRepository';
+import { SignupRequestAgent } from '@/src/dto/request/SignupRequestAgent.dto';
 
 export default function AddAgentScreen() {
   const { t } = useTranslation();
@@ -15,6 +16,14 @@ export default function AddAgentScreen() {
   const { handleCreateAgent } = useManagerHook(new ManagerService(new managerRepository()));
   const loading = false;
   const viewModelError = null;
+
+  const handleCreate = async (data: SignupRequestAgent) => {
+    try {
+      await handleCreateAgent(data, setError);
+    } catch (err: any) {
+      setError(err.message || 'An unexpected error occurred.');
+    }
+  };
 
   return (
     <ThemedView className="flex-1">
@@ -30,7 +39,7 @@ export default function AddAgentScreen() {
           ) : null}
           <UserCreationForm
             userType="agent"
-            onSubmit={(data) => handleCreateAgent(data, setError)}
+            onSubmit={handleCreate}
             isLoading={loading}
           />
         </ThemedView>

@@ -10,44 +10,66 @@ import { UserInfoCard } from '@/components/Profile/UserInfoCard';
 import { ProfileOptionsGroup } from '@/components/Profile/ProfileOptionsGroup';
 import { ProfileOptionRowProps } from '@/components/Profile/ProfileOptionRow'; // Per il tipo delle opzioni
 import { useTranslation } from 'react-i18next';
+import { getToken } from '@/src/core/auth/TokenManager';
+import { router } from 'expo-router';
 
 export default function ProfileTab() {
   const backgroundColor = useThemeColor({}, 'background');
   const { logout } = useAuth();
   const { t } = useTranslation();
-  // borderColor non è più usato direttamente qui se ProfileOptionsGroup e UserInfoCard lo gestiscono internamente
+  
+  const [userData, setUserData] = React.useState({
+    username: '',
+    role: ''
+  });
 
-  // TODO DA SISTEMARE: Implementare recupero dati utente reali dal server
-  const userData = {
-    name: 'DA SISTEMARE', // Implementare recupero nome utente dal server
-    email: 'DA SISTEMARE', // Implementare recupero email utente dal server
-  };
+  getToken().then(token => {
+    if (token && userData.username === '') {
+      const payloadBase64 = token.split('.')[1];
+      const payload = JSON.parse(atob(payloadBase64));
+      const newUserData = { ...userData };
+      newUserData.username = payload.sub;
+      newUserData.role = payload.roles.join(', ').replace(/ROLE_/g, '');
+      setUserData(newUserData);
+    }
+  }).catch(error => {
+    console.error('Errore nel recupero del token:', error);
+  });
+  
 
-  // Adattato il tipo per ProfileOptionsGroup
-  const profileOptions: Array<Omit<ProfileOptionRowProps, 'isFirst'>> = [
+  const adminOptions: Array<Omit<ProfileOptionRowProps, 'isFirst'>> = [
     {
-      id: 'edit-profile',
-      title: 'Modifica Profilo',
-      icon: 'mdi:account-edit',
-      onPress: () => console.log('Edit profile')
+      id: 'add-agent',
+      title: 'Aggiungi Agente',
+      icon: 'mdi:account-group',
+      onPress: () => router.push('/(protected)/(admin)/add-agent')
     },
+    {
+      id: 'add-admin',
+      title: 'Aggiungi Amministratore',
+      icon: 'mdi:shield-account',
+      onPress: () => router.push('/(protected)/(admin)/add-admin')
+    },
+    {
+      id: 'change-password',
+      title: 'Cambia Password',
+      icon: 'mdi:lock-reset',
+      onPress: () => router.push('/(protected)/(admin)/change-password')
+    }
+  ];
+
+  const commonOptions: Array<Omit<ProfileOptionRowProps, 'isFirst'>> = [
     {
       id: 'settings',
       title: 'Impostazioni',
       icon: 'mdi:cog',
-      onPress: () => console.log('Settings')
-    },
-    {
-      id: 'help',
-      title: 'Aiuto',
-      icon: 'mdi:help-circle',
-      onPress: () => console.log('Help')
+      onPress: () => router.push('/(protected)/(buyer)/settings')
     },
     {
       id: 'logout',
       title: t('logout'),
       icon: 'mdi:logout',
-      onPress: async () => { // Trasformato in async
+      onPress: async () => {
         try {
           await logout();
         } catch (error) {
@@ -61,7 +83,6 @@ export default function ProfileTab() {
   return (
     <ThemedView style={{ flex: 1, backgroundColor }}>
       <ThemedView className="p-4">
-        {/* Se si vuole mantenere lo sfondo bianco per l'header, ripristinare bg-white qui o gestire tramite tema */}
         <ThemedText className="text-xl font-semibold">
           {t('profileTab')}
         </ThemedText>
@@ -72,13 +93,11 @@ export default function ProfileTab() {
         contentContainerStyle={{ paddingVertical: 20 }}
         showsVerticalScrollIndicator={false}
       >
-        <UserInfoCard
-          name={userData.name}
-          email={userData.email}
-          // iconName e iconLabel usano i default di UserInfoCard
-        />
+        <UserInfoCard name={userData.username} role={userData.role} email='' />
 
-        <ProfileOptionsGroup options={profileOptions} />
+        {userData.role.includes('MANAGER') && <ProfileOptionsGroup options={adminOptions} />}
+        
+        <ProfileOptionsGroup options={commonOptions} />
       </ScrollView>
     </ThemedView>
   );
