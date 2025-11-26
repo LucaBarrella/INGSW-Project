@@ -73,9 +73,9 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
         <View style={styles.container}>
           <MapView style={styles.map}>
             {properties.map((property, index) => (
-              <Marker
+              property.latitude && property.longitude && <Marker
                 key={index}
-                coordinate={{ latitude: property.latitude!, longitude: property.longitude! }}
+                coordinate={{ latitude: property.latitude, longitude: property.longitude }}
                 title={`€${property.price.toLocaleString()}`}
                 description={property.description}
               />
