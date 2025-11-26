@@ -81,7 +81,7 @@ export default function ProfileTab() {
   const commonOptions: Array<Omit<ProfileOptionRowProps, 'isFirst'>> = [
     {
       id: 'settings',
-      title: 'Impostazioni',
+      title: t('settings'),
       icon: 'mdi:cog',
       onPress: () => router.push('/(protected)/(buyer)/settings')
     },
@@ -97,6 +97,15 @@ export default function ProfileTab() {
           Alert.alert('Errore Logout', 'Impossibile completare il logout. Riprova.');
         }
       }
+    }
+  ];
+
+  const agentOptions: Array<Omit<ProfileOptionRowProps, 'isFirst'>> = [
+    {
+      id: 'my-properties',
+      title: t('myProperties'),
+      icon: 'mdi:home-city',
+      onPress: () => router.push('/(protected)/(agent)/properties')
     }
   ];
 
@@ -116,7 +125,7 @@ export default function ProfileTab() {
         <UserInfoCard name={userData.fullName} username={userData.username} role={userData.role} email={userData.email}  />
 
         {userData.role.includes('MANAGER') && <ProfileOptionsGroup options={adminOptions} />}
-        
+        {userData.role.includes('AGENT') && <ProfileOptionsGroup options={agentOptions} />}
         <ProfileOptionsGroup options={commonOptions} />
       </ScrollView>
     </ThemedView>

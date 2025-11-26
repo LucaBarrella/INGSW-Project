@@ -115,6 +115,7 @@ module.exports = function (api) {
             'mdi:account-group',
             'mdi:shield-account',
             'mdi:lock-reset',
+            'mdi:home-city',
 
 
 
