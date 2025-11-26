@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { Appointment } from '../../../../src/dto/agenda';
+import { VisitRequest } from '../../../../src/dto/agenda';
 import { BlurView } from 'expo-blur';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 interface ExtendedVisitCardProps {
-  appointment: Appointment;
+  appointment: VisitRequest;
 }
 
 const ExtendedVisitCard: React.FC<ExtendedVisitCardProps> = ({ appointment }) => {
@@ -20,7 +20,7 @@ const ExtendedVisitCard: React.FC<ExtendedVisitCardProps> = ({ appointment }) =>
       <BlurView intensity={90} tint="light" className="rounded-lg overflow-hidden">
         <View className="p-3 border-l-4" style={{ borderColor: extendedVisitBorderColor }}>
           <Text style={{ color: textColor }} className="font-bold">Extended Visit</Text>
-          <Text style={{ color: secondaryTextColor }}>{appointment.property.address} with {appointment.client.name}</Text>
+          <Text style={{ color: secondaryTextColor }}>{appointment.property.address} with {appointment.userInfo.fullName}</Text>
           <Text style={{ color: secondaryTextColor }} className="text-xs">{formatTime(appointment.startTime)} - {formatTime(appointment.endTime)}</Text>
         </View>
       </BlurView>

@@ -9,7 +9,7 @@ interface GroupOpportunityCardProps {
 }
 
 const GroupOpportunityCard: React.FC<GroupOpportunityCardProps> = ({ groupRequest, onConfirm, onDecline }) => {
-  const { property, potentialClients, requestedTime } = groupRequest;
+  const { property, potentialClients, startTime: requestedTime } = groupRequest;
 
   return (
     <View className="p-4 rounded-lg shadow-md mb-4 bg-blue-50 border-l-4 border-blue-500">

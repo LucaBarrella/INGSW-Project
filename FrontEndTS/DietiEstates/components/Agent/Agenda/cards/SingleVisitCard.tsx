@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Appointment } from '../../../../src/dto/agenda';
+import { VisitRequest } from '../../../../src/dto/agenda';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 interface SingleVisitCardProps {
-  appointment: Appointment;
+  appointment: VisitRequest;
   isConflict?: boolean;
 }
 
@@ -38,7 +38,7 @@ const SingleVisitCard: React.FC<SingleVisitCardProps> = ({ appointment, isConfli
         </View>
         <View className="flex-row items-center mt-1">
           <Ionicons name="person-outline" size={14} color={isConflict ? conflictColor : secondaryTextColor} />
-          <Text style={{ color: isConflict ? conflictTextColor : textColor }} className="ml-1.5 text-sm font-semibold">{appointment.client.name}</Text>
+          <Text style={{ color: isConflict ? conflictTextColor : textColor }} className="ml-1.5 text-sm font-semibold">{appointment.userInfo.fullName}</Text>
         </View>
       </TouchableOpacity>
       {isExpanded && (

@@ -1,6 +1,3 @@
-// Stato di una richiesta o appuntamento
-export type Status = 'pending' | 'confirmed' | 'declined' | 'conflicting';
-
 // Tipo di appuntamento per la colorazione
 export type AppointmentType = 'standard' | 'group' | 'conflict' | 'extended';
 
@@ -14,30 +11,28 @@ export interface Property {
   id: string;
   address: string;
   imageUrl?: string;
+  addressId: number;
 }
 
-export interface Appointment {
-  id: string;
-  property: Property;
-  client: User;
-  startTime: Date;
-  endTime: Date;
-  durationMinutes: number;
-  type: AppointmentType;
-  notes?: string;
+export interface UserInfo {
+  id?: number;
+  fullName: string;
+  email: string;
 }
 
 export interface VisitRequest {
-  id: string;
+  id: number;
   property: Property;
-  potentialClients: User[];
-  requestedTime: Date;
-  status: Status;
+  potentialClients: UserInfo[];
+  startTime: Date;
+  endTime: Date;
+  status: "PENDING" | "CONFIRMED" | "REJECTED" | "CANCELLED";
   isGroupOpportunity?: boolean;
   conflict?: Conflict;
+  userInfo: UserInfo;
 }
 
 export interface Conflict {
-  conflictingAppointmentId: string;
+  conflictingAppointmentId: number;
   reason: string; // Es. "Orario sovrapposto"
 }

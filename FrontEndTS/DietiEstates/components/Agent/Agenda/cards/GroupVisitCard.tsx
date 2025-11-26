@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Appointment } from '../../../../src/dto/agenda';
+import { VisitRequest } from '../../../../src/dto/agenda';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 interface GroupVisitCardProps {
-  appointments: Appointment[];
+  appointments: VisitRequest[];
 }
 
 const GroupVisitCard: React.FC<GroupVisitCardProps> = ({ appointments }) => {
@@ -16,7 +16,7 @@ const GroupVisitCard: React.FC<GroupVisitCardProps> = ({ appointments }) => {
   const { startTime, endTime, property } = firstAppointment;
 
   // Colleziona tutti i clienti da tutti gli appuntamenti nel gruppo
-  const clients = appointments.map(app => app.client);
+  const clients = appointments.map(app => app.userInfo);
 
   const time = `${startTime.getHours()}:${String(startTime.getMinutes()).padStart(2, '0')} - ${endTime.getHours()}:${String(endTime.getMinutes()).padStart(2, '0')}`;
 
@@ -45,7 +45,7 @@ const GroupVisitCard: React.FC<GroupVisitCardProps> = ({ appointments }) => {
         <View className="flex-row items-start mt-1">
           <Ionicons name="people-outline" size={14} color={secondaryTextColor} />
           <Text style={{ color: secondaryTextColor }} className="ml-1.5 text-sm font-semibold flex-1">
-            {clients.map(c => c.name).join(', ')}
+            {clients.map(c => c.fullName).join(', ')}
           </Text>
         </View>
       </TouchableOpacity>

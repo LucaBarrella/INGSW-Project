@@ -9,8 +9,8 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 
 interface PendingRequestsProps {
   requests: VisitRequest[];
-  onAccept: (requestId: string) => void;
-  onDecline: (requestId: string) => void;
+  onAccept: (requestId: number) => void;
+  onDecline: (requestId: number) => void;
   isRequestsVisible: boolean;
   toggleRequestsVisibility: () => void;
 }
@@ -45,7 +45,7 @@ const PendingRequests: React.FC<PendingRequestsProps> = ({ requests, onAccept, o
               />
             </ThemedView>
           )}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id.toString()}
           scrollEnabled={false}
         />
       )}

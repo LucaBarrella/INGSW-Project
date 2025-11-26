@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Appointment } from '../../../../src/dto/agenda';
+import { VisitRequest } from '../../../../src/dto/agenda';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 interface ConflictBlockProps {
-  appointments: Appointment[];
+  appointments: VisitRequest[];
 }
 
 const ConflictBlock: React.FC<ConflictBlockProps> = ({ appointments }) => {
@@ -29,7 +29,7 @@ const ConflictBlock: React.FC<ConflictBlockProps> = ({ appointments }) => {
           </View>
           <View className="flex-row items-center mt-1">
             <Ionicons name="person-outline" size={14} color={conflictColor} />
-            <Text style={{ color: conflictTextColor }} className="ml-1.5 text-sm font-semibold">{app.client.name}</Text>
+            <Text style={{ color: conflictTextColor }} className="ml-1.5 text-sm font-semibold">{app.userInfo.fullName}</Text>
           </View>
         </View>
       ))}
@@ -53,7 +53,7 @@ const ConflictBlock: React.FC<ConflictBlockProps> = ({ appointments }) => {
             <Text className="mb-4">Choose which appointment to cancel:</Text>
             {appointments.map(app => (
               <TouchableOpacity key={app.id} className="p-3 rounded-lg mb-2" style={{ backgroundColor: conflictBgColor }}>
-                <Text style={{ color: conflictTextColor }}>{app.property.address} with {app.client.name}</Text>
+                <Text style={{ color: conflictTextColor }}>{app.property.address} with {app.userInfo.fullName}</Text>
               </TouchableOpacity>
             ))}
             <TouchableOpacity onPress={() => setModalVisible(false)} className="mt-4 p-3 rounded-lg" style={{ backgroundColor: conflictBorderColor }}>

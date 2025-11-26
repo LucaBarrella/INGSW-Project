@@ -1,15 +1,15 @@
 import React from 'react';
-import { Appointment } from '../../../src/dto/agenda';
+import { VisitRequest } from '../../../src/dto/agenda';
 import SingleVisitCard from './cards/SingleVisitCard';
 import GroupVisitCard from './cards/GroupVisitCard';
 
 interface EventCardProps {
-  appointment: Appointment;
+  appointment: VisitRequest;
   isConflict?: boolean;
 }
 
 const EventCard: React.FC<EventCardProps> = ({ appointment, isConflict }) => {
-  const isGroupVisit = appointment.type === 'group' || (Array.isArray(appointment.client) && appointment.client.length > 1);
+  const isGroupVisit = appointment.isGroupOpportunity  || (Array.isArray(appointment.userInfo) && appointment.userInfo.length > 1);
 
   if (isConflict) {
     return <SingleVisitCard appointment={appointment} isConflict={true} />;

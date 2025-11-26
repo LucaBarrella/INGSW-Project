@@ -49,6 +49,7 @@ export const getVisitsOfCurrentAgent = async (): Promise<PagedVisitsDTO> => {
   console.log('[VisitApiService] getVisitsOfCurrentAgent:');
   const url = visitEndpoints.getVisitsByAgent;
   const response = await httpClient.get(url);
+  console.log('[VisitApiService] getVisitsOfCurrentAgent response:', response.data);
   return response.data;
 };
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState, useCallback } from 'react';
 import { LayoutChangeEvent } from 'react-native';
-import { Appointment } from '../../../src/dto/agenda';
+import { VisitRequest } from '../../../src/dto/agenda';
 import SingleVisitCard from './cards/SingleVisitCard';
 import GroupVisitCard from './cards/GroupVisitCard';
 import ConflictBlock from './cards/ConflictBlock';
@@ -10,7 +10,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 
 interface TimelineEventProps {
-  group: Appointment[];
+  group: VisitRequest[];
   showTime: boolean;
 }
 

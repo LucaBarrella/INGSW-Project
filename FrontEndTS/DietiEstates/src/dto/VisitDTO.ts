@@ -1,3 +1,5 @@
+import { UserInfo } from "./agenda";
+
 export interface VisitDTO {
   visit: {
     id: number;
@@ -17,5 +19,6 @@ export interface VisitDTO {
     building: string | null;
     latitude: number;
     longitude: number;
-  }
+  },
+  userInfo: UserInfo;
 }

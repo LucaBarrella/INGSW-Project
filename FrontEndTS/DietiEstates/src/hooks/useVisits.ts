@@ -110,14 +110,14 @@ export const useVisits = (initialBuyerId?: string) => {
     setLoading(true);
     setError(null);
     try {
-      const data = (await visitService.getVisitsOfCurrentAgent()).content;
+      const data = await visitService.getVisitsOfCurrentAgent();
       return data;
     } catch (err: any) {
       setError(err.message || 'Failed to fetch visits for agent');
     } finally {
       setLoading(false);
     }
-    return [];
+    return {pending: [], others: []};
   };
 
   useEffect(() => {

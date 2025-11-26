@@ -1,24 +1,23 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Appointment } from '../../../src/dto/agenda';
+import { VisitRequest } from '../../../src/dto/agenda';
 import TimelineEvent from './TimelineEvent';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 interface ConfirmedScheduleProps {
-  appointments: Appointment[];
+  appointments: VisitRequest[];
   isScheduleVisible: boolean;
   toggleScheduleVisibility: () => void;
 }
 
 const ConfirmedSchedule: React.FC<ConfirmedScheduleProps> = ({ appointments, isScheduleVisible, toggleScheduleVisibility }) => {
 
-  const groupAndSlotAppointments = (appointments: Appointment[]): { type: 'event' | 'empty', data: Appointment[] | { startTime: Date; endTime: Date } }[] => {
+  const groupAndSlotAppointments = (appointments: VisitRequest[]): { type: 'event' | 'empty', data: VisitRequest[] | { startTime: Date; endTime: Date } }[] => {
     if (!appointments.length) return [];
 
     const sorted = [...appointments].sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
-    const timelineItems: { type: 'event' | 'empty', data: Appointment[] | { startTime: Date; endTime: Date } }[] = [];
-
+    const timelineItems: { type: 'event' | 'empty', data: VisitRequest[] | { startTime: Date; endTime: Date } }[] = [];
     let lastEndTime = sorted[0].startTime; // Inizia con l'ora di inizio del primo appuntamento
 
     for (let i = 0; i < sorted.length; i++) {
@@ -33,7 +32,7 @@ const ConfirmedSchedule: React.FC<ConfirmedScheduleProps> = ({ appointments, isS
       }
 
       // Raggruppa appuntamenti sovrapposti o consecutivi
-      const group: Appointment[] = [currentApp];
+      const group: VisitRequest[] = [currentApp];
       let j = i + 1;
       while (j < sorted.length && sorted[j].startTime.getTime() < currentApp.endTime.getTime()) {
         group.push(sorted[j]);
@@ -74,7 +73,7 @@ const ConfirmedSchedule: React.FC<ConfirmedScheduleProps> = ({ appointments, isS
             {timelineItems.length > 0 ? (
               timelineItems.map((item, index) => {
                 if (item.type === 'event') {
-                  const group = item.data as Appointment[];
+                  const group = item.data;
                   return (
                     <TimelineEvent
                       key={index}

@@ -9,8 +9,8 @@ declare module 'axios' {
   }
 }
 
-// const BASE_URL = 'https://thefabbest-dietiestates25.hf.space'
-const BASE_URL = 'https://ropesthrills-dietiestates25.hf.space';
+const BASE_URL = 'https://thefabbest-dietiestates25.hf.space'
+//const BASE_URL = 'https://ropesthrills-dietiestates25.hf.space';
       
 const TIMEOUT = 10000;
 

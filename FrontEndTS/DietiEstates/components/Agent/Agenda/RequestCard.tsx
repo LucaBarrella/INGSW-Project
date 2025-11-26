@@ -14,7 +14,7 @@ interface RequestCardProps {
 }
 
 const RequestCard: React.FC<RequestCardProps> = ({ request, onAccept, onDecline }) => {
-  const { property, requestedTime, status, isGroupOpportunity } = request;
+  const { property, startTime: requestedTime, status, isGroupOpportunity } = request;
 
   const conflictColor = useThemeColor({}, 'error');
   const successColor = useThemeColor({}, 'success');

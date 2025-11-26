@@ -22,6 +22,7 @@
   "date": "Data",
   "time": "Ora",
   "address": "Indirizzo",
+  "loadingAgenda": "Caricamento agenda...",
 
   "visit_status": {
     "PENDING": "in attesa",

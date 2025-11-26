@@ -1,22 +1,24 @@
 import React, { useReducer, useEffect, useState } from 'react';
 import { View, ActivityIndicator, Text, ScrollView } from 'react-native';
-import { Appointment, VisitRequest } from '../../../src/dto/agenda';
+import { VisitRequest } from '../../../src/dto/agenda';
 import AgendaHeader from './AgendaHeader';
 import ConfirmedSchedule from './ConfirmedSchedule';
 import PendingRequests from './PendingRequests';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ThemedView } from '@/components/ThemedView';
+import { useVisits } from '@/src/hooks/useVisits';
+import { t } from 'i18next';
 
 // State and Reducer remain the same as before
 
 interface AgendaState {
-  appointments: Appointment[];
+  appointments: VisitRequest[];
   visitRequests: VisitRequest[];
   loading: boolean;
 }
 
 type AgendaAction =
-  | { type: 'SET_INITIAL_DATA'; payload: { appointments: Appointment[]; visitRequests: VisitRequest[] } }
+  | { type: 'SET_INITIAL_DATA'; payload: { appointments: VisitRequest[]; visitRequests: VisitRequest[] } }
   | { type: 'ACCEPT_REQUEST'; payload: { requestId: string } }
   | { type: 'REJECT_REQUEST'; payload: { requestId: string } };
 
@@ -40,7 +42,7 @@ function agendaReducer(state: AgendaState, action: AgendaAction): AgendaState {
       if (!requestToAccept) return state;
 
       const existingAppointmentIndex = state.appointments.findIndex(
-        app => app.property.id === requestToAccept.property.id && app.startTime.getTime() === requestToAccept.requestedTime.getTime()
+        app => app.property.id === requestToAccept.property.id && app.startTime.getTime() === requestToAccept.startTime.getTime()
       );
 
       if (existingAppointmentIndex !== -1) {
@@ -66,12 +68,12 @@ function agendaReducer(state: AgendaState, action: AgendaAction): AgendaState {
         };
       } else {
         // Crea un nuovo appuntamento
-        const newAppointment: Appointment = {
+        const newAppointment: VisitRequest = {
           id: `app-${Date.now()}`,
           property: requestToAccept.property,
           client: requestToAccept.potentialClients[0],
-          startTime: requestToAccept.requestedTime,
-          endTime: new Date(requestToAccept.requestedTime.getTime() + 60 * 60 * 1000),
+          startTime: requestToAccept.startTime,
+          endTime: new Date(requestToAccept.startTime.getTime() + 60 * 60 * 1000),
           durationMinutes: 60,
           type: 'standard',
         };
@@ -98,6 +100,7 @@ const AgendaScreen = () => {
   const [state, dispatch] = useReducer(agendaReducer, initialState);
   const [isRequestsVisible, setRequestsVisible] = useState(true);
   const [isScheduleVisible, setScheduleVisible] = useState(false);
+  const { getVisitsOfCurrentAgent } = useVisits();
 
   const toggleRequestsVisibility = () => setRequestsVisible(!isRequestsVisible);
   const toggleScheduleVisibility = () => setScheduleVisible(!isScheduleVisible);
@@ -105,10 +108,10 @@ const AgendaScreen = () => {
   useEffect(() => {
     const fetchAgendaData = async () => {
       try {
-        // TODO: Implementare la nuova logica per il recupero degli appuntamenti e delle richieste di visita.
-        // Per ora, simulo dati vuoti.
-        const appointments: Appointment[] = [];
-        const visitRequests: VisitRequest[] = [];
+        let visitRequestsData = await getVisitsOfCurrentAgent();
+        let visitRequests: VisitRequest[] = visitRequestsData.pending;
+        let appointments: VisitRequest[] = visitRequestsData.others;
+        
         dispatch({ type: 'SET_INITIAL_DATA', payload: { appointments, visitRequests } });
       } catch (error) {
         console.error("Errore nel recupero dei dati dell'agenda:", error);
@@ -130,7 +133,7 @@ const AgendaScreen = () => {
     return (
       <View className="flex-1 justify-center items-center bg-gray-100">
         <ActivityIndicator size="large" color="#0000ff" />
-        <Text className="mt-2 text-gray-600">Caricamento agenda...</Text>
+        <Text className="mt-2 text-gray-600">{t('loadingAgenda')}</Text>
       </View>
     );
   }
