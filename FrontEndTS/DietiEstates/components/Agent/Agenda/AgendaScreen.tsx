@@ -19,8 +19,8 @@ interface AgendaState {
 
 type AgendaAction =
   | { type: 'SET_INITIAL_DATA'; payload: { appointments: VisitRequest[]; visitRequests: VisitRequest[] } }
-  | { type: 'ACCEPT_REQUEST'; payload: { requestId: string } }
-  | { type: 'REJECT_REQUEST'; payload: { requestId: string } };
+  | { type: 'ACCEPT_REQUEST'; payload: { requestId: number } }
+  | { type: 'REJECT_REQUEST'; payload: { requestId: number } };
 
 const initialState: AgendaState = {
   appointments: [],
@@ -69,13 +69,13 @@ function agendaReducer(state: AgendaState, action: AgendaAction): AgendaState {
       } else {
         // Crea un nuovo appuntamento
         const newAppointment: VisitRequest = {
-          id: `app-${Date.now()}`,
+          id: requestToAccept.id,
           property: requestToAccept.property,
-          client: requestToAccept.potentialClients[0],
+          userInfo: requestToAccept.potentialClients[0],
           startTime: requestToAccept.startTime,
-          endTime: new Date(requestToAccept.startTime.getTime() + 60 * 60 * 1000),
-          durationMinutes: 60,
-          type: 'standard',
+          endTime: requestToAccept.endTime,
+          potentialClients: requestToAccept.potentialClients,
+          status: requestToAccept.status,
         };
 
         return {
@@ -100,7 +100,7 @@ const AgendaScreen = () => {
   const [state, dispatch] = useReducer(agendaReducer, initialState);
   const [isRequestsVisible, setRequestsVisible] = useState(true);
   const [isScheduleVisible, setScheduleVisible] = useState(false);
-  const { getVisitsOfCurrentAgent } = useVisits();
+  const { getVisitsOfCurrentAgent, updateVisitStatus } = useVisits();
 
   const toggleRequestsVisibility = () => setRequestsVisible(!isRequestsVisible);
   const toggleScheduleVisibility = () => setScheduleVisible(!isScheduleVisible);
@@ -121,12 +121,20 @@ const AgendaScreen = () => {
     fetchAgendaData();
   }, []);
 
-  const handleAcceptRequest = (requestId: string) => {
-    dispatch({ type: 'ACCEPT_REQUEST', payload: { requestId } });
+  const handleAcceptRequest = (requestId: number) => {
+    updateVisitStatus(requestId, 'CONFIRMED').then(() => {
+      dispatch({ type: 'ACCEPT_REQUEST', payload: { requestId } });
+    }).catch(error => {
+      console.error("Errore nell'accettare la richiesta di visita:", error);
+    });
   };
 
-  const handleRejectRequest = (requestId: string) => {
-    dispatch({ type: 'REJECT_REQUEST', payload: { requestId } });
+  const handleRejectRequest = (requestId: number) => {
+    updateVisitStatus(requestId, 'REJECTED').then(() => {
+      dispatch({ type: 'REJECT_REQUEST', payload: { requestId } });
+    }).catch(error => {
+      console.error("Errore nel rifiutare la richiesta di visita:", error);
+    });
   };
 
   if (state.loading) {
