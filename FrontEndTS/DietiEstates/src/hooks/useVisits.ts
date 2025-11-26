@@ -23,24 +23,6 @@ export const useVisits = (initialBuyerId?: string) => {
     }
   };
 
-  const scheduleVisit = async (visitData: Partial<VisitDTO>) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await visitService.scheduleVisit(visitData);
-      // Optionally re-fetch visits after scheduling
-      if (initialBuyerId) {
-        fetchVisitsByBuyer(initialBuyerId);
-      }
-      return result;
-    } catch (err: any) {
-      setError(err.message || 'Failed to schedule visit');
-      return { success: false, message: err.message };
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const updateVisitStatus = async (visitId: string | number, status: "CONFIRMED" | "REJECTED" | "CANCELLED" | "PENDING") => {
     setLoading(true);
     setError(null);
@@ -58,59 +40,11 @@ export const useVisits = (initialBuyerId?: string) => {
     }
   };
 
-  const cancelVisit = async (visitId: string | number) => {
+  const getVisitsOfCurrentAgent = async (date: Date) => {
     setLoading(true);
     setError(null);
     try {
-      const result = await visitService.cancelVisit(visitId);
-      if (initialBuyerId) {
-        fetchVisitsByBuyer(initialBuyerId);
-      }
-      return result;
-    } catch (err: any) {
-      setError(err.message || 'Failed to cancel visit');
-      return { success: false, message: err.message };
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const confirmVisit = async (visitId: string | number) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await visitService.confirmVisit(visitId);
-      if (initialBuyerId) {
-        fetchVisitsByBuyer(initialBuyerId);
-      }
-      return result;
-    } catch (err: any) {
-      setError(err.message || 'Failed to confirm visit');
-      return { success: false, message: err.message };
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getVisitById = async (visitId: string | number) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await visitService.getVisitById(visitId);
-      return result;
-    } catch (err: any) {
-      setError(err.message || 'Failed to get visit by ID');
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getVisitsOfCurrentAgent = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await visitService.getVisitsOfCurrentAgent();
+      const data = await visitService.getVisitsOfCurrentAgent(date);
       return data;
     } catch (err: any) {
       setError(err.message || 'Failed to fetch visits for agent');
@@ -132,10 +66,6 @@ export const useVisits = (initialBuyerId?: string) => {
     error,
     getVisitsOfCurrentAgent,
     fetchVisitsByBuyer,
-    scheduleVisit,
-    updateVisitStatus,
-    cancelVisit,
-    confirmVisit,
-    getVisitById,
+    updateVisitStatus
   };
 };

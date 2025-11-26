@@ -15,8 +15,13 @@ export class VisitService implements IVisitService {
     return this.visitRepository.getVisitsByBuyer();
   }
 
-  async getVisitsOfCurrentAgent(): Promise<{pending: VisitRequest[], others: VisitRequest[]}> {
-    let visits : VisitDTO[] = (await this.visitRepository.getVisitsOfCurrentAgent()).content;
+  async getVisitsOfCurrentAgent(date: Date): Promise<{pending: VisitRequest[], others: VisitRequest[]}> {
+    let visits : VisitDTO[] = (await this.visitRepository.getVisitsOfCurrentAgent()).content.filter(v => {
+      let visitDate = new Date(v.visit.startTime * 1000);
+      return visitDate.getFullYear() === date.getFullYear() &&
+             visitDate.getMonth() === date.getMonth() &&
+             visitDate.getDate() === date.getDate();
+    });
     let visitRequests: VisitRequest[] = [];
     
     // guarda starttime e endtime, se incastrano fai confronto address, se sono uguali group opportunity, se sono diversi conflict

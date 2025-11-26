@@ -100,6 +100,7 @@ const AgendaScreen = () => {
   const [state, dispatch] = useReducer(agendaReducer, initialState);
   const [isRequestsVisible, setRequestsVisible] = useState(true);
   const [isScheduleVisible, setScheduleVisible] = useState(false);
+  const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const { getVisitsOfCurrentAgent, updateVisitStatus } = useVisits();
 
   const toggleRequestsVisibility = () => setRequestsVisible(!isRequestsVisible);
@@ -108,7 +109,7 @@ const AgendaScreen = () => {
   useEffect(() => {
     const fetchAgendaData = async () => {
       try {
-        let visitRequestsData = await getVisitsOfCurrentAgent();
+        let visitRequestsData = await getVisitsOfCurrentAgent(currentDate);
         let visitRequests: VisitRequest[] = visitRequestsData.pending;
         let appointments: VisitRequest[] = visitRequestsData.others;
         
@@ -160,7 +161,7 @@ const AgendaScreen = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemedView className="flex-1 bg-gray-50">
         <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-          <AgendaHeader />
+          <AgendaHeader currentDate={currentDate} onCurrentDateChange={setCurrentDate} />
           <PendingRequests
             requests={state.visitRequests}
             onAccept={handleAcceptRequest}
