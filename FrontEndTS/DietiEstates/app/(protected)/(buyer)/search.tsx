@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Alert } from 'react-native';
 import { useLocalSearchParams, Stack, router } from 'expo-router';
 import { useSearch } from '@/context/SearchContext';
 import useSearchProperties from '@/src/hooks/useSearchProperties';
@@ -81,6 +81,18 @@ export default function SearchResultsScreen() {
           properties={properties}
           onPropertyPress={handlePropertyPress}
           onSearchTrigger={search}
+          onChangeCenter={(newLat, newLng) => {
+            if (state.geolocation) {
+              state.geolocation.lat = newLat;
+              state.geolocation.lon = newLng;
+              //trigger a new search with updated center
+              search().catch(err => {
+                Alert.alert('Errore', 'Si è verificato un errore durante la ricerca con la nuova posizione.');
+                console.error('[SearchScreen] search failed', err);
+              });
+            }
+          }}
+          center={state.geolocation ? { latitude: state.geolocation.lat, longitude: state.geolocation.lon } : undefined}
         />
       )}
     </ThemedView>

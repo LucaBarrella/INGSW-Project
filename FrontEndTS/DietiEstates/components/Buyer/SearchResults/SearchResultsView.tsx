@@ -7,18 +7,22 @@ import { SearchAndFilter } from '../SearchIntegration/SearchAndFilter';
 import { BuyerPropertyCard } from '../BuyerPropertyCard';
 import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, MarkerAnimated } from 'react-native-maps';
 
 interface SearchResultsViewProps {
   properties: PropertyDetail[];
   onPropertyPress: (propertyId: number) => void;
   onSearchTrigger: () => void;
+  onChangeCenter: (lat: number, lon: number) => void;
+  center?: { latitude: number; longitude: number };
 }
 
 export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
   properties,
   onPropertyPress,
   onSearchTrigger,
+  onChangeCenter,
+  center
 }) => {
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const tint = useThemeColor({}, 'tint');
@@ -71,15 +75,18 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
         />
       ) : (
         <View style={styles.container}>
-          <MapView style={styles.map}>
+          <MapView style={styles.map} initialRegion={center? { latitudeDelta: 0.2, longitudeDelta:0.2, ...center } : undefined} onLongPress={event => {console.log( "Map long pressed at", event.nativeEvent.coordinate); onChangeCenter(event.nativeEvent.coordinate.latitude, event.nativeEvent.coordinate.longitude)}} >
             {properties.map((property, index) => (
-              property.latitude && property.longitude && <Marker
+              property.address.latitude && property.address.longitude && <Marker
                 key={index}
-                coordinate={{ latitude: property.latitude, longitude: property.longitude }}
+                coordinate={{ latitude: property.address.latitude, longitude: property.address.longitude }}
                 title={`€${property.price.toLocaleString()}`}
                 description={property.description}
+                onPress={() => onPropertyPress(property.id)}
               />
             ))}
+            
+            {center && <Marker coordinate={{latitude: center.latitude, longitude: center.longitude}} pinColor={ "#00ccffff" }/>}
           </MapView>
         </View>
       )}
