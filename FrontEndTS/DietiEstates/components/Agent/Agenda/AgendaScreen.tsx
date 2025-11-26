@@ -122,6 +122,11 @@ const AgendaScreen = () => {
     fetchAgendaData();
   }, [currentDate]);
 
+  const dateChanged = (newDate: Date) => {
+    dispatch({ type: 'SET_INITIAL_DATA', payload: { appointments: [], visitRequests: [] } });
+    setCurrentDate(newDate);
+  }
+
   const handleAcceptRequest = (requestId: number) => {
     updateVisitStatus(requestId, 'CONFIRMED').then((response) => {
       if (response.success !== false) {
@@ -162,7 +167,7 @@ const AgendaScreen = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemedView className="flex-1 bg-gray-50">
         <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-          <AgendaHeader currentDate={currentDate} onCurrentDateChange={setCurrentDate} />
+          <AgendaHeader currentDate={currentDate} onCurrentDateChange={dateChanged} />
           <PendingRequests
             requests={state.visitRequests}
             onAccept={handleAcceptRequest}
