@@ -2,102 +2,156 @@ import axios, { AxiosError, InternalAxiosRequestConfig, AxiosInstance } from 'ax
 import ApiError from './errors/ApiError';
 import { getToken, getRefreshToken, saveToken, saveRefreshToken } from './auth/TokenManager';
 
-const baseURL = __DEV__
-  ? 'https://thefabbest-dietiestates25.hf.space'
-  : 'https://thefabbest-dietiestates25.hf.space';
+// Estendi l'interfaccia di configurazione di Axios per includere la proprietà personalizzata
+declare module 'axios' {
+  export interface InternalAxiosRequestConfig {
+    _isRetry?: boolean;
+  }
+}
 
-if (!baseURL) {
+// const BASE_URL = 'https://thefabbest-dietiestates25.hf.space'
+const BASE_URL = 'https://ropesthrills-dietiestates25.hf.space';
+      
+const TIMEOUT = 10000;
+
+if (!BASE_URL) {
   console.error('ERRORE: URL base API non configurato!');
 }
 
-console.log(`[httpClient] Modalità API Reale. Connessione a: ${baseURL}`);
 const httpClient: AxiosInstance = axios.create({
-  baseURL: baseURL,
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  baseURL: BASE_URL,
+  timeout: TIMEOUT,
+  headers: { 'Content-Type': 'application/json' },
 });
 
+interface QueueItem {
+  resolve: (value?: any) => void;
+  reject: (reason?: any) => void;
+}
+
+let isRefreshing = false;
+let failedQueue: QueueItem[] = [];
+
+const enqueueFailedRequest = (): Promise<string> =>
+  new Promise((resolve, reject) => failedQueue.push({ resolve, reject }));
+
+const processFailedQueue = (error: any | null, token?: string) => {
+  failedQueue.forEach(({ resolve, reject }) => {
+    if (error) reject(error);
+    else resolve(token);
+  });
+  failedQueue = [];
+};
+
+const setAuthHeader = (headers: any, token: string | undefined) => {
+  if (!headers) return;
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  else delete headers['Authorization'];
+};
+
+const mapStatusToMessage = (status: number): string => {
+  switch (status) {
+    case 400: return 'Richiesta non valida. Controlla i dati inseriti.';
+    case 401: return 'Sessione scaduta. Effettua nuovamente il login.';
+    case 403: return 'Accesso negato. Non hai i permessi per questa operazione.';
+    case 404: return 'Risorsa non trovata.';
+    case 409: return 'Conflitto. La risorsa esiste già o c\'è un problema di stato.';
+    case 500: return 'Errore interno del server. Riprova più tardi.';
+    case 503: return 'Servizio non disponibile. Riprova più tardi.';
+    default: return `Si è verificato un errore: ${status}.`;
+  }
+};
+
+// Request interceptor: aggiunge Authorization se presente
 httpClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> => {
     try {
       const token = await getToken();
-      if (token) {
-        config.headers = config.headers ?? {};
-        config.headers['Authorization'] = `Bearer ${token}`;
-      }
-    } catch (error) {
-      console.error('Errore nel recuperare il token:', error);
+      config.headers = config.headers ?? {};
+      setAuthHeader(config.headers, token ?? undefined);
+    } catch (e) {
+      console.error('Errore nel recupero del token:', e);
+    }
+    console.log(`[httpClient] Richiesta in uscita: ${config.method?.toUpperCase()} ${config.url}`);
+    console.log('[httpClient] Headers:', config.headers);
+    if (config.data) {
+        console.log('[httpClient] Payload:', JSON.stringify(config.data, null, 2));
     }
     return config;
   },
   (error: AxiosError) => {
-    console.error('Errore nella interceptor di richiesta:', error);
+    console.error('[httpClient] Errore intercettore richiesta:', error);
     return Promise.reject(error);
   }
 );
 
+// Refresh flow: gestisce il rinnovo token e la riesecuzione delle richieste in coda
+const performRefresh = async (originalRequest: InternalAxiosRequestConfig) => {
+  originalRequest._isRetry = true;
+  isRefreshing = true;
+
+  try {
+    const refreshToken = await getRefreshToken();
+    console.log('[httpClient] Tentativo di refresh token con:', refreshToken ? 'token presente' : 'token assente');
+    if (!refreshToken) {
+      throw new ApiError(401, 'Sessione scaduta. Effettua nuovamente il login.');
+    }
+
+    const response = await axios.post(`${BASE_URL}/auth/refresh`, { refreshToken });
+    const newToken = response.data;
+
+    await saveToken(newToken.accessToken);
+    await saveRefreshToken(newToken.refreshToken);
+
+    httpClient.defaults.headers.common['Authorization'] = `Bearer ${newToken.accessToken}`;
+    if (originalRequest.headers) {
+      originalRequest.headers['Authorization'] = `Bearer ${newToken.accessToken}`;
+    }
+
+    processFailedQueue(null, newToken.accessToken);
+    return httpClient(originalRequest);
+  } catch (err) {
+    processFailedQueue(err, undefined);
+    throw new ApiError(401, 'Sessione scaduta. Effettua nuovamente il login.');
+  } finally {
+    isRefreshing = false;
+  }
+};
+
+// Response interceptor: gestisce errori e refresh token
 httpClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    let userMessage = 'Si è verificato un errore inatteso.';
-    let statusCode = error.response?.status || 0;
+    const statusCode = error.response?.status ?? 0;
+    const originalRequest = error.config as InternalAxiosRequestConfig | undefined;
 
     if (error.response) {
-      console.log(statusCode);
-
-      switch (statusCode) {
-        case 400:
-          userMessage = 'Richiesta non valida. Controlla i dati inseriti.';
-          break;
-        case 401:
-          userMessage = 'Credenziali non valide o sessione scaduta. Effettua nuovamente il login.';
-          break;
-        case 403:
-          userMessage = 'Accesso negato. Non hai i permessi per questa operazione.';
-          break;
-        case 498:
-          // Evitiamo loop: non tentare refresh se la richiesta originale era /auth/refresh
-          if (!(error.config && error.config.url && error.config.url.endsWith('/refresh'))) {
-            try {
-              const refreshToken = await getRefreshToken();
-              if (refreshToken) {
-                const response = await httpClient.post('/auth/refresh', { refreshToken });
-                const newToken = response.data;
-                await saveToken(newToken.accessToken);
-                await saveRefreshToken(newToken.refreshToken);
-                return httpClient.request(error.config!);
-              }
-            } catch (refreshError) {
-              console.error('Errore durante il refresh del token:', refreshError);
+      // Rinnova token su 401/403 (backend usa 403 per token scaduti)
+      if ((statusCode === 401 || statusCode === 403) && originalRequest && !originalRequest._isRetry) {
+        if (isRefreshing) {
+          try {
+            const token = await enqueueFailedRequest();
+            if (originalRequest.headers) {
+              originalRequest.headers['Authorization'] = `Bearer ${token}`;
             }
+            return httpClient(originalRequest);
+          } catch (e) {
+            return Promise.reject(e);
           }
-          break;
-        case 404:
-          userMessage = 'Risorsa non trovata.';
-          break;
-        case 409:
-          userMessage = 'Conflitto. La risorsa esiste già o c\'è un problema di stato.';
-          break;
-        case 500:
-          userMessage = 'Errore interno del server. Riprova più tardi.';
-          break;
-        case 503:
-          userMessage = 'Servizio non disponibile. Riprova più tardi.';
-          break;
-        default:
-          userMessage = `Si è verificato un errore: ${statusCode}.`;
+        }
+        return performRefresh(originalRequest);
       }
-    } else if (error.request) {
-      userMessage = 'Nessuna risposta dal server. Controlla la tua connessione.';
-      console.error('Errore di rete o nessuna risposta dal server:', error.request);
-    } else {
-      userMessage = 'Errore nella configurazione della richiesta.';
-      console.error('Errore configurazione richiesta Axios:', error.message);
-    }
 
-    return Promise.reject(ApiError.from(error, statusCode, userMessage));
+      console.error(`[httpClient] Errore risposta API (Status: ${statusCode}):`, error.response.data);
+      const userMessage = mapStatusToMessage(statusCode);
+      return Promise.reject(new ApiError(statusCode, userMessage));
+    } else if (error.request) {
+      console.error('[httpClient] Errore di rete o nessuna risposta dal server:', error.request);
+      return Promise.reject(new ApiError(0, 'Nessuna risposta dal server. Controlla la tua connessione.'));
+    } else {
+      console.error('[httpClient] Errore configurazione richiesta Axios:', error.message);
+      return Promise.reject(new ApiError(0, 'Errore nella configurazione della richiesta.'));
+    }
   }
 );
 

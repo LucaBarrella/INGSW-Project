@@ -1,15 +1,62 @@
-import { createContext, Dispatch, useReducer, useEffect, useContext, ReactNode } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createContext, Dispatch, useReducer, useContext, ReactNode, useEffect } from 'react';
 import {
-  PropertyFilters,
-  Range,
   DEFAULT_PRICE_RANGES,
-  RESIDENTIAL_CATEGORIES,
-  COMMERCIAL_CATEGORIES,
-  LAND_CATEGORIES,
-  GARAGE_CATEGORIES,
   Geolocation,
-} from '../components/Buyer/SearchIntegration/types'; // Assumendo che i tipi siano qui
+  // Nuovi import dalla DTO per la nuova struttura dei filtri
+  SearchCriteria,
+  FilterState,
+  defaultSearchCriteria,
+} from '../src/dto/SearchDTO'; // Corretto il percorso di importazione
+import SearchStateRepository from '../src/repositories/SearchStateRepository';
+import { ALL_FILTERS } from '../config/filter-config';
+
+// Helper functions: pure, piccole e fortemente tipizzate
+const deepEqual = (a: unknown, b: unknown): boolean => {
+  try {
+    return JSON.stringify(a) === JSON.stringify(b);
+  } catch {
+    return a === b;
+  }
+};
+
+const updateFilterState = <T,>(existing: FilterState<T>, newValue: T, defaultValue: T): FilterState<T> => {
+  const isModified = !deepEqual(newValue, defaultValue);
+  return { ...existing, value: newValue, isModified };
+};
+
+const updateFilterCategory = <TCategory extends Record<string, FilterState<any>>>(
+  existingCategory: TCategory,
+  newFilters: Partial<Record<keyof TCategory, any>>,
+  defaultCategoryDef: Record<string, { defaultValue: any }>
+): TCategory => {
+  const updated = { ...existingCategory } as TCategory;
+  for (const key of Object.keys(newFilters) as (keyof TCategory)[]) {
+    const rawNewValue = newFilters[key];
+
+    // Se non esiste lo stato corrente per questa chiave, creiamo un FilterState di fallback
+    const existing = (updated[key] as unknown as FilterState<any>) ?? ({} as FilterState<any>);
+
+    // Otteniamo il valore di default in modo robusto:
+    // 1) dalla definizione di default della categoria (defaultCategoryDef)
+    // 2) se non presente, dal file di configurazione globale ALL_FILTERS
+    // 3) se non presente, dall'esistente.defaultValue
+    // 4) infine fallback a rawNewValue
+    let defaultValue: any = undefined;
+    if (defaultCategoryDef && (defaultCategoryDef as any)[key as string] && (defaultCategoryDef as any)[key as string].defaultValue !== undefined) {
+      defaultValue = (defaultCategoryDef as any)[key as string].defaultValue;
+    } else if ((ALL_FILTERS as any) && (ALL_FILTERS as any)[key as string] && (ALL_FILTERS as any)[key as string].defaultValue !== undefined) {
+      defaultValue = (ALL_FILTERS as any)[key as string].defaultValue;
+    } else if (existing && (existing as any).defaultValue !== undefined) {
+      defaultValue = (existing as any).defaultValue;
+    } else {
+      defaultValue = rawNewValue;
+    }
+
+    // Normalizziamo il FilterState usando updateFilterState (determina isModified)
+    updated[key] = updateFilterState(existing as any, rawNewValue, defaultValue) as any;
+  }
+  return updated;
+};
 
 // 1. Definire Tipi, Azioni e Stato Iniziale del Context
 
@@ -17,8 +64,11 @@ import {
 export interface SearchState {
   searchQuery: string;
   geolocation: Geolocation | null;
-  filters: PropertyFilters;
-  selectedMainCategoryInPanel: keyof Omit<PropertyFilters, 'general'> | null;
+  previousGeolocation: Geolocation | null; // Aggiunto per tracciare la geolocalizzazione precedente
+  // Ora lo stato dei filtri utilizza la nuova struttura SearchCriteria che usa FilterState<T>
+  filters: SearchCriteria;
+  previousFilters: SearchCriteria; // Aggiunto per tracciare lo stato precedente
+  selectedMainCategoryInPanel: keyof Omit<SearchCriteria, 'general'> | null;
   isLoadingFromStorage: boolean;
   errorStorage: string | null;
 }
@@ -27,56 +77,26 @@ export interface SearchState {
 export const initialSearchState: SearchState = {
   searchQuery: '',
   geolocation: null,
-  filters: {
-    general: {
-      contract: 'sale',
-      priceRange: DEFAULT_PRICE_RANGES.sale.defaultRange,
-      size: { min: 20, max: 200 },
-      searchRadiusKm: { min: 20, max: 20 }, // Default: 20km radius
-    },
-    residential: {
-      category: RESIDENTIAL_CATEGORIES[0],
-      // backend-aligned defaults
-      minNumberOfFloors: undefined,
-      minNumberOfRooms: '',
-      minNumberOfBathrooms: '',
-      floor: '',
-      mustHaveElevator: false,
-      hasPool: false,
-      minParkingSpaces: undefined,
-    },
-    commercial: {
-      category: COMMERCIAL_CATEGORIES[0],
-      minNumberOfFloors: undefined,
-      minNumberOfRooms: undefined,
-      minNumberOfBathrooms: undefined,
-      mustHaveWheelchairAccess: false,
-      constructionYear: '',
-    },
-    land: {
-      category: LAND_CATEGORIES[0],
-      mustBeAccessibleFromStreet: false,
-      slope: 0,
-    },
-    garage: {
-      category: GARAGE_CATEGORIES[0],
-      minNumberOfFloors: undefined,
-      mustHaveSurveillance: false,
-    },
-  },
+  previousGeolocation: null, // Inizializza a null
+  // Inizializziamo i filtri con il defaultSearchCriteria (usa FilterState<T>)
+  filters: defaultSearchCriteria,
+  previousFilters: defaultSearchCriteria, // Inizializza allo stesso valore
   selectedMainCategoryInPanel: null,
-  isLoadingFromStorage: true,
+  // La persistenza è gestita da SearchRepository; il context resta puro.
+  isLoadingFromStorage: false,
   errorStorage: null,
 };
 
 // Tipi di Azione (SearchAction)
 export type SearchAction =
   | { type: 'SET_QUERY'; payload: string }
-  | { type: 'SET_FILTERS'; payload: PropertyFilters }
-  | { type: 'UPDATE_FILTER'; payload: Partial<PropertyFilters> | { category: keyof Omit<PropertyFilters, 'general'>; newFilters: Partial<PropertyFilters[keyof Omit<PropertyFilters, 'general'>]> } | { subCategory: 'general'; newFilters: Partial<PropertyFilters['general']>} }
+  | { type: 'SET_FILTERS'; payload: SearchCriteria }
+  // UPDATE_FILTER: payload indica quale "categoria" aggiornare e i nuovi valori (raw)
+  | { type: 'UPDATE_FILTER'; payload: { subCategory: 'general'; newFilters: Partial<Record<keyof SearchCriteria['general'], any>> } | { category: keyof Omit<SearchCriteria, 'general'>; newFilters: Partial<Record<string, any>> } }
   | { type: 'RESET_FILTERS'; payload?: { keepTransactionType?: boolean } }
-  | { type: 'SET_SELECTED_MAIN_CATEGORY_IN_PANEL'; payload: keyof Omit<PropertyFilters, 'general'> | null }
+  | { type: 'SET_SELECTED_MAIN_CATEGORY_IN_PANEL'; payload: keyof Omit<SearchCriteria, 'general'> | null }
   | { type: 'SET_GEOLOCATION'; payload: Geolocation | null }
+  | { type: 'HYDRATE_STATE'; payload: Partial<Pick<SearchState, 'filters' | 'searchQuery' | 'selectedMainCategoryInPanel' | 'geolocation'>> }
   | { type: 'LOAD_STATE_FROM_STORAGE'; payload: Partial<SearchState> }
   | { type: 'SET_STORAGE_LOADING'; payload: boolean }
   | { type: 'SET_STORAGE_ERROR'; payload: string | null };
@@ -96,6 +116,7 @@ const SearchContext = createContext<SearchContextType | undefined>(undefined);
 export const searchReducer = (state: SearchState, action: SearchAction): SearchState => {
   console.log('[SearchContext] Action Dispatched:', action.type, 'Payload:', 'payload' in action ? action.payload : 'N/A');
   let newState: SearchState;
+
   switch (action.type) {
     case 'SET_QUERY':
       newState = { ...state, searchQuery: action.payload };
@@ -103,90 +124,89 @@ export const searchReducer = (state: SearchState, action: SearchAction): SearchS
     case 'SET_FILTERS':
       newState = { ...state, filters: action.payload };
       break;
-    case 'UPDATE_FILTER':
-      // Gestione deep merge per aggiornamenti parziali dei filtri
-      if ('subCategory' in action.payload && action.payload.subCategory === 'general') {
-        // SearchContext.tsx — aggiorna branch 'UPDATE_FILTER' per gestire il cambio contract
-        const prevContract = state.filters.general.contract;
-        const newGeneral = {
-          ...state.filters.general,
-          ...action.payload.newFilters,
-        };
+    case 'UPDATE_FILTER': {
+      const payload = action.payload as { subCategory?: 'general'; category?: keyof Omit<SearchCriteria, 'general'>; newFilters: Partial<Record<string, any>> };
+      const updatedFilters: SearchCriteria = { ...state.filters };
 
-        // Se il contract viene cambiato e il priceRange era ancora il default precedente,
-        // sincronizziamo il priceRange al default del nuovo contract.
-        if ('contract' in action.payload.newFilters) {
-          const prevDefault = prevContract === 'rent'
-            ? DEFAULT_PRICE_RANGES.rent.defaultRange
-            : DEFAULT_PRICE_RANGES.sale.defaultRange;
-          const currPrice = state.filters.general.priceRange;
-          const priceEqualToPrevDefault = currPrice.min === prevDefault.min && currPrice.max === prevDefault.max;
+      // Delega la logica di aggiornamento a funzioni helper pure
+      if (payload.subCategory === 'general') {
+        const newFilters = payload.newFilters as Partial<Record<keyof SearchCriteria['general'], any>>;
+        updatedFilters.general = updateFilterCategory(state.filters.general, newFilters, defaultSearchCriteria.general as any);
+      } else if (payload.category) {
+        const categoryKey = payload.category as keyof Omit<SearchCriteria, 'general'>;
+        const newFilters = payload.newFilters as Partial<Record<string, any>>;
+        updatedFilters[categoryKey] = updateFilterCategory(state.filters[categoryKey] as any, newFilters, (defaultSearchCriteria as any)[categoryKey]);
+      }
 
-          const newContract = (action.payload.newFilters as any).contract as 'rent' | 'sale';
-          if (priceEqualToPrevDefault) {
-            newGeneral.priceRange = newContract === 'rent'
-              ? DEFAULT_PRICE_RANGES.rent.defaultRange
-              : DEFAULT_PRICE_RANGES.sale.defaultRange;
+      newState = { ...state, previousFilters: state.filters, filters: updatedFilters };
+      break;
+    }
+    case 'RESET_FILTERS': {
+      const keepTransactionType = action.payload?.keepTransactionType === true;
+      const effectiveContract = keepTransactionType ? state.filters.general.contract.value : defaultSearchCriteria.general.contract.value;
+
+      // Clona i default per evitare side-effect sul defaultSearchCriteria
+      const resetFilters: any = JSON.parse(JSON.stringify(defaultSearchCriteria));
+
+      // Imposta contract al valore effettivo (può essere mantenuto o resettato).
+      // Dopo un RESET vogliamo che nessun filtro rimanga segnato come "modified",
+      // anche se manteniamo il tipo di transazione (keepTransactionType).
+      resetFilters.general.contract = {
+        ...resetFilters.general.contract,
+        value: effectiveContract,
+        // Forziamo isModified a false: il reset ristabilisce lo stato "pulito"
+        isModified: false,
+      };
+      
+      // PriceRange dipende dal tipo di contratto: usiamo i range per sale/rent come default post-reset
+      const pr = effectiveContract === 'rent' ? DEFAULT_PRICE_RANGES.rent.defaultRange : DEFAULT_PRICE_RANGES.sale.defaultRange;
+      resetFilters.general.priceRange = {
+        ...resetFilters.general.priceRange,
+        value: pr,
+        defaultValue: pr,
+        isModified: false,
+      };
+
+      // Garantiamo che tutti gli altri FilterState abbiano value = defaultValue e isModified = false
+      for (const catKey of Object.keys(resetFilters)) {
+        const cat = resetFilters[catKey];
+        if (!cat || typeof cat !== 'object') continue;
+        for (const fKey of Object.keys(cat)) {
+          if (catKey === 'general' && (fKey === 'contract' || fKey === 'priceRange')) continue;
+          const fs = cat[fKey];
+          if (fs && typeof fs === 'object' && 'defaultValue' in fs) {
+            fs.value = fs.defaultValue;
+            fs.isModified = false;
+            cat[fKey] = fs;
           }
         }
-
-        newState = {
-          ...state,
-          filters: {
-            ...state.filters,
-            general: newGeneral,
-          },
-        };
-      } else if ('category' in action.payload) {
-        const categoryKey = action.payload.category as keyof Omit<PropertyFilters, 'general'>;
-        newState = {
-          ...state,
-          filters: {
-            ...state.filters,
-            [categoryKey]: {
-              ...state.filters[categoryKey],
-              ...action.payload.newFilters,
-            },
-          },
-        };
-      } else {
-         // Fallback per un aggiornamento più generico di PropertyFilters, anche se meno specifico
-        newState = {
-          ...state,
-          filters: {
-            ...state.filters,
-            ...(action.payload as Partial<PropertyFilters>),
-          },
-        };
       }
-      break;
-    case 'RESET_FILTERS':
-      const currentTransactionType = state.filters.general.contract;
-      const defaultFilters = initialSearchState.filters;
+
       newState = {
         ...state,
-        searchQuery: initialSearchState.searchQuery, // Resetta anche la query di ricerca
-        filters: {
-          ...defaultFilters,
-          general: {
-            ...defaultFilters.general,
-            contract: action.payload?.keepTransactionType
-              ? currentTransactionType
-              : defaultFilters.general.contract,
-            // Assicurati che il priceRange sia aggiornato in base al transactionType effettivo dopo il reset
-            priceRange: (action.payload?.keepTransactionType ? currentTransactionType : defaultFilters.general.contract) === 'rent'
-              ? DEFAULT_PRICE_RANGES.rent.defaultRange
-              : DEFAULT_PRICE_RANGES.sale.defaultRange,
-          },
-        },
-        selectedMainCategoryInPanel: null, // Resetta anche la categoria selezionata nel pannello
+        searchQuery: '',
+        filters: resetFilters as SearchCriteria,
+        selectedMainCategoryInPanel: null,
       };
       break;
+    }
     case 'SET_SELECTED_MAIN_CATEGORY_IN_PANEL':
       newState = { ...state, selectedMainCategoryInPanel: action.payload };
       break;
     case 'SET_GEOLOCATION':
-      newState = { ...state, geolocation: action.payload };
+      newState = { ...state, previousGeolocation: state.geolocation, geolocation: action.payload };
+      break;
+    case 'HYDRATE_STATE':
+      newState = {
+        ...state,
+        ...(action.payload.searchQuery !== undefined ? { searchQuery: action.payload.searchQuery } : {}),
+        ...(action.payload.selectedMainCategoryInPanel !== undefined ? { selectedMainCategoryInPanel: action.payload.selectedMainCategoryInPanel } : {}),
+        ...(action.payload.geolocation !== undefined ? { geolocation: action.payload.geolocation, previousGeolocation: action.payload.geolocation } : {}),
+        ...(action.payload.filters ? { filters: action.payload.filters as SearchCriteria, previousFilters: action.payload.filters as SearchCriteria } : {}),
+        isLoadingFromStorage: false,
+        errorStorage: null,
+      };
+      console.log('[SearchContext] HYDRATE_STATE applied. isLoadingFromStorage: false');
       break;
     case 'LOAD_STATE_FROM_STORAGE':
       newState = {
@@ -212,163 +232,50 @@ export const searchReducer = (state: SearchState, action: SearchAction): SearchS
   return newState;
 };
 
-// Chiavi per AsyncStorage
-const SEARCH_QUERY_KEY = 'searchQuery';
-const FILTERS_KEY = 'filters';
-const SELECTED_MAIN_CATEGORY_KEY = 'selectedMainCategoryInPanel';
-const GEOLOCATION_KEY = 'geolocation';
-
 // 3. Creare il Provider (SearchProvider)
 export const SearchProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(searchReducer, initialSearchState);
 
-  // Effetto per Caricare da AsyncStorage (al mount del Provider)
+  // Hydration: carica stato persistente all'avvio del Provider e dispatcha HYDRATE_STATE
   useEffect(() => {
-    const loadState = async () => {
+    let cancelled = false;
+    const hydrate = async () => {
       try {
-        console.log('[SearchContext] Attempting to load state from AsyncStorage...');
         dispatch({ type: 'SET_STORAGE_LOADING', payload: true });
-        const storedQuery = await AsyncStorage.getItem(SEARCH_QUERY_KEY);
-        const storedFilters = await AsyncStorage.getItem(FILTERS_KEY);
-        const storedSelectedCategory = await AsyncStorage.getItem(SELECTED_MAIN_CATEGORY_KEY);
-
-        const storedGeolocation = await AsyncStorage.getItem(GEOLOCATION_KEY);
-        
-        console.log('[SearchContext] Raw from AsyncStorage:', { storedQuery, storedFilters, storedSelectedCategory, storedGeolocation });
-
-        const loadedState: Partial<SearchState> = {};
-        let successfullyParsedFilters = false;
-
-        if (storedQuery !== null) {
-          loadedState.searchQuery = storedQuery;
-          console.log('[SearchContext] Loaded searchQuery:', storedQuery);
-        }
-        if (storedFilters !== null) {
-          try {
-            const parsedFilters: PropertyFilters = JSON.parse(storedFilters);
-            // Validate filters.general.contract
-            if (parsedFilters.general && !['sale', 'rent'].includes(parsedFilters.general.contract)) {
-              console.warn('[SearchContext] Invalid filters.general.contract found in storage. Defaulting to "sale".');
-              parsedFilters.general.contract = 'sale';
-            } else if (!parsedFilters.general) {
-              console.warn('[SearchContext] filters.general is undefined in storage. Defaulting contract to "sale".');
-              parsedFilters.general = { ...initialSearchState.filters.general, contract: 'sale' };
-            }
-            loadedState.filters = parsedFilters;
-            successfullyParsedFilters = true;
-            console.log('[SearchContext] Loaded and parsed filters:', parsedFilters);
-          } catch (e) {
-            console.error("[SearchContext] Errore nel parsing dei filtri da AsyncStorage", e);
-            // Non dispatchare SET_STORAGE_ERROR qui, lascia che il flusso continui
-            // per impostare isLoadingFromStorage a false. L'errore è già loggato.
-            // Potremmo voler rimuovere la chiave corrotta.
-            await AsyncStorage.removeItem(FILTERS_KEY);
-          }
-        }
-        if (storedSelectedCategory !== null) {
-          loadedState.selectedMainCategoryInPanel = storedSelectedCategory as keyof Omit<PropertyFilters, 'general'>;
-          console.log('[SearchContext] Loaded selectedMainCategoryInPanel:', storedSelectedCategory);
-        }
-        
-        if (storedGeolocation !== null) {
-          try {
-            const parsedGeolocation = JSON.parse(storedGeolocation);
-            loadedState.geolocation = parsedGeolocation;
-            console.log('[SearchContext] Loaded geolocation:', parsedGeolocation);
-          } catch (e) {
-            console.error("[SearchContext] Errore nel parsing della geolocalizzazione da AsyncStorage", e);
-            await AsyncStorage.removeItem(GEOLOCATION_KEY);
-          }
-        }
-
-        if (Object.keys(loadedState).length > 0) {
-          // Se abbiamo caricato qualcosa, anche solo la query, applichiamo lo stato caricato.
-          // Se i filtri non sono stati parsati con successo, loadedState.filters sarà undefined,
-          // e lo stato dei filtri rimarrà quello iniziale (o quello già presente se non era initialSearchState).
-          // LOAD_STATE_FROM_STORAGE imposterà isLoadingFromStorage a false.
-          dispatch({ type: 'LOAD_STATE_FROM_STORAGE', payload: loadedState });
-        } else {
-          // Nessun dato salvato o nessun dato caricato con successo (es. solo filtri corrotti)
-          console.log('[SearchContext] No valid state found in AsyncStorage or only corrupted data.');
-          dispatch({ type: 'SET_STORAGE_LOADING', payload: false });
-        }
-
-      } catch (error) {
-        console.error("[SearchContext] Errore nel caricamento dello stato da AsyncStorage (catch generale)", error);
-        dispatch({ type: 'SET_STORAGE_ERROR', payload: "Impossibile caricare le preferenze di ricerca." });
+        const partialState = await SearchStateRepository.loadStateFromStorage();
+        const storedFilters = await SearchStateRepository.loadFilters();
+        if (cancelled) return;
+        const hydratePayload: any = {};
+        if (partialState.searchQuery !== undefined) hydratePayload.searchQuery = partialState.searchQuery;
+        if (partialState.selectedMainCategoryInPanel !== undefined) hydratePayload.selectedMainCategoryInPanel = partialState.selectedMainCategoryInPanel;
+        if (partialState.geolocation !== undefined) hydratePayload.geolocation = partialState.geolocation;
+        if (storedFilters) hydratePayload.filters = storedFilters;
+        dispatch({ type: 'HYDRATE_STATE', payload: hydratePayload });
+        console.log('[SearchContext] Hydrated from storage', hydratePayload);
+      } catch (e) {
+        console.error('[SearchContext] Error hydrating from storage', e);
+        dispatch({ type: 'SET_STORAGE_ERROR', payload: 'Errore caricamento filtri da storage' });
+      } finally {
+        dispatch({ type: 'SET_STORAGE_LOADING', payload: false });
       }
     };
+    hydrate();
+    return () => { cancelled = true; };
+  }, [dispatch]);
 
-    loadState();
-  }, []); // Eseguito solo al mount
-
-  // Effetto per Salvare in AsyncStorage (quando lo stato rilevante cambia)
+  // Persistenza: salva filtri (debounced nel repository) ogni volta che cambiano, evitando il salvataggio durante l'idratazione
   useEffect(() => {
-    const saveState = async () => {
-      if (state.isLoadingFromStorage && !state.errorStorage) {
-        // Non salvare mentre si sta ancora caricando dallo storage, a meno che non ci sia già un errore di storage
-        console.log('[SearchContext] Skipping save, still loading from storage.');
-        return;
-      }
-      console.log('[SearchContext] Attempting to save state to AsyncStorage:', {
-        query: state.searchQuery,
-        filters: state.filters,
-        selectedCat: state.selectedMainCategoryInPanel
-      });
+    if (state.isLoadingFromStorage) return;
+    const persist = async () => {
       try {
-        // Salva searchQuery
-        if (state.searchQuery !== initialSearchState.searchQuery || !AsyncStorage.getItem(SEARCH_QUERY_KEY)) {
-             await AsyncStorage.setItem(SEARCH_QUERY_KEY, state.searchQuery);
-             console.log('[SearchContext] Saved searchQuery:', state.searchQuery);
-        } else if (state.searchQuery === initialSearchState.searchQuery) {
-            await AsyncStorage.removeItem(SEARCH_QUERY_KEY);
-            console.log('[SearchContext] Removed searchQuery (back to default).');
-        }
-
-        // Salva filters
-        const filtersString = JSON.stringify(state.filters);
-        const initialFiltersString = JSON.stringify(initialSearchState.filters);
-        if (filtersString !== initialFiltersString || !AsyncStorage.getItem(FILTERS_KEY)) {
-            await AsyncStorage.setItem(FILTERS_KEY, filtersString);
-            console.log('[SearchContext] Saved filters:', filtersString);
-        } else if (filtersString === initialFiltersString) {
-            await AsyncStorage.removeItem(FILTERS_KEY);
-            console.log('[SearchContext] Removed filters (back to default).');
-        }
-
-        // Salva selectedMainCategoryInPanel
-        if (state.selectedMainCategoryInPanel !== initialSearchState.selectedMainCategoryInPanel || !AsyncStorage.getItem(SELECTED_MAIN_CATEGORY_KEY)) {
-            if (state.selectedMainCategoryInPanel) {
-                 await AsyncStorage.setItem(SELECTED_MAIN_CATEGORY_KEY, state.selectedMainCategoryInPanel);
-                 console.log('[SearchContext] Saved selectedMainCategoryInPanel:', state.selectedMainCategoryInPanel);
-            } else {
-                await AsyncStorage.removeItem(SELECTED_MAIN_CATEGORY_KEY);
-                console.log('[SearchContext] Removed selectedMainCategoryInPanel (is null).');
-            }
-        } else if (state.selectedMainCategoryInPanel === initialSearchState.selectedMainCategoryInPanel) { // usually null
-             await AsyncStorage.removeItem(SELECTED_MAIN_CATEGORY_KEY);
-             console.log('[SearchContext] Removed selectedMainCategoryInPanel (back to default null).');
-        }
-        
-        // Salva geolocation
-        const geolocationString = JSON.stringify(state.geolocation);
-        const initialGeolocationString = JSON.stringify(initialSearchState.geolocation);
-        if (geolocationString !== initialGeolocationString || !AsyncStorage.getItem(GEOLOCATION_KEY)) {
-            await AsyncStorage.setItem(GEOLOCATION_KEY, geolocationString);
-            console.log('[SearchContext] Saved geolocation:', geolocationString);
-        } else if (geolocationString === initialGeolocationString) {
-            await AsyncStorage.removeItem(GEOLOCATION_KEY);
-            console.log('[SearchContext] Removed geolocation (back to default null).');
-        }
-
-      } catch (error) {
-        console.error("[SearchContext] Errore nel salvataggio dello stato in AsyncStorage", error);
-        dispatch({ type: 'SET_STORAGE_ERROR', payload: "Impossibile salvare le preferenze di ricerca." });
+        await SearchStateRepository.saveFilters(state.filters);
+      } catch (e) {
+        console.error('[SearchContext] Error saving filters to storage', e);
+        // Non dispatchiamo un errore di storage qui per non bloccare l'UI; il reducer ha already a SET_STORAGE_ERROR action if needed
       }
     };
-
-    saveState();
-  }, [state.searchQuery, state.filters, state.selectedMainCategoryInPanel, state.geolocation, state.isLoadingFromStorage]);
+    persist();
+  }, [state.filters, state.isLoadingFromStorage]);
 
   const setGeolocation = (g: Geolocation | null) => {
     dispatch({ type: 'SET_GEOLOCATION', payload: g });

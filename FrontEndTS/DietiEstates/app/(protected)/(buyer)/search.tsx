@@ -1,83 +1,21 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, Stack, router } from 'expo-router';
 import { useSearch } from '@/context/SearchContext';
-import { PropertyFilters, RESIDENTIAL_CATEGORIES, COMMERCIAL_CATEGORIES, LAND_CATEGORIES } from '@/components/Buyer/SearchIntegration/types';
+import useSearchProperties from '@/src/hooks/useSearchProperties';
+import useSearchUrlState from '@/src/hooks/useSearchUrlState';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
-import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
 import { SearchResultsView } from '@/components/Buyer/SearchResults/SearchResultsView';
 
 export default function SearchResultsScreen() {
   // Aggiunto triggerSearch al tipo dei parametri URL
   const params = useLocalSearchParams<{ category?: string; query?: string; contract?: 'rent' | 'sale', triggerSearch?: string }>();
-  const { state, dispatch } = useSearch();
-  const [isLoading, setIsLoading] = useState(true); // Mantenuto per il caricamento dei dati API
-  const [properties, setProperties] = useState<PropertyDetail[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const { state } = useSearch();
+  const { properties, isLoading, error, search } = useSearchProperties();
 
-  // Effetto per sincronizzare i parametri URL con il SearchContext
-  useEffect(() => {
-    console.log('[SearchScreen] Syncing URL params to context. Current params:', JSON.stringify(params));
-    console.log('[SearchScreen] Context state BEFORE sync:', {
-      query: state.searchQuery,
-      filters: JSON.stringify(state.filters.general), // Log solo general per brevità
-      selectedCat: state.selectedMainCategoryInPanel
-    });
-
-    let dispatchNeeded = false;
-
-    if (params.query && params.query !== state.searchQuery) {
-      console.log(`[SearchScreen] URL query ("${params.query}") differs from context ("${state.searchQuery}"). Dispatching SET_QUERY.`);
-      dispatch({ type: 'SET_QUERY', payload: params.query });
-      dispatchNeeded = true;
-    }
-
-    if (params.category) {
-      const categoryKey = params.category.toLowerCase() as keyof Omit<PropertyFilters, 'general'>;
-      if (['residential', 'commercial', 'land'].includes(categoryKey)) {
-        if (categoryKey !== state.selectedMainCategoryInPanel) {
-          console.log(`[SearchScreen] URL category ("${categoryKey}") differs from context selectedMainCategoryInPanel ("${state.selectedMainCategoryInPanel}"). Dispatching SET_SELECTED_MAIN_CATEGORY_IN_PANEL.`);
-          dispatch({ type: 'SET_SELECTED_MAIN_CATEGORY_IN_PANEL', payload: categoryKey });
-          dispatchNeeded = true;
-        }
-        
-        let defaultSubCategory;
-        switch (categoryKey) {
-            case 'residential': defaultSubCategory = RESIDENTIAL_CATEGORIES[0]; break;
-            case 'commercial': defaultSubCategory = COMMERCIAL_CATEGORIES[0]; break;
-            case 'land': defaultSubCategory = LAND_CATEGORIES[0]; break;
-        }
-
-        const currentCategoryFilter = state.filters[categoryKey];
-        if (defaultSubCategory && currentCategoryFilter?.category !== defaultSubCategory) {
-            console.log(`[SearchScreen] Default subCategory for ${categoryKey} ("${defaultSubCategory}") differs from context filter ("${currentCategoryFilter?.category}"). Dispatching UPDATE_FILTER.`);
-            dispatch({
-                type: 'UPDATE_FILTER',
-                payload: { category: categoryKey, newFilters: { category: defaultSubCategory } },
-            });
-            dispatchNeeded = true;
-        }
-      }
-    }
-    
-    if (params.contract && params.contract !== state.filters.general.contract) {
-        console.log(`[SearchScreen] URL transactionType ("${params.contract}") differs from context ("${state.filters.general.contract}"). Dispatching UPDATE_FILTER for general.`);
-        dispatch({
-            type: 'UPDATE_FILTER',
-            payload: { subCategory: 'general', newFilters: { contract: params.contract } },
-        });
-        dispatchNeeded = true;
-    }
-
-    if (dispatchNeeded) {
-      console.log('[SearchScreen] Dispatches were made based on URL params.');
-    } else {
-      console.log('[SearchScreen] No dispatches needed based on URL params, context is in sync or params are not set.');
-    }
-    // Non è necessario loggare lo stato DOPO qui perché il dispatch è asincrono e lo stato aggiornato
-    // sarà visibile al prossimo render o nel log del reducer.
-  }, [params, dispatch, state.searchQuery, state.filters, state.selectedMainCategoryInPanel]);
+  // URL <-> Context synchronization is handled by useSearchUrlState to centralize logic and avoid scattered effects
+  useSearchUrlState();
 
 
   const searchTitle = params?.category
@@ -85,83 +23,25 @@ export default function SearchResultsScreen() {
     : params?.query || state.searchQuery || 'Ricerca';
 
 
-  // Funzione per recuperare le proprietà tramite API
-  const fetchProperties = useCallback(async (queryToUse: string, filtersToUse: PropertyFilters) => {
-    // Non procedere se lo stato sta ancora caricando da AsyncStorage
-    // Questo controllo è ancora valido perché isLoadingFromStorage è globale per il context.
-    console.log('[SearchScreen] fetchProperties useCallback created. isLoadingFromStorage:', state.isLoadingFromStorage);
-
-    if (state.isLoadingFromStorage) {
-      console.log("[SearchScreen] fetchProperties: SearchContext is still loading from AsyncStorage. Aborting fetch.");
-      return;
-    }
-    
-    console.log('[SearchScreen] fetchProperties: Attempting to fetch. Setting isLoading to true.');
-    setIsLoading(true);
-    setProperties([]); // Pulisce i risultati precedenti
-    setError(null);
-
-    try {
-      // Usa queryToUse e filtersToUse invece di state.searchQuery e state.filters
-      console.log('[SearchScreen] fetchProperties: Calling ApiService.searchProperties with:', {
-        query: queryToUse,
-        filters: JSON.stringify(filtersToUse, null, 2)
-      });
-      
-      // TODO: Implementare la nuova logica di chiamata API per la ricerca delle proprietà.
-      // Per ora, simulo un risultato vuoto per evitare errori.
-      console.log('[SearchScreen] fetchProperties: Simulazione di chiamata API. Nessun risultato.');
-      setProperties([]);
-      // Simulo anche un ritardo per rappresentare una chiamata API
-      await new Promise(resolve => setTimeout(resolve, 500));
-    } catch (err) {
-      console.error('[SearchScreen] fetchProperties: Error fetching properties:', err);
-      const errorMessage = err instanceof Error ? err.message : "Impossibile caricare i risultati della ricerca. Riprova più tardi.";
-      setError(errorMessage);
-      setProperties([]); // Assicura che la lista sia vuota in caso di errore
-    } finally {
-      console.log('[SearchScreen] fetchProperties: API call finished. Setting isLoading to false.');
-      setIsLoading(false);
-    }
-  }, [state.isLoadingFromStorage]); // Rimosso state.searchQuery e state.filters
+  // La logica di recupero proprietà è ora delegata a useSearchProperties.search.
+  // Il hook gestisce isLoading, error e properties.
 
   // Rimosso l'useEffect che triggerava fetchProperties su ogni cambio di query/filtri.
   // La ricerca ora viene triggerata solo esplicitamente tramite il parametro URL triggerSearch,
   // dopo che il context è stato sincronizzato.
+  
 
   useEffect(() => {
-    console.log(`[SearchScreen] useEffect for triggerSearch triggered. isLoadingFromStorage: ${state.isLoadingFromStorage}, triggerSearch: ${params.triggerSearch}, contextQuery: ${state.searchQuery}, contextFilters: ${JSON.stringify(state.filters.general.contract)}`);
-    
-    // Esegue fetchProperties solo se il context ha finito di caricare E il parametro triggerSearch è presente
+    // La ricerca viene attivata solo quando triggerSearch è presente nell'URL.
     if (!state.isLoadingFromStorage && params.triggerSearch === 'true') {
-      console.log('[SearchScreen] useEffect for triggerSearch: isLoadingFromStorage is false and triggerSearch is true.');
-      
-      // L'effetto di sincronizzazione dei parametri URL (sopra) dovrebbe aver già aggiornato lo stato del context.
-      // Quindi, possiamo fare affidamento su state.searchQuery e state.filters qui.
-      const queryForFetch = state.searchQuery; 
-      const filtersForFetch = state.filters;
-
-      console.log('[SearchScreen] useEffect for triggerSearch: Calling fetchProperties with (from context state):', { 
-        query: queryForFetch, 
-        filters: JSON.stringify(filtersForFetch) 
+      console.log('[SearchScreen] Triggering search from URL params...');
+      search().catch(err => {
+        console.error('[SearchScreen] search failed', err);
       });
-      fetchProperties(queryForFetch, filtersForFetch);
-      
-      // Rimuove il parametro triggerSearch dopo aver eseguito la ricerca.
+      // Rimuovi il parametro per evitare ricerche multiple
       router.setParams({ triggerSearch: undefined });
-      console.log('[SearchScreen] useEffect for triggerSearch: Removed triggerSearch param.');
-    } else if (state.isLoadingFromStorage) {
-       console.log('[SearchScreen] useEffect for triggerSearch: isLoadingFromStorage is true. Waiting...');
-    } else if (params.triggerSearch !== 'true') {
-       console.log('[SearchScreen] useEffect for triggerSearch: triggerSearch is not true. Not fetching.');
     }
-  }, [
-       state.isLoadingFromStorage, 
-       params.triggerSearch, 
-       state.searchQuery, // Aggiunto per rieseguire se la query nel context cambia (post-sincronizzazione)
-       state.filters,     // Aggiunto per rieseguire se i filtri nel context cambiano (post-sincronizzazione)
-       fetchProperties    // fetchProperties ora dipende solo da isLoadingFromStorage
-     ]);
+  }, [state.isLoadingFromStorage, params.triggerSearch, search]);
 
   useEffect(() => {
     console.log('[SearchScreen] Properties state updated:', properties);

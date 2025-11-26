@@ -4,6 +4,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { RangeSlider } from "./RangeSlider";
+import { PriceInput } from "./PriceInput";
 import { SegmentedControl } from "./SegmentedControl";
 import { QuickNumericSelector } from "./QuickNumericSelector";
 import { LabelInput } from "@/components/LabelInput";
@@ -11,6 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { withErrorBoundary } from "./ErrorBoundary";
 import { useSearch } from "@/context/SearchContext";
+import useSearchProperties from '@/src/hooks/useSearchProperties';
 import { ALL_FILTERS, CATEGORY_FILTERS } from "@/config/filter-config";
 import { RESIDENTIAL_CATEGORIES, COMMERCIAL_CATEGORIES, GARAGE_CATEGORIES, LAND_CATEGORIES } from "./types"; //Dobbiamo creare GARAGE_CATEGORIES
 import type { FilterDefinition } from "./types";
@@ -24,7 +26,6 @@ interface FilterPanelProps {
 const categoryStateToConfigMap: Record<string, string> = {
   residential: 'RESIDENTIAL',
   commercial: 'COMMERCIAL',
-  industrial: 'COMMERCIAL', // 'industrial' frontend mapped to COMMERCIAL config (no separate INDUSTRIAL config)
   garage: 'GARAGE',
   land: 'LAND',
 };
@@ -35,6 +36,8 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
 
   const { state, dispatch } = useSearch();
   const { filters, selectedMainCategoryInPanel } = state;
+  // Usa l'hook che espone updateFilter/resetFilters con logica di sanitizzazione
+  const { updateFilter, resetFilters } = useSearchProperties();
 
   const panelHeight = Dimensions.get('window').height * 0.8;
   const textColor = useThemeColor({}, "text");
@@ -82,41 +85,48 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
   };
 
   const handleReset = (keepTransactionType = true) => {
-    dispatch({ type: 'RESET_FILTERS', payload: { keepTransactionType } });
+    // Usa l'hook per mantenere la logica centralizzata
+    resetFilters(keepTransactionType);
   };
 
   const selectCategory = (categoryKey: keyof typeof categoryStateToConfigMap | null) => {
     dispatch({ type: 'SET_SELECTED_MAIN_CATEGORY_IN_PANEL', payload: categoryKey as any });
-if (categoryKey) {
-  // imposta category di default se necessario
-  const defaultCat = (filters as any)[categoryKey]?.category ?? null;
-  if (!defaultCat) {
-    const defaultValue = (categoryKey === 'residential' && (filters as any).residential?.category)
-      ? (filters as any).residential.category
-      : null;
-    if (defaultValue) {
-      dispatch({
-        type: 'UPDATE_FILTER',
-        payload: { category: categoryKey as any, newFilters: { category: defaultValue as any } } as any
-      });
+    if (categoryKey) {
+      // imposta category di default se necessario (usiamo .value quando presente)
+      const existingCategoryState = (filters as any)[categoryKey];
+      const defaultCatValue = existingCategoryState?.category?.value ?? null;
+      if (!defaultCatValue) {
+        // se non esiste un valore corrente, proviamo a leggere il default dalla stessa categoria (se presente)
+        const fallbackDefault = existingCategoryState?.category?.defaultValue ?? null;
+        if (fallbackDefault !== null && fallbackDefault !== undefined) {
+          // usa l'hook per aggiornare la categoria
+          updateFilter(categoryKey as any, { category: fallbackDefault } as any);
+        }
+      }
     }
-  }
-}
   };
 
   const updateGeneralFilter = (newFilters: Record<string, any>) => {
-    dispatch({ type: 'UPDATE_FILTER', payload: { subCategory: 'general', newFilters } });
+    // instrada verso l'hook che normalizza null/undefined e dispatcha
+    updateFilter('general', newFilters as any);
   };
 
   const updateCategoryFilter = (categoryKey: keyof typeof categoryStateToConfigMap, newFilters: Record<string, any>) => {
-    dispatch({ type: 'UPDATE_FILTER', payload: { category: categoryKey as any, newFilters } });
+    // instrada verso l'hook per aggiornamenti delle categorie
+    updateFilter(categoryKey as any, newFilters as any);
   };
 
   const renderControl = (def: FilterDefinition, currentCategoryKey?: keyof typeof categoryStateToConfigMap) => {
     const isGeneral = !currentCategoryKey;
-    const value = isGeneral
-      ? (filters.general as any)[def.key] ?? def.defaultValue
-      : ((filters as any)[currentCategoryKey as string] ?? {})[def.key] ?? def.defaultValue;
+
+    // Recupera il FilterState e poi il suo valore; fallback su def.defaultValue
+    const rawState = isGeneral
+      ? (filters.general as any)[def.key]
+      : ((filters as any)[currentCategoryKey as string] ?? {})[def.key];
+
+    const value = rawState && typeof rawState === 'object' && 'value' in rawState
+      ? rawState.value
+      : (rawState !== undefined ? rawState : def.defaultValue);
 
     const onChange = (next: any) => {
       if (isGeneral) {
@@ -128,6 +138,17 @@ if (categoryKey) {
 
     switch (def.control) {
       case 'RangeSlider':
+        if (def.key === 'priceRange') {
+          return (
+            <PriceInput
+              key={def.key}
+              label="Prezzo massimo"
+              value={value.max ?? 0}
+              onChange={(newMax) => onChange({ min: 0, max: newMax })}
+              quickOptions={[100000, 200000, 300000]}
+            />
+          );
+        }
         return (
           <RangeSlider
             key={def.key}
@@ -246,22 +267,23 @@ if (categoryKey) {
 
               {!selectedMainCategoryInPanel ? (
                 <ThemedView className="grid grid-cols-2 gap-4">
-                  {availableCategories.map((catKey) => (
-                    <TouchableOpacity
-                      key={catKey}
-                      onPress={() => {
-                        // mappiamo la chiave config uppercase al corrispondente stato (reverse map)
-                        const stateKey = Object.keys(categoryStateToConfigMap).find(k => categoryStateToConfigMap[k] === catKey);
-                        selectCategory(stateKey as any);
-                      }}
-                      className="p-4 rounded-lg"
-                      style={{ backgroundColor: loginCardBackground }}
-                    >
-                      <ThemedText className="font-medium" style={{ color: textColor }}>
-                        {catKey}
-                      </ThemedText>
-                    </TouchableOpacity>
-                  ))}
+                  {availableCategories.map((catKey) => {
+                    // mappiamo la chiave config uppercase al corrispondente stato (reverse map)
+                    const stateKey = Object.keys(categoryStateToConfigMap).find(k => categoryStateToConfigMap[k] === catKey) as keyof typeof categoryStateToConfigMap | undefined;
+                    const isSelected = stateKey ? selectedMainCategoryInPanel === stateKey : false;
+                    return (
+                      <TouchableOpacity
+                        key={catKey}
+                        onPress={() => selectCategory(stateKey as any)}
+                        className="p-4 rounded-lg"
+                        style={{ backgroundColor: isSelected ? tintColor : loginCardBackground }}
+                      >
+                        <ThemedText className="font-medium" style={{ color: isSelected ? '#fff' : textColor }}>
+                          {catKey}
+                        </ThemedText>
+                      </TouchableOpacity>
+                    );
+                  })}
                 </ThemedView>
               ) : (
                 <ThemedView>
@@ -293,8 +315,12 @@ if (categoryKey) {
                     console.log('[FilterPanel] category options for', stateKey, opts);
                     if (opts.length === 0) return null;
   
-                    const currentValue = ((filters as any)[stateKey] || {}).category;
-  
+                    // Il filtro category è un FilterState<...>; usiamo .value per il controllo UI
+                    const rawCategoryState = ((filters as any)[stateKey] || {}).category;
+                    const currentValue = rawCategoryState && typeof rawCategoryState === 'object' && 'value' in rawCategoryState
+                      ? rawCategoryState.value
+                      : (rawCategoryState ?? undefined);
+
                     return (
                       <ThemedView className="mb-4">
                         <ThemedText className="text-sm mb-2" style={{ color: textColor }}>
@@ -304,7 +330,7 @@ if (categoryKey) {
                           options={opts.map(o => ({ label: String(o), value: o }))}
                           value={currentValue}
                           onChange={(v: any) => {
-                            // aggiorna la proprietà 'category' della categoria selezionata
+                            // aggiorna la proprietà 'category' della categoria selezionata usando l'hook (normalizza valori)
                             updateCategoryFilter(stateKey as any, { category: v });
                           }}
                         />
@@ -328,7 +354,9 @@ if (categoryKey) {
               <TouchableOpacity
                 onPress={() => {
                   hidePanel();
-                  if (onApplyAndNavigate) onApplyAndNavigate();
+                  if (onApplyAndNavigate) {
+                    onApplyAndNavigate();
+                  }
                 }}
                 className="p-4 rounded-lg items-center flex-row justify-center"
                 style={{ backgroundColor: buttonBackground }}

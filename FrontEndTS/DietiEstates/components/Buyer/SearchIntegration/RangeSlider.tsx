@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import Slider from "@react-native-community/slider";
@@ -6,7 +6,7 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { withErrorBoundary } from "./ErrorBoundary";
 import type { RangeSliderProps } from "./types";
 
-const formatCurrency = (value: number): string => {
+export const formatCurrency = (value: number): string => {
   if (value >= 1000000) {
     return `€${(value / 1000000).toLocaleString('it-IT', { maximumFractionDigits: 1 })}M`;
   } else if (value >= 1000) {
@@ -31,6 +31,13 @@ const RangeSliderComponent: React.FC<RangeSliderProps> = ({
   const backgroundColor = useThemeColor({}, "tabIconDefault");
   const tabIconDefault = useThemeColor({}, "text");
 
+  const initialDisplayValue = type === "price" ? value.max : value.min;
+  const [tempValue, setTempValue] = useState(initialDisplayValue);
+
+  useEffect(() => {
+    setTempValue(initialDisplayValue);
+  }, [value]);
+
   // Assicuriamoci che displayValue sia sempre all'interno del range
   const ensureInRange = (val: number): number => {
     if (val < min) return min;
@@ -45,7 +52,7 @@ const RangeSliderComponent: React.FC<RangeSliderProps> = ({
     return `${val}${unit}`;
   };
 
-  const handleValueChange = (val: number) => {
+  const handleSlidingComplete = (val: number) => {
     const safeVal = ensureInRange(val);
     if (type === "price") {
       onChange({ min: 0, max: safeVal });
@@ -56,7 +63,6 @@ const RangeSliderComponent: React.FC<RangeSliderProps> = ({
     }
   };
 
-  const displayValue = ensureInRange(type === "price" ? value.max : value.min);
   const finalFormatValue = formatValue || defaultFormatValue;
 
   return (
@@ -82,7 +88,7 @@ const RangeSliderComponent: React.FC<RangeSliderProps> = ({
           className="text-sm font-medium"
           style={{ color: textColor }}
         >
-          {finalFormatValue(displayValue)}
+          {finalFormatValue(tempValue)}
         </ThemedText>
       </ThemedView>
       <ThemedView className="px-2">
@@ -90,8 +96,9 @@ const RangeSliderComponent: React.FC<RangeSliderProps> = ({
           minimumValue={min}
           maximumValue={max}
           step={step}
-          value={displayValue}
-          onSlidingComplete={handleValueChange}
+          value={tempValue}
+          onValueChange={setTempValue}
+          onSlidingComplete={handleSlidingComplete}
           minimumTrackTintColor={tintColor}
           maximumTrackTintColor={backgroundColor}
           thumbTintColor={tintColor}

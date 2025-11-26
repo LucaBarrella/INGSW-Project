@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { TextInput, TouchableOpacity, View, FlatList } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { SearchBarProps, PhotonFeature } from './types';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { useSearch } from '@/context/SearchContext';
+import useSearchProperties from '@/src/hooks/useSearchProperties';
 import { useTranslation } from 'react-i18next';
 
 /**
@@ -35,35 +35,11 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const [suggestions, setSuggestions] = useState<PhotonFeature[]>([]);
   const isSelectingRef = React.useRef(false);
   const lastQueryRef = React.useRef<string>(''); // Per tracciare l'ultima query inviata a Photon
-  const suggestionsCache = React.useRef<Map<string, PhotonFeature[]>>(new Map()); // Cache in memoria
-  const accessFrequency = React.useRef<Map<string, number>>(new Map()); // Contatore accessi per LFU
+  // Usa il repository/hook per suggerimenti persistenti e il conteggio filtri attivi
+  const { getSuggestions, saveSuggestions, activeFiltersCount: activeCountFromHook, updateFilter } = useSearchProperties();
 
-  // Carica la cache da AsyncStorage all'avvio
-  useEffect(() => {
-    const loadCacheFromStorage = async () => {
-      try {
-        const storedCache = await AsyncStorage.getItem('photonSuggestionsCache');
-        if (storedCache) {
-          const parsedArray = JSON.parse(storedCache);
-          // Ricostruisce la Map con i tipi corretti
-          const parsedCache = new Map<string, PhotonFeature[]>();
-          const parsedFrequency = new Map<string, number>();
-          
-          for (const [key, value] of parsedArray) {
-            parsedCache.set(key, value as PhotonFeature[]);
-            parsedFrequency.set(key, 1); // Reset frequency on load
-          }
-          suggestionsCache.current = parsedCache;
-          accessFrequency.current = parsedFrequency;
-          console.log('[SearchBar] Loaded suggestions cache from AsyncStorage:', parsedCache.size, 'entries');
-        }
-      } catch (error) {
-        console.error('[SearchBar] Error loading cache from AsyncStorage:', error);
-      }
-    };
-
-    loadCacheFromStorage();
-  }, []);
+  // Suggestion persistence and caching delegated to SearchRepository via useSearchProperties.
+  // No local AsyncStorage management here to keep the UI component simple.
 
   useEffect(() => {
     // Skip fetching suggestions if we're currently selecting one
@@ -73,51 +49,36 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     }
 
     const q = value?.trim() ?? '';
-    
-    // Se c'è già una geolocalizzazione selezionata e la query corrisponde al label,
-    // evita completamente qualsiasi operazione con i suggerimenti
+    console.log(`[SearchBar useEffect] q: "${q}", geolocation: ${JSON.stringify(state.geolocation)}, lastQuery: "${lastQueryRef.current}"`);
+
     if (state.geolocation && q === state.geolocation.label) {
-      console.log('[SearchBar] Geolocation already selected, skipping suggestions entirely');
+      setSuggestions([]);
       return;
     }
-    
+
     if (!q) {
       setSuggestions([]);
       lastQueryRef.current = '';
       console.log('[SearchBar] Query is empty, clearing suggestions');
       return;
     }
-    
-    // Usa cache persistente se disponibile
-    if (suggestionsCache.current.has(q)) {
-      console.log('[SearchBar] Using persistent cache for query:', q);
-      setSuggestions(suggestionsCache.current.get(q)!);
-      lastQueryRef.current = q;
-      
-      // Incrementa il contatore di accesso per LFU
-      const currentCount = accessFrequency.current.get(q) || 0;
-      accessFrequency.current.set(q, currentCount + 1);
-      return;
-    }
-    
+
     // Evita chiamate duplicate per la stessa query (cache a breve termine)
-    if (q === lastQueryRef.current) {
-      console.log('[SearchBar] Same query as last time, skipping Photon call');
-      return;
-    }
-    
+    // Rimuovo questo blocco per permettere la modifica della località
+
     // Evita chiamate per query troppo corte (meno di 2 caratteri)
     if (q.length < 2) {
-      console.log('[SearchBar] Skipping Photon call - query too short:', q);
+      console.log('[SearchBar] Skipping suggestions - query too short:', q);
       setSuggestions([]);
       return;
     }
+
     const timer = setTimeout(async () => {
       try {
-        // TODO: Implementare la nuova logica per i suggerimenti di autocompletamento.
-        // Per ora, disabilito i suggerimenti.
-        console.log('[SearchBar] Autocomplete suggestions temporarily disabled.');
-        setSuggestions([]);
+        // Il hook/useSearchProperties delega a SearchRepository che ora risolve
+        // sia la cache in-memory/AsyncStorage sia la chiamata remota a Photon su cache miss.
+        const suggestionsFromRepo = await getSuggestions(q);
+        setSuggestions(suggestionsFromRepo || []);
         lastQueryRef.current = q;
       } catch (err) {
         console.error('[SearchBar] error fetching suggestions', err);
@@ -126,10 +87,12 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [value, state.geolocation]); // Aggiunto state.geolocation come dipendenza
+  }, [value, getSuggestions]); // Rimuovo state.geolocation dalle dipendenze
 
   const handleSubmit = () => {
-    if (onSearchPress) onSearchPress();
+    if (onSearchPress) {
+      onSearchPress();
+    }
   };
 
   const handleSelectSuggestion = (s: PhotonFeature) => {
@@ -137,11 +100,33 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     const label = s.label ?? s.properties?.name ?? '';
     onChangeText(label);
     const coords = s.geometry?.coordinates;
+    const radiusKm = 5;
     if (Array.isArray(coords) && coords.length >= 2) {
       const [lon, lat] = coords;
-      setGeolocation({ lat, lon, label, radiusKm: 5 });
+      // Aggiorna la geolocalizzazione visibile nel context (badge UI)
+      setGeolocation({ lat, lon, label, radiusKm });
+      // Aggiorna i filter state usati per costruire il payload (radius in metri)
+      try {
+        updateFilter('general', {
+          centerLatitude: lat,
+          centerLongitude: lon,
+          // Non aggiorniamo più il raggio qui, lasciamo che il builder usi il default o il valore modificato dall'utente.
+        });
+      } catch (e) {
+        // fallback: set dispatch direttamente se updateFilter non funziona
+        console.error('[SearchBar] updateFilter failed', e);
+      }
     } else {
-      setGeolocation({ lat: 0, lon: 0, label, radiusKm: 5 });
+      setGeolocation({ lat: 0, lon: 0, label, radiusKm });
+      try {
+        updateFilter('general', {
+          centerLatitude: 0,
+          centerLongitude: 0,
+          // Non aggiorniamo più il raggio qui, lasciamo che il builder usi il default o il valore modificato dall'utente.
+        });
+      } catch (e) {
+        console.error('[SearchBar] updateFilter failed', e);
+      }
     }
     setSuggestions([]);
   };
@@ -212,10 +197,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                 {t('Filters')}
               </ThemedText>
 
-              {activeFiltersCount > 0 && (
+              {activeCountFromHook > 0 && (
                 <ThemedView className="absolute -top-2 -right-2 min-w-[18px] h-5 bg-white rounded-full border border-gray-200 items-center justify-center px-1">
                   <ThemedText className="text-xs font-bold leading-tight">
-                    {activeFiltersCount}
+                    {activeCountFromHook}
                   </ThemedText>
                 </ThemedView>
               )}
@@ -223,7 +208,22 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           </View>
         </View>
 
-        {/* I suggerimenti di autocompletamento sono temporaneamente disabilitati. */}
+        {suggestions.length > 0 && (
+          <FlatList
+            data={suggestions}
+            keyboardShouldPersistTaps="handled"
+            keyExtractor={(item, index) => `${item.properties?.osm_id ?? item.label ?? 'suggestion'}-${index}`}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() => handleSelectSuggestion(item)}
+                className="py-2 px-3 border-b border-gray-100"
+              >
+                <ThemedText className="text-sm">{item.label}</ThemedText>
+              </TouchableOpacity>
+            )}
+            style={{ maxHeight: 200 }}
+          />
+        )}
 
       </ThemedView>
     </ThemedView>

@@ -60,52 +60,14 @@ export const LAND_CATEGORIES = [
   "Coltivabile"
 ] as const;
 
-type ResidentialCategory = typeof RESIDENTIAL_CATEGORIES[number];
-type CommercialCategory = typeof COMMERCIAL_CATEGORIES[number];
-type LandCategory = typeof LAND_CATEGORIES[number];
-type GarageCategory = typeof GARAGE_CATEGORIES[number];
+import type { SearchCriteria } from '@/src/dto/SearchDTO';
 
-// Define the main filters interface (aligned with backend field names)
-export interface PropertyFilters {
-  general: {
-    contract: "rent" | "sale";
-    priceRange: Range;
-    size: Range;
-    // Raggio di ricerca in chilometri (usiamo Range per compatibilità con RangeSlider)
-    searchRadiusKm?: Range;
-  };
-  residential: {
-    category: ResidentialCategory;
-    // Backend-aligned fields
-    minNumberOfFloors?: number;
-    minNumberOfRooms: number | string;
-    minNumberOfBathrooms: number | string;
-    floor: string;
-    mustHaveElevator: boolean;
-    hasPool: boolean;
-    minParkingSpaces?: number;
-  };
-  commercial: {
-    category: CommercialCategory;
-    minNumberOfFloors?: number;
-    minNumberOfRooms?: number;
-    minNumberOfBathrooms?: number;
-    mustHaveWheelchairAccess: boolean;
-    constructionYear: string | number;
-  };
-  garage: {
-    category: GarageCategory;
-    // Garage specific backend field
-    minNumberOfFloors?: number;
-    mustHaveSurveillance: boolean;
-  };
-  land: {
-    category: LandCategory;
-    // Backend naming
-    mustBeAccessibleFromStreet: boolean;
-    slope: string | number;
-  };
-}
+/**
+* PropertyFilters: alias di compatibilità verso SearchCriteria.
+* SearchCriteria (in SearchDTO) è la fonte di verità; manteniamo l'alias
+* per evitare modifiche diffuse nel codice legacy.
+*/
+export type PropertyFilters = SearchCriteria;
 
 // Categories Type
 export interface Category {

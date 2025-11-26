@@ -31,6 +31,7 @@ export interface PropertyDTO {
   status: "UNDER_CONSTRUCTION" | "NEW" | "RENOVATED" | "GOOD_CONDITION" | "TO_BE_RENOVATED" | "POOR_CONDITION"; // Stato dell'immobile
   createdAt: string; // Data di creazione (ISO string)
   imageUrl?: string; // URL dell'immagine principale (opzionale)
+  firstImageUrl?: string; // Campo per la prima immagine dalla ricerca
   images?: string[]; // Array di URL immagini
   
   contractType: 'rent' | 'sale';
@@ -65,7 +66,6 @@ export interface PropertyDetail extends PropertyDTO {
   propertyDetails?: {
     residential?: Partial<PropertyFilters['residential']>;
     commercial?: Partial<PropertyFilters['commercial']>;
-    industrial?: Partial<PropertyFilters['industrial']>;
     land?: Partial<PropertyFilters['land']>;
   };
 }

@@ -33,12 +33,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
           <SearchAndFilter
             // onSearch e onFiltersChange rimosse perché gestite dal SearchContext
             placeholder="Cerca immobili..."
-            categories={{
-              residential: { name: "Residenziale" },
-              commercial: { name: "Commerciale" },
-              industrial: { name: "Industriale" },
-              land: { name: "Terreno" }
-            }}
+            // Rimuovo la prop 'categories' per usare quelle del context
           />
         </View>
         <Pressable

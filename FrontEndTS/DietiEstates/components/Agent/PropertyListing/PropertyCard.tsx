@@ -59,7 +59,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
     >
       <Image
         // Usa un placeholder se imageUrl non è definito
-        source={{ uri: property.imageUrl || placeholderImageUrl }}
+        source={{ uri: property.firstImageUrl || placeholderImageUrl }}
         className="w-full h-48"
         resizeMode="cover"
       />
