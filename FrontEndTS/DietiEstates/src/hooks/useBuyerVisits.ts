@@ -29,17 +29,7 @@ export const useBuyerVisits = (): UseBuyerVisitsResult => {
         console.log("[useBuyerVisits] Fetching visits");
         const data: PagedVisitsDTO = await visitService.getVisitsByBuyer();
         console.log(JSON.stringify(data));
-        const visitDTOs: VisitDTO[] = data.content.map(visit => ({
-          id: visit.id,
-          propertyId: visit.propertyId,
-          buyerId: visit.buyerId,
-          agentId: visit.agentId,
-          status: visit.status,
-          notes: visit.notes,
-          scheduledDate: visit.scheduledDate.toString(),
-          createdAt: visit.createdAt.toString(),
-          updatedAt: visit.updatedAt.toString(),
-        }));
+        const visitDTOs: VisitDTO[] = data.content;
         setVisits(visitDTOs);
       } catch (err) {
         console.log("Failed to fetch buyer visits:", err);

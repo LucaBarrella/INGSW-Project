@@ -19,6 +19,16 @@
   "offers": "Offerte",
   "loading": "Caricamento...",
   "visit_requests": "Richieste di visita",
+  "date": "Data",
+  "time": "Ora",
+  "address": "Indirizzo",
+
+  "visit_status": {
+    "PENDING": "in attesa",
+    "CONFIRMED": "confermata",
+    "COMPLETED": "completata",
+    "REJECTED": "rifiutata"
+  },
 
   "property_status": {
     "UNDER_CONSTRUCTION": "in costruzione",

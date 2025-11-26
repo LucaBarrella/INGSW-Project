@@ -11,6 +11,20 @@ export default function VisitsTab() {
   const backgroundColor = useThemeColor({}, 'background');
   const { visits, loading, error } = useBuyerVisits();
   const { t } = useTranslation();
+  const getStatusColor = (status: string) => {
+    switch ((status || '').toUpperCase()) {
+      case 'PENDING':
+        return '#F59E0B'; // yellow
+      case 'CONFIRMED':
+        return '#10B981'; // green
+      case 'CANCELLED':
+        return '#6B7280'; // gray
+      case 'REJECTED':
+        return '#EF4444'; // red
+      default:
+        return '#9CA3AF'; // default gray
+    }
+  };
 
   return (
     <ThemedView style={{ flex: 1, backgroundColor }}>
@@ -34,12 +48,21 @@ export default function VisitsTab() {
         ) : (
           <ThemedView>
             {visits && visits.map((visit: VisitDTO) => (
-              <ThemedView key={visit.id} className="mb-4 p-4 border border-gray-200 rounded-lg">
-                <ThemedText className="text-lg font-semibold">Visit ID: {visit.id}</ThemedText>
-                <ThemedText>Date: {new Date(visit.scheduledDate).toLocaleDateString()}</ThemedText>
-                <ThemedText>Time: {new Date(visit.scheduledDate).toLocaleTimeString()}</ThemedText>
-                <ThemedText>Status: {visit.status}</ThemedText>
-                {visit.notes && <ThemedText>Notes: {visit.notes}</ThemedText>}
+              <ThemedView key={visit.visit.id} className="mb-4 p-4 border border-gray-200 rounded-lg">
+                <ThemedText className="text-lg font-semibold">{t('date')}: {new Date(visit.visit.startTime).toLocaleDateString()}</ThemedText>
+                <ThemedText>{t('time')}: {new Date(visit.visit.startTime).toLocaleTimeString()}</ThemedText>
+                <ThemedText>{t('address')}: {visit.address.city} ({visit.address.country}) {visit.address.street} {visit.address.streetNumber}</ThemedText>
+                <ThemedView style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
+                  <ThemedText><ThemedView
+                    style={{
+                      width: 10,
+                      height: 10,
+                      borderRadius: 6,
+                      backgroundColor: getStatusColor(visit.visit.status),
+                      margin: 8,
+                    }}
+                  /> {t(`visit_status.${visit.visit.status.toUpperCase()}`)}</ThemedText>
+                </ThemedView>
               </ThemedView>
             ))}
           </ThemedView>
