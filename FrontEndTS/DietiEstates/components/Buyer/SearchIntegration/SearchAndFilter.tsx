@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useSearch } from "@/context/SearchContext";
 import { ThemedView } from "@/components/ThemedView";
 import { SearchBar } from "./SearchBar";
@@ -9,12 +9,12 @@ import { Alert } from "react-native";
 interface SearchAndFilterProps {
   placeholder?: string;
   categories?: Categories;
-  onSearchSubmitNavigate?: () => void; // Added new prop
+  onSearchTrigger: () => void;
 }
 
 export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
   placeholder,
-  onSearchSubmitNavigate, // Destructure the new prop
+  onSearchTrigger,
 }) => {
   const { state, dispatch } = useSearch();
   const { activeFiltersCount } = useSearchProperties();
@@ -33,7 +33,7 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
     // Non c'è più tempFilters da ripristinare
   };
 
-  const handleSearchOrFilterAction = (action: 'search' | 'filter') => {
+  const handleSearchSubmit = useCallback(() => {
     if (!state.geolocation) {
       Alert.alert(
         "Località non selezionata",
@@ -42,13 +42,17 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
       return;
     }
 
-    if (action === 'search' && onSearchSubmitNavigate) {
-      onSearchSubmitNavigate();
+    // Trigger the search using the callback from the parent
+    onSearchTrigger();
+  }, [state.geolocation, onSearchTrigger]);
+
+  const handleSearchOrFilterAction = (action: 'search' | 'filter') => {
+    if (action === 'search') {
+      handleSearchSubmit();
     } else if (action === 'filter') {
       setIsFilterOpen(true);
     }
   };
-
   return (
     <>
       <ThemedView className="w-full">

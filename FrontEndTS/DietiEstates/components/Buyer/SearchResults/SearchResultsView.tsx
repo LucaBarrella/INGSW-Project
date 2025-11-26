@@ -11,13 +11,14 @@ import MapView, { Marker } from 'react-native-maps';
 
 interface SearchResultsViewProps {
   properties: PropertyDetail[];
-  // onSearch: (query: string) => void; // Rimosso
   onPropertyPress: (propertyId: number) => void;
+  onSearchTrigger: () => void;
 }
 
 export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
   properties,
   onPropertyPress,
+  onSearchTrigger,
 }) => {
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const tint = useThemeColor({}, 'tint');
@@ -31,9 +32,8 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
       <View className="flex-row items-center py-2 pr-2 border-b" style={{ borderColor: useThemeColor({}, 'border') }}>
         <View className="flex-1 mr-2">
           <SearchAndFilter
-            // onSearch e onFiltersChange rimosse perché gestite dal SearchContext
             placeholder="Cerca immobili..."
-            // Rimuovo la prop 'categories' per usare quelle del context
+            onSearchTrigger={onSearchTrigger}
           />
         </View>
         <Pressable

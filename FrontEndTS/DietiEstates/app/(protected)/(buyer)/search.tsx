@@ -77,9 +77,10 @@ export default function SearchResultsScreen() {
         </ThemedView>
       ) : (
         <SearchResultsView
+          key={String(properties.length)} // Usa la lunghezza dell'array properties come key per forzare il re-render del componente quando properties cambia
           properties={properties}
-          // onSearch non è più necessaria, SearchAndFilter aggiorna il context
           onPropertyPress={handlePropertyPress}
+          onSearchTrigger={search}
         />
       )}
     </ThemedView>

@@ -41,3 +41,6 @@ app-example
 .clinerules
 context.md
 .env
+
+# kilo config
+./kilocode

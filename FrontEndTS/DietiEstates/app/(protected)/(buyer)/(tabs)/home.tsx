@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { View, ActivityIndicator, SafeAreaView, FlatList, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemedView } from '@/components/ThemedView';
@@ -8,7 +8,6 @@ import { CategoryButton } from '@/components/Buyer/CategoryButton';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { SearchAndFilter, Categories } from '@/components/Buyer/SearchIntegration';
 // import ApiService from '@/src/services/api.service'; // Importa ApiService
-import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types'; // Usa il tipo unificato
 import useInfiniteHistory from '@/hooks/useInfiniteHistory';
 import HistoryPlaceholder from '@/components/Buyer/HistoryPlaceholder';
 import { useTranslation } from 'react-i18next';
@@ -40,9 +39,6 @@ export default function HomeTab() {
   const { t } = useTranslation();
   const backgroundColor = useThemeColor({}, 'background');
   const errorColor = useThemeColor({}, 'tint'); // Placeholder per colore errore
-  const [featuredProperties, setFeaturedProperties] = useState<PropertyDetail[]>([]); // Usa il tipo unificato
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const {
     properties,
@@ -79,24 +75,6 @@ export default function HomeTab() {
     console.log('Property pressed:', propertyId);
   };
 
-  // Funzione per recuperare le proprietà in evidenza
-  const fetchFeaturedProperties = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      console.log("Fetching featured properties is temporarily disabled.");
-      setFeaturedProperties([]);
-    } catch (err) {
-      setError("Could not load featured properties.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  // useEffect per caricare i dati al mount
-  useEffect(() => {
-    fetchFeaturedProperties();
-  }, [fetchFeaturedProperties]);
 
   // carica la cronologia al mount
   useEffect(() => {
@@ -111,7 +89,7 @@ export default function HomeTab() {
       <SearchAndFilter
         placeholder="Cerca immobili..."
         categories={CATEGORIES}
-        onSearchSubmitNavigate={handleSearchSubmitNavigate}
+        onSearchTrigger={handleSearchSubmitNavigate}
       />
 
       <ScrollView contentContainerStyle={{ padding: 16 }} className="flex-grow">
@@ -167,22 +145,6 @@ export default function HomeTab() {
           )}
         </View>
 
-        <View style={{ marginTop: 20 }} className="flex flex-col">
-          {isLoading ? (
-            <ActivityIndicator size="large" className="my-4" />
-          ) : featuredProperties && featuredProperties.length > 0 ? (
-            featuredProperties.map((item) => (
-              <ThemedView key={String(item.id)} style={{ marginBottom: 16 }}>
-                <BuyerPropertyCard
-                  property={item}
-                  onPress={() => handlePropertyPress(item.id)}
-                />
-              </ThemedView>
-            ))
-          ) : (
-            <ThemedText className="text-center my-4">Nessun immobile in evidenza</ThemedText>
-          )}
-        </View>
 
         <SafeAreaView style={{ height: 40 }} />
       </ScrollView>
