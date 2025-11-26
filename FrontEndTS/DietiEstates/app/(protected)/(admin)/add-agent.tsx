@@ -1,5 +1,5 @@
 import React from 'react';
-import { AddUser } from './add-common';
+import AddUser from './add-common';
 
 export default function AddAgentScreen() {
   return (
