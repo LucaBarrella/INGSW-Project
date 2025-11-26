@@ -1,5 +1,5 @@
 import React, { useReducer, useEffect, useState } from 'react';
-import { View, ActivityIndicator, Text, ScrollView } from 'react-native';
+import { View, ActivityIndicator, Text, ScrollView, Alert } from 'react-native';
 import { VisitRequest } from '../../../src/dto/agenda';
 import AgendaHeader from './AgendaHeader';
 import ConfirmedSchedule from './ConfirmedSchedule';
@@ -124,14 +124,15 @@ const AgendaScreen = () => {
 
   const handleAcceptRequest = (requestId: number) => {
     updateVisitStatus(requestId, 'CONFIRMED').then((response) => {
-      if (response.success) {
+      if (response.success !== false) {
         dispatch({ type: 'ACCEPT_REQUEST', payload: { requestId } });
       }
       else {
-        console.error("Errore nell'accettare la richiesta di visita:", response.message);
+        Alert.alert("Errore", "Non puoi accettare questa richiesta di visita perché hai già un appuntamento confermato in questo orario.");
       }
     }).catch(error => {
-      console.error("Errore nell'accettare la richiesta di visita:", error);
+      Alert.alert("Errore", "Si è verificato un errore durante l'accettazione della richiesta di visita.");
+      console.error("Errore nel accettare la richiesta di visita:", error);
     });
   };
 
