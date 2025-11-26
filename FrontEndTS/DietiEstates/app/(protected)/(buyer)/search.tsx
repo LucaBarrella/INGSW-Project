@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { ActivityIndicator, Alert } from 'react-native';
-import { useLocalSearchParams, Stack, router } from 'expo-router';
+import { useLocalSearchParams, Stack } from 'expo-router';
 import { useSearch } from '@/context/SearchContext';
 import useSearchProperties from '@/src/hooks/useSearchProperties';
 import useSearchUrlState from '@/src/hooks/useSearchUrlState';
@@ -9,8 +9,8 @@ import { ThemedText } from '@/components/ThemedText';
 import { SearchResultsView } from '@/components/Buyer/SearchResults/SearchResultsView';
 
 export default function SearchResultsScreen() {
-  // Aggiunto triggerSearch al tipo dei parametri URL
-  const params = useLocalSearchParams<{ category?: string; query?: string; contract?: 'rent' | 'sale', triggerSearch?: string }>();
+  // Legge params URL per titoli/categoria (solo lettura; il triggerSearch è stato rimosso)
+  const params = useLocalSearchParams<{ category?: string; query?: string; contract?: 'rent' | 'sale' }>();
   const { state } = useSearch();
   const { properties, isLoading, error, search } = useSearchProperties();
 
@@ -32,16 +32,8 @@ export default function SearchResultsScreen() {
   
 
   useEffect(() => {
-    // La ricerca viene attivata solo quando triggerSearch è presente nell'URL.
-    if (!state.isLoadingFromStorage && params.triggerSearch === 'true') {
-      console.log('[SearchScreen] Triggering search from URL params...');
-      search().catch(err => {
-        console.error('[SearchScreen] search failed', err);
-      });
-      // Rimuovi il parametro per evitare ricerche multiple
-      router.setParams({ triggerSearch: undefined });
-    }
-  }, [state.isLoadingFromStorage, params.triggerSearch, search]);
+    // La ricerca ora viene triggerata esplicitamente dall'utente (es. pulsante "Cerca" nel FilterPanel).
+  }, []);
 
   useEffect(() => {
     console.log('[SearchScreen] Properties state updated:', properties);
@@ -77,7 +69,6 @@ export default function SearchResultsScreen() {
         </ThemedView>
       ) : (
         <SearchResultsView
-          key={String(properties.length)} // Usa la lunghezza dell'array properties come key per forzare il re-render del componente quando properties cambia
           properties={properties}
           onPropertyPress={handlePropertyPress}
           onSearchTrigger={search}

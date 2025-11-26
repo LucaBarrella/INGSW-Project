@@ -1,74 +1,82 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useSearch } from '@/context/SearchContext';
 
-
 // Hook centralizza la sincronizzazione URL <-> SearchContext
+// Ora: - non sincronizza più automaticamente ad ogni cambio di filtro (evita update durante render)
+//      - espone forceSyncUrl() per sincronizzare esplicitamente (es. quando l'utente clicca "Cerca")
+//      - esegue una sola inizializzazione "URL -> Context" all'avvio, senza causare loop
 export default function useSearchUrlState() {
-  const params = useLocalSearchParams<{ category?: string; query?: string; contract?: 'rent' | 'sale'; triggerSearch?: string }>();
-  const { state } = useSearch();
+  const params = useLocalSearchParams<{ category?: string; query?: string; contract?: 'rent' | 'sale' }>();
+  const { state, dispatch } = useSearch();
 
-
+  const initializedFromUrlRef = useRef(false);
   const syncFromUrlRef = useRef(false);
-  const debounceTimer = useRef<number | null>(null);
 
-  // Sincronizza parametri URL verso context quando cambiano
+  // Inizializza lo stato del context dai params URL una sola volta all'avvio della pagina,
+  // solo dopo che lo storage (se presente) ha finito il suo caricamento.
   useEffect(() => {
-    // Sincronizzazione URL -> Context temporaneamente disabilitata per debug
-  }, []);
+    // Se già inizializzato o non ci sono params significativi, esci velocemente
+    if (initializedFromUrlRef.current) return;
+    if (!params) return;
 
-  // Sincronizza context -> URL con debounce per evitare aggiornamenti eccessivi
-  useEffect(() => {
-    // Non sincronizzare se la sincronizzazione proviene dall'URL
-    if (syncFromUrlRef.current) return;
+    // Evita di sovrascrivere lo stato durante l'idratazione da storage
+    if (state.isLoadingFromStorage) return;
 
-    // Crea params oggetto senza campi undefined
-    const newParams: Record<string, string> = {};
-    if (state.searchQuery && state.searchQuery.length > 0) newParams.query = state.searchQuery;
-    if (state.selectedMainCategoryInPanel) newParams.category = state.selectedMainCategoryInPanel;
-    const contractVal = state.filters.general.contract.value;
-    if (contractVal) newParams.contract = contractVal;
+    const hasQuery = typeof params.query === 'string' && params.query.length > 0;
+    const hasCategory = typeof params.category === 'string' && params.category.length > 0;
+    const hasContract = typeof params.contract === 'string' && params.contract.length > 0;
 
-    // Evita chiamate ridondanti se i params sono già uguali
-    const currentParams = params as Record<string, any>;
-    const keysEqual = (a: Record<string, any>, b: Record<string, any>) => {
-      const aKeys = Object.keys(a).sort();
-      const bKeys = Object.keys(b).sort();
-      if (aKeys.length !== bKeys.length) return false;
-      for (let i = 0; i < aKeys.length; i++) {
-        const k = aKeys[i];
-        if (a[k] !== b[k]) return false;
-      }
-      return true;
-    };
-    if (keysEqual(newParams, Object.fromEntries(Object.entries(currentParams).filter(([_, v]) => v !== undefined)))) {
+    if (!hasQuery && !hasCategory && !hasContract) {
+      initializedFromUrlRef.current = true;
       return;
     }
 
-    if (debounceTimer.current) {
-      clearTimeout(debounceTimer.current);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    debounceTimer.current = window.setTimeout(() => {
-      router.setParams(newParams as any);
-    }, 300);
+    // Indichiamo che la sincronizzazione proviene dall'URL per evitare che il
+    // side-effect di sincronizzazione (se reintrodotto) reagisca immediatamente.
+    syncFromUrlRef.current = true;
 
-    return () => {
-      if (debounceTimer.current) {
-        clearTimeout(debounceTimer.current);
+    try {
+      if (hasQuery) {
+        dispatch({ type: 'SET_QUERY', payload: params.query as string });
       }
-    };
-  }, [state.filters.general.contract.value, state.selectedMainCategoryInPanel, params]);
+      if (hasCategory) {
+        // selectedMainCategoryInPanel si aspetta la chiave di categoria (es. "residential")
+        dispatch({ type: 'SET_SELECTED_MAIN_CATEGORY_IN_PANEL', payload: params.category as any });
+      }
+      if (hasContract) {
+        // Aggiorna il contract dentro la sottocategoria 'general'
+        dispatch({ type: 'UPDATE_FILTER', payload: { subCategory: 'general', newFilters: { contract: params.contract } } as any });
+      }
+    } catch (e) {
+      // Non vogliamo bloccare la UI per errori di parsing params
+      // eslint-disable-next-line no-console
+      console.error('[useSearchUrlState] Error applying URL params to context', e);
+    } finally {
+      initializedFromUrlRef.current = true;
+      // Permetti eventuali future sincronizzazioni esplicite
+      setTimeout(() => {
+        syncFromUrlRef.current = false;
+      }, 0);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params, state.isLoadingFromStorage, dispatch]);
 
-  // Espone utility per eventuali chiamate esplicite (es. forzare sync)
-  const forceSyncUrl = () => {
+  // Espone utility per sincronizzare esplicitamente il Context -> URL
+  // Questa funzione deve essere chiamata solo quando l'utente applica i filtri (es. clic "Cerca")
+  const forceSyncUrl = useCallback(() => {
     const p: Record<string, string> = {};
     if (state.searchQuery) p.query = state.searchQuery;
     if (state.selectedMainCategoryInPanel) p.category = state.selectedMainCategoryInPanel;
-    const contractVal = state.filters.general.contract.value;
+    const contractVal = state.filters?.general?.contract?.value;
     if (contractVal) p.contract = contractVal;
-    router.setParams(p as any);
-  };
+    try {
+      router.setParams(p as any);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('[useSearchUrlState] forceSyncUrl failed', e);
+    }
+  }, [state.searchQuery, state.selectedMainCategoryInPanel, state.filters]);
 
   return { forceSyncUrl };
 }

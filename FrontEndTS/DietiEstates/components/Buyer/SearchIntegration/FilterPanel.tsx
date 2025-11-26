@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { ScrollView, TouchableOpacity, Animated, Platform, StyleSheet, Modal, Easing, Dimensions, View, Switch } from "react-native";
+import { ScrollView, TouchableOpacity, Animated, Platform, StyleSheet, Modal, Easing, Dimensions, View, Switch, Alert } from "react-native";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
@@ -13,6 +13,7 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { withErrorBoundary } from "./ErrorBoundary";
 import { useSearch } from "@/context/SearchContext";
 import useSearchProperties from '@/src/hooks/useSearchProperties';
+import useSearchUrlState from '@/src/hooks/useSearchUrlState';
 import { ALL_FILTERS, CATEGORY_FILTERS } from "@/config/filter-config";
 import { RESIDENTIAL_CATEGORIES, COMMERCIAL_CATEGORIES, GARAGE_CATEGORIES, LAND_CATEGORIES } from "./types"; //Dobbiamo creare GARAGE_CATEGORIES
 import type { FilterDefinition } from "./types";
@@ -36,8 +37,10 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
 
   const { state, dispatch } = useSearch();
   const { filters, selectedMainCategoryInPanel } = state;
-  // Usa l'hook che espone updateFilter/resetFilters con logica di sanitizzazione
-  const { updateFilter, resetFilters } = useSearchProperties();
+  // Usa l'hook che espone updateFilter/resetFilters/search con logica di sanitizzazione
+  const { updateFilter, resetFilters, search } = useSearchProperties();
+  // Hook per sincronizzare esplicitamente Context -> URL quando l'utente applica i filtri
+  const { forceSyncUrl } = useSearchUrlState();
 
   const panelHeight = Dimensions.get('window').height * 0.8;
   const textColor = useThemeColor({}, "text");
@@ -352,10 +355,19 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
 
             <ThemedView className="px-4 pt-4 pb-8 border-t border-gray-200 dark:border-gray-700" style={{ backgroundColor: backgroundPrimary }}>
               <TouchableOpacity
-                onPress={() => {
+                onPress={async () => {
                   hidePanel();
-                  if (onApplyAndNavigate) {
-                    onApplyAndNavigate();
+                  try {
+                    // Esegui la ricerca direttamente dall'hook (disaccoppia da URL)
+                    await search();
+                    // Sincronizza l'URL solo dopo che la ricerca è stata effettivamente applicata
+                    try { forceSyncUrl(); } catch (e) { console.error('[FilterPanel] forceSyncUrl failed', e); }
+                    // Se il chiamante vuole anche navigare/aggiornare la UI, invoca la callback
+                    if (onApplyAndNavigate) onApplyAndNavigate();
+                  } catch (err) {
+                    Alert.alert('Errore', 'Si è verificato un errore durante la ricerca. Riprova.');
+                    // eslint-disable-next-line no-console
+                    console.error('[FilterPanel] search failed', err);
                   }
                 }}
                 className="p-4 rounded-lg items-center flex-row justify-center"
