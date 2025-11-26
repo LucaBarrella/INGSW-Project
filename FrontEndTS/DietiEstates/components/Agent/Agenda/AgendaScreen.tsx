@@ -111,7 +111,7 @@ const AgendaScreen = () => {
       try {
         let visitRequestsData = await getVisitsOfCurrentAgent(currentDate);
         let visitRequests: VisitRequest[] = visitRequestsData.pending;
-        let appointments: VisitRequest[] = visitRequestsData.others;
+        let appointments: VisitRequest[] = visitRequestsData.confirmed;
         
         dispatch({ type: 'SET_INITIAL_DATA', payload: { appointments, visitRequests } });
       } catch (error) {

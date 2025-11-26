@@ -15,7 +15,7 @@ export class VisitService implements IVisitService {
     return this.visitRepository.getVisitsByBuyer();
   }
 
-  async getVisitsOfCurrentAgent(date: Date): Promise<{pending: VisitRequest[], others: VisitRequest[]}> {
+  async getVisitsOfCurrentAgent(date: Date): Promise<{pending: VisitRequest[], confirmed: VisitRequest[]}> {
     let visits : VisitDTO[] = (await this.visitRepository.getVisitsOfCurrentAgent()).content.filter(v => {
       let visitDate = new Date(v.visit.startTime * 1000);
       return visitDate.getFullYear() === date.getFullYear() &&
@@ -60,7 +60,7 @@ export class VisitService implements IVisitService {
       visitRequests.push(newVisit);
     }
     
-    return {pending: visitRequests.filter(v => v.status === "PENDING"), others: visitRequests.filter(v => v.status !== "PENDING" && v.status !== "CANCELLED")};
+    return {pending: visitRequests.filter(v => v.status === "PENDING"), confirmed: visitRequests.filter(v => v.status === "CONFIRMED")};
 
   }
 

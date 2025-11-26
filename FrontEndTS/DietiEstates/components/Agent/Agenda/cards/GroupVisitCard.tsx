@@ -3,6 +3,8 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { VisitRequest } from '../../../../src/dto/agenda';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { t } from 'i18next';
+import { useVisits } from '@/src/hooks/useVisits';
 
 interface GroupVisitCardProps {
   appointments: VisitRequest[];
@@ -10,6 +12,7 @@ interface GroupVisitCardProps {
 
 const GroupVisitCard: React.FC<GroupVisitCardProps> = ({ appointments }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { updateVisitStatus } = useVisits();
   
   // Estrai le informazioni comuni dal primo appuntamento
   const firstAppointment = appointments[0];
@@ -51,9 +54,9 @@ const GroupVisitCard: React.FC<GroupVisitCardProps> = ({ appointments }) => {
       </TouchableOpacity>
       {isExpanded && (
         <View className="mt-3 pt-3 border-t" style={{ borderColor: cardBorderColor + '99' }}>
-          <TouchableOpacity className="flex-row items-center justify-center">
+          <TouchableOpacity className="flex-row items-center justify-center" onPress={()=> {console.log("TODO what?")}}>
             <Ionicons name="trash-outline" size={18} color={conflictColor} />
-            <Text style={{ color: conflictColor }} className="font-bold ml-2 text-sm">Cancel Visit</Text>
+            <Text style={{ color: conflictColor }} className="font-bold ml-2 text-sm">{t('cancelVisit')}</Text>
           </TouchableOpacity>
         </View>
       )}

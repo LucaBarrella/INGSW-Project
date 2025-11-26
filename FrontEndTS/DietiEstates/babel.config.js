@@ -127,7 +127,8 @@ module.exports = function (api) {
             'material-symbols:fire-extinguisher',
             'material-symbols:height',
             'material-symbols:forest',
-            'material-symbols:history-rounded'
+            'material-symbols:history-rounded',
+            'material-symbols:factory-outline',
           ],
         },
       ],

@@ -51,7 +51,7 @@ export const useVisits = (initialBuyerId?: string) => {
     } finally {
       setLoading(false);
     }
-    return {pending: [], others: []};
+    return {pending: [], confirmed: []};
   };
 
   useEffect(() => {
