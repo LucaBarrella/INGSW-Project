@@ -120,7 +120,7 @@ const AgendaScreen = () => {
     };
 
     fetchAgendaData();
-  }, []);
+  }, [currentDate]);
 
   const handleAcceptRequest = (requestId: number) => {
     updateVisitStatus(requestId, 'CONFIRMED').then((response) => {

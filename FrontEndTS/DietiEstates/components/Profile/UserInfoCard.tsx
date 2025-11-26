@@ -6,6 +6,7 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 
 interface UserInfoCardProps {
   name: string;
+  username: string;
   email: string;
   role?: string; // Ruolo è opzionale, non tutti gli utenti potrebbero averlo visualizzato
   iconName?: string; // Icona utente personalizzabile
@@ -16,6 +17,7 @@ export const UserInfoCard: React.FC<UserInfoCardProps> = ({
   name,
   email,
   role,
+  username,
   iconName = "mdi:account-circle", // Icona di default
   iconLabel = "User profile",
 }) => {
@@ -36,6 +38,9 @@ export const UserInfoCard: React.FC<UserInfoCardProps> = ({
       />
       <ThemedText type="subtitle" className="mt-2">
         {name}
+      </ThemedText>
+      <ThemedText className="text-gray-600 dark:text-gray-400"> {/* Ripristinato text-gray-600 e aggiunto dark mode variant */}
+        {username}
       </ThemedText>
       <ThemedText className="text-gray-600 dark:text-gray-400"> {/* Ripristinato text-gray-600 e aggiunto dark mode variant */}
         {email}

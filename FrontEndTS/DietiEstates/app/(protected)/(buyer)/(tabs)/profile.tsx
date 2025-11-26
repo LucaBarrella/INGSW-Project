@@ -12,6 +12,7 @@ import { ProfileOptionRowProps } from '@/components/Profile/ProfileOptionRow'; /
 import { useTranslation } from 'react-i18next';
 import { getToken } from '@/src/core/auth/TokenManager';
 import { router } from 'expo-router';
+import httpClient from '@/src/core/httpClient';
 
 export default function ProfileTab() {
   const backgroundColor = useThemeColor({}, 'background');
@@ -20,21 +21,40 @@ export default function ProfileTab() {
   
   const [userData, setUserData] = React.useState({
     username: '',
-    role: ''
+    role: '',
+    email: '',
+    fullName: ''
   });
 
-  getToken().then(token => {
-    if (token && userData.username === '') {
-      const payloadBase64 = token.split('.')[1];
-      const payload = JSON.parse(atob(payloadBase64));
-      const newUserData = { ...userData };
-      newUserData.username = payload.sub;
-      newUserData.role = payload.roles.join(', ').replace(/ROLE_/g, '');
-      setUserData(newUserData);
-    }
-  }).catch(error => {
-    console.error('Errore nel recupero del token:', error);
-  });
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const token = await getToken();
+        if (token) {
+          const payloadBase64 = token.split('.')[1];
+          const payload = JSON.parse(atob(payloadBase64));
+          setUserData(prev => ({
+            ...prev,
+            username: payload.sub,
+            role: payload.roles.join(', ').replace(/ROLE_/g, '')
+          }));
+        }
+      } catch (error) {
+        console.error('Errore nel recupero del token:', error);
+      }
+
+      try {
+        const response = await httpClient.get("/info/me");
+        setUserData(prev => ({
+          ...prev,
+          fullName: response.data.fullName,
+          email: response.data.email
+        }));
+      } catch (error) {
+        console.error('Errore nel recupero delle informazioni utente:', error);
+      }
+    })();
+  }, []);
   
 
   const adminOptions: Array<Omit<ProfileOptionRowProps, 'isFirst'>> = [
@@ -93,7 +113,7 @@ export default function ProfileTab() {
         contentContainerStyle={{ paddingVertical: 20 }}
         showsVerticalScrollIndicator={false}
       >
-        <UserInfoCard name={userData.username} role={userData.role} email='' />
+        <UserInfoCard name={userData.fullName} username={userData.username} role={userData.role} email={userData.email}  />
 
         {userData.role.includes('MANAGER') && <ProfileOptionsGroup options={adminOptions} />}
         
