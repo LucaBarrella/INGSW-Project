@@ -17,7 +17,7 @@ export class VisitService implements IVisitService {
 
   async getVisitsOfCurrentAgent(date: Date): Promise<{pending: VisitRequest[], confirmed: VisitRequest[]}> {
     let visits : VisitDTO[] = (await this.visitRepository.getVisitsOfCurrentAgent()).content.filter(v => {
-      let visitDate = new Date(v.visit.startTime * 1000);
+      let visitDate = new Date(v.visit.startTime);
       return visitDate.getFullYear() === date.getFullYear() &&
              visitDate.getMonth() === date.getMonth() &&
              visitDate.getDate() === date.getDate();

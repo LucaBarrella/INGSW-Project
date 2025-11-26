@@ -50,6 +50,12 @@ export const getVisitsOfCurrentAgent = async (): Promise<PagedVisitsDTO> => {
   const url = visitEndpoints.getVisitsByAgent;
   const response = await httpClient.get(url);
   console.log('[VisitApiService] getVisitsOfCurrentAgent response:', response.data);
+  // multiply by 1000 to convert from seconds to milliseconds
+  response.data.content = response.data.content.map((visit: any) => {
+    visit.visit.startTime *= 1000;
+    visit.visit.endTime *= 1000;
+    return visit;
+  });
   return response.data;
 };
 
