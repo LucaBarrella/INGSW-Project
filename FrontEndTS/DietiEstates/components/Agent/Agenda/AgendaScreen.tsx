@@ -122,16 +122,26 @@ const AgendaScreen = () => {
   }, []);
 
   const handleAcceptRequest = (requestId: number) => {
-    updateVisitStatus(requestId, 'CONFIRMED').then(() => {
-      dispatch({ type: 'ACCEPT_REQUEST', payload: { requestId } });
+    updateVisitStatus(requestId, 'CONFIRMED').then((response) => {
+      if (response.success) {
+        dispatch({ type: 'ACCEPT_REQUEST', payload: { requestId } });
+      }
+      else {
+        console.error("Errore nell'accettare la richiesta di visita:", response.message);
+      }
     }).catch(error => {
       console.error("Errore nell'accettare la richiesta di visita:", error);
     });
   };
 
   const handleRejectRequest = (requestId: number) => {
-    updateVisitStatus(requestId, 'REJECTED').then(() => {
-      dispatch({ type: 'REJECT_REQUEST', payload: { requestId } });
+    updateVisitStatus(requestId, 'REJECTED').then((response) => {
+      if (response.success) {
+        dispatch({ type: 'REJECT_REQUEST', payload: { requestId } });
+      }
+      else {
+        console.error("Errore nel rifiutare la richiesta di visita:", response.message);
+      }
     }).catch(error => {
       console.error("Errore nel rifiutare la richiesta di visita:", error);
     });
