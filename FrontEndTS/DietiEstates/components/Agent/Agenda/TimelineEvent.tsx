@@ -63,7 +63,7 @@ const TimelineEvent: React.FC<TimelineEventProps> = ({ group, showTime, onDelete
 
   const renderEventCard = () => {
     if (isSingleVisit) {
-      return <SingleVisitCard appointment={firstEvent} />;
+      return <SingleVisitCard appointment={firstEvent} handleCancelVisit={onDeleteAppointment} />;
     }
     if (isGroupVisit) {
       return <GroupVisitCard appointments={group} />;

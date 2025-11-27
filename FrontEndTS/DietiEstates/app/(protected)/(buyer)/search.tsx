@@ -13,6 +13,7 @@ export default function SearchResultsScreen() {
   const params = useLocalSearchParams<{ category?: string; query?: string; contract?: 'rent' | 'sale' }>();
   const { state } = useSearch();
   const { properties, isLoading, error, search } = useSearchProperties();
+  const [viewMode, setViewMode] = React.useState<'list' | 'map'>('list');
 
   // URL <-> Context synchronization is handled by useSearchUrlState to centralize logic and avoid scattered effects
   useSearchUrlState();
@@ -83,6 +84,8 @@ export default function SearchResultsScreen() {
               });
             }
           }}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
           center={state.geolocation ? { latitude: state.geolocation.lat, longitude: state.geolocation.lon } : undefined}
         />
       )}

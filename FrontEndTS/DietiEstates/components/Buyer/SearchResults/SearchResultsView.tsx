@@ -15,6 +15,8 @@ interface SearchResultsViewProps {
   onPropertyPress: (propertyId: number) => void;
   onSearchTrigger: () => void;
   onChangeCenter: (lat: number, lon: number) => void;
+  viewMode: 'list' | 'map';
+  setViewMode: React.Dispatch<React.SetStateAction<"list" | "map">>;
   center?: { latitude: number; longitude: number };
 }
 
@@ -23,9 +25,10 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
   onPropertyPress,
   onSearchTrigger,
   onChangeCenter,
+  viewMode,
+  setViewMode,
   center
 }) => {
-  const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const tint = useThemeColor({}, 'tint');
 
   const toggleViewMode = () => {
@@ -76,7 +79,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
         />
       ) : (
         <View style={styles.container}>
-          <MapView style={styles.map} initialRegion={center? { latitudeDelta: 0.2, longitudeDelta:0.2, ...center } : undefined} onLongPress={event => {console.log( "Map long pressed at", event.nativeEvent.coordinate); onChangeCenter(event.nativeEvent.coordinate.latitude, event.nativeEvent.coordinate.longitude)}} >
+          <MapView style={styles.map} initialRegion={center? { latitudeDelta: 0.2, longitudeDelta:0.2, ...center } : undefined} onLongPress={event => {onChangeCenter(event.nativeEvent.coordinate.latitude, event.nativeEvent.coordinate.longitude)}} >
             {properties.map((property, index) => (
               property.address.latitude && property.address.longitude && <Marker
                 key={index}
@@ -87,7 +90,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
               />
             ))}
             
-            {center && <Marker coordinate={{latitude: center.latitude, longitude: center.longitude}} pinColor={ "#00ccffff" }/>}
+            {center && <Marker coordinate={{latitude: center.latitude, longitude: center.longitude}} pinColor={ "#c7f4ffff" }/>}
           </MapView>
         </View>
       )}

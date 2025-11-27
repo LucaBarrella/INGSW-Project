@@ -4,16 +4,15 @@ import { Ionicons } from '@expo/vector-icons';
 import { VisitRequest } from '../../../../src/dto/agenda';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { t } from 'i18next';
-import { useVisits } from '@/src/hooks/useVisits';
 
 interface SingleVisitCardProps {
   appointment: VisitRequest;
   isConflict?: boolean;
+  handleCancelVisit: (visitId: number) => void;
 }
 
-const SingleVisitCard: React.FC<SingleVisitCardProps> = ({ appointment, isConflict }) => {
+const SingleVisitCard: React.FC<SingleVisitCardProps> = ({ appointment, isConflict, handleCancelVisit }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { updateVisitStatus } = useVisits();
   const conflictColor = useThemeColor({}, 'errorIcon');
   const conflictBgColor = useThemeColor({}, 'errorBackground');
   const conflictBorderColor = useThemeColor({}, 'errorIcon');
@@ -46,7 +45,7 @@ const SingleVisitCard: React.FC<SingleVisitCardProps> = ({ appointment, isConfli
       </TouchableOpacity>
       {isExpanded && (
         <View className="mt-3 pt-3 border-t" style={{ borderColor: cardBorderColor + '99' }}>
-          <TouchableOpacity className="flex-row items-center justify-center" onPress={()=> {updateVisitStatus(appointment.id, 'CANCELLED')}}>
+          <TouchableOpacity className="flex-row items-center justify-center" onPress={()=> {handleCancelVisit(appointment.id)}}>
             <Ionicons name="trash-outline" size={18} color={conflictColor} />
             <Text style={{ color: conflictTextColor }} className="font-bold ml-2 text-sm">{t('cancelVisit')}</Text>
           </TouchableOpacity>
