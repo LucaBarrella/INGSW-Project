@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, useColorScheme, Dimensions, NativeSyntheticEvent, NativeScrollEvent, Modal, Platform, SafeAreaView, StatusBar, useWindowDimensions } from 'react-native';
+import { View, ScrollView, TouchableOpacity, Image, StyleSheet, useColorScheme, Dimensions, NativeSyntheticEvent, NativeScrollEvent, Modal, Platform, SafeAreaView, StatusBar, useWindowDimensions } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
+import { PropertyDTO } from '@/components/Agent/PropertyDashboard/types';
 import { Colors } from '@/constants/Colors';
 import { ThemedIcon } from '@/components/ThemedIcon';
 import { ThemedView } from '@/components/ThemedView';
@@ -11,9 +11,14 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Gallery from 'react-native-awesome-gallery';
 import VisitSchedulerPanel from '../../../components/Buyer/VisitSchedulerPanel';
 import OfferPanel from '../../../components/Offer/OfferPanel';
-import { Property } from '@/src/entity/Property';
+import httpClient from '@/src/core/httpClient';
+import { PlaceDTO } from '@/src/dto/response/PlaceDTO';
 
 const { width: screenWidth } = Dimensions.get('window');
+
+function formatAddress(address: PropertyDTO['address']): string {
+  return `${address?.city} (${address?.province}, ${address?.country}) - ${address.street} ${address?.streetNumber}`;
+}
 
 const PropertyDetailScreen: React.FC = () => {
   const { propertyId } = useLocalSearchParams();
@@ -27,13 +32,45 @@ const PropertyDetailScreen: React.FC = () => {
   const [isOfferPanelVisible, setOfferPanelVisible] = useState(false);
   const [isGalleryVisible, setIsGalleryVisible] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [property, setProperty] = useState<Property>();
+  const [property, setProperty] = useState<PropertyDTO>();
   const [fetchingProperty, setFetchingProperty] = useState(false);
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+  const emptyAvailableDatesArray: string[] = [];
 
   const scrollViewRef = useRef<ScrollView>(null);
   const { t } = useTranslation();
 
+  function parseLocalDateTime(dateArray: number[]): Date {
+    const [year, month, day, hour, minute, second, nanosecond] = dateArray;
+    // Note: JavaScript months are 0-indexed, but Java months are 1-indexed
+    return new Date(year, month - 1, day, hour, minute, second, nanosecond / 1000000);
+}
 
+  useEffect(() => {
+    const fetchPropertyDetails = async () => {
+      if (!propertyId) return;
+      setFetchingProperty(true);
+      try {
+        const response = await httpClient.get<PropertyDTO>(`/properties/details/${propertyId}`);
+        console.log('Fetched property details:', response.data);
+        setProperty(response.data);
+      } catch (error) {
+        console.error('Error fetching property details:', error);
+      } finally {
+        setFetchingProperty(false);
+      }
+    }
+    const fetchNearbyServices = async () => {
+      if (!propertyId) return;
+      httpClient.get<PlaceDTO[]>(`/api/properties/${propertyId}/places`).then(response => {
+        console.log('Nearby services:', response.data);
+      }).catch(error => {
+        console.error('Error fetching nearby services:', error);
+      });
+    };
+    fetchPropertyDetails();
+    fetchNearbyServices();
+  }, []);
 
   const handleBack = () => {
     router.back();
@@ -71,11 +108,11 @@ const PropertyDetailScreen: React.FC = () => {
           <View style={styles.tabContent}>
             <ThemedText style={styles.tabContentText}>
               <ThemedText style={styles.detailLabel}>Stato: </ThemedText>
-              {property.status}
+              {t("property_condition." + property.condition)}
             </ThemedText>
             <ThemedText style={styles.tabContentText}>
               <ThemedText style={styles.detailLabel}>Agente: </ThemedText>
-              {property.agentId || 'Non specificato'}
+              {property.agent.id || 'Non specificato'}
             </ThemedText>
             <ThemedText style={styles.tabContentText}>
               <ThemedText style={styles.detailLabel}>Prezzo: </ThemedText>
@@ -92,11 +129,11 @@ const PropertyDetailScreen: React.FC = () => {
             </ThemedText>
             <ThemedText style={styles.tabContentText}>
               <ThemedText style={styles.detailLabel}>Creato: </ThemedText>
-              {property.createdAt.toLocaleDateString('it-IT')}
+              {parseLocalDateTime(property.createdAt).toLocaleDateString('it-IT')}
             </ThemedText>
             <ThemedText style={styles.tabContentText}>
               <ThemedText style={styles.detailLabel}>Aggiornato: </ThemedText>
-              {property.updatedAt.toLocaleDateString('it-IT')}
+              {parseLocalDateTime(property.updatedAt).toLocaleDateString('it-IT')}
             </ThemedText>
           </View>
         );
@@ -107,12 +144,19 @@ const PropertyDetailScreen: React.FC = () => {
 
   const styles = createStyles(themeColors);
 
-  if (!property) {
+  if (fetchingProperty) {
     return (
       <ThemedView style={styles.centeredContainer}>
-        <ThemedText style={styles.errorText}>Immobile non trovato</ThemedText>
+        <ThemedText style={styles.loadingText}>{t('loading')}</ThemedText>
+      </ThemedView>
+    );
+  }
+  else if (!property) {
+    return (
+      <ThemedView style={styles.centeredContainer}>
+        <ThemedText style={styles.errorText}>{t('propertyNotFound')}</ThemedText>
         <TouchableOpacity style={styles.backButtonError} onPress={handleBack}>
-          <ThemedText style={styles.backButtonText}>Torna indietro</ThemedText>
+          <ThemedText style={styles.backButtonText}>{t('goBack')}</ThemedText>
         </TouchableOpacity>
       </ThemedView>
     );
@@ -166,9 +210,9 @@ const PropertyDetailScreen: React.FC = () => {
 
         {/* Titolo, indirizzo e prezzo */}
         <View style={styles.propertyInfo}>
-          <ThemedText style={styles.title}>{property.title || 'Immobile'}</ThemedText>
+          <ThemedText style={styles.title}>{formatAddress(property.address) || 'Immobile'}</ThemedText>
           <ThemedText style={styles.address}>
-            {property.address || 'Indirizzo non disponibile'}
+            {property.address?.city || 'Indirizzo non disponibile'}
           </ThemedText>
           <ThemedText style={styles.price}>{formatPrice(property.price)}</ThemedText>
         </View>
@@ -184,19 +228,19 @@ const PropertyDetailScreen: React.FC = () => {
           <View style={styles.detailItem}>
             <ThemedIcon icon="material-symbols:person-add-outline" size={24} lightColor={themeColors.text} darkColor={themeColors.text} accessibilityLabel="Agente" />
             <ThemedText style={styles.detailText}>
-              Agente: {property.agentId || 'N/A'}
+              Agente: {property.agent.id || 'N/A'}
             </ThemedText>
           </View>
           <View style={styles.detailItem}>
             <ThemedIcon icon="material-symbols:calendar-today" size={24} lightColor={themeColors.text} darkColor={themeColors.text} accessibilityLabel="Creato" />
             <ThemedText style={styles.detailText}>
-              {property.createdAt.toLocaleDateString('it-IT')}
+              { parseLocalDateTime(property.createdAt).toLocaleDateString('it-IT')}
             </ThemedText>
           </View>
           <View style={styles.detailItem}>
             <ThemedIcon icon="material-symbols:update" size={24} lightColor={themeColors.text} darkColor={themeColors.text} accessibilityLabel="Aggiornato" />
             <ThemedText style={styles.detailText}>
-              {property.updatedAt.toLocaleDateString('it-IT')}
+              {parseLocalDateTime(property.updatedAt).toLocaleDateString('it-IT')}
             </ThemedText>
           </View>
         </View>
@@ -205,10 +249,11 @@ const PropertyDetailScreen: React.FC = () => {
         <View style={styles.tagsContainer}>
           <View style={styles.tag}>
             <ThemedText style={styles.tagText}>
-              {property.status === 'active' ? 'Attivo' : property.status === 'sold' ? 'Venduto' : property.status === 'rented' ? 'Affittato' : 'Inattivo'}
+              {t("property_status." + property.condition)}
             </ThemedText>
           </View>
           <View style={styles.tag}>
+            {/* TODO see */}
             <ThemedText style={styles.tagText}>
               Premium
             </ThemedText>
@@ -260,7 +305,7 @@ const PropertyDetailScreen: React.FC = () => {
 
         {/* Mappa */}
         <View style={styles.mapContainer}>
-          <ThemedText style={styles.sectionTitle}>Posizione</ThemedText>
+          <ThemedText style={styles.sectionTitle}>{'position'}</ThemedText>
           <View style={styles.map}>
             <Image 
               source={{ 
@@ -323,12 +368,12 @@ const PropertyDetailScreen: React.FC = () => {
       <VisitSchedulerPanel
         isVisible={isVisitPanelVisible}
         onClose={() => setVisitPanelVisible(false)}
-        property={property}
+        availableDates={emptyAvailableDatesArray}
       />
       <OfferPanel
         isVisible={isOfferPanelVisible}
         onClose={() => setOfferPanelVisible(false)}
-        propertyAddress={property?.address || 'Indirizzo non disponibile'}
+        propertyAddress={formatAddress(property?.address) || 'Indirizzo non disponibile'}
         askingPrice={property?.price ? property.price.toString() : '0'}
       />
 
@@ -344,11 +389,10 @@ const PropertyDetailScreen: React.FC = () => {
           <Gallery
             data={images.map(uri => ({ uri }))}
             renderItem={({ item, index }) => {
-              const { width, height } = useWindowDimensions();
               return (
                 <Image
                   source={{ uri: item.uri }}
-                  style={{ width, height }} /* Rimosso flex: 1 */
+                  style={{ width: windowWidth, height: windowHeight }} /* Rimosso flex: 1 */
                   resizeMode="contain"
                 />
               );

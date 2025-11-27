@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import AnimatedSlideUpPanel from '../common/AnimatedSlideUpPanel';
 import { getMeteoForTheDay, getTimeFromIndex, getEmojiFromMeteoCode } from '../../src/services (old)/OpenMeteoApiService';
-import { Property } from '@/src/entity/Property';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedIcon } from '@/components/ThemedIcon';
 
@@ -47,8 +46,7 @@ const availableTimes = [
 interface VisitSchedulerPanelProps {
   isVisible: boolean;
   onClose: () => void;
-  property: Property;
-  availableDates?: string[];
+  availableDates: string[];
 }
 
 interface Day {
@@ -63,8 +61,7 @@ interface Day {
 const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
   isVisible,
   onClose,
-  property,
-  availableDates = [],
+  availableDates,
 }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [days, setDays] = useState<Day[]>([]);

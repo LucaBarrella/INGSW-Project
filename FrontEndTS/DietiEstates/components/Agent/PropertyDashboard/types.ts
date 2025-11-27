@@ -20,6 +20,10 @@ export interface PropertyDTO {
   id: number;
   address: {
     city: string;
+    province: string;
+    country: string;
+    street: string;
+    streetNumber: string;
   };
   views?: number;
   bookings?: number;
@@ -28,8 +32,9 @@ export interface PropertyDTO {
   type: keyof Omit<PropertyFilters, "general">; // 'residential', 'commercial', 'industrial', 'land'
   propertyCategory: string;
   price: number; // Prezzo come numero
-  status: "UNDER_CONSTRUCTION" | "NEW" | "RENOVATED" | "GOOD_CONDITION" | "TO_BE_RENOVATED" | "POOR_CONDITION"; // Stato dell'immobile
-  createdAt: string; // Data di creazione (ISO string)
+  condition: "UNDER_CONSTRUCTION" | "NEW" | "RENOVATED" | "GOOD_CONDITION" | "TO_BE_RENOVATED" | "POOR_CONDITION"; // Stato dell'immobile
+  createdAt: number[]; // Data di creazione
+  updatedAt: number[]; // Data di aggiornamento
   imageUrl?: string; // URL dell'immagine principale (opzionale)
   firstImageUrl?: string; // Campo per la prima immagine dalla ricerca
   images?: string[]; // Array di URL immagini
