@@ -6,14 +6,14 @@ import ThemedButton from './ThemedButton';
 import { ThemedView } from './ThemedView';
 import { ConfirmationDialog } from './ConfirmationDialog';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { SignupRequestAgent } from '@/src/dto/request/SignupRequestAgent.dto';
+import { CreateUserRequest } from '@/src/dto/request/CreateUserRequest.dto';
 
 
 type UserType = 'admin' | 'agent';
 
 interface UserCreationFormProps extends ViewProps {
   userType: UserType;
-  onSubmit: (data: SignupRequestAgent) => Promise<void>;
+  onSubmit: (data: CreateUserRequest) => Promise<void>;
   isLoading?: boolean;
   lightColor?: string;
   darkColor?: string;
@@ -32,20 +32,18 @@ export default function UserCreationForm({
   const text = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
   const cardBackground = useThemeColor({ light: lightColor, dark: darkColor }, 'loginCardBackground');
   
-  const [formData, setFormData] = useState<SignupRequestAgent>({
+  const [formData, setFormData] = useState<CreateUserRequest>({
         name: '',
         surname: '',
         username: '',
         email: '',
-        password: '',
-        confirmPassword: '',
         phone: '',
         licenseNumber: '',
   });
 
   const [showConfirmation, setShowConfirmation] = useState(false);
 
-  const handleInputChange = (field: keyof SignupRequestAgent, value: string): void => {
+  const handleInputChange = (field: keyof CreateUserRequest, value: string): void => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -62,8 +60,6 @@ export default function UserCreationForm({
         surname: '',
         username: '',
         email: '',
-        password: '',
-        confirmPassword: '',
         phone: '',
         licenseNumber: '',
       });
@@ -125,32 +121,6 @@ export default function UserCreationForm({
         onChangeText={(value: string) => handleInputChange('email', value)}
         keyboardType="email-address"
         autoCapitalize="none"
-        required
-        textColor={text}
-        lightColor={cardBackground}
-        darkColor={cardBackground}
-        inputBackgroundColor={background}
-        className="mb-6"
-      />
-      
-      <LabelInput
-        label={t('forms.labels.password')}
-        type="password"
-        value={formData.password}
-        onChangeText={(value: string) => handleInputChange('password', value)}
-        required
-        textColor={text}
-        lightColor={cardBackground}
-        darkColor={cardBackground}
-        inputBackgroundColor={background}
-        className="mb-6"
-      />
-    
-      <LabelInput 
-        label={t('forms.labels.confirmPassword')}
-        type="password"
-        value={formData.confirmPassword}
-        onChangeText={(value: string) => handleInputChange('confirmPassword', value)}
         required
         textColor={text}
         lightColor={cardBackground}

@@ -1,7 +1,7 @@
 // src/api/ManagerApi.ts
 import httpClient from '../core/httpClient';
 import { ChangePasswordDTO } from '../dto/request/ChangePassword.dto';
-import { SignupRequestAgent } from '../dto/request/SignupRequestAgent.dto';
+import { CreateUserRequest } from '../dto/request/CreateUserRequest.dto';
 import { IManagerApi } from './interfaces/IManagerApi';
 
 const MANAGER_ENDPOINTS = {
@@ -11,7 +11,7 @@ const MANAGER_ENDPOINTS = {
 } as const;
 
 export class ManagerApi implements IManagerApi {
-  async createAgent(agentData: SignupRequestAgent): Promise<void> {
+  async createAgent(agentData: CreateUserRequest): Promise<void> {
     const response = await httpClient.post(MANAGER_ENDPOINTS.CREATE_AGENT, agentData);
     return response.data;
   }

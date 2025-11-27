@@ -1,4 +1,4 @@
-import { SignupRequestAgent } from "../dto/request/SignupRequestAgent.dto";
+import { CreateUserRequest } from "../dto/request/CreateUserRequest.dto";
 import { IManagerRepository } from "./interfaces/IManagerRepository";
 import { ManagerApi } from "../api/ManagerApi";
 import ApiError from "../core/errors/ApiError";
@@ -26,7 +26,7 @@ export class ManagerRepository implements IManagerRepository {
         return { success: false, message };
     }
 
-    async createAgent(agentData: SignupRequestAgent): Promise<{ success: boolean; message?: string; id?: string | number }> {
+    async createAgent(agentData: CreateUserRequest): Promise<{ success: boolean; message?: string; id?: string | number }> {
         try {
             await this.managerApi.createAgent(agentData);
             return { success: true, message: "Agent created successfully" };
