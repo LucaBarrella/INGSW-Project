@@ -392,71 +392,128 @@ Il livello di presentazione è responsabile dell'interfaccia utente e della gest
 Il livello logico gestisce la logica di business del sistema, elaborando le richieste degli utenti e interagendo con il livello di dati. È stato progettato per essere scalabile e modulare, consentendo l'aggiunta di nuove funzionalità senza influire sulle parti esistenti del sistema.\\
 Il livello di dati è responsabile della gestione e dell'archiviazione delle informazioni. È stato progettato per garantire l'integrità e la sicurezza dei dati, con prestazioni ragionevoli e una struttura scalabile, in modo da supportare la crescita del sistema.\\
 Inoltre, sono state adottate tecnologie moderne e best practice di sviluppo software per garantire che il sistema sia robusto, sicuro e performante. Tra queste, l'uso di framework professionali per lo sviluppo, la gestione del versionamento del codice e l'implementazione di test automatici per garantire la qualità del software.\\
-Di seguito, vengono illustrate in dettaglio le scelte progettuali adottate per ciascun livello del sistema.
+Di seguito, vengono illustrate in dettaglio le scelte progettuali e tecnologiche adottate per ciascun livello del sistema.
 
 \newpage
 \subsection{Front-End}
 
-Il front-end del sistema è implementato come applicazione mobile multipiattaforma basata su \textbf{React Native} e \textbf{TypeScript}. Questa scelta tecnologica consente di ottenere un'unica base di codice eseguibile sia su dispositivi \textbf{iOS} che \textbf{Android}, garantendo al contempo buone prestazioni, manutenibilità e flessibilità. L'architettura è progettata secondo principi di \textit{separation of concerns}, modularità e scalabilità, organizzando il sistema in strati logici con responsabilità chiaramente definite. \\
-L'articolazione del front-end prevede i seguenti livelli:
-
-\subsubsection{1. Strato di Presentazione (Presentation Layer)}
-Questo strato comprende tutti gli elementi responsabili della visualizzazione e dell'interazione diretta con l'utente. La sua progettazione mira a mantenere l'interfaccia separata dalla logica applicativa.
+Il front-end del sistema è progettato come applicazione mobile multipiattaforma, sviluppata in \textbf{React Native} con \textbf{TypeScript}. Questa scelta tecnologica è motivata dalla necessità di garantire:
 \begin{itemize}
-    \item \textbf{Schermate (Screens):} rappresentano le viste principali dell'applicazione e definiscono l'organizzazione dei contenuti mostrati all'utente.
-    \item \textbf{Componenti UI Riutilizzabili:} elementi modulari concepiti per favorire la coerenza visiva e ridurre la duplicazione del codice.
-    \item \textbf{Stili e Risorse Grafiche:} definiscono l'aspetto estetico dell'interfaccia, garantendo uniformità e applicazione coerente del design system.
+    \item \textbf{portabilità}, permettendo l’esecuzione su dispositivi iOS e Android tramite un unico codebase;
+    \item \textbf{elevata manutenibilità}, grazie al typing statico fornito da TypeScript;
+    \item \textbf{buona efficienza} in termini di prestazioni e reattività dell’interfaccia;
+    \item \textbf{rapidità di sviluppo}, resa possibile dall’ecosistema React e dalla disponibilità di componenti già ottimizzati per dispositivi mobili.
 \end{itemize}
 
-\subsubsection{2. Strato Logico e di Gestione dello Stato (Logic and State Management Layer)}
-Questo strato centralizza la logica applicativa non direttamente legata alla parte grafica, contribuendo alla manutenibilità e alla testabilità del sistema.
+L’architettura adottata segue i principi di \textbf{separation of concerns}, \textbf{scalabilità} e \textbf{testabilità}, strutturando l’applicazione in strati logici chiaramente definiti. Tale scelta consente di minimizzare l’accoppiamento tra componenti, facilitare l’evoluzione del sistema e supportare la manutenzione a lungo termine.
+
+\subsubsection{Strato di Presentazione (Presentation Layer)}
+Questo livello contiene tutti i componenti relativi alla visualizzazione e all’interazione con l’utente. I principi di design adottati seguono linee guida di \textbf{usabilità}, \textbf{consistenza} e \textbf{responsività}.
 \begin{itemize}
-    \item \textbf{Moduli di Logica Riutilizzabile:} incapsulano comportamenti specifici del dominio applicativo.
-    \item \textbf{Contesti di Stato (Contexts):} consentono la gestione e condivisione dello stato globale tra i vari componenti.
-    \item \textbf{Validazione dei Dati:} definizioni e schemi per il controllo dell'integrità dei dati in ingresso.
-    \item \textbf{Configurazioni e Costanti:} parametri che regolano il comportamento dell'applicazione e supportano la configurabilità del sistema.
+    \item \textbf{Schermate principali}: rappresentano le viste dell’app, strutturate in modo da favorire la comprensione immediata delle funzionalità.
+    \item \textbf{Componenti UI riutilizzabili}: progettati per garantire uniformità visiva e ridurre la ridondanza.
+    \item \textbf{Stili e risorse grafiche globali}: definiscono il design system dell’applicazione.
+\end{itemize}
+Le scelte di design dell’interfaccia utente privilegiano semplicità, chiarezza e accessibilità, con l’obiettivo di ridurre la curva di apprendimento e migliorare l’esperienza dell’utente finale.
+
+\subsubsection{Strato Logico e di Gestione dello Stato (Logic and State Management Layer)}
+In questo livello risiede la logica applicativa non direttamente legata alla visualizzazione. Esso è progettato secondo criteri di \textbf{modularità} e \textbf{riuso}.
+\begin{itemize}
+    \item \textbf{Moduli di logica riutilizzabili}: incapsulano comportamenti specifici del dominio.
+    \item \textbf{Contesti globali di stato}: gestiscono informazioni condivise tra più schermate.
+    \item \textbf{Validazione dei dati}: garantisce la correttezza degli input del sistema.
 \end{itemize}
 
-\subsubsection{3. Strato dei Servizi (Service Layer)}
-Lo strato dei servizi si occupa dell'interazione con il back-end e della gestione delle operazioni di comunicazione remota.
+\subsubsection{Strato dei Servizi (Service Layer)}
+Questo strato gestisce la comunicazione con il back-end attraverso API RESTful. La scelta di separare questo livello facilita i test, riduce l’accoppiamento e consente di isolare cambiamenti nelle API.
 \begin{itemize}
-    \item \textbf{Client API:} moduli incaricati di effettuare le chiamate alle API REST fornite dal back-end.
-    \item \textbf{Servizi di Business del Front-End:} coordinano più operazioni, implementano logiche applicative complesse e si interfacciano con i repository e i client API.
-    \item \textbf{Infrastruttura HTTP:} componenti dedicati alla gestione centralizzata delle richieste, degli errori e delle configurazioni di rete.
-    \item \textbf{DTO (Data Transfer Objects):} strutture dati che definiscono il formato delle informazioni scambiate tra front-end e back-end.
+    \item \textbf{Client API}: implementano le chiamate al back-end.
+    \item \textbf{Servizi di business}: orchestrano operazioni complesse lato client.
+    \item \textbf{DTO}: definiscono i formati dei dati scambiati con il server.
 \end{itemize}
 
-\subsubsection{4. Strato di Persistenza Locale (Persistence Layer)}
-Questo livello gestisce la memorizzazione locale dei dati, necessaria per garantire persistenza, efficienza e supporto offline, utilizzando librerie come AsyncStorage.
+\subsubsection{Strato di Persistenza Locale (Persistence Layer)}
+Il front-end utilizza un meccanismo di persistenza locale per migliorare l’esperienza utente, ridurre la latenza e supportare funzionalità offline, tramite la libreria AsyncStorage.
 \begin{itemize}
-    \item \textbf{Repository:} astrazioni che permettono di accedere ai dati provenienti da fonti locali o remote mantenendo un'interfaccia uniforme.
-    \item \textbf{Gestione Sicura dei Token:} meccanismi dedicati alla conservazione di credenziali sensibili e informazioni di sessione, tramite l'uso di librerie come Expo SecureStore.
+    \item \textbf{Repository}: astrazioni per l’accesso a dati remoti o locali.
+    \item \textbf{Gestione sicura dei token}: garantisce la protezione di credenziali sensibili, attraverso la libreria Expo SecureStore.
 \end{itemize}
 
-\subsubsection{5. Strato di Navigazione (Navigation Layer)}
-Lo strato di navigazione definisce la struttura dei flussi dell'applicazione e gestisce le transizioni tra le diverse schermate.
+\subsubsection{Strato di Navigazione (Navigation Layer)}
+La navigazione è organizzata secondo un modello gerarchico e dichiarativo, che permette di gestire flussi complessi e protezione delle rotte.
 \begin{itemize}
-    \item \textbf{Router Logico:} stabilisce la gerarchia delle viste e le modalità di transizione, incluse eventuali gerarchie annidate, tramite la libreria Expo Router.
-    \item \textbf{Protezione delle Rotte:} meccanismi che regolano l'accesso alle sezioni dell'applicazione in base allo stato di autenticazione o al ruolo dell'utente.
-    \item \textbf{Pattern di Navigazione:} supporto a diverse tipologie di navigazione (ad esempio tab-based, stack navigation), scelte in funzione delle esigenze dei flussi applicativi.
+    \item \textbf{Router logico}: definisce le relazioni tra schermate.
+    \item \textbf{Protezione delle rotte}: limita l’accesso alle sezioni riservate agli utenti autenticati.
+    \item \textbf{Pattern di navigazione}: supporto a tab, stack o navigazione annidata.
 \end{itemize}
-Questa organizzazione architetturale garantisce una netta separazione delle responsabilità e favorisce la scalabilità del front-end, facilitando al contempo il riutilizzo del codice, la manutenibilità e la testabilità dell'intero sistema.
 
+L’architettura descritta consente una netta separazione delle responsabilità, supporta la crescita del progetto e assicura un’elevata qualità del codice.
 
+% ================================================================
+% ================================================================
 
 \subsection{Back-End}
-Il back-end è sviluppato in \textbf{Java} utilizzando il framework \textbf{Spring Boot}, che fornisce un'architettura solida, scalabile e modulare per la gestione delle richieste e l'elaborazione della logica di business.\\
-Spring Boot semplifica notevolmente lo sviluppo, offrendo funzionalità integrate per la gestione delle dipendenze, la configurazione automatica e la sicurezza, consentendo di concentrare l'attenzione sulla logica applicativa piuttosto che sugli aspetti infrastrutturali.\\
-Il framework supporta nativamente la realizzazione di \textbf{API RESTful}, utilizzate per la comunicazione tra il front-end, sviluppato in \textbf{React Native}, e il back-end.
+Il back-end del sistema è sviluppato in \textbf{Java} utilizzando il framework \textbf{Spring Boot}, scelto per la sua architettura solida, scalabile e modulare. Tale framework fornisce un insieme di funzionalità integrate, quali gestione delle dipendenze, configurazione automatica e meccanismi di sicurezza preconfigurati, che consentono di ridurre la complessità infrastrutturale e di concentrare l’attenzione sulla logica applicativa e sulle esigenze del dominio. \\
+Spring Boot supporta nativamente la creazione di \textbf{API RESTful}, che costituiscono l’interfaccia di comunicazione tra il front-end, sviluppato in \textbf{React Native}, e il back-end. L’architettura adottata segue un approccio multilivello (Controller–Service–Repository), che garantisce una chiara separazione delle responsabilità, migliorando manutenibilità e testabilità.
 
-Per la persistenza dei dati, viene impiegato un database relazionale \textbf{PostgreSQL}, integrato attraverso \textbf{Hibernate} come framework ORM (Object-Relational Mapping). Quest'ultimo, in combinazione con la \textbf{Jakarta Persistence API (JPA)}, fornisce un'interfaccia standard e astratta per la gestione della persistenza, semplificando le operazioni di lettura e scrittura sul database e garantendo coerenza tra modello applicativo e modello relazionale.
+\subsubsection{Strato di Presentazione (Controller Layer)}
+Questo livello espone le funzionalità applicative tramite endpoint REST:
+\begin{itemize}
+    \item \textbf{Controller REST}: gestiscono le richieste HTTP e restituiscono risposte strutturate.
+    \item \textbf{DTO} (Data Transfer Object): assicurano lo scambio sicuro e controllato di dati con il front-end.
+    \item \textbf{Gestione centralizzata degli errori}: uniforma il formato delle risposte in caso di eccezioni.
+\end{itemize}
 
-Il sistema di sicurezza è gestito tramite \textbf{Spring Security}, che consente di implementare meccanismi di autenticazione e autorizzazione robusti e configurabili, proteggendo le API da accessi non autorizzati.
+\subsubsection{Strato di Logica di Business (Service Layer)}
+Comprende le regole applicative e il coordinamento tra presentazione e persistenza:
+\begin{itemize}
+    \item \textbf{Servizi di business}: implementano le operazioni del dominio.
+    \item \textbf{Validazione}: garantisce la correttezza e la coerenza dei dati in ingresso.
+    \item \textbf{Mapper}: trasformano automaticamente DTO ed entità di dominio.
+\end{itemize}
 
-Per quanto riguarda il deployment, l'applicazione è containerizzata tramite \textbf{Docker}, che permette di isolare l'ambiente di esecuzione e garantire portabilità e coerenza tra i diversi ambienti di sviluppo, test e produzione. I container vengono distribuiti e gestiti su \textbf{Microsoft Azure}, che assicura scalabilità, affidabilità e continuità del servizio.\\
-Per la gestione e la memorizzazione dei contenuti multimediali, come immagini o file, viene utilizzato \textbf{Azure Blob Storage}, una soluzione di archiviazione a oggetti altamente scalabile e sicura, integrata con il back-end per la gestione efficiente dei file.
+\subsubsection{Strato di Persistenza (Repository Layer)}
+Per la gestione dei dati è impiegato un database relazionale \textbf{PostgreSQL}. La persistenza è implementata tramite \textbf{Hibernate} come framework ORM, integrato con la \textbf{Jakarta Persistence API (JPA)}:
+\begin{itemize}
+    \item \textbf{Entità JPA}: modellano le tabelle del database.
+    \item \textbf{Repository Spring Data JPA}: permettono l’accesso ai dati tramite interfacce e query astratte.
+    \item \textbf{Hibernate ORM}: gestisce la conversione tra oggetti Java e rappresentazione relazionale, riducendo la complessità operativa.
+\end{itemize}
+Questo approccio offre un alto livello di astrazione, migliorando portabilità e coerenza tra livello applicativo e schema dati.
 
-Infine, \textbf{JUnit} viene utilizzato per l'esecuzione di test automatici, al fine di garantire la qualità del codice e la stabilità del sistema durante lo sviluppo e l'integrazione continua.
+\subsubsection{Strato di Sicurezza}
+Il sistema di sicurezza è implementato tramite \textbf{Spring Security}, che garantisce un modello robusto di autenticazione e autorizzazione:
+\begin{itemize}
+    \item \textbf{Filtri di sicurezza}: applicano controlli sugli endpoint sensibili.
+    \item \textbf{Autenticazione JWT}: consente un approccio stateless, scalabile e sicuro.
+    \item \textbf{Gestione ruoli e permessi}: definisce i livelli di accesso alle varie funzionalità.
+\end{itemize}
+
+\subsubsection{Gestione dei Contenuti Multimediali}
+Per la memorizzazione e gestione di contenuti multimediali (come immagini o file di documentazione) è utilizzato \textbf{Azure Blob Storage}, una soluzione di archiviazione a oggetti scalabile e sicura. Il back-end integra questo servizio tramite SDK ufficiali, consentendo:
+\begin{itemize}
+    \item caricamento e download dei file;
+    \item generazione di URL sicuri e temporanei;
+    \item gestione efficiente di contenuti di grandi dimensioni.
+\end{itemize}
+
+\subsubsection{Deployment e Infrastruttura}
+Il processo di deployment è basato su una pipeline containerizzata:
+\begin{itemize}
+    \item \textbf{Docker}: consente la creazione di container isolati e riproducibili per il back-end.
+    \item \textbf{Microsoft Azure}: piattaforma cloud utilizzata per la distribuzione, garantisce scalabilità, alta disponibilità e monitoraggio continuo.
+    \item \textbf{Ambienti separati} (sviluppo, test, produzione): supportano una gestione strutturata del ciclo di vita dell’applicazione.
+\end{itemize}
+
+\subsubsection{Testing}
+La qualità e la stabilità del sistema sono assicurate tramite test automatici eseguiti con \textbf{JUnit}, che permettono:
+\begin{itemize}
+    \item verifica delle unità funzionali;
+    \item individuazione rapida di regressioni;
+    \item supporto all’integrazione continua.
+\end{itemize}
+
+L’architettura descritta garantisce robustezza, scalabilità e una chiara separazione delle responsabilità, assicurando al sistema un’elevata manutenibilità e predisposizione all’evoluzione futura.
 
 \subsection{Database}
 Il database è progettato per essere scalabile e performante, utilizzando PostgreSQL.\\
