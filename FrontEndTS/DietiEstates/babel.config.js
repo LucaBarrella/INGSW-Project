@@ -52,7 +52,7 @@ module.exports = function (api) {
             'material-symbols:person-add-outline',
             'material-symbols:real-estate-agent-outline',
             'material-symbols:sim-card-download-outline',
-            'material-symbols:check-circle-outline', // Aggiunta icona mancante
+            'material-symbols:check-circle-outline',
 
             'material-symbols:push-pin',
             'material-symbols:push-pin-outline',

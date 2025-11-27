@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, ScrollView, TouchableOpacity, Image, StyleSheet, useColorScheme, Dimensions, NativeSyntheticEvent, NativeScrollEvent, Modal, Platform, SafeAreaView, StatusBar, useWindowDimensions } from 'react-native';
+import { View, ScrollView, TouchableOpacity, Image, StyleSheet, useColorScheme, Dimensions, NativeSyntheticEvent, NativeScrollEvent, Modal, Platform, StatusBar, useWindowDimensions } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { PropertyDTO } from '@/components/Agent/PropertyDashboard/types';
 import { Colors } from '@/constants/Colors';
@@ -13,6 +13,7 @@ import VisitSchedulerPanel from '../../../components/Buyer/VisitSchedulerPanel';
 import OfferPanel from '../../../components/Offer/OfferPanel';
 import httpClient from '@/src/core/httpClient';
 import { PlaceDTO } from '@/src/dto/response/PlaceDTO';
+import { ServiceCard } from '@/components/Property/ServiceCard';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -33,12 +34,20 @@ const PropertyDetailScreen: React.FC = () => {
   const [isGalleryVisible, setIsGalleryVisible] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [property, setProperty] = useState<PropertyDTO>();
+  const [places, setPlaces] = useState<PlaceDTO[]>([]);
   const [fetchingProperty, setFetchingProperty] = useState(false);
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const emptyAvailableDatesArray: string[] = [];
 
   const scrollViewRef = useRef<ScrollView>(null);
   const { t } = useTranslation();
+
+  const iconNames: { [key: string]: string } = {
+    'education': 'material-symbols:school',
+    'Ospedale': 'material-symbols:local-hospital',
+    'Supermercato': 'material-symbols:material-symbols:shopping-bag',
+    'public_transport': 'material-symbols:train',
+  }
 
   function parseLocalDateTime(dateArray: number[]): Date {
     const [year, month, day, hour, minute, second, nanosecond] = dateArray;
@@ -52,9 +61,9 @@ const PropertyDetailScreen: React.FC = () => {
       setFetchingProperty(true);
       try {
         const response = await httpClient.get<PropertyDTO>(`/properties/details/${propertyId}`);
-        console.log('Fetched property details:', response.data);
         setProperty(response.data);
       } catch (error) {
+        // no alert, continue silently (error message is shown anyway when not fetching anymore)
         console.error('Error fetching property details:', error);
       } finally {
         setFetchingProperty(false);
@@ -63,8 +72,10 @@ const PropertyDetailScreen: React.FC = () => {
     const fetchNearbyServices = async () => {
       if (!propertyId) return;
       httpClient.get<PlaceDTO[]>(`/api/properties/${propertyId}/places`).then(response => {
-        console.log('Nearby services:', response.data);
+        console.log('Fetched nearby services:', response.data);
+        setPlaces(response.data);
       }).catch(error => {
+        // no alert, continue silently
         console.error('Error fetching nearby services:', error);
       });
     };
@@ -324,26 +335,9 @@ const PropertyDetailScreen: React.FC = () => {
         <View style={styles.nearbyServices}>
           <ThemedText style={styles.sectionTitle}>Servizi vicini</ThemedText>
           <View style={styles.servicesGrid}>
-            <View style={styles.serviceCard}>
-              <ThemedIcon icon="material-symbols:school" size={24} lightColor={themeColors.text} darkColor={themeColors.text} accessibilityLabel="Scuola" />
-              <ThemedText style={styles.serviceName}>Scuola</ThemedText>
-              <ThemedText style={styles.serviceDistance}>1.2 km</ThemedText>
-            </View>
-            <View style={styles.serviceCard}>
-              <ThemedIcon icon="material-symbols:local-hospital" size={24} lightColor={themeColors.text} darkColor={themeColors.text} accessibilityLabel="Ospedale" />
-              <ThemedText style={styles.serviceName}>Ospedale</ThemedText>
-              <ThemedText style={styles.serviceDistance}>2.5 km</ThemedText>
-            </View>
-            <View style={styles.serviceCard}>
-              <ThemedIcon icon="material-symbols:shopping-bag" size={24} lightColor={themeColors.text} darkColor={themeColors.text} accessibilityLabel="Centro commerciale" />
-              <ThemedText style={styles.serviceName}>Centro commerciale</ThemedText>
-              <ThemedText style={styles.serviceDistance}>3.1 km</ThemedText>
-            </View>
-            <View style={styles.serviceCard}>
-              <ThemedIcon icon="material-symbols:train" size={24} lightColor={themeColors.text} darkColor={themeColors.text} accessibilityLabel="Stazione" />
-              <ThemedText style={styles.serviceName}>Stazione</ThemedText>
-              <ThemedText style={styles.serviceDistance}>4.0 km</ThemedText>
-            </View>
+            {places.filter((place) => place.name).map((place, index) => (
+              <ServiceCard key={index} place={place} iconName={iconNames[place.category] ? iconNames[place.category] : 'material-symbols:push-pin'} />
+            ))}
           </View>
         </View>
 
@@ -659,24 +653,6 @@ const createStyles = (themeColors: typeof Colors.light) => StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 12,
-  },
-  serviceCard: {
-    width: '48%',
-    backgroundColor: themeColors.backgroundMuted,
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-  },
-  serviceName: {
-    fontSize: 14,
-    fontWeight: '500',
-    marginTop: 8,
-    textAlign: 'center',
-  },
-  serviceDistance: {
-    fontSize: 12,
-    color: themeColors.tint,
-    marginTop: 4,
   },
   agentCard: {
     flexDirection: 'row',
