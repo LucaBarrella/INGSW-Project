@@ -79,7 +79,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
         />
       ) : (
         <View style={styles.container}>
-          <MapView style={styles.map} initialRegion={center? { latitudeDelta: 0.2, longitudeDelta:0.2, ...center } : undefined} onLongPress={event => {onChangeCenter(event.nativeEvent.coordinate.latitude, event.nativeEvent.coordinate.longitude)}} >
+          <MapView style={styles.map} region={center? { latitudeDelta: 0.1, longitudeDelta:0.1, ...center } : undefined} onLongPress={event => {onChangeCenter(event.nativeEvent.coordinate.latitude, event.nativeEvent.coordinate.longitude)}} >
             {properties.map((property, index) => (
               property.address.latitude && property.address.longitude && <Marker
                 key={index}

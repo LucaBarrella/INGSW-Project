@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert } from 'react-native';
 import { useLocalSearchParams, Stack } from 'expo-router';
 import { useSearch } from '@/context/SearchContext';
@@ -13,7 +13,7 @@ export default function SearchResultsScreen() {
   const params = useLocalSearchParams<{ category?: string; query?: string; contract?: 'rent' | 'sale' }>();
   const { state } = useSearch();
   const { properties, isLoading, error, search } = useSearchProperties();
-  const [viewMode, setViewMode] = React.useState<'list' | 'map'>('list');
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
 
   // URL <-> Context synchronization is handled by useSearchUrlState to centralize logic and avoid scattered effects
   useSearchUrlState();
@@ -23,18 +23,14 @@ export default function SearchResultsScreen() {
     ? `${params.category[0].toUpperCase()}${params.category.slice(1)}`
     : params?.query || state.searchQuery || 'Ricerca';
 
-
-  // La logica di recupero proprietà è ora delegata a useSearchProperties.search.
-  // Il hook gestisce isLoading, error e properties.
-
-  // Rimosso l'useEffect che triggerava fetchProperties su ogni cambio di query/filtri.
-  // La ricerca ora viene triggerata solo esplicitamente tramite il parametro URL triggerSearch,
-  // dopo che il context è stato sincronizzato.
-  
-
+  // Trigger search once after URL params are synced and storage is loaded
   useEffect(() => {
-    // La ricerca ora viene triggerata esplicitamente dall'utente (es. pulsante "Cerca" nel FilterPanel).
-  }, []);
+    if (!state.isLoadingFromStorage) {
+      search().catch(err => {
+        console.error('[SearchScreen] Initial search failed:', err);
+      });
+    }
+  }, [state.isLoadingFromStorage, search]);
 
   useEffect(() => {
     console.log('[SearchScreen] Properties state updated:', properties);
