@@ -9,6 +9,9 @@ import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import MapView, { Marker } from 'react-native-maps';
 import { t } from 'i18next';
+import { useRouter } from 'expo-router';
+
+const router = useRouter();
 
 interface SearchResultsViewProps {
   properties: PropertyDetail[];
@@ -18,6 +21,13 @@ interface SearchResultsViewProps {
   setViewMode: React.Dispatch<React.SetStateAction<"list" | "map">>;
   center?: { latitude: number; longitude: number };
 }
+
+const handleDetailsPress = (propertyId : number) => {
+  router.push({
+    pathname: '/(protected)/(buyer)/property-detail',
+    params: { propertyId },
+  });
+};
 
 export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
   properties,
@@ -38,7 +48,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
       <View className="flex-row items-center py-2 pr-2 border-b" style={{ borderColor: useThemeColor({}, 'border') }}>
         <View className="flex-1 mr-2">
           <SearchAndFilter
-            placeholder="Cerca immobili..."
+            placeholder={t('searchPlaceholder')}
             onSearchTrigger={onSearchTrigger}
           />
         </View>
@@ -64,6 +74,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
           renderItem={({ item }) => (
             <BuyerPropertyCard
               property={item}
+              onPress={() => handleDetailsPress(item.id)}
             />
           )}
           ListEmptyComponent={() => (
@@ -83,7 +94,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
                 coordinate={{ latitude: property.address.latitude, longitude: property.address.longitude }}
                 title={`€${property.price.toLocaleString()}`}
                 description={property.description}
-                onPress={() => onPropertyPress(property.id)}
+                onPress={() => handleDetailsPress(property.id)}
               />
             ))}
             

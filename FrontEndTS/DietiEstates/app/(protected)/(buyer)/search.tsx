@@ -64,15 +64,12 @@ export default function SearchResultsScreen() {
           properties={properties}
           onSearchTrigger={search}
           onChangeCenter={(newLat, newLng) => {
-            if (state.geolocation) {
-              state.geolocation.lat = newLat;
-              state.geolocation.lon = newLng;
-              //trigger a new search with updated center
-              search().catch(err => {
-                Alert.alert('Errore', 'Si è verificato un errore durante la ricerca con la nuova posizione.');
-                console.error('[SearchScreen] search failed', err);
-              });
-            }
+            state.geolocation = { lat: newLat, lon: newLng };
+            //trigger a new search with updated center
+            search().catch(err => {
+              Alert.alert('Errore', 'Si è verificato un errore durante la ricerca con la nuova posizione.');
+              console.error('[SearchScreen] search failed', err);
+            });
           }}
           viewMode={viewMode}
           setViewMode={setViewMode}

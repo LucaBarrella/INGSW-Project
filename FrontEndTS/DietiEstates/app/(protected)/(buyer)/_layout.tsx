@@ -29,11 +29,11 @@ export default function BuyerLayout() {
       <Stack.Screen
         name="search"
         options={{
-        headerShown: true,
-        title: '',
-        animation: 'slide_from_right',
-        headerBackTitle: 'Home',
-      }}
+          headerShown: true,
+          title: '',
+          animation: 'slide_from_right',
+          headerBackTitle: 'Home',
+        }}
       />
       <Stack.Screen
         name="property-detail"
