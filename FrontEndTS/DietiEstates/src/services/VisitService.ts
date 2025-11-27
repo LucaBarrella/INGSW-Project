@@ -43,10 +43,13 @@ export class VisitService implements IVisitService {
       
       for (let existingVisit of visitRequests) {
         if ( newVisit.startTime < existingVisit.endTime && newVisit.endTime > existingVisit.startTime) {
-          if (visit.address.id !== existingVisit.property.addressId) {
-            existingVisit.conflict = {conflictingAppointmentId: visit.visit.id, reason:"reason TODO"};
-            newVisit.conflict = {conflictingAppointmentId: existingVisit.id, reason:"reason TODO"};
-            visitRequests.push(newVisit);
+          if (visit.visit.status === "CONFIRMED" && existingVisit.status === "CONFIRMED" && visit.address.id !== existingVisit.property.addressId) {
+            newVisit.isGroupOpportunity = false;
+            existingVisit.isGroupOpportunity = false;
+            newVisit.potentialClients = [];
+            existingVisit.potentialClients = [];
+            existingVisit.conflict = {conflictingAppointmentId: visit.visit.id};
+            newVisit.conflict = {conflictingAppointmentId: existingVisit.id};
             break;
           }
           else {

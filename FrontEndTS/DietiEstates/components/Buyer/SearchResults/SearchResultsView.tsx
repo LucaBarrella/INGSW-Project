@@ -7,7 +7,8 @@ import { SearchAndFilter } from '../SearchIntegration/SearchAndFilter';
 import { BuyerPropertyCard } from '../BuyerPropertyCard';
 import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import MapView, { Marker, MarkerAnimated } from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
+import { t } from 'i18next';
 
 interface SearchResultsViewProps {
   properties: PropertyDetail[];
@@ -68,7 +69,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
           ListEmptyComponent={() => (
             <ThemedView className="flex-1 items-center justify-center p-8">
               <ThemedText className="text-center text-gray-500">
-                Nessun risultato trovato per questa ricerca
+                {t('noSearchResults')}
               </ThemedText>
             </ThemedView>
           )}

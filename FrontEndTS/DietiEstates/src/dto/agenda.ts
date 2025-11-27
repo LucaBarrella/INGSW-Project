@@ -34,5 +34,4 @@ export interface VisitRequest {
 
 export interface Conflict {
   conflictingAppointmentId: number;
-  reason: string; // Es. "Orario sovrapposto"
 }

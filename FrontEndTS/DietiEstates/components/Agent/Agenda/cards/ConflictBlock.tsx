@@ -3,12 +3,14 @@ import { View, Text, TouchableOpacity, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { VisitRequest } from '../../../../src/dto/agenda';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { t } from 'i18next';
 
 interface ConflictBlockProps {
   appointments: VisitRequest[];
+  onDeleteAppointment: (appointmentId: number) => void;
 }
 
-const ConflictBlock: React.FC<ConflictBlockProps> = ({ appointments }) => {
+const ConflictBlock: React.FC<ConflictBlockProps> = ({ appointments, onDeleteAppointment }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const conflictColor = useThemeColor({}, 'errorIcon');
   const conflictBgColor = useThemeColor({}, 'errorBackground');
@@ -37,7 +39,7 @@ const ConflictBlock: React.FC<ConflictBlockProps> = ({ appointments }) => {
       <View className="mt-3 pt-3 border-t" style={{ borderColor: conflictBorderColor + '99' }}>
         <TouchableOpacity onPress={() => setModalVisible(true)} className="flex-row items-center justify-center">
           <Ionicons name="warning-outline" size={18} color={conflictColor} />
-          <Text style={{ color: conflictTextColor }} className="font-bold ml-2 text-sm">Resolve Conflict</Text>
+          <Text style={{ color: conflictTextColor }} className="font-bold ml-2 text-sm">{t('resolveConflict')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -49,15 +51,15 @@ const ConflictBlock: React.FC<ConflictBlockProps> = ({ appointments }) => {
       >
         <View className="flex-1 justify-center items-center bg-black/50">
           <View className="bg-white p-6 rounded-lg w-11/12">
-            <Text className="text-lg font-bold mb-4">Resolve Conflict</Text>
-            <Text className="mb-4">Choose which appointment to cancel:</Text>
+            <Text className="text-lg font-bold mb-4">{t('resolveConflict')}</Text>
+            <Text className="mb-4">{t('chooseAppointmentToCancel')}</Text>
             {appointments.map(app => (
-              <TouchableOpacity key={app.id} className="p-3 rounded-lg mb-2" style={{ backgroundColor: conflictBgColor }}>
-                <Text style={{ color: conflictTextColor }}>{app.property.address} with {app.userInfo.fullName}</Text>
+              <TouchableOpacity key={app.id} className="p-3 rounded-lg mb-2" style={{ backgroundColor: conflictBgColor }} onPress={() => onDeleteAppointment(app.id)}>
+                <Text style={{ color: conflictTextColor }}>{app.property.address} {t('with')} {app.userInfo.fullName}</Text>
               </TouchableOpacity>
             ))}
             <TouchableOpacity onPress={() => setModalVisible(false)} className="mt-4 p-3 rounded-lg" style={{ backgroundColor: conflictBorderColor }}>
-              <Text className="text-center font-bold" style={{ color: conflictBgColor }}>Close</Text>
+              <Text className="text-center font-bold" style={{ color: conflictBgColor }}>{t('close')}</Text>
             </TouchableOpacity>
           </View>
         </View>

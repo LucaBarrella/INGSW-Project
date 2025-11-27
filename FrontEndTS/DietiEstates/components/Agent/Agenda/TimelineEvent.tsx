@@ -12,14 +12,15 @@ import { ThemedText } from '@/components/ThemedText';
 interface TimelineEventProps {
   group: VisitRequest[];
   showTime: boolean;
+  onDeleteAppointment: (appointmentId: number) => void;
 }
 
-const TimelineEvent: React.FC<TimelineEventProps> = ({ group, showTime }) => {
+const TimelineEvent: React.FC<TimelineEventProps> = ({ group, showTime, onDeleteAppointment }) => {
   const [cardHeight, setCardHeight] = useState(0);
   const firstEvent = group[0];
   const { startTime } = firstEvent;
 
-  const isConflict = group.length > 1 && group.some(app => app.property.id !== group[0].property.id);
+  const isConflict = group.length > 1 && group.some(app => app.conflict);
   const isGroupVisit = group.length > 1 && !isConflict;
   const isSingleVisit = group.length === 1;
 
@@ -67,7 +68,7 @@ const TimelineEvent: React.FC<TimelineEventProps> = ({ group, showTime }) => {
     if (isGroupVisit) {
       return <GroupVisitCard appointments={group} />;
     }
-    return <ConflictBlock appointments={group} />;
+    return <ConflictBlock appointments={group} onDeleteAppointment={onDeleteAppointment}/>;
   };
 
 

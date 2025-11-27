@@ -9,9 +9,10 @@ interface ConfirmedScheduleProps {
   appointments: VisitRequest[];
   isScheduleVisible: boolean;
   toggleScheduleVisibility: () => void;
+  onDeleteAppointment: (appointmentId: number) => void;
 }
 
-const ConfirmedSchedule: React.FC<ConfirmedScheduleProps> = ({ appointments, isScheduleVisible, toggleScheduleVisibility }) => {
+const ConfirmedSchedule: React.FC<ConfirmedScheduleProps> = ({ appointments, isScheduleVisible, toggleScheduleVisibility, onDeleteAppointment }) => {
 
   const groupAndSlotAppointments = (appointments: VisitRequest[]): { type: 'event' | 'empty', data: VisitRequest[] | { startTime: Date; endTime: Date } }[] => {
     if (!appointments.length) return [];
@@ -78,6 +79,7 @@ const ConfirmedSchedule: React.FC<ConfirmedScheduleProps> = ({ appointments, isS
                     <TimelineEvent
                       key={index}
                       group={group}
+                      onDeleteAppointment={onDeleteAppointment}
                       showTime={true} // Mostra sempre l'orario per gli eventi
                     />
                   );

@@ -133,24 +133,41 @@ const AgendaScreen = () => {
         dispatch({ type: 'ACCEPT_REQUEST', payload: { requestId } });
       }
       else {
-        Alert.alert("Errore", "Non puoi accettare questa richiesta di visita perché hai già un appuntamento confermato in questo orario.");
+        Alert.alert(t('error'), t('errorAcceptingRequestConflict'));
       }
     }).catch(error => {
-      Alert.alert("Errore", "Si è verificato un errore durante l'accettazione della richiesta di visita.");
+      Alert.alert(t('error'), t('errorAcceptingRequest'));
       console.error("Errore nel accettare la richiesta di visita:", error);
     });
   };
 
   const handleRejectRequest = (requestId: number) => {
     updateVisitStatus(requestId, 'REJECTED').then((response) => {
-      if (response.success) {
+      if (response.success !== false) {
         dispatch({ type: 'REJECT_REQUEST', payload: { requestId } });
       }
       else {
-        console.error("Errore nel rifiutare la richiesta di visita:", response.message);
+        console.error("Errore nel rifiutare la richiesta di visita, response:", response.message);
       }
     }).catch(error => {
       console.error("Errore nel rifiutare la richiesta di visita:", error);
+    });
+  };
+
+  const handleDeleteAppointment = (appointmentId: number) => {
+    updateVisitStatus(appointmentId, 'CANCELLED').then((response) => {
+      if (response.success !== false) {
+        // Rimuovi l'appuntamento dallo stato
+        const updatedAppointments = state.appointments.filter(app => app.id !== appointmentId);
+        dispatch({ type: 'SET_INITIAL_DATA', payload: { appointments: updatedAppointments, visitRequests: state.visitRequests } });
+      }
+      else {
+        Alert.alert(t('error'), t('errorDeletingAppointment'));
+        console.error("Errore nel cancellare l'appuntamento, response:", response.message);
+      }
+    }).catch(error => {
+      Alert.alert(t('error'), t('errorDeletingAppointment'));
+      console.error("Errore nel cancellare l'appuntamento:", error);
     });
   };
 
@@ -179,6 +196,7 @@ const AgendaScreen = () => {
             appointments={state.appointments}
             isScheduleVisible={isScheduleVisible}
             toggleScheduleVisibility={toggleScheduleVisibility}
+            onDeleteAppointment={handleDeleteAppointment}
           />
         </ScrollView>
       </ThemedView>

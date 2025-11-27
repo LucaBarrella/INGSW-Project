@@ -23,6 +23,10 @@
   "time": "Ora",
   "address": "Indirizzo",
   "loadingAgenda": "Caricamento agenda...",
+  "errorAcceptingRequest": "Errore durante l'accettazione della richiesta di visita.",
+  "errorAcceptingRequestConflict": "Non puoi accettare questa richiesta di visita perché hai già un appuntamento confermato in questo orario.",
+  "errorDeletingAppointment": "Errore durante la cancellazione dell'appuntamento.",
+  "error": "Errore",
 
   "visit_status": {
     "PENDING": "in attesa",
