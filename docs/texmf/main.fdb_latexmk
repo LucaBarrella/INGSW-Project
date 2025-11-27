@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1763726402.84467 "c:/Users/maryd/projects/INGSW-Project/docs/texmf/main.tex" "main.pdf" "main" 1763726405.22022 0
-  "C:/Users/maryd/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1763723995 80909 eab91d9745dd2edfd62a31d53cd5fe15 ""
+["pdflatex"] 1764254797.22929 "c:/Users/maryd/projects/INGSW-Project/docs/texmf/main.tex" "main.pdf" "main" 1764254799.14143 0
+  "C:/Users/maryd/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1764254415 80909 eab91d9745dd2edfd62a31d53cd5fe15 ""
   "C:/Users/maryd/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/ecbx1000.pk" 1742214216 25420 98b6fef9028f2b61784f86cd9e7725c3 ""
   "C:/Users/maryd/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/ecbx1200.pk" 1742214225 31952 296b8804c99aaeaf72b46a3e16dd5635 ""
   "C:/Users/maryd/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/ecbx1440.pk" 1742214207 40136 32afffa559c5ff619897307bef0231d3 ""
@@ -31,6 +31,7 @@
   "C:/Users/maryd/AppData/Local/Programs/MiKTeX/fonts/tfm/jknappen/ec/ecsl1000.tfm" 993062192 3372 8bafd4fa1c46df00fc8030740806e3ce ""
   "C:/Users/maryd/AppData/Local/Programs/MiKTeX/fonts/tfm/jknappen/ec/ecti1000.tfm" 993062320 2840 5606e1a681c23005308de9d61c09a8ff ""
   "C:/Users/maryd/AppData/Local/Programs/MiKTeX/fonts/tfm/jknappen/ec/tcrm1000.tfm" 993062508 1436 c7f957a372ef2fbe93c0982f96625e12 ""
+  "C:/Users/maryd/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1247596667 32569 5e5ddc8df908dea60932f3c484a54c0d ""
   "C:/Users/maryd/AppData/Local/Programs/MiKTeX/tex/context/base/mkii/supp-pdf.mkii" 1580390158 71627 94eb9990bed73c364d7f53f960cc8c5b ""
   "C:/Users/maryd/AppData/Local/Programs/MiKTeX/tex/generic/babel/babel.sty" 1704647332 150008 7a05b0fdc0167c04e192003e780ab195 ""
   "C:/Users/maryd/AppData/Local/Programs/MiKTeX/tex/generic/babel/locale/it/babel-it.ini" 1704647334 4255 d2c36ede3f04f7968d64917327cbb37a ""
@@ -140,16 +141,16 @@
   "C:/Users/maryd/AppData/Local/Programs/MiKTeX/tex/latex/transparent/transparent.sty" 1674488802 1918 c8d1ecb3722721d6f624992cbc042b70 ""
   "C:/Users/maryd/AppData/Local/Programs/MiKTeX/tex/latex/trimspaces/trimspaces.sty" 1253169183 1380 971a51b00a14503ddf754cab24c3f209 ""
   "C:/Users/maryd/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1700127522 55487 80a65caedd3722f4c20a14a69e785d8f ""
-  "c:/Users/maryd/projects/INGSW-Project/docs/texmf/main.tex" 1763726401 30937 6ea00a7470a7e9044046057ed0eb3ab9 ""
+  "c:/Users/maryd/projects/INGSW-Project/docs/texmf/main.tex" 1764254796 32940 00e1c5c90eeddda608cff3533f6621c3 ""
   "diagram/UseCaseDiagram.pdf" 1763724533 55170 29257844abfa811847057873f6a3a561 ""
   "figures/adminPersona.pdf" 1741605387 3000415 4914a2c71755b4501deaed1cdd9d0114 ""
   "figures/logo-federico-II.pdf" 1741605387 133374 49d25d1953b4d39549634b522c1059d6 ""
   "figures/oldclientPersona.pdf" 1741605387 3126208 87f899b8578ded3e2c269f1a6ac45b98 ""
   "figures/reagentPersona.pdf" 1741605387 3075271 6c9103da52d0ebe5d9754baab42220b0 ""
   "figures/youngclientPersona.pdf" 1741605387 3070743 73b25aff27a8176220d1d55798c3cf54 ""
-  "main.aux" 1763726404 5930 c6cd5aedf5e039d91e09f77d4d31b6d6 "pdflatex"
-  "main.tex" 1763726401 30937 6ea00a7470a7e9044046057ed0eb3ab9 ""
-  "main.toc" 1763726404 2893 b847e8fdb00ac16a803031243fa2de27 "pdflatex"
+  "main.aux" 1764254798 5930 c6cd5aedf5e039d91e09f77d4d31b6d6 "pdflatex"
+  "main.tex" 1764254796 32940 00e1c5c90eeddda608cff3533f6621c3 ""
+  "main.toc" 1764254798 2893 b847e8fdb00ac16a803031243fa2de27 "pdflatex"
   "uninafrontespizio.sty" 1741605387 5700 2b23b4cc227f9220f323aa2eace5b339 ""
   (generated)
   "main.aux"
