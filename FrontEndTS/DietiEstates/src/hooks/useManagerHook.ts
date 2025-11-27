@@ -1,25 +1,17 @@
 import { useCallback } from "react"
 import { ManagerService } from "@/src/services/ManagerService"
-import { SignupRequestAgent } from "../dto/request/SignupRequestAgent.dto";
+import { CreateUserRequest } from "../dto/request/CreateUserRequest.dto";
 import { ChangePasswordDTOWithConfirm } from "../dto/request/ChangePasswordWithConfirm.dto";
 
 export const useManagerHook = (managerService : ManagerService) => {
 
-    const handleCreateAgent = useCallback(async (data: SignupRequestAgent, setError: (error: string) => void) => {
+    const handleCreateAgent = useCallback(async (data: CreateUserRequest, setError: (error: string) => void) => {
         if (data.name.trim() === "" || data.surname.trim() === "" || data.username.trim() === "" || data.email.trim() === "") {
             setError("All fields are required");
             return;
         }
         if (!data.licenseNumber || !data.phone || data.licenseNumber.trim() === "" || data.phone.trim() === "") {
             setError("Phone number and license number are required");
-            return;
-        }
-        if (data.password.length < 8) {
-            setError("Password must be at least 8 characters long");
-            return;
-        }
-        if (data.password !== data.confirmPassword) {
-            setError("Passwords do not match");
             return;
         }
         try {
@@ -35,17 +27,9 @@ export const useManagerHook = (managerService : ManagerService) => {
         }
     }, [managerService]);
 
-    const handleCreateAdmin = useCallback(async (data: SignupRequestAgent, setError: (error: string) => void) => {
+    const handleCreateAdmin = useCallback(async (data: CreateUserRequest, setError: (error: string) => void) => {
         if (data.name.trim() === "" || data.surname.trim() === "" || data.username.trim() === "" || data.email.trim() === "") {
             setError("All fields are required");
-            return;
-        }
-        if (data.password.length < 8) {
-            setError("Password must be at least 8 characters long");
-            return;
-        }
-        if (data.password !== data.confirmPassword) {
-            setError("Passwords do not match");
             return;
         }
         try {

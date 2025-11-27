@@ -8,7 +8,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { TabHeader } from '@/components/TabHeader';
 import { ManagerService } from '@/src/services/ManagerService';
 import { ManagerRepository } from '@/src/repositories/ManagerRepository';
-import { SignupRequestAgent } from '@/src/dto/request/SignupRequestAgent.dto';
+import { CreateUserRequest } from '@/src/dto/request/CreateUserRequest.dto';
 import { router } from 'expo-router';
 
 interface AddUserProps {
@@ -22,7 +22,7 @@ const AddUser: React.FC<AddUserProps> = ({ addingType }) => {
   const loading = false;
   const viewModelError = null;
 
-  const handleAgent = async (data: SignupRequestAgent) => {
+  const handleAgent = async (data: CreateUserRequest) => {
       try {
         const response = await handleCreateAgent(data, setError);
         if (response) {
@@ -35,7 +35,7 @@ const AddUser: React.FC<AddUserProps> = ({ addingType }) => {
     };
     
     
-    const handleAdmin = async (data: SignupRequestAgent) => {
+    const handleAdmin = async (data: CreateUserRequest) => {
       try {
           const response = await handleCreateAdmin(data, setError);
           if (response) {
