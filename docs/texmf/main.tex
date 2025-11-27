@@ -394,10 +394,55 @@ Il livello di dati è responsabile della gestione e dell'archiviazione delle inf
 Inoltre, sono state adottate tecnologie moderne e best practice di sviluppo software per garantire che il sistema sia robusto, sicuro e performante. Tra queste, l'uso di framework professionali per lo sviluppo, la gestione del versionamento del codice e l'implementazione di test automatici per garantire la qualità del software.\\
 Di seguito, vengono illustrate in dettaglio le scelte progettuali adottate per ciascun livello del sistema.
 
+\newpage
 \subsection{Front-End}
-Il front-end è realizzato in \textbf{React Native} per garantire un'esperienza utente fluida e reattiva, perfettamente adattabile a dispositivi e sistemi operativi diversi, con un look nativo e ben integrato con l'ambiente operativo.\\
-React-Native permette e promuove inoltre lo sviluppo di interfacce utente modulari e riutilizzabili, facilitando la manutenzione e l'evoluzione del codice nel tempo.\\
-Il linguaggio scelto è \textbf{TypeScript}, che si integra perfettamente con React Native e offre buone garanzie in termini di manutenzione del codice, modularità e riduzione degli errori grazie al suo sistema di tipi statici; È inoltre un linguaggio tra i più popolari.
+
+Il front-end del sistema è implementato come applicazione mobile multipiattaforma basata su \textbf{React Native} e \textbf{TypeScript}. Questa scelta tecnologica consente di ottenere un'unica base di codice eseguibile sia su dispositivi \textbf{iOS} che \textbf{Android}, garantendo al contempo buone prestazioni, manutenibilità e flessibilità. L'architettura è progettata secondo principi di \textit{separation of concerns}, modularità e scalabilità, organizzando il sistema in strati logici con responsabilità chiaramente definite. \\
+L'articolazione del front-end prevede i seguenti livelli:
+
+\subsubsection{1. Strato di Presentazione (Presentation Layer)}
+Questo strato comprende tutti gli elementi responsabili della visualizzazione e dell'interazione diretta con l'utente. La sua progettazione mira a mantenere l'interfaccia separata dalla logica applicativa.
+\begin{itemize}
+    \item \textbf{Schermate (Screens):} rappresentano le viste principali dell'applicazione e definiscono l'organizzazione dei contenuti mostrati all'utente.
+    \item \textbf{Componenti UI Riutilizzabili:} elementi modulari concepiti per favorire la coerenza visiva e ridurre la duplicazione del codice.
+    \item \textbf{Stili e Risorse Grafiche:} definiscono l'aspetto estetico dell'interfaccia, garantendo uniformità e applicazione coerente del design system.
+\end{itemize}
+
+\subsubsection{2. Strato Logico e di Gestione dello Stato (Logic and State Management Layer)}
+Questo strato centralizza la logica applicativa non direttamente legata alla parte grafica, contribuendo alla manutenibilità e alla testabilità del sistema.
+\begin{itemize}
+    \item \textbf{Moduli di Logica Riutilizzabile:} incapsulano comportamenti specifici del dominio applicativo.
+    \item \textbf{Contesti di Stato (Contexts):} consentono la gestione e condivisione dello stato globale tra i vari componenti.
+    \item \textbf{Validazione dei Dati:} definizioni e schemi per il controllo dell'integrità dei dati in ingresso.
+    \item \textbf{Configurazioni e Costanti:} parametri che regolano il comportamento dell'applicazione e supportano la configurabilità del sistema.
+\end{itemize}
+
+\subsubsection{3. Strato dei Servizi (Service Layer)}
+Lo strato dei servizi si occupa dell'interazione con il back-end e della gestione delle operazioni di comunicazione remota.
+\begin{itemize}
+    \item \textbf{Client API:} moduli incaricati di effettuare le chiamate alle API REST fornite dal back-end.
+    \item \textbf{Servizi di Business del Front-End:} coordinano più operazioni, implementano logiche applicative complesse e si interfacciano con i repository e i client API.
+    \item \textbf{Infrastruttura HTTP:} componenti dedicati alla gestione centralizzata delle richieste, degli errori e delle configurazioni di rete.
+    \item \textbf{DTO (Data Transfer Objects):} strutture dati che definiscono il formato delle informazioni scambiate tra front-end e back-end.
+\end{itemize}
+
+\subsubsection{4. Strato di Persistenza Locale (Persistence Layer)}
+Questo livello gestisce la memorizzazione locale dei dati, necessaria per garantire persistenza, efficienza e supporto offline, utilizzando librerie come AsyncStorage.
+\begin{itemize}
+    \item \textbf{Repository:} astrazioni che permettono di accedere ai dati provenienti da fonti locali o remote mantenendo un'interfaccia uniforme.
+    \item \textbf{Gestione Sicura dei Token:} meccanismi dedicati alla conservazione di credenziali sensibili e informazioni di sessione, tramite l'uso di librerie come Expo SecureStore.
+\end{itemize}
+
+\subsubsection{5. Strato di Navigazione (Navigation Layer)}
+Lo strato di navigazione definisce la struttura dei flussi dell'applicazione e gestisce le transizioni tra le diverse schermate.
+\begin{itemize}
+    \item \textbf{Router Logico:} stabilisce la gerarchia delle viste e le modalità di transizione, incluse eventuali gerarchie annidate, tramite la libreria Expo Router.
+    \item \textbf{Protezione delle Rotte:} meccanismi che regolano l'accesso alle sezioni dell'applicazione in base allo stato di autenticazione o al ruolo dell'utente.
+    \item \textbf{Pattern di Navigazione:} supporto a diverse tipologie di navigazione (ad esempio tab-based, stack navigation), scelte in funzione delle esigenze dei flussi applicativi.
+\end{itemize}
+Questa organizzazione architetturale garantisce una netta separazione delle responsabilità e favorisce la scalabilità del front-end, facilitando al contempo il riutilizzo del codice, la manutenibilità e la testabilità dell'intero sistema.
+
+
 
 \subsection{Back-End}
 Il back-end è sviluppato in \textbf{Java} utilizzando il framework \textbf{Spring Boot}, che fornisce un'architettura solida, scalabile e modulare per la gestione delle richieste e l'elaborazione della logica di business.\\
@@ -422,7 +467,7 @@ Inoltre, sono implementate misure di sicurezza per proteggere i dati sensibili, 
 
 \chapter{Testing e Valutazione dell'Usabilità}
 Per garantire la qualità del sistema DietiEstates25, sono stati implementati test automatici e condotte valutazioni di usabilità.\\
-I test automatici sono stati realizzati utilizzando JUnit per il back-end e TODO per il front-end, coprendo le funzionalità principali e verificando la correttezza del comportamento del sistema.\\
+I test automatici sono stati realizzati utilizzando JUnit per il back-end e Jest e React Testing Library per il front-end, coprendo le funzionalità principali e verificando la correttezza del comportamento del sistema.\\
 La valutazione dell'usabilità è stata condotta attraverso ispezioni sistematiche e test con utenti volontari interessati all'applicazione.\\
 Inoltre sono stati impiegati SonarQube per l'analisi della qualità del codice, individuando potenziali problemi e aree di miglioramento.\\
 I risultati dei test automatici e delle valutazioni di usabilità sono stati analizzati per identificare eventuali problemi e apportare le necessarie correzioni al sistema, al fine di garantire un'esperienza utente fluida, intuitiva, accessibile mantenendo un elevato livello di affidabilità.\\

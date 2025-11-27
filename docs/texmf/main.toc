@@ -34,11 +34,16 @@
 \contentsline {chapter}{\numberline {2}Progettazione del Sistema}{21}{}%
 \contentsline {section}{\numberline {2.1}Obiettivi di Progettazione}{21}{}%
 \contentsline {section}{\numberline {2.2}Architettura del Sistema}{21}{}%
-\contentsline {subsection}{\numberline {2.2.1}Front-End}{21}{}%
-\contentsline {subsection}{\numberline {2.2.2}Back-End}{22}{}%
-\contentsline {subsection}{\numberline {2.2.3}Database}{22}{}%
-\contentsline {chapter}{\numberline {3}Testing e Valutazione dell'Usabilità}{23}{}%
-\contentsline {section}{\numberline {3.1}Test Automatici}{23}{}%
-\contentsline {section}{\numberline {3.2}Valutazione dell'Usabilità}{23}{}%
-\contentsline {section}{\numberline {3.3}SonarQube}{23}{}%
-\contentsline {section}{\numberline {3.4}Accessibilità}{24}{}%
+\contentsline {subsection}{\numberline {2.2.1}Front-End}{22}{}%
+\contentsline {subsubsection}{1. Strato di Presentazione (Presentation Layer)}{22}{}%
+\contentsline {subsubsection}{2. Strato Logico e di Gestione dello Stato (Logic and State Management Layer)}{22}{}%
+\contentsline {subsubsection}{3. Strato dei Servizi (Service Layer)}{22}{}%
+\contentsline {subsubsection}{4. Strato di Persistenza Locale (Persistence Layer)}{23}{}%
+\contentsline {subsubsection}{5. Strato di Navigazione (Navigation Layer)}{23}{}%
+\contentsline {subsection}{\numberline {2.2.2}Back-End}{23}{}%
+\contentsline {subsection}{\numberline {2.2.3}Database}{24}{}%
+\contentsline {chapter}{\numberline {3}Testing e Valutazione dell'Usabilità}{25}{}%
+\contentsline {section}{\numberline {3.1}Test Automatici}{25}{}%
+\contentsline {section}{\numberline {3.2}Valutazione dell'Usabilità}{25}{}%
+\contentsline {section}{\numberline {3.3}SonarQube}{25}{}%
+\contentsline {section}{\numberline {3.4}Accessibilità}{26}{}%
