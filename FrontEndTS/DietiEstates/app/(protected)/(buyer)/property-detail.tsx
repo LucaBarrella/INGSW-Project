@@ -107,16 +107,16 @@ const PropertyDetailScreen: React.FC = () => {
         return (
           <View style={styles.tabContent}>
             <ThemedText style={styles.tabContentText}>
-              <ThemedText style={styles.detailLabel}>Stato: </ThemedText>
+              <ThemedText style={styles.detailLabel}>{t('status')}: </ThemedText>
               {t("property_condition." + property.condition)}
             </ThemedText>
             <ThemedText style={styles.tabContentText}>
-              <ThemedText style={styles.detailLabel}>Agente: </ThemedText>
-              {property.agent.id || 'Non specificato'}
+              <ThemedText style={styles.detailLabel}>{t('agent')}: </ThemedText>
+              {property.agent.id || t('notSpecified')}
             </ThemedText>
             <ThemedText style={styles.tabContentText}>
-              <ThemedText style={styles.detailLabel}>Prezzo: </ThemedText>
-              {property.price.toLocaleString('it-IT')} €
+              <ThemedText style={styles.detailLabel}>{t('price')}: </ThemedText>
+              {property.price.toLocaleString('it-IT')} € {property.contractType === 'rent' ? t('al mese') : ''}
             </ThemedText>
           </View>
         );
