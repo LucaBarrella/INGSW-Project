@@ -28,6 +28,9 @@
   "errorDeletingAppointment": "Errore durante la cancellazione dell'appuntamento.",
   "error": "Errore",
   "noSearchResults": "Nessun risultato di ricerca",
+  "features": "Caratteristiche",
+  "details": "Dettagli",
+  "nearbyServices": "Servizi vicini",
 
   "visit_status": {
     "PENDING": "in attesa",

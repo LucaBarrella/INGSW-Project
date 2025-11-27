@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert } from 'react-native';
-import { useLocalSearchParams, Stack, router } from 'expo-router';
+import { useLocalSearchParams, Stack } from 'expo-router';
 import { useSearch } from '@/context/SearchContext';
 import useSearchProperties from '@/src/hooks/useSearchProperties';
 import useSearchUrlState from '@/src/hooks/useSearchUrlState';
@@ -42,13 +42,6 @@ export default function SearchResultsScreen() {
     }
   }, [error]);
 
-  const handlePropertyPress = (propertyId: number) => {
-    router.push({
-      pathname: '/(protected)/(buyer)/property-detail',
-      params: { propertyId: propertyId },
-    });
-  };
-
   return (
     <ThemedView className="flex-1">
       <Stack.Screen
@@ -69,7 +62,6 @@ export default function SearchResultsScreen() {
       ) : (
         <SearchResultsView
           properties={properties}
-          onPropertyPress={handlePropertyPress}
           onSearchTrigger={search}
           onChangeCenter={(newLat, newLng) => {
             if (state.geolocation) {

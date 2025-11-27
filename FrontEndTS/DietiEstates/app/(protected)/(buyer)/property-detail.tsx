@@ -297,7 +297,7 @@ const PropertyDetailScreen: React.FC = () => {
               onPress={() => setActiveTab('details')}
             >
               <ThemedText style={[styles.tabText, activeTab === 'details' && styles.tabTextActive]}>
-                Dettagli
+                {t('details')}
               </ThemedText>
             </TouchableOpacity>
             <TouchableOpacity 
@@ -305,7 +305,7 @@ const PropertyDetailScreen: React.FC = () => {
               onPress={() => setActiveTab('features')}
             >
               <ThemedText style={[styles.tabText, activeTab === 'features' && styles.tabTextActive]}>
-                Caratteristiche
+                {t('features')}
               </ThemedText>
             </TouchableOpacity>
           </View>
@@ -333,7 +333,7 @@ const PropertyDetailScreen: React.FC = () => {
 
         {/* Nearby Services */}
         <View style={styles.nearbyServices}>
-          <ThemedText style={styles.sectionTitle}>Servizi vicini</ThemedText>
+          <ThemedText style={styles.sectionTitle}>{t('nearbyServices')}</ThemedText>
           <View style={styles.servicesGrid}>
             {places.filter((place) => place.name).map((place, index) => (
               <ServiceCard key={index} place={place} iconName={iconNames[place.category] ? iconNames[place.category] : 'material-symbols:push-pin'} />
@@ -382,7 +382,7 @@ const PropertyDetailScreen: React.FC = () => {
         <GestureHandlerRootView style={{ flex: 1 }}>
           <Gallery
             data={images.map(uri => ({ uri }))}
-            renderItem={({ item, index }) => {
+            renderItem={({ item }) => {
               return (
                 <Image
                   source={{ uri: item.uri }}
@@ -391,7 +391,7 @@ const PropertyDetailScreen: React.FC = () => {
                 />
               );
             }}
-            keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(_item, index) => index.toString()}
             initialIndex={selectedImageIndex}
             onIndexChange={(index) => setSelectedImageIndex(index)}
             swipeEnabled={true}

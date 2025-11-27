@@ -12,7 +12,6 @@ import { t } from 'i18next';
 
 interface SearchResultsViewProps {
   properties: PropertyDetail[];
-  onPropertyPress: (propertyId: number) => void;
   onSearchTrigger: () => void;
   onChangeCenter: (lat: number, lon: number) => void;
   viewMode: 'list' | 'map';
@@ -22,7 +21,6 @@ interface SearchResultsViewProps {
 
 export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
   properties,
-  onPropertyPress,
   onSearchTrigger,
   onChangeCenter,
   viewMode,
@@ -66,7 +64,6 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
           renderItem={({ item }) => (
             <BuyerPropertyCard
               property={item}
-              onPress={() => onPropertyPress(item.id)}
             />
           )}
           ListEmptyComponent={() => (
