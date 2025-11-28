@@ -18,6 +18,8 @@ export interface DashboardStats {
 
 export type PropertyCondition = "UNDER_CONSTRUCTION" | "NEW" | "RENOVATED" | "GOOD_CONDITION" | "TO_BE_RENOVATED" | "POOR_CONDITION"; 
 
+export type EnergyRating = 'A4' | 'A3' | 'A2' | 'A1' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'NOT_APPLIABLE';
+
 export interface PropertyDTO {
   id: number;
   address: {

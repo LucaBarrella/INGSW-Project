@@ -48,7 +48,7 @@ export default function SettingsScreen() {
 
   const handleLanguageChange = async () => {
     Alert.alert(
-      t('settings.language'),
+      t('setting.language'),
       '',
       languages.map(lang => ({
         text: lang.name,
@@ -81,7 +81,7 @@ export default function SettingsScreen() {
       <ScrollView>
         <ThemedView className="mt-4">
           <SettingOption
-            title={t('settings.language')}
+            title={t('setting.language')}
             value={getCurrentLanguageName()}
             onPress={handleLanguageChange}
           />

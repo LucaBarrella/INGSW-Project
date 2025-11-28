@@ -13,6 +13,7 @@ import Animated, {
   measure,
   useAnimatedRef,
 } from 'react-native-reanimated';
+import { t } from 'i18next';
 
 // Define ListingType
 export type ListingType = 'SALE' | 'RENT';
@@ -132,7 +133,7 @@ export default function ListingTypeSelector({ control, name, rules, errors }: Li
         // Usiamo NativeWind per il layout principale
         <ThemedView className="mb-6">
           <ThemedText type="defaultSemiBold" className="mb-3 text-base">
-            Tipo di Annuncio
+            {t('contractType')}
           </ThemedText>
           <View className="flex-row justify-between gap-4">
             {listingTypes.map((item) => {

@@ -3,6 +3,7 @@ import { z } from 'zod';
 // Tipi di base che saranno utilizzati in più schemi
 const stringRequired = z.string().min(1, 'Campo richiesto');
 const positiveNumber = z.string().regex(/^\d+$/, 'Deve essere un numero positivo');
+const numberRequired = z.number({ required_error: 'Campo richiesto' });
 
 // Schema per i dettagli residenziali
 const residentialDetailsSchema = z.object({
@@ -43,15 +44,21 @@ const landDetailsSchema = z.object({
 const basePropertySchema = z.object({
   contractType: z.enum(['SALE', 'RENT'], { required_error: 'Seleziona il tipo di annuncio' }),
   propertyCategoryName: z.enum(['RESIDENTIAL', 'COMMERCIAL', 'INDUSTRIAL', 'LAND'], { required_error: 'Seleziona il tipo di immobile' }),
-  title: stringRequired.min(5, 'Il titolo deve essere di almeno 5 caratteri'),
   description: stringRequired.min(20, 'La descrizione deve essere di almeno 20 caratteri'),
   price: positiveNumber,
   area: positiveNumber,
-  address: stringRequired,
-  city: stringRequired,
-  energyClass: z.string().min(1, 'Seleziona una classe energetica'),
-  availability: z.boolean(),
+  energyClass: z.enum(['A4', 'A3', 'A2', 'A1', 'B', 'C', 'D', 'E', 'F', 'G', 'NOT_APPLIABLE'], { required_error: 'Seleziona la classe energetica' }),
   condition: z.enum(["UNDER_CONSTRUCTION", "NEW", "RENOVATED", "GOOD_CONDITION", "TO_BE_RENOVATED", "POOR_CONDITION"], { required_error: 'Seleziona la condizione della proprietà' }),
+  addressRequest: z.object({
+    country: stringRequired,
+    province: stringRequired,
+    city: stringRequired,
+    street: stringRequired,
+    streetNumber: stringRequired,
+    building: z.string(),
+    latitude: numberRequired,
+    longitude: numberRequired,
+  })
 });
 
 // Schema completo che discrimina in base al tipo di proprietà
@@ -59,25 +66,25 @@ export const propertySchema = z.discriminatedUnion('propertyType', [
   // Schema per proprietà residenziali
   z.object({
     propertyType: z.literal('RESIDENTIAL'),
-    ...basePropertySchema.omit({ propertyType: true }).shape, // Ometti propertyType dal base
+    ...basePropertySchema.omit({ propertyCategoryName: true }).shape, // Ometti propertyType dal base
     ...residentialDetailsSchema.shape,
   }),
   // Schema per proprietà commerciali
   z.object({
     propertyType: z.literal('COMMERCIAL'),
-    ...basePropertySchema.omit({ propertyType: true }).shape, // Ometti propertyType dal base
+    ...basePropertySchema.omit({ propertyCategoryName: true }).shape, // Ometti propertyType dal base
     ...commercialDetailsSchema.shape,
   }),
   // Schema per proprietà industriali
   z.object({
     propertyType: z.literal('INDUSTRIAL'),
-    ...basePropertySchema.omit({ propertyType: true }).shape, // Ometti propertyType dal base
+    ...basePropertySchema.omit({ propertyCategoryName: true }).shape, // Ometti propertyType dal base
     ...industrialDetailsSchema.shape,
   }),
   // Schema per terreni
   z.object({
     propertyType: z.literal('LAND'),
-    ...basePropertySchema.omit({ propertyType: true }).shape, // Ometti propertyType dal base
+    ...basePropertySchema.omit({ propertyCategoryName: true }).shape, // Ometti propertyType dal base
     ...landDetailsSchema.shape,
   }),
 ]);

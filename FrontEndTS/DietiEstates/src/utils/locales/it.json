@@ -35,6 +35,17 @@
   "forSale": "in vendita",
   "forRent": "in affitto",
   "getInTouch": "Contatta",
+  "contractType": "Tipo di Contratto",
+  "NOT_APPLIABLE": "Non Applicabile",
+  "myProperties": "I miei Immobili",
+  "propertyLocationAndStatus": "Posizione e Stato dell'Immobile",
+  "searchAddress": "Cerca Indirizzo",
+  "searchYourPropertyLocation": "Cerca la posizione del tuo immobile",
+  "settings": "Impostazioni",
+  
+  "setting": {
+    "language": "Lingua"
+  },
 
   "visit_status": {
     "PENDING": "in attesa",

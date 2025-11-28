@@ -3,7 +3,6 @@ import { Controller, Control, FieldErrors } from 'react-hook-form';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { LabelInput } from '@/components/LabelInput';
-import { useThemeColor } from '@/hooks/useThemeColor'; // Re-importato
 
 // Define props for react-hook-form integration
 interface Step2BasicDetailsProps {
@@ -27,29 +26,8 @@ export default function Step2_BasicDetails({ control, errors }: Step2BasicDetail
 
       <Controller
         control={control}
-        name="title"
-        // rules={requiredRule} // Rimosso, gestito da Zod
-        render={({ field: { onChange, onBlur, value } }) => (
-          // Rimosso Fragment non necessario
-            <LabelInput
-              label="Titolo Annuncio"
-              placeholder="Es. Villa con vista mare"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              error={!!errors.title}
-              errorMessage={errors.title?.message as string} // Passa il messaggio di errore
-            />
-            // Rimosso ThemedText per errore, ora gestito da LabelInput
-        )}
-      />
-
-      <Controller
-        control={control}
         name="description"
-        // rules={requiredRule} // Rimosso
         render={({ field: { onChange, onBlur, value } }) => (
-          // Rimosso Fragment non necessario
             <LabelInput
               label="Descrizione"
               placeholder="Descrivi l'immobile..."
@@ -61,7 +39,6 @@ export default function Step2_BasicDetails({ control, errors }: Step2BasicDetail
               error={!!errors.description}
               errorMessage={errors.description?.message as string} // Passa il messaggio di errore
             />
-            // Rimosso ThemedText per errore
         )}
       />
 
@@ -87,7 +64,7 @@ export default function Step2_BasicDetails({ control, errors }: Step2BasicDetail
 
       <Controller
         control={control}
-        name="size"
+        name="area"
         // rules={{ ...requiredRule, ...numericRule }} // Rimosso
         render={({ field: { onChange, onBlur, value } }) => (
           // Rimosso Fragment non necessario
@@ -98,8 +75,8 @@ export default function Step2_BasicDetails({ control, errors }: Step2BasicDetail
               onChangeText={onChange}
               value={value}
               keyboardType="numeric"
-              error={!!errors.size}
-              errorMessage={errors.size?.message as string} // Passa il messaggio di errore
+              error={!!errors.area}
+              errorMessage={errors.area?.message as string} // Passa il messaggio di errore
             />
             // Rimosso ThemedText per errore
         )}

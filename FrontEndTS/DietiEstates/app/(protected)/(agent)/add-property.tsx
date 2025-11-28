@@ -1,14 +1,11 @@
 import React from 'react';
-import { Alert, ScrollView, View, ActivityIndicator } from 'react-native'; // Aggiunto ActivityIndicator
-import { useForm, Controller, SubmitHandler, FieldName } from 'react-hook-form';
+import { ScrollView, View, ActivityIndicator, Alert } from 'react-native'; // Aggiunto ActivityIndicator
+import { useForm, SubmitHandler, FieldName } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod'; // Importa il resolver
 import { ThemedView } from '@/components/ThemedView';
-import { ThemedText } from '@/components/ThemedText';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { Colors } from '@/constants/Colors';
 
-import ListingTypeSelector, { ListingType } from '@/components/Agent/AddPropertySteps/ListingTypeSelector';
-import Step1_PropertyType, { PropertyType } from '@/components/Agent/AddPropertySteps/Step1_PropertyType';
+import ListingTypeSelector from '@/components/Agent/AddPropertySteps/ListingTypeSelector';
+import Step1_PropertyType from '@/components/Agent/AddPropertySteps/Step1_PropertyType';
 import Step2_BasicDetails from '@/components/Agent/AddPropertySteps/Step2_BasicDetails';
 import Step3_LocationStatus from '@/components/Agent/AddPropertySteps/Step3_LocationStatus';
 import Step4_PropertyDetails from '@/components/Agent/AddPropertySteps/Step4_PropertyDetails';
@@ -62,15 +59,14 @@ import { propertySchema, PropertyFormData } from './schemas/propertySchema'; // 
 // Mapping dei campi per step per la validazione
 const fieldsByStep: Record<number, FieldName<PropertyFormData>[]> = {
   1: ['listingType', 'propertyType'],
-  2: ['title', 'description', 'price', 'size'],
-  3: ['address', 'city', 'energyClass', 'availability'],
-  4: [ // Cast a 'any' per bypassare l'inferenza TS restrittiva sui campi specifici
-       // La validazione Zod gestirà comunque la logica corretta al runtime.
+  2: ['description', 'price', 'area'],
+  3: ['addressRequest', 'energyClass'],
+  4: [
       'residentialCategory', 'rooms', 'bathrooms', 'floor', 'elevator', 'pool',
       'commercialCategory', 'commercialBathrooms', 'emergencyExit', 'constructionDate',
       'industrialCategory', 'ceilingHeight', 'fireSystem', 'floorLoad', 'offices', 'structure',
       'landCategory', 'soilType', 'slope'
-     ] as any[], // Cast dell'intero array a any[]
+     ] as any[],
   5: [], // Nessun campo RHF per le foto per ora
 };
 
@@ -94,14 +90,20 @@ export default function AddPropertyScreen() {
     defaultValues: {
       contractType: undefined, // Usa undefined per i tipi enum/literal opzionali con Zod
       propertyType: undefined,
-      title: '',
       description: '',
       price: '',
-      size: '',
-      address: '',
-      city: '',
-      energyClass: '', // Potrebbe richiedere un valore di default valido per l'enum/picker
-      availability: true,
+      area: '',
+      addressRequest: {
+        country: '',
+        province: '',
+        city: '',
+        street: '',
+        streetNumber: '',
+        building: '',
+        latitude: undefined,
+        longitude: undefined,
+      },
+      energyClass: 'NOT_APPLIABLE', // Potrebbe richiedere un valore di default valido per l'enum/picker
       elevator: false,
       pool: false,
       emergencyExit: false,
@@ -129,7 +131,7 @@ export default function AddPropertyScreen() {
           </>
         );
       case 2: return <Step2_BasicDetails {...commonProps} />;
-      case 3: return <Step3_LocationStatus {...commonProps} />;
+      case 3: return <Step3_LocationStatus {...commonProps} setValue={setValue} />;
       case 4: return <Step4_PropertyDetails {...commonProps} propertyType={watchedPropertyType} />;
       case 5: return <Step5_Photos selectedImages={selectedImages} onImagesChange={handleImagesChange} />;
       default: return null;
@@ -152,6 +154,13 @@ export default function AddPropertyScreen() {
       setCurrentStep((prev) => Math.min(prev + 1, 5));
     } else {
       console.log("Validation Errors for Step", currentStep, ":", errors); // Log per debug specifico dello step
+      if (errors.addressRequest?.latitude || errors.addressRequest?.longitude) {
+        Alert.alert(
+          "Errore di Validazione",
+          "Per favore, assicurati di aver selezionato un indirizzo valido dai suggerimenti in alto per permetterci di geolocalizzare la tua proprietà.",
+          [{ text: "OK" }]
+        );
+      }
       // Gli errori verranno mostrati automaticamente dai componenti grazie a RHF e alla modalità onBlur/onChange
     }
   };
@@ -168,14 +177,11 @@ export default function AddPropertyScreen() {
       const propertyData: any = {
         listingType: data.contractType,
         propertyType: data.propertyType,
-        title: data.title,
         description: data.description,
         price: parseFloat(data.price), // Zod assicura che sia un numero stringa valido
-        size: parseInt(data.size, 10), // Zod assicura che sia un numero stringa valido
-        address: data.address,
-        city: data.city,
+        area: parseInt(data.area), // Zod assicura che sia un numero stringa valido
+        addressRequest: data.addressRequest,
         energyClass: data.energyClass, // Zod assicura che sia un valore valido
-        availability: data.availability,
         // Aggiungi campi specifici basati su propertyType
       };
 

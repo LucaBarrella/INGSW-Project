@@ -8,6 +8,7 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import { useSearch } from '@/context/SearchContext';
 import useSearchProperties from '@/src/hooks/useSearchProperties';
 import { useTranslation } from 'react-i18next';
+import { SuggestionsDisplayer } from './SuggestionsDisplayer';
 
 /**
  * SearchBar con autocomplete Photon:
@@ -208,22 +209,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           </View>
         </View>
 
-        {suggestions.length > 0 && (
-          <FlatList
-            data={suggestions}
-            keyboardShouldPersistTaps="handled"
-            keyExtractor={(item, index) => `${item.properties?.osm_id ?? item.label ?? 'suggestion'}-${index}`}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                onPress={() => handleSelectSuggestion(item)}
-                className="py-2 px-3 border-b border-gray-100"
-              >
-                <ThemedText className="text-sm">{item.label}</ThemedText>
-              </TouchableOpacity>
-            )}
-            style={{ maxHeight: 200 }}
-          />
-        )}
+        <SuggestionsDisplayer onSelectSuggestion={handleSelectSuggestion} suggestions={suggestions} />
 
       </ThemedView>
     </ThemedView>
