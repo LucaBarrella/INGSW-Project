@@ -54,6 +54,10 @@ export const AuthProvider = ({ children, authService }: AuthProviderProps) => {
 
     const inAuthGroup = segments[0] === '(auth)';
     const inProtectedGroup = segments[0] === '(protected)';
+    const isFeedbackScreen = segments[0] === 'feedback';
+    if (isFeedbackScreen) {
+      return;
+    }
 
     if (!hasCompletedOnboarding) {
       if (segments[0] !== '(onboarding)') {

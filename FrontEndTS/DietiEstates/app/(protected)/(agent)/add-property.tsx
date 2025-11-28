@@ -135,6 +135,8 @@ export default function AddPropertyScreen() {
       emergencyExit: false,
       hasSurveillance: false,
       garden: 'ABSENT',
+      isFurnished: false,
+      heatingType: 'Absent', // not all caps
     },
     mode: 'onBlur', // Valida quando l'utente lascia il campo per un feedback migliore
   });
@@ -196,6 +198,10 @@ export default function AddPropertyScreen() {
   // Funzione di submit finale
   const onSubmit: SubmitHandler<PropertyFormData> = async (data) => {
     console.log("isSubmitting:", isSubmitting);
+    if (selectedImages.length === 0) {
+      Alert.alert("Attenzione", "Per favore, aggiungi almeno un'immagine della proprietà.");
+      return;
+    }
     if (isSubmitting) return; // Previene submit multipli
     setIsSubmitting(true);
 
@@ -208,10 +214,10 @@ export default function AddPropertyScreen() {
         contractType: data.contractType,
         propertyType: data.propertyType,
         description: data.description,
-        price: parseFloat(data.price), // Zod assicura che sia un numero stringa valido
-        area: parseInt(data.area), // Zod assicura che sia un numero stringa valido
+        price: parseFloat(data.price),
+        area: parseInt(data.area),
         addressRequest: data.addressRequest,
-        energyRating: data.energyClass, // Zod assicura che sia un valore valido
+        energyRating: data.energyClass,
         condition: data.condition
       };
 
@@ -231,9 +237,12 @@ export default function AddPropertyScreen() {
           break;
         case 'COMMERCIAL':
           propertyData.propertyCategoryName = data.commercialCategory;
-          propertyData.bathrooms = parseInt(data.commercialBathrooms, 10);
+          propertyData.numberOfBathrooms = data.numberOfBathrooms;
+          propertyData.floor = data.floor;
+          propertyData.numberOfFloors = data.numberOfFloors;
+          propertyData.numberOfRooms = data.numberOfRooms;
           propertyData.emergencyExit = data.emergencyExit;
-          propertyData.constructionDate = parseInt(data.constructionDate, 10); // Zod assicura che sia un anno valido
+          propertyData.constructionDate = data.constructionDate;
           break;
         case 'GARAGE':
           propertyData.propertyCategoryName = data.garageCategory;
@@ -267,6 +276,7 @@ export default function AddPropertyScreen() {
             buttonAction: '/(protected)/(agent)/(tabs)/home', // Reindirizza alla home dell'agente
           },
         });
+        return;
       } else {
         // Gestione del caso di fallimento
         throw new Error('Errore durante la creazione dell\'immobile.');
@@ -285,6 +295,7 @@ export default function AddPropertyScreen() {
           buttonAction: 'back', // Permette di tornare indietro
         },
       });
+      return;
     } finally {
       setIsSubmitting(false); // Riabilita il pulsante
     }

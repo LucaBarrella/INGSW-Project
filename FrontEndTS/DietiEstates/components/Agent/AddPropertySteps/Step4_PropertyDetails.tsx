@@ -164,7 +164,7 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
                 onPress={showGardenOptions}
               >
                 <ThemedText style={{ color: value ? textColor : textColor + '80' }}> {/* Cambia colore testo se selezionato, placeholder opacizzato */}
-                  {value ? (value === 'ABSENT' ? 'Assente' : value === 'PRIVATE' ? 'Privato' : 'Condiviso') : 'Seleziona tipo di giardino...'}
+                  {value ? t(value) : t('selectGardenType')}
                 </ThemedText>
               </Pressable>
               {errors.garden && <ThemedText className="mt-1 mb-2.5 text-xs" style={{ color: themeErrorColor }}>{errors.garden.message as string}</ThemedText>}
@@ -192,7 +192,7 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
               },
               (selectedIndex?: number) => {
                 if (selectedIndex !== undefined && selectedIndex !== cancelButtonIndex && selectedIndex !== 0) {
-                  const heatingTypes = ['None', 'Autonomous', 'Centralized'];
+                  const heatingTypes = ['Absent', 'Autonomous', 'Centralized'];
                   onChange(heatingTypes[selectedIndex - 1]);
                 } else if (selectedIndex === 0) {
                   onChange('');
@@ -210,7 +210,7 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
                 onPress={showHeatingTypeOptions}
               >
                 <ThemedText style={{ color: value ? textColor : textColor + '80' }}> {/* Cambia colore testo se selezionato, placeholder opacizzato */}
-                  {value ? (value === 'None' ? 'Nessuno' : value === 'Autonomous' ? 'Autonomo' : 'Centralizzato') : 'Seleziona tipo di riscaldamento...'}
+                  {value ? t(value) : 'Seleziona tipo di riscaldamento...'}
                 </ThemedText>
               </Pressable>
               {errors.heatingType && <ThemedText className="mt-1 mb-2.5 text-xs" style={{ color: themeErrorColor }}>{errors.heatingType.message as string}</ThemedText>}
@@ -277,7 +277,7 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
           );
         }}
       />
-       <Controller control={control} name="commercialBathrooms" /* rules rimosse */ render={({ field: { onChange, onBlur, value } }) => ( // Optional?
+       <Controller control={control} name="numberOfBathrooms" render={({ field: { onChange, onBlur, value } }) => ( // Optional?
          <LabelInput
            label="Numero Bagni (Servizi)"
            placeholder="Es. 1"
@@ -285,10 +285,50 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
            onChangeText={onChange}
            value={value}
            keyboardType="numeric"
-           error={!!errors.commercialBathrooms}
-           errorMessage={errors.commercialBathrooms?.message as string}
+           error={!!errors.numberOfBathrooms}
+           errorMessage={errors.numberOfBathrooms?.message as string}
          />
       )} />
+
+      <Controller control={control} name="numberOfRooms" render={({ field: { onChange, onBlur, value } }) => (
+        <LabelInput
+          label="Numero Locali"
+          placeholder="Es. 3"
+          onBlur={onBlur}
+          onChangeText={onChange}
+          value={value}
+          keyboardType="numeric"
+          error={!!errors.numberOfRooms}
+          errorMessage={errors.numberOfRooms?.message as string}
+        />
+      )} />
+
+      <Controller control={control} name="floor" render={({ field: { onChange, onBlur, value } }) => (
+        <LabelInput
+          label="Piano"
+          placeholder="Es. 1 (0 per piano terra)"
+          onBlur={onBlur}
+          onChangeText={onChange}
+          value={value}
+          keyboardType="numeric"
+          error={!!errors.floor}
+          errorMessage={errors.floor?.message as string}
+        />
+      )} />
+
+      <Controller control={control} name="numberOfFloors" render={({ field: { onChange, onBlur, value } }) => (
+        <LabelInput
+          label="Numero di Piani"
+          placeholder="Es. 2"
+          onBlur={onBlur}
+          onChangeText={onChange}
+          value={value}
+          keyboardType="numeric"
+          error={!!errors.numberOfFloors}
+          errorMessage={errors.numberOfFloors?.message as string}
+        />
+      )} />
+
        <Controller control={control} name="emergencyExit" render={({ field: { onChange, value } }) => (
         <View className="mb-1.5 flex-row justify-between items-center py-2 mt-2.5"><ThemedText className="text-base">Uscita di Sicurezza</ThemedText><Switch trackColor={{ false: borderColor, true: tint }} thumbColor={backgroundColor} ios_backgroundColor={borderColor} onValueChange={onChange} value={!!value} /></View>
       )} />
@@ -312,7 +352,6 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
       <Controller
         control={control}
         name="garageCategory"
-        // rules rimosse
         render={({ field: { onChange, value } }) => {
           const { showActionSheetWithOptions } = useActionSheet();
 

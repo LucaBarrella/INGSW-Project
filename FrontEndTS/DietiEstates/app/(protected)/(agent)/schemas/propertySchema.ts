@@ -14,16 +14,19 @@ const residentialDetailsSchema = z.object({
   numberOfRooms: positiveNumber,
   numberOfFloors: positiveNumber,
   numberOfBathrooms: positiveNumber,
-  heatingType: z.enum(['None', 'Autonomous', 'Centralized'], { required_error: 'Seleziona il tipo di riscaldamento' }),
+  heatingType: z.enum(['Absent', 'Autonomous', 'Centralized'], { required_error: 'Seleziona il tipo di riscaldamento' }),
   garden: z.enum(['ABSENT', 'PRIVATE', 'SHARED'], { required_error: 'Seleziona il tipo di giardino' }),
-  isFurnished: z.boolean(),
+  isFurnished: z.boolean(), /* TODO numero di posti auto ? */
 });
 
 // Schema per i dettagli commerciali
 const commercialDetailsSchema = z.object({
   commercialCategory: stringRequired,
-  commercialBathrooms: positiveNumber,
   emergencyExit: z.boolean(),
+  floor: positiveNumber,
+  numberOfFloors: positiveNumber,
+  numberOfBathrooms: positiveNumber,
+  numberOfRooms: positiveNumber,
   constructionDate: z.string().regex(/^\d{4}$/, 'Anno non valido'),
 });
 

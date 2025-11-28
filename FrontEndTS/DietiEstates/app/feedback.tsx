@@ -28,6 +28,7 @@ export default function FeedbackRoute() {
   const iconName = params.iconName;
 
   const handleButtonPress = () => {
+    console.log("Button pressed with action:", buttonAction);
     if (buttonAction === 'back') {
       if (router.canGoBack()) {
         router.back();

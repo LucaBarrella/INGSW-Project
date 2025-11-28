@@ -42,6 +42,14 @@
   "searchAddress": "Cerca Indirizzo",
   "searchYourPropertyLocation": "Cerca la posizione del tuo immobile",
   "settings": "Impostazioni",
+  "selectGardenType": "Seleziona tipo di giardino...",
+  "selectHeatingType": "Seleziona tipo di riscaldamento...",
+  "Absent": "Assente",
+  "Autonomous": "Autonomo",
+  "Centralized": "Centralizzato",
+  "ABSENT": "assente",
+  "PRIVATE": "privato",
+  "SHARED": "condiviso",
   
   "setting": {
     "language": "Lingua"
