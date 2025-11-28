@@ -130,6 +130,7 @@ module.exports = function (api) {
             'material-symbols:forest',
             'material-symbols:history-rounded',
             'material-symbols:factory-outline',
+            'material-symbols:garage-outline',
           ],
         },
       ],

@@ -64,10 +64,10 @@ const fieldsByStep: Record<number, FieldName<PropertyFormData>[]> = {
   4: [
       'residentialCategory', 'rooms', 'bathrooms', 'floor', 'elevator', 'pool',
       'commercialCategory', 'commercialBathrooms', 'emergencyExit', 'constructionDate',
-      'industrialCategory', 'ceilingHeight', 'fireSystem', 'floorLoad', 'offices', 'structure',
+      'garageCategory', 'ceilingHeight', 'fireSystem', 'floorLoad', 'offices', 'structure',
       'landCategory', 'soilType', 'slope'
      ] as any[],
-  5: [], // Nessun campo RHF per le foto per ora
+  5: [], // Nessun campo RHF per le foto per ora TODO (garage)
 };
 
 export default function AddPropertyScreen() {
@@ -77,7 +77,6 @@ export default function AddPropertyScreen() {
   const [currentStep, setCurrentStep] = React.useState(1);
   const [selectedImages, setSelectedImages] = React.useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  // const { createProperty, loading, error: viewModelError } = usePropertiesViewModel();
   const loading = false;
   const viewModelError = null;
   const createProperty = async (data: any) => {
@@ -202,8 +201,8 @@ export default function AddPropertyScreen() {
           propertyData.emergencyExit = data.emergencyExit;
           propertyData.constructionDate = parseInt(data.constructionDate, 10); // Zod assicura che sia un anno valido
           break;
-        case 'INDUSTRIAL':
-          propertyData.category = data.industrialCategory;
+        case 'GARAGE':
+          propertyData.category = data.garageCategory;
           propertyData.ceilingHeight = parseFloat(data.ceilingHeight);
           propertyData.fireSystem = data.fireSystem;
           propertyData.floorLoad = parseInt(data.floorLoad, 10);

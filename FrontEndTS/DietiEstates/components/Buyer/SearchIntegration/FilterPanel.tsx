@@ -297,7 +297,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
   
                   {/* Selettore sottocategoria (es. Appartamento, Loft, ...) */}
                   {(() => {
-                    // Usa direttamente selectedMainCategoryInPanel (già 'residential'|'commercial'|'industrial'|'land')
+                    // Usa direttamente selectedMainCategoryInPanel (già 'residential'|'commercial'|'garage'|'land')
                     const stateKey = selectedMainCategoryInPanel as keyof typeof categoryStateToConfigMap | undefined;
                     // Debug: log stato corrente per investigare perché le opzioni non compaiono
                     // eslint-disable-next-line no-console
@@ -307,7 +307,6 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
                     const optionsMap: Record<string, string[]> = {
                       residential: RESIDENTIAL_CATEGORIES as unknown as string[],
                       commercial: COMMERCIAL_CATEGORIES as unknown as string[],
-                      industrial: COMMERCIAL_CATEGORIES as unknown as string[], // industrial maps to commercial set
                       garage: GARAGE_CATEGORIES as unknown as string[],
                       land: LAND_CATEGORIES as unknown as string[],
                     };

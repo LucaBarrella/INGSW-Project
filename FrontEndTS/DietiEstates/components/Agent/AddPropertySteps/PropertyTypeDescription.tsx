@@ -12,7 +12,7 @@ interface PropertyTypeDescriptionProps {
 const descriptions: Record<PropertyType, string> = {
   RESIDENTIAL: 'Ideale per case, appartamenti e spazi abitativi. Include caratteristiche come stanze, bagni e servizi.',
   COMMERCIAL: 'Adatto per negozi, uffici e attività commerciali. Considera aspetti come visibilità, accessibilità e spazi comuni.',
-  INDUSTRIAL: 'Per magazzini, fabbriche e strutture produttive. Valuta altezza soffitti, capacità di carico e sistemi antincendio.',
+  GARAGE: 'Per parcheggi ad uso personale e posti auto.',
   LAND: 'Terreni edificabili o agricoli. Specificare tipo di suolo, pendenza e potenzialità di sviluppo.',
 };
 
@@ -33,7 +33,7 @@ export default function PropertyTypeDescription({ selectedType }: PropertyTypeDe
         {/* Mappa il tipo selezionato a un titolo più leggibile */}
         {selectedType === 'RESIDENTIAL' ? 'Proprietà Residenziale' :
          selectedType === 'COMMERCIAL' ? 'Proprietà Commerciale' :
-         selectedType === 'INDUSTRIAL' ? 'Proprietà Industriale' :
+         selectedType === 'GARAGE' ? 'Autorimessa' :
          'Terreno'}
       </ThemedText>
       <ThemedText type="default" style={{ color: textColor }}>

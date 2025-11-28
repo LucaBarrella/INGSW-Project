@@ -8,7 +8,7 @@ export interface VisitDTO {
     endTime: number;
     status: 'PENDING' | 'CONFIRMED' | 'REJECTED' | 'CANCELLED';
   },
-  propertyType: 'RESIDENTIAL' | 'COMMERCIAL' | 'LAND' | 'INDUSTRIAL';
+  propertyType: 'RESIDENTIAL' | 'COMMERCIAL' | 'LAND' | 'GARAGE';
   address: {
     id: number;
     country: string;

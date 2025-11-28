@@ -42,7 +42,7 @@ const CharacteristicItem: React.FC<CharacteristicItemProps> = ({ iconName, value
   );
 };
 
-export type PropertyType = "Residential" | "Commercial" | "Industrial" | "Land" | string;
+export type PropertyType = "Residential" | "Commercial" | "Garage" | "Land" | string;
 
 export interface PropertyCharacteristicsData {
   propertyType: PropertyType;
@@ -82,7 +82,7 @@ export const PropertyCharacteristicsDisplay: React.FC<PropertyCharacteristicsDis
           <CharacteristicItem iconName="material-symbols:bathtub" value={property.bathrooms} />
         </>
       )}
-      {property.propertyType === "industrial" && (
+      {property.propertyType === "garage" && /*TODO*/(
         <>
           <CharacteristicItem iconName="material-symbols:fire-extinguisher" label="Antincendio" value={property.fireSuppression} />
           <CharacteristicItem iconName="material-symbols:height" value={property.ceilingHeight} unit="m" />
@@ -118,8 +118,8 @@ export const mapPropertyDetailToCharacteristics = (
       // emergencyExit è un booleano
       characteristics.emergencyExit = propertyDetail.propertyDetails?.commercial?.emergencyExit;
       break;
-    case 'industrial':
-      // fireSystem è un booleano
+    case 'garage':
+      // TODO
       characteristics.fireSuppression = propertyDetail.propertyDetails?.industrial?.fireSystem;
       // ceilingHeight è una stringa, va convertita a numero
       const industrialCeilingHeight = propertyDetail.propertyDetails?.industrial?.ceilingHeight;

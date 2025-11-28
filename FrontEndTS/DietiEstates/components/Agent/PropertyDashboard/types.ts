@@ -35,7 +35,7 @@ export interface PropertyDTO {
   bookings?: number;
   latitude?: number;
   longitude?: number;
-  type: keyof Omit<PropertyFilters, "general">; // 'residential', 'commercial', 'industrial', 'land'
+  type: keyof Omit<PropertyFilters, "general">; // 'residential', 'commercial', 'garage', 'land'
   propertyCategory: string;
   price: number; // Prezzo come numero
   condition: PropertyCondition;

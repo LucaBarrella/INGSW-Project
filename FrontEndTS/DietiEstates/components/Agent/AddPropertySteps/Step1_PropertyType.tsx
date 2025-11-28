@@ -7,7 +7,7 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import { CategoryButton } from '@/components/Buyer/CategoryButton'; // Importato CategoryButton
 
 // Define PropertyType based on current file
-export type PropertyType = 'RESIDENTIAL' | 'COMMERCIAL' | 'INDUSTRIAL' | 'LAND';
+export type PropertyType = 'RESIDENTIAL' | 'COMMERCIAL' | 'GARAGE' | 'LAND';
 
 // Define props for react-hook-form integration
 interface Step1PropertyTypeProps {
@@ -21,7 +21,7 @@ interface Step1PropertyTypeProps {
 const propertyTypes: { type: PropertyType; label: string; icon: string }[] = [
   { type: 'RESIDENTIAL', label: 'Residenziale', icon: 'material-symbols:home-outline' },
   { type: 'COMMERCIAL', label: 'Commerciale', icon: 'material-symbols:business-center-outline' },
-  { type: 'INDUSTRIAL', label: 'Industriale', icon: 'material-symbols:factory-outline' },
+  { type: 'GARAGE', label: 'Garage', icon: 'material-symbols:garage-outline' },
   { type: 'LAND', label: 'Terreno', icon: 'material-symbols:landscape-outline' },
 ];
 

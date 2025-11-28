@@ -217,7 +217,7 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
               {
                 options,
                 cancelButtonIndex,
-                title: 'Seleziona Categoria Industriale',
+                title: 'Seleziona Categoria Autorimessa',
               },
               (selectedIndex?: number) => {
                 if (selectedIndex !== undefined && selectedIndex !== cancelButtonIndex && selectedIndex !== 0) {
@@ -441,7 +441,7 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
         return renderResidentialFields();
       case 'COMMERCIAL':
         return renderCommercialFields();
-      case 'INDUSTRIAL':
+      case 'GARAGE':
         return renderGarageFields();
       case 'LAND':
         return renderLandFields();
