@@ -14,4 +14,8 @@ export class VisitRepository implements IVisitRepository {
   async updateVisitStatus(visitId: string | number, status: "CONFIRMED" | "REJECTED" | "CANCELLED" | "PENDING"): Promise<{ success: boolean; message?: string }> {
     return VisitApiService.updateVisitStatus(visitId, status);
   }
+
+  async createVisit(propertyId: number, agentId: number, startTime: string, endTime: string): Promise<{ success: boolean; message?: string }> {
+    return VisitApiService.createVisit(propertyId, agentId, startTime, endTime);
+  }
 }

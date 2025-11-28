@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import AnimatedSlideUpPanel from '../common/AnimatedSlideUpPanel';
 import { getMeteoForTheDay, getTimeFromIndex, getEmojiFromMeteoCode } from '../../src/services (old)/OpenMeteoApiService';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedIcon } from '@/components/ThemedIcon';
+import { useVisits } from '@/src/hooks/useVisits';
+import { t } from 'i18next';
 
 // --- Helper Functions ---
 const getDaysInMonth = (date: Date, availableDates: string[]) => {
@@ -47,6 +49,8 @@ interface VisitSchedulerPanelProps {
   isVisible: boolean;
   onClose: () => void;
   availableDates: string[];
+  propertyId: number;
+  agentId: number;
 }
 
 interface Day {
@@ -62,12 +66,15 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
   isVisible,
   onClose,
   availableDates,
+  propertyId,
+  agentId,
 }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [days, setDays] = useState<Day[]>([]);
   const [selectedDay, setSelectedDay] = useState<Day | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [meteo, setMeteo] = useState(new Map());
+  const { createVisit } = useVisits();
 
   // --- Theme Colors ---
   const backgroundColor = useThemeColor({}, 'background');
@@ -78,6 +85,7 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
   const mutedBackgroundColor = useThemeColor({}, 'backgroundMuted');
   const buttonTextColor = useThemeColor({}, 'buttonTextColor');
   const disabledColor = useThemeColor({}, 'visitStatusDeleted');
+  const [isAgentAvailable, setIsAgentAvailable] = useState<boolean>(true);
 
   // --- Effects ---
   useEffect(() => {
@@ -100,8 +108,8 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
     if (firstAvailableDay) {
       initialDateToSet = firstAvailableDay;
     } else {
-      // If no future available dates, default to today
       initialDateToSet = today;
+      setIsAgentAvailable(false);
     }
 
     setCurrentDate(initialDateToSet);
@@ -116,6 +124,20 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
 
 
   // --- Handlers ---
+  const handleVisitConfirmation = () => {
+    if (selectedDay && selectedTime){
+      createVisit(propertyId, agentId, selectedDay.date, selectedTime).then((result) => {
+        if (result.success !== false) {
+          Alert.alert(t('visitRequestedSuccessfully'), t('visitRequestedMessage'));
+          onClose();
+        } else {
+          Alert.alert(t('failedToRequestVisit'), t('pleaseTryAnotherTimeSlot'));
+          console.error("Failed to create visit:", result.message);
+        }
+      });
+    }
+  };
+
   const handleMonthChange = (increment: number) => {
     setCurrentDate(prev => {
       const newDate = new Date(prev);
@@ -155,6 +177,8 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
         elevation: 20,
       }}
     >
+      {isAgentAvailable ? (
+        <>
       <ScrollView showsVerticalScrollIndicator={false} className="flex-1 p-4 pb-0">
         <Text style={{ color: textColor }} className="text-2xl font-bold text-center mb-4">Schedule Your Visit</Text>
 
@@ -238,12 +262,24 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
           disabled={!selectedDay || !selectedTime}
           className="w-full h-12 rounded-full flex items-center justify-center"
           style={{ backgroundColor: (!selectedDay || !selectedTime) ? disabledColor : brandColor }}
+          onPress={handleVisitConfirmation}
         >
           <Text style={{ color: buttonTextColor }} className="text-base font-bold">
             {selectedTime ? `Confirm Visit for ${selectedTime}` : 'Select a time slot'}
           </Text>
         </TouchableOpacity>
       </View>
+      </>)
+      : (
+        <View className="flex-1 items-center justify-center p-4">
+          <Text style={{ color: textColor }} className="text-xl font-semibold text-center mb-4">
+            {t('agentHasNoAvailability')}
+          </Text>
+          <Text style={{ color: textSecondaryColor }} className="text-center">
+            {t('pleaseTryAgainLaterOrContactAgent')}
+          </Text>
+        </View>
+      )}
     </AnimatedSlideUpPanel>
   );
 };

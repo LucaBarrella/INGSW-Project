@@ -253,8 +253,7 @@ export default function AddPropertyScreen() {
           break;
         case 'LAND':
           propertyData.propertyCategoryName = data.landCategory;
-          propertyData.soilType = data.soilType;
-          propertyData.slope = parseFloat(data.slope);
+          propertyData.hasRoadAccess = data.hasRoadAccess;
           break;
       }
 

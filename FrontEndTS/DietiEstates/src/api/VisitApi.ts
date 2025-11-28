@@ -15,6 +15,7 @@ const visitEndpoints = {
   cancelVisit: '/visits/{visitId}/cancel',
   confirmVisit: '/visits/{visitId}/confirm',
   updateVisitStatus: '/visits/{visitId}/status',
+  createVisit: '/visits',
 } as const;
 
 /**
@@ -96,6 +97,12 @@ export const updateVisitStatus = async (visitId: string | number, status: "CONFI
   return response.data;
 };
 
+export const createVisit = async (propertyId: number, agentId: number, startTime: string, endTime: string): Promise<{ success: boolean; message?: string }> => {
+  const url = visitEndpoints.createVisit;
+  const response = await httpClient.post(url, { propertyId, agentId, startTime, endTime });
+  return response.data;
+};
+
 /**
  * Annulla una visita pianificata.
  * @param visitId - L'ID della visita da annullare.
@@ -130,4 +137,5 @@ export default {
   updateVisitStatus,
   cancelVisit,
   confirmVisit,
+  createVisit
 };

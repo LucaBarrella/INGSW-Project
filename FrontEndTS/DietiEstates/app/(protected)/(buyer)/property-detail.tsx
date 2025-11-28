@@ -16,6 +16,7 @@ import { PlaceDTO } from '@/src/dto/response/PlaceDTO';
 import { ServiceCard } from '@/components/Property/ServiceCard';
 import MapView, { Marker } from 'react-native-maps';
 import { generatePropertyImageUrls } from '@/src/utils/imageUtils';
+import { AvailabilityDTO } from '@/src/dto/response/AvailabilityDTO';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -38,7 +39,7 @@ const PropertyDetailScreen: React.FC = () => {
   const [places, setPlaces] = useState<PlaceDTO[]>([]);
   const [fetchingProperty, setFetchingProperty] = useState(false);
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
-  const emptyAvailableDatesArray: string[] = [];
+  const [availableDatesArray, setAvailableDatesArray] = useState<string[]>([]);
 
   const scrollViewRef = useRef<ScrollView>(null);
   const { t } = useTranslation();
@@ -82,9 +83,21 @@ const PropertyDetailScreen: React.FC = () => {
         console.error('Error fetching nearby services:', error);
       });
     };
+    
     fetchPropertyDetails();
     fetchNearbyServices();
   }, []);
+
+  useEffect(() => {
+    const fetchAvailability = async () => {
+      if (!propertyId || !property) {
+        return;
+      }
+      const availabilities = await httpClient.get<AvailabilityDTO[]>(`/agents/${property.agent.id}/availabilities`);
+      setAvailableDatesArray(availabilities.data.map(a => new Date(a.startTime * 1000).toISOString().split('T')[0]));
+    };
+    fetchAvailability();
+  }, [property, propertyId]);
 
   const handleBack = () => {
     router.back();
@@ -285,7 +298,9 @@ const PropertyDetailScreen: React.FC = () => {
       <VisitSchedulerPanel
         isVisible={isVisitPanelVisible}
         onClose={() => setVisitPanelVisible(false)}
-        availableDates={emptyAvailableDatesArray}
+        availableDates={availableDatesArray}
+        propertyId={property.id}
+        agentId={property.agent.id}
       />
       <OfferPanel
         isVisible={isOfferPanelVisible}

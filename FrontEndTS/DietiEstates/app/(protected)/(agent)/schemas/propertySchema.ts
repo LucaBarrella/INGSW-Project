@@ -4,6 +4,7 @@ import { z } from 'zod';
 const stringRequired = z.string().min(1, 'Campo richiesto');
 const positiveNumber = z.string().regex(/^\d+$/, 'Deve essere un numero positivo');
 const numberRequired = z.number({ required_error: 'Campo richiesto' });
+const positiveNumberGreaterThanZero = z.string().regex(/^[1-9]\d*$/, 'Deve essere un numero positivo maggiore di zero');
 
 // Schema per i dettagli residenziali
 const residentialDetailsSchema = z.object({
@@ -11,9 +12,9 @@ const residentialDetailsSchema = z.object({
   floor: positiveNumber,
   elevator: z.boolean(),
   pool: z.boolean(),
-  numberOfRooms: positiveNumber,
-  numberOfFloors: positiveNumber,
-  numberOfBathrooms: positiveNumber,
+  numberOfRooms: positiveNumberGreaterThanZero,
+  numberOfFloors: positiveNumberGreaterThanZero,
+  numberOfBathrooms: positiveNumberGreaterThanZero,
   heatingType: z.enum(['Absent', 'Autonomous', 'Centralized'], { required_error: 'Seleziona il tipo di riscaldamento' }),
   garden: z.enum(['ABSENT', 'PRIVATE', 'SHARED'], { required_error: 'Seleziona il tipo di giardino' }),
   isFurnished: z.boolean(), /* TODO numero di posti auto ? */
@@ -24,9 +25,9 @@ const commercialDetailsSchema = z.object({
   commercialCategory: stringRequired,
   emergencyExit: z.boolean(),
   floor: positiveNumber,
-  numberOfFloors: positiveNumber,
-  numberOfBathrooms: positiveNumber,
-  numberOfRooms: positiveNumber,
+  numberOfFloors: positiveNumberGreaterThanZero,
+  numberOfBathrooms: positiveNumberGreaterThanZero,
+  numberOfRooms: positiveNumberGreaterThanZero,
   constructionDate: z.string().regex(/^\d{4}$/, 'Anno non valido'),
 });
 
@@ -34,7 +35,7 @@ const commercialDetailsSchema = z.object({
 const garageDetailsSchema = z.object({
   garageCategory: stringRequired,
   hasSurveillance: z.boolean(),
-  numberOfFloors: positiveNumber,
+  numberOfFloors: positiveNumberGreaterThanZero,
   floor: positiveNumber
 });
 

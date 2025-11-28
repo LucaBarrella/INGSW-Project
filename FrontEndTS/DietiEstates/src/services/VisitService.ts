@@ -70,4 +70,8 @@ export class VisitService implements IVisitService {
   async updateVisitStatus(visitId: string | number, status: "CONFIRMED" | "REJECTED" | "CANCELLED" | "PENDING"): Promise<{ success: boolean; message?: string }> {
     return this.visitRepository.updateVisitStatus(visitId, status);
   }
+
+  async createVisit(propertyId: number, agentId: number, startTime: string, endTime: string): Promise<{ success: boolean; message?: string }> {
+    return this.visitRepository.createVisit(propertyId, agentId, startTime, endTime);
+  }
 }
