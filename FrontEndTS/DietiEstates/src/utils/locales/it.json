@@ -31,6 +31,10 @@
   "features": "Caratteristiche",
   "details": "Dettagli",
   "nearbyServices": "Servizi vicini",
+  "position": "Posizione",
+  "forSale": "in vendita",
+  "forRent": "in affitto",
+  "getInTouch": "Contatta",
 
   "visit_status": {
     "PENDING": "in attesa",

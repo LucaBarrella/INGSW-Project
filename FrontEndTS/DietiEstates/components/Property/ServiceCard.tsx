@@ -34,6 +34,6 @@ export const ServiceCard: React.FC<{ place: PlaceDTO; iconName: string }> = ({ p
         <View style={styles.serviceCard}>
             <ThemedIcon icon={iconName} size={24} lightColor={themeColors.text} darkColor={themeColors.text} accessibilityLabel={place.name} />
             <ThemedText style={styles.serviceName}>{place.name}</ThemedText>
-            <ThemedText style={styles.serviceDistance}>{place.distance}</ThemedText>
+            <ThemedText style={styles.serviceDistance}>{place.distance}m</ThemedText>
         </View>);
 }

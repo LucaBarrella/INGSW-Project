@@ -24,6 +24,8 @@ export interface PropertyDTO {
     country: string;
     street: string;
     streetNumber: string;
+    longitude?: number;
+    latitude?: number;
   };
   views?: number;
   bookings?: number;
@@ -59,7 +61,8 @@ export interface PropertyDTO {
     profileImageUrl?: string;
     agency?: {
       name: string;
-    }
+    },
+    email?: string;
   };
 }
 

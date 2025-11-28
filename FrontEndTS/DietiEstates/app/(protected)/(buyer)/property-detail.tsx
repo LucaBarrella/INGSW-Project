@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, ScrollView, TouchableOpacity, Image, StyleSheet, useColorScheme, Dimensions, NativeSyntheticEvent, NativeScrollEvent, Modal, Platform, StatusBar, useWindowDimensions } from 'react-native';
+import { View, ScrollView, TouchableOpacity, Image, StyleSheet, useColorScheme, Dimensions, NativeSyntheticEvent, NativeScrollEvent, Modal, Platform, StatusBar, useWindowDimensions, Linking } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { PropertyDTO } from '@/components/Agent/PropertyDashboard/types';
 import { Colors } from '@/constants/Colors';
@@ -14,6 +14,7 @@ import OfferPanel from '../../../components/Offer/OfferPanel';
 import httpClient from '@/src/core/httpClient';
 import { PlaceDTO } from '@/src/dto/response/PlaceDTO';
 import { ServiceCard } from '@/components/Property/ServiceCard';
+import MapView, { Marker } from 'react-native-maps';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -27,7 +28,6 @@ const PropertyDetailScreen: React.FC = () => {
   const colorScheme = useColorScheme();
   const themeColors = Colors[colorScheme ?? 'light'];
 
-  const [activeTab, setActiveTab] = useState<'description' | 'details' | 'features'>('description');
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isVisitPanelVisible, setVisitPanelVisible] = useState(false);
   const [isOfferPanelVisible, setOfferPanelVisible] = useState(false);
@@ -61,6 +61,7 @@ const PropertyDetailScreen: React.FC = () => {
       setFetchingProperty(true);
       try {
         const response = await httpClient.get<PropertyDTO>(`/properties/details/${propertyId}`);
+        console.log("Property: ", response.data);
         setProperty(response.data);
       } catch (error) {
         // no alert, continue silently (error message is shown anyway when not fetching anymore)
@@ -100,56 +101,6 @@ const PropertyDetailScreen: React.FC = () => {
     const slide = Math.ceil(event.nativeEvent.contentOffset.x / event.nativeEvent.layoutMeasurement.width);
     if (slide !== activeImageIndex) {
       setActiveImageIndex(slide);
-    }
-  };
-
-  const renderTabContent = () => {
-    if (!property) return null;
-
-    const styles = createStyles(themeColors);
-    switch (activeTab) {
-      case 'description':
-        return (
-          <ThemedText style={styles.tabContentText}>
-            {property.description || 'Nessuna descrizione disponibile per questo immobile.'}
-          </ThemedText>
-        );
-      case 'details':
-        return (
-          <View style={styles.tabContent}>
-            <ThemedText style={styles.tabContentText}>
-              <ThemedText style={styles.detailLabel}>{t('status')}: </ThemedText>
-              {t("property_condition." + property.condition)}
-            </ThemedText>
-            <ThemedText style={styles.tabContentText}>
-              <ThemedText style={styles.detailLabel}>{t('agent')}: </ThemedText>
-              {property.agent.id || t('notSpecified')}
-            </ThemedText>
-            <ThemedText style={styles.tabContentText}>
-              <ThemedText style={styles.detailLabel}>{t('price')}: </ThemedText>
-              {property.price.toLocaleString('it-IT')} € {property.contractType === 'rent' ? t('al mese') : ''}
-            </ThemedText>
-          </View>
-        );
-      case 'features':
-        return (
-          <View style={styles.tabContent}>
-            <ThemedText style={styles.tabContentText}>
-              <ThemedText style={styles.detailLabel}>ID: </ThemedText>
-              {property.id}
-            </ThemedText>
-            <ThemedText style={styles.tabContentText}>
-              <ThemedText style={styles.detailLabel}>Creato: </ThemedText>
-              {parseLocalDateTime(property.createdAt).toLocaleDateString('it-IT')}
-            </ThemedText>
-            <ThemedText style={styles.tabContentText}>
-              <ThemedText style={styles.detailLabel}>Aggiornato: </ThemedText>
-              {parseLocalDateTime(property.updatedAt).toLocaleDateString('it-IT')}
-            </ThemedText>
-          </View>
-        );
-      default:
-        return null;
     }
   };
 
@@ -264,9 +215,8 @@ const PropertyDetailScreen: React.FC = () => {
             </ThemedText>
           </View>
           <View style={styles.tag}>
-            {/* TODO see */}
             <ThemedText style={styles.tagText}>
-              Premium
+              {property.contractType === 'rent' ? t('forRent') : t('forSale')}
             </ThemedText>
           </View>
         </View>
@@ -281,55 +231,14 @@ const PropertyDetailScreen: React.FC = () => {
           </TouchableOpacity>
         </View>
 
-        {/* Tab */}
-        <View style={styles.tabsContainer}>
-          <View style={styles.tabs}>
-            <TouchableOpacity 
-              style={[styles.tab, activeTab === 'description' && styles.tabActive]}
-              onPress={() => setActiveTab('description')}
-            >
-              <ThemedText style={[styles.tabText, activeTab === 'description' && styles.tabTextActive]}>
-                Descrizione
-              </ThemedText>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={[styles.tab, activeTab === 'details' && styles.tabActive]}
-              onPress={() => setActiveTab('details')}
-            >
-              <ThemedText style={[styles.tabText, activeTab === 'details' && styles.tabTextActive]}>
-                {t('details')}
-              </ThemedText>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={[styles.tab, activeTab === 'features' && styles.tabActive]}
-              onPress={() => setActiveTab('features')}
-            >
-              <ThemedText style={[styles.tabText, activeTab === 'features' && styles.tabTextActive]}>
-                {t('features')}
-              </ThemedText>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.tabContentContainer}>
-            {renderTabContent()}
-          </View>
-        </View>
-
         {/* Mappa */}
+        {property.address.latitude && property.address.longitude && (
         <View style={styles.mapContainer}>
-          <ThemedText style={styles.sectionTitle}>{'position'}</ThemedText>
-          <View style={styles.map}>
-            <Image 
-              source={{ 
-                uri: 'https://via.placeholder.com/400x200' 
-              }} 
-              style={styles.mapImage} 
-              resizeMode="cover"
-            />
-            <View style={styles.mapMarker}>
-              <View style={styles.mapMarkerPin} />
-            </View>
-          </View>
-        </View>
+          <ThemedText style={styles.sectionTitle}>{t('position')}</ThemedText>
+          <MapView style={styles.map} region={{ latitudeDelta: 0.1, longitudeDelta:0.1, latitude: property.address.latitude, longitude: property.address.longitude }} >
+            <Marker coordinate={{latitude: property.address.latitude, longitude: property.address.longitude}} pinColor={ "#c7f4ffff" }/>
+          </MapView>
+        </View>)}
 
         {/* Nearby Services */}
         <View style={styles.nearbyServices}>
@@ -342,22 +251,17 @@ const PropertyDetailScreen: React.FC = () => {
         </View>
 
         {/* Agente immobiliare */}
+        {property.agent && property.agent.firstName && property.agent.lastName && property.agent.email &&
         <View style={styles.agentCard}>
-          <Image
-            source={{
-              uri: 'https://via.placeholder.com/64x64'
-            }}
-            style={styles.agentAvatar}
-            resizeMode="cover"
-          />
           <View style={styles.agentInfo}>
-            <ThemedText style={styles.agentName}>Agente immobiliare</ThemedText>
-            <ThemedText style={styles.agentRole}>Agenzia immobiliare</ThemedText>
+            <ThemedText style={styles.agentName}>{`${property.agent.firstName} ${property.agent.lastName}`}</ThemedText>
+            <ThemedText style={styles.agentRole}>{property.agent.agency?.name}</ThemedText>
           </View>
-          <TouchableOpacity style={styles.contactButton}>
-            <ThemedText style={styles.contactButtonText}>Contatta</ThemedText>
+          <TouchableOpacity style={styles.contactButton} onPress={() => Linking.openURL(`mailto:${property.agent.email}`)}>
+            <ThemedText style={styles.contactButtonText}>{t('getInTouch')}</ThemedText>
           </TouchableOpacity>
         </View>
+        }
       </ScrollView>
       <VisitSchedulerPanel
         isVisible={isVisitPanelVisible}
@@ -377,7 +281,7 @@ const PropertyDetailScreen: React.FC = () => {
         animationType="slide"
         presentationStyle="fullScreen"
         onRequestClose={() => setIsGalleryVisible(false)}
-        supportedOrientations={['portrait', 'landscape']} /* Aggiunto supporto per orientamenti */
+        supportedOrientations={['portrait', 'landscape']}
       >
         <GestureHandlerRootView style={{ flex: 1 }}>
           <Gallery
@@ -386,7 +290,7 @@ const PropertyDetailScreen: React.FC = () => {
               return (
                 <Image
                   source={{ uri: item.uri }}
-                  style={{ width: windowWidth, height: windowHeight }} /* Rimosso flex: 1 */
+                  style={{ width: windowWidth, height: windowHeight }}
                   resizeMode="contain"
                 />
               );
