@@ -41,8 +41,7 @@ const garageDetailsSchema = z.object({
 // Schema per i dettagli del terreno
 const landDetailsSchema = z.object({
   landCategory: stringRequired,
-  soilType: stringRequired,
-  slope: z.string().regex(/^\d+(\.\d+)?$/, 'Pendenza non valida'),
+  hasRoadAccess: z.boolean(),
 });
 
 // Schema base comune a tutti i tipi di proprietà

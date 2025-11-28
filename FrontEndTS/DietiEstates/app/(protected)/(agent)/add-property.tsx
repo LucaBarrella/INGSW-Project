@@ -66,7 +66,7 @@ const fieldsByStep: Record<number, FieldName<PropertyFormData>[]> = {
       'residentialCategory', 'rooms', 'bathrooms', 'floor', 'elevator', 'pool',
       'commercialCategory', 'commercialBathrooms', 'emergencyExit', 'constructionDate',
       'garageCategory', 'numberOfFloors',
-      'landCategory', 'soilType', 'slope', 'garden', 'numberOfBathrooms', 'numberOfRooms', 'isFurnished', 'heatingType'
+      'landCategory', 'garden', 'numberOfBathrooms', 'numberOfRooms', 'isFurnished', 'heatingType', 'hasRoadAccess'
      ] as any[],
   5: [],
 };
@@ -137,6 +137,7 @@ export default function AddPropertyScreen() {
       garden: 'ABSENT',
       isFurnished: false,
       heatingType: 'Absent', // not all caps
+      hasRoadAccess: false,
     },
     mode: 'onBlur', // Valida quando l'utente lascia il campo per un feedback migliore
   });

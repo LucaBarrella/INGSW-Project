@@ -468,60 +468,8 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
           );
         }}
       />
-      <Controller
-        control={control}
-        name="soilType"
-        render={({ field: { onChange, value } }) => { // Optional?
-          const { showActionSheetWithOptions } = useActionSheet();
-
-          const showSoilTypeOptions = () => {
-            const options = ['Seleziona tipo...', ...soilTypes, 'Annulla'];
-            const cancelButtonIndex = options.length - 1;
-
-            showActionSheetWithOptions(
-              {
-                options,
-                cancelButtonIndex,
-                title: 'Seleziona Tipo di Suolo',
-              },
-              (selectedIndex?: number) => {
-                if (selectedIndex !== undefined && selectedIndex !== cancelButtonIndex && selectedIndex !== 0) {
-                  onChange(options[selectedIndex]);
-                } else if (selectedIndex === 0) {
-                  onChange('');
-                }
-              }
-            );
-          };
-
-          return (
-            <View className="mb-1.5">
-              <ThemedText className="mb-2 text-base">Tipo di Suolo</ThemedText>
-              <Pressable
-                className="border rounded min-h-[40px] h-[50px] justify-center px-3"
-                style={{ borderColor: errors.soilType ? themeErrorColor : borderColor, backgroundColor: backgroundColor }}
-                onPress={showSoilTypeOptions}
-              >
-                <ThemedText style={{ color: value ? textColor : textColor + '80' }}> {/* Cambia colore testo se selezionato, placeholder opacizzato */}
-                  {value || 'Seleziona tipo...'}
-                </ThemedText>
-              </Pressable>
-              {errors.soilType && <ThemedText className="mt-1 mb-2.5 text-xs" style={{ color: themeErrorColor }}>{errors.soilType.message as string}</ThemedText>}
-            </View>
-          );
-        }}
-      />
-      <Controller control={control} name="slope" /* rules rimosse */ render={({ field: { onChange, onBlur, value } }) => ( // Optional?
-        <LabelInput
-          label="Pendenza (%)"
-          placeholder="Es. 5"
-          onBlur={onBlur}
-          onChangeText={onChange}
-          value={value}
-          keyboardType="numeric"
-          error={!!errors.slope}
-          errorMessage={errors.slope?.message as string}
-        />
+      <Controller control={control} name="hasRoadAccess" render={({ field: { onChange, value } }) => (
+        <View className="mb-1.5 flex-row justify-between items-center py-2 mt-2.5"><ThemedText className="text-base">Accesso Stradale</ThemedText><Switch trackColor={{ false: borderColor, true: tint }} thumbColor={backgroundColor} ios_backgroundColor={borderColor} onValueChange={onChange} value={!!value} /></View>
       )} />
     </>
   );
