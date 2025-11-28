@@ -44,9 +44,10 @@ const PropertyDetailScreen: React.FC = () => {
 
   const iconNames: { [key: string]: string } = {
     'education': 'material-symbols:school',
-    'Ospedale': 'material-symbols:local-hospital',
-    'Supermercato': 'material-symbols:material-symbols:shopping-bag',
+    'healthcare': 'material-symbols:local-hospital',
+    'commercial': 'material-symbols:material-symbols:shopping-bag',
     'public_transport': 'material-symbols:train',
+    'leisure': 'material-symbols:park',
   }
 
   function parseLocalDateTime(dateArray: number[]): Date {

@@ -92,7 +92,7 @@ export default function AddPropertyScreen() {
   const { control, handleSubmit, watch, setValue, trigger, formState: { errors } } = useForm<PropertyFormData>({
     resolver: zodResolver(propertySchema), // Applica il resolver
     defaultValues: {
-      listingType: undefined, // Usa undefined per i tipi enum/literal opzionali con Zod
+      contractType: undefined, // Usa undefined per i tipi enum/literal opzionali con Zod
       propertyType: undefined,
       title: '',
       description: '',
@@ -166,7 +166,7 @@ export default function AddPropertyScreen() {
     try {
       // 1. Preparazione Dati
       const propertyData: any = {
-        listingType: data.listingType,
+        listingType: data.contractType,
         propertyType: data.propertyType,
         title: data.title,
         description: data.description,

@@ -41,8 +41,8 @@ const landDetailsSchema = z.object({
 
 // Schema base comune a tutti i tipi di proprietà
 const basePropertySchema = z.object({
-  listingType: z.enum(['SALE', 'RENT'], { required_error: 'Seleziona il tipo di annuncio' }),
-  propertyType: z.enum(['RESIDENTIAL', 'COMMERCIAL', 'INDUSTRIAL', 'LAND'], { required_error: 'Seleziona il tipo di immobile' }),
+  contractType: z.enum(['SALE', 'RENT'], { required_error: 'Seleziona il tipo di annuncio' }),
+  propertyCategoryName: z.enum(['RESIDENTIAL', 'COMMERCIAL', 'INDUSTRIAL', 'LAND'], { required_error: 'Seleziona il tipo di immobile' }),
   title: stringRequired.min(5, 'Il titolo deve essere di almeno 5 caratteri'),
   description: stringRequired.min(20, 'La descrizione deve essere di almeno 20 caratteri'),
   price: positiveNumber,

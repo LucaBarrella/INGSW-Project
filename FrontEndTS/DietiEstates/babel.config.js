@@ -29,6 +29,7 @@ module.exports = function (api) {
             'material-symbols:local-hospital',
             'material-symbols:shopping-bag',
             'material-symbols:train',
+            'material-symbols:park',
 
             'octicon:mark-github-16',
             'octicon:mark-github-24',
