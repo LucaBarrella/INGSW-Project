@@ -8,11 +8,15 @@ const numberRequired = z.number({ required_error: 'Campo richiesto' });
 // Schema per i dettagli residenziali
 const residentialDetailsSchema = z.object({
   residentialCategory: stringRequired,
-  rooms: positiveNumber,
-  bathrooms: positiveNumber,
   floor: positiveNumber,
   elevator: z.boolean(),
   pool: z.boolean(),
+  numberOfRooms: positiveNumber,
+  numberOfFloors: positiveNumber,
+  numberOfBathrooms: positiveNumber,
+  heatingType: z.enum(['None', 'Autonomous', 'Centralized'], { required_error: 'Seleziona il tipo di riscaldamento' }),
+  garden: z.enum(['ABSENT', 'PRIVATE', 'SHARED'], { required_error: 'Seleziona il tipo di giardino' }),
+  isFurnished: z.boolean(),
 });
 
 // Schema per i dettagli commerciali

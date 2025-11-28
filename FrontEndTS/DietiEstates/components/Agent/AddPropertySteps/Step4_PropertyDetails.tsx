@@ -21,7 +21,6 @@ const residentialCategories = ['Apartment', 'Villa', 'Penthouse', 'Townhouse'];
 const commercialCategories = ['Office', 'Shop', 'Warehouse', 'Restaurant'];
 const landCategories = ['Building Plot', 'Agricultural Land', 'Industrial Land'];
 const garageCategories = ['Single Garage', 'Double Garage', 'Parking Space'];
-const structureTypes = ['Cemento Armato', 'Acciaio', 'Muratura Portante', 'Legno'];
 const soilTypes = ['Argilloso', 'Sabbioso', 'Limoso', 'Ghiaioso'];
 
 export default function Step4_PropertyDetails({ control, errors, propertyType }: Step4PropertyDetailsProps) {
@@ -79,7 +78,7 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
           );
         }}
       />
-      <Controller control={control} name="rooms" /* rules rimosse */ render={({ field: { onChange, onBlur, value } }) => (
+      <Controller control={control} name="numberOfRooms" render={({ field: { onChange, onBlur, value } }) => (
         <LabelInput
           label="Numero Locali"
           placeholder="Es. 3"
@@ -87,11 +86,11 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
           onChangeText={onChange}
           value={value}
           keyboardType="numeric"
-          error={!!errors.rooms}
-          errorMessage={errors.rooms?.message as string}
+          error={!!errors.numberOfRooms}
+          errorMessage={errors.numberOfRooms?.message as string}
         />
       )} />
-      <Controller control={control} name="bathrooms" /* rules rimosse */ render={({ field: { onChange, onBlur, value } }) => (
+      <Controller control={control} name="numberOfBathrooms" render={({ field: { onChange, onBlur, value } }) => (
          <LabelInput
            label="Numero Bagni"
            placeholder="Es. 2"
@@ -99,27 +98,135 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
            onChangeText={onChange}
            value={value}
            keyboardType="numeric"
-           error={!!errors.bathrooms}
-           errorMessage={errors.bathrooms?.message as string}
+           error={!!errors.numberOfBathrooms}
+           errorMessage={errors.numberOfBathrooms?.message as string}
          />
       )} />
-      <Controller control={control} name="floor" /* rules rimosse */ render={({ field: { onChange, onBlur, value } }) => ( // Floor might not be required
+      <Controller control={control} name="floor" render={({ field: { onChange, onBlur, value } }) => (
          <LabelInput
            label="Piano"
            placeholder="Es. 2 (0 per piano terra)"
            onBlur={onBlur}
            onChangeText={onChange}
            value={value}
-           keyboardType="numeric" // Zod gestisce la validazione numerica
+           keyboardType="numeric"
            error={!!errors.floor}
            errorMessage={errors.floor?.message as string}
          />
       )} />
+      
+      <Controller control={control} name="numberOfFloors" render={({ field: { onChange, onBlur, value } }) => (
+         <LabelInput
+           label="Numero di Piani"
+           placeholder="Es. 3"
+           onBlur={onBlur}
+           onChangeText={onChange}
+           value={value}
+           keyboardType="numeric"
+           error={!!errors.numberOfFloors}
+           errorMessage={errors.numberOfFloors?.message as string}
+         />
+      )} />
+      
+      <Controller
+        control={control}
+        name="garden"
+        render={({ field: { onChange, value } }) => {
+          const { showActionSheetWithOptions } = useActionSheet();
+
+          const showGardenOptions = () => {
+            const options = ['Seleziona tipo di giardino...', 'Assente', 'Privato', 'Condiviso', 'Annulla'];
+            const cancelButtonIndex = options.length - 1;
+
+            showActionSheetWithOptions(
+              {
+                options,
+                cancelButtonIndex,
+                title: 'Seleziona Tipo di Giardino',
+              },
+              (selectedIndex?: number) => {
+                if (selectedIndex !== undefined && selectedIndex !== cancelButtonIndex && selectedIndex !== 0) {
+                  const gardenTypes = ['ABSENT', 'PRIVATE', 'SHARED'];
+                  onChange(gardenTypes[selectedIndex - 1]);
+                } else if (selectedIndex === 0) {
+                  onChange('');
+                }
+              }
+            );
+          };
+
+          return (
+            <View className="mb-1.5">
+              <ThemedText className="mb-2 text-base">Tipo di Giardino</ThemedText>
+              <Pressable
+                className="border rounded min-h-[40px] h-[50px] justify-center px-3"
+                style={{ borderColor: errors.garden ? themeErrorColor : borderColor, backgroundColor: backgroundColor }}
+                onPress={showGardenOptions}
+              >
+                <ThemedText style={{ color: value ? textColor : textColor + '80' }}> {/* Cambia colore testo se selezionato, placeholder opacizzato */}
+                  {value ? (value === 'ABSENT' ? 'Assente' : value === 'PRIVATE' ? 'Privato' : 'Condiviso') : 'Seleziona tipo di giardino...'}
+                </ThemedText>
+              </Pressable>
+              {errors.garden && <ThemedText className="mt-1 mb-2.5 text-xs" style={{ color: themeErrorColor }}>{errors.garden.message as string}</ThemedText>}
+            </View>
+          );
+        }}
+      />
+
+      {/* Heating Type Picker (Absent, Autonomous, Centralized) */}
+      <Controller
+        control={control}
+        name="heatingType"
+        render={({ field: { onChange, value } }) => {
+          const { showActionSheetWithOptions } = useActionSheet();
+
+          const showHeatingTypeOptions = () => {
+            const options = ['Seleziona tipo di riscaldamento...', 'Nessuno', 'Autonomo', 'Centralizzato', 'Annulla'];
+            const cancelButtonIndex = options.length - 1;
+
+            showActionSheetWithOptions(
+              {
+                options,
+                cancelButtonIndex,
+                title: 'Seleziona Tipo di Riscaldamento',
+              },
+              (selectedIndex?: number) => {
+                if (selectedIndex !== undefined && selectedIndex !== cancelButtonIndex && selectedIndex !== 0) {
+                  const heatingTypes = ['None', 'Autonomous', 'Centralized'];
+                  onChange(heatingTypes[selectedIndex - 1]);
+                } else if (selectedIndex === 0) {
+                  onChange('');
+                }
+              }
+            );
+          };
+
+          return (
+            <View className="mb-1.5">
+              <ThemedText className="mb-2 text-base">Tipo di Riscaldamento</ThemedText>
+              <Pressable
+                className="border rounded min-h-[40px] h-[50px] justify-center px-3"
+                style={{ borderColor: errors.heatingType ? themeErrorColor : borderColor, backgroundColor: backgroundColor }}
+                onPress={showHeatingTypeOptions}
+              >
+                <ThemedText style={{ color: value ? textColor : textColor + '80' }}> {/* Cambia colore testo se selezionato, placeholder opacizzato */}
+                  {value ? (value === 'None' ? 'Nessuno' : value === 'Autonomous' ? 'Autonomo' : 'Centralizzato') : 'Seleziona tipo di riscaldamento...'}
+                </ThemedText>
+              </Pressable>
+              {errors.heatingType && <ThemedText className="mt-1 mb-2.5 text-xs" style={{ color: themeErrorColor }}>{errors.heatingType.message as string}</ThemedText>}
+            </View>
+          );
+        }}
+      />
+
       <Controller control={control} name="elevator" render={({ field: { onChange, value } }) => (
         <View className="mb-1.5 flex-row justify-between items-center py-2 mt-2.5"><ThemedText className="text-base">Ascensore</ThemedText><Switch trackColor={{ false: borderColor, true: tint }} thumbColor={backgroundColor} ios_backgroundColor={borderColor} onValueChange={onChange} value={!!value} /></View>
       )} />
       <Controller control={control} name="pool" render={({ field: { onChange, value } }) => (
         <View className="mb-1.5 flex-row justify-between items-center py-2 mt-2.5"><ThemedText className="text-base">Piscina</ThemedText><Switch trackColor={{ false: borderColor, true: tint }} thumbColor={backgroundColor} ios_backgroundColor={borderColor} onValueChange={onChange} value={!!value} /></View>
+      )} />
+      <Controller control={control} name="isFurnished" render={({ field: { onChange, value } }) => (
+        <View className="mb-1.5 flex-row justify-between items-center py-2 mt-2.5"><ThemedText className="text-base">Arredato</ThemedText><Switch trackColor={{ false: borderColor, true: tint }} thumbColor={backgroundColor} ios_backgroundColor={borderColor} onValueChange={onChange} value={!!value} /></View>
       )} />
     </>
   );

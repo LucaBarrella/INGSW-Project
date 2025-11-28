@@ -219,6 +219,13 @@ const PropertyDetailScreen: React.FC = () => {
           </View>
         </View>
 
+        {/*Description */}
+        <View style={styles.descriptionContainer}>
+          <ThemedText style={styles.descriptionText}>
+            {property.description || 'Descrizione non disponibile'}
+          </ThemedText>
+        </View>
+
         {/* Tag/Badge */}
         <View style={styles.tagsContainer}>
           <View style={styles.tag}>
@@ -483,6 +490,15 @@ const createStyles = (themeColors: typeof Colors.light) => StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: themeColors.text,
+  },
+  descriptionContainer: {
+    marginHorizontal: 16,
+    marginBottom: 16,
+  },
+  descriptionText: {
+    fontSize: 14,
+    color: themeColors.tint,
+    lineHeight: 20,
   },
   tabsContainer: {
     marginHorizontal: 16,

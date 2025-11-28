@@ -66,20 +66,18 @@ const fieldsByStep: Record<number, FieldName<PropertyFormData>[]> = {
       'residentialCategory', 'rooms', 'bathrooms', 'floor', 'elevator', 'pool',
       'commercialCategory', 'commercialBathrooms', 'emergencyExit', 'constructionDate',
       'garageCategory', 'numberOfFloors',
-      'landCategory', 'soilType', 'slope'
+      'landCategory', 'soilType', 'slope', 'garden', 'numberOfBathrooms', 'numberOfRooms', 'isFurnished', 'heatingType'
      ] as any[],
   5: [],
 };
 
 export default function AddPropertyScreen() {
   const backgroundColor = useThemeColor({}, 'background');
-  const tint = useThemeColor({}, 'tint'); // Per ActivityIndicator
   const buttonTextColor = useThemeColor({}, 'buttonTextColor'); // Ottieni il colore qui
   const [currentStep, setCurrentStep] = React.useState(1);
   const [selectedImages, setSelectedImages] = React.useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const loading = false;
-  const viewModelError = null;
   const createProperty = async (data: any, images: string[]) => {
   const formData = new FormData();
   
@@ -136,6 +134,7 @@ export default function AddPropertyScreen() {
       pool: false,
       emergencyExit: false,
       hasSurveillance: false,
+      garden: 'ABSENT',
     },
     mode: 'onBlur', // Valida quando l'utente lascia il campo per un feedback migliore
   });
@@ -213,18 +212,22 @@ export default function AddPropertyScreen() {
         area: parseInt(data.area), // Zod assicura che sia un numero stringa valido
         addressRequest: data.addressRequest,
         energyRating: data.energyClass, // Zod assicura che sia un valore valido
-        condition: data.condition,
+        condition: data.condition
       };
 
       // Aggiungi campi specifici in base al tipo
       switch (data.propertyType) {
         case 'RESIDENTIAL':
           propertyData.propertyCategoryName = data.residentialCategory;
-          propertyData.rooms = data.rooms;
-          propertyData.bathrooms = data.bathrooms;
           propertyData.floor = data.floor;
           propertyData.elevator = data.elevator;
           propertyData.pool = data.pool;
+          propertyData.numberOfFloors = data.numberOfFloors;
+          propertyData.numberOfRooms = data.numberOfRooms;
+          propertyData.numberOfBathrooms = data.numberOfBathrooms;
+          propertyData.garden = data.garden;
+          propertyData.isFurnished = data.isFurnished;
+          propertyData.heatingType = data.heatingType;
           break;
         case 'COMMERCIAL':
           propertyData.propertyCategoryName = data.commercialCategory;
