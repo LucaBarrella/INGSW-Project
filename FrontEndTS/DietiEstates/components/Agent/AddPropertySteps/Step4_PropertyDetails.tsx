@@ -7,6 +7,7 @@ import { LabelInput } from '@/components/LabelInput';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { PropertyType } from './Step1_PropertyType';
 import { useActionSheet } from '@expo/react-native-action-sheet'; // Importato useActionSheet
+import { t } from 'i18next';
 
 // Define props for react-hook-form integration
 interface Step4PropertyDetailsProps {
@@ -16,10 +17,10 @@ interface Step4PropertyDetailsProps {
 }
 
 // Define options for pickers (example values)
-const residentialCategories = ['Appartamento', 'Villa', 'Attico', 'Monolocale', 'Bilocale'];
-const commercialCategories = ['Negozio', 'Ufficio', 'Magazzino', 'Ristorante'];
-const industrialCategories = ['Capannone', 'Laboratorio', 'Area Produttiva'];
-const landCategories = ['Agricolo', 'Edificabile', 'Boschivo'];
+const residentialCategories = ['Apartment', 'Villa', 'Penthouse', 'Townhouse'];
+const commercialCategories = ['Office', 'Shop', 'Warehouse', 'Restaurant'];
+const landCategories = ['Building Plot', 'Agricultural Land', 'Industrial Land'];
+const garageCategories = ['Single Garage', 'Double Garage', 'Parking Space'];
 const structureTypes = ['Cemento Armato', 'Acciaio', 'Muratura Portante', 'Legno'];
 const soilTypes = ['Argilloso', 'Sabbioso', 'Limoso', 'Ghiaioso'];
 
@@ -42,18 +43,18 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
           const { showActionSheetWithOptions } = useActionSheet();
 
           const showResidentialCategoryOptions = () => {
-            const options = ['Seleziona categoria...', ...residentialCategories, 'Annulla'];
+            const options = ['Seleziona categoria...', ...residentialCategories.map(category => t(`property_category.sub.${category}`)), 'Annulla'];
             const cancelButtonIndex = options.length - 1;
 
             showActionSheetWithOptions(
               {
                 options,
                 cancelButtonIndex,
-                title: 'Seleziona Categoria Residenziale',
+                title: t('selectResidentialCategory'),
               },
               (selectedIndex?: number) => {
                 if (selectedIndex !== undefined && selectedIndex !== cancelButtonIndex && selectedIndex !== 0) {
-                  onChange(options[selectedIndex]);
+                  onChange(residentialCategories[selectedIndex - 1]);
                 } else if (selectedIndex === 0) {
                   onChange('');
                 }
@@ -63,14 +64,14 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
 
           return (
             <View className="mb-1.5">
-              <ThemedText className="mb-2 text-base">Categoria Residenziale</ThemedText>
+              <ThemedText className="mb-2 text-base">{t('residentialCategory')}</ThemedText>
               <Pressable
                 className="border rounded min-h-[40px] h-[50px] justify-center px-3"
                 style={{ borderColor: errors.residentialCategory ? themeErrorColor : borderColor, backgroundColor: backgroundColor }}
                 onPress={showResidentialCategoryOptions}
               >
                 <ThemedText style={{ color: value ? textColor : textColor + '80' }}> {/* Cambia colore testo se selezionato, placeholder opacizzato */}
-                  {value || 'Seleziona categoria...'}
+                  {value ? t(`property_category.sub.${value}`) : t('selectCategory')}
                 </ThemedText>
               </Pressable>
               {errors.residentialCategory && <ThemedText className="mt-1 mb-2.5 text-xs" style={{ color: themeErrorColor }}>{errors.residentialCategory.message as string}</ThemedText>}
@@ -199,17 +200,17 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
     </>
   );
 
-  const renderIndustrialFields = () => (
+  const renderGarageFields = () => (
     <>
       <Controller
         control={control}
-        name="industrialCategory"
+        name="garageCategory"
         // rules rimosse
         render={({ field: { onChange, value } }) => {
           const { showActionSheetWithOptions } = useActionSheet();
 
-          const showIndustrialCategoryOptions = () => {
-            const options = ['Seleziona categoria...', ...industrialCategories, 'Annulla'];
+          const showGarageCategoryOptions = () => {
+            const options = ['Seleziona categoria...', ...garageCategories, 'Annulla'];
             const cancelButtonIndex = options.length - 1;
 
             showActionSheetWithOptions(
@@ -230,17 +231,17 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
 
           return (
             <View className="mb-1.5">
-              <ThemedText className="mb-2 text-base">Categoria Industriale</ThemedText>
+              <ThemedText className="mb-2 text-base">{t('garageCategory')}</ThemedText>
               <Pressable
                 className="border rounded min-h-[40px] h-[50px] justify-center px-3"
-                style={{ borderColor: errors.industrialCategory ? themeErrorColor : borderColor, backgroundColor: backgroundColor }}
-                onPress={showIndustrialCategoryOptions}
+                style={{ borderColor: errors.garageCategory ? themeErrorColor : borderColor, backgroundColor: backgroundColor }}
+                onPress={showGarageCategoryOptions}
               >
                 <ThemedText style={{ color: value ? textColor : textColor + '80' }}> {/* Cambia colore testo se selezionato, placeholder opacizzato */}
-                  {value || 'Seleziona categoria...'}
+                  {value ? t(`property_category.sub.${value}`) : t('selectCategory')}
                 </ThemedText>
               </Pressable>
-              {errors.industrialCategory && <ThemedText className="mt-1 mb-2.5 text-xs" style={{ color: themeErrorColor }}>{errors.industrialCategory.message as string}</ThemedText>}
+              {errors.garageCategory && <ThemedText className="mt-1 mb-2.5 text-xs" style={{ color: themeErrorColor }}>{errors.garageCategory.message as string}</ThemedText>}
             </View>
           );
         }}
@@ -441,7 +442,7 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
       case 'COMMERCIAL':
         return renderCommercialFields();
       case 'INDUSTRIAL':
-        return renderIndustrialFields();
+        return renderGarageFields();
       case 'LAND':
         return renderLandFields();
       default:

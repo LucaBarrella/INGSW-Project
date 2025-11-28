@@ -67,7 +67,24 @@
     "commercial_property": "proprietà commerciale",
     "residential_property": "proprietà residenziale",
     "land": "terreno",
-    "garage": "autorimessa"
+    "garage": "autorimessa",
+    "sub": {
+      "Apartment": "Appartamento",
+      "Villa": "Villa",
+      "Studio": "Monolocale",
+      "Penthouse": "Attico",
+      "Townhouse": "Casa a schiera",
+      "Office": "Ufficio",
+      "Shop": "Negozio",
+      "Restaurant": "Ristorante",
+      "Warehouse": "Magazzino",
+      "Building Plot": "Lotto Edificabile",
+      "Agricultural Land": "Terreno Agricolo",
+      "Industrial Land": "Terreno Industriale",
+      "Single Garage": "Garage Singolo",
+      "Double Garage": "Garage Doppio",
+      "Parking Space": "Posto Auto"
+    }
   },
 
   "history_placeholder": {
