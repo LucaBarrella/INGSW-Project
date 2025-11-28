@@ -10,7 +10,7 @@ const residentialDetailsSchema = z.object({
   residentialCategory: stringRequired,
   rooms: positiveNumber,
   bathrooms: positiveNumber,
-  floor: z.string().regex(/^-?\d+$/, 'Deve essere un numero'),
+  floor: positiveNumber,
   elevator: z.boolean(),
   pool: z.boolean(),
 });
@@ -23,12 +23,12 @@ const commercialDetailsSchema = z.object({
   constructionDate: z.string().regex(/^\d{4}$/, 'Anno non valido'),
 });
 
-// Schema per i dettagli garage TODO
+// Schema per i dettagli garage
 const garageDetailsSchema = z.object({
   garageCategory: stringRequired,
-  ceilingHeight: z.string().regex(/^\d+(\.\d+)?$/, 'Altezza non valida'),
-  fireSystem: z.boolean(),
-  floorLoad: positiveNumber,
+  hasSurveillance: z.boolean(),
+  numberOfFloors: positiveNumber,
+  floor: positiveNumber
 });
 
 // Schema per i dettagli del terreno

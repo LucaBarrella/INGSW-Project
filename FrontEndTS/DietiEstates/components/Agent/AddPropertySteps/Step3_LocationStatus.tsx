@@ -264,6 +264,62 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
         render={() => <></>}
       />
 
+      {/*Property Condition */}
+      <Controller
+        control={control}
+        name="condition"
+        render={({ field: { onChange, value } }) => {
+          const { showActionSheetWithOptions } = useActionSheet();
+
+          const propertyConditions = [
+            "UNDER_CONSTRUCTION", "NEW", "RENOVATED", 
+            "GOOD_CONDITION", "TO_BE_RENOVATED", "POOR_CONDITION"
+          ];
+
+          const showConditionOptions = () => {
+            const options = ['Seleziona condizione...', ...propertyConditions.map(pc => t(`property_status.${pc}`)), 'Annulla'];
+            const cancelButtonIndex = options.length - 1;
+
+            showActionSheetWithOptions(
+              {
+                options,
+                cancelButtonIndex,
+                title: 'Seleziona Condizione della Proprietà',
+              },
+              (selectedIndex?: number) => {
+                if (selectedIndex !== undefined && selectedIndex !== cancelButtonIndex && selectedIndex !== 0) {
+                  onChange(propertyConditions[selectedIndex - 1]);
+                } else if (selectedIndex === 0) {
+                  onChange('');
+                }
+              }
+            );
+          };
+
+          return (
+            <View className="mb-3">
+              <ThemedText className="mb-2 text-base">Condizione della Proprietà</ThemedText>
+              <Pressable
+                className="border rounded min-h-[40px] h-[50px] justify-center px-3"
+                style={{ 
+                  borderColor: errors.condition ? themeErrorColor : borderColor, 
+                  backgroundColor: backgroundColor 
+                }}
+                onPress={showConditionOptions}
+              >
+                <ThemedText style={{ color: value ? textColor : textColor + '80' }}>
+                  {value ? t(`property_status.${value}`) : 'Seleziona condizione...'}
+                </ThemedText>
+              </Pressable>
+              {errors.condition && (
+                <ThemedText className="mt-1 mb-2.5 text-xs" style={{ color: themeErrorColor }}>
+                  {errors.condition.message as string}
+                </ThemedText>
+              )}
+            </View>
+          );
+        }}
+      />
       {/* Energy Class Selector using ActionSheet */}
       <Controller
         control={control}
@@ -293,7 +349,7 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
 
           return (
             <View className="mb-1.5">
-              <ThemedText className="mb-2 text-base">Classe Energetica</ThemedText>
+              <ThemedText className="mb-2 text-base">{t('energyClass')}</ThemedText>
               <Pressable
                 className="border rounded min-h-[40px] h-[50px] justify-center px-3"
                 style={{ 
@@ -303,7 +359,7 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
                 onPress={showEnergyClassOptions}
               >
                 <ThemedText style={{ color: value ? textColor : textColor + '80' }}>
-                  {value ? t(value) : 'Seleziona classe...'}
+                  {value ? t(value) : t('selectEnergyClass')}
                 </ThemedText>
               </Pressable>
               {errors.energyClass && (

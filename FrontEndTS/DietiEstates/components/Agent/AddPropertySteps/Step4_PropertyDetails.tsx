@@ -246,88 +246,33 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
           );
         }}
       />
-      <Controller control={control} name="ceilingHeight" /* rules rimosse */ render={({ field: { onChange, onBlur, value } }) => ( // Optional?
+      <Controller control={control} name="floor" render={({ field: { onChange, onBlur, value } }) => (
         <LabelInput
-          label="Altezza Soffitto (m)"
-          placeholder="Es. 4.5"
+          label="Piano"
+          placeholder="Es. 1 (0 per piano terra)"
           onBlur={onBlur}
           onChangeText={onChange}
           value={value}
           keyboardType="numeric"
-          error={!!errors.ceilingHeight}
-          errorMessage={errors.ceilingHeight?.message as string}
+          error={!!errors.floor}
+          errorMessage={errors.floor?.message as string}
         />
       )} />
-       <Controller control={control} name="floorLoad" /* rules rimosse */ render={({ field: { onChange, onBlur, value } }) => ( // Optional?
+       <Controller control={control} name="numberOfFloors" render={({ field: { onChange, onBlur, value } }) => (
          <LabelInput
-           label="Carico Pavimento (kg/mq)"
-           placeholder="Es. 1500"
+           label="Numero di Piani"
+           placeholder="Es. 2"
            onBlur={onBlur}
            onChangeText={onChange}
            value={value}
            keyboardType="numeric"
-           error={!!errors.floorLoad}
-           errorMessage={errors.floorLoad?.message as string}
+           error={!!errors.numberOfFloors}
+           errorMessage={errors.numberOfFloors?.message as string}
          />
       )} />
-       <Controller control={control} name="offices" /* rules rimosse */ render={({ field: { onChange, onBlur, value } }) => ( // Optional?
-         <LabelInput
-           label="Numero Uffici Interni"
-           placeholder="Es. 3"
-           onBlur={onBlur}
-           onChangeText={onChange}
-           value={value}
-           keyboardType="numeric"
-           error={!!errors.offices}
-           errorMessage={errors.offices?.message as string}
-         />
-      )} />
-      <Controller control={control} name="fireSystem" render={({ field: { onChange, value } }) => (
-         <View className="mb-1.5 flex-row justify-between items-center py-2 mt-2.5"><ThemedText className="text-base">Impianto Antincendio</ThemedText><Switch trackColor={{ false: borderColor, true: tint }} thumbColor={backgroundColor} ios_backgroundColor={borderColor} onValueChange={onChange} value={!!value} /></View>
-       )} />
-       <Controller
-         control={control}
-         name="structure"
-         render={({ field: { onChange, value } }) => { // Optional?
-           const { showActionSheetWithOptions } = useActionSheet();
-
-           const showStructureTypeOptions = () => {
-             const options = ['Seleziona struttura...', ...structureTypes, 'Annulla'];
-             const cancelButtonIndex = options.length - 1;
-
-             showActionSheetWithOptions(
-               {
-                 options,
-                 cancelButtonIndex,
-                 title: 'Seleziona Tipo Struttura',
-               },
-               (selectedIndex?: number) => {
-                 if (selectedIndex !== undefined && selectedIndex !== cancelButtonIndex && selectedIndex !== 0) {
-                   onChange(options[selectedIndex]);
-                 } else if (selectedIndex === 0) {
-                   onChange('');
-                 }
-               }
-             );
-           };
-
-           return (
-             <View className="mb-1.5">
-               <ThemedText className="mb-2 text-base">Tipo Struttura</ThemedText>
-               <Pressable
-                 className="border rounded min-h-[40px] h-[50px] justify-center px-3"
-                 style={{ borderColor: errors.structure ? themeErrorColor : borderColor, backgroundColor: backgroundColor }}
-                 onPress={showStructureTypeOptions}
-               >
-                 <ThemedText style={{ color: value ? textColor : textColor + '80' }}> {/* Cambia colore testo se selezionato, placeholder opacizzato */}
-                   {value || 'Seleziona struttura...'}
-                 </ThemedText>
-               </Pressable>
-               {errors.structure && <ThemedText className="mt-1 mb-2.5 text-xs" style={{ color: themeErrorColor }}>{errors.structure.message as string}</ThemedText>}
-             </View>
-           );
-         }}
-       />
+      <Controller control={control} name="hasSurveillance" render={({ field: { onChange, value } }) => (
+         <View className="mb-1.5 flex-row justify-between items-center py-2 mt-2.5"><ThemedText className="text-base">Impianto Sorveglianza</ThemedText><Switch trackColor={{ false: borderColor, true: tint }} thumbColor={backgroundColor} ios_backgroundColor={borderColor} onValueChange={onChange} value={!!value} /></View>
+       )}/>
     </>
   );
 

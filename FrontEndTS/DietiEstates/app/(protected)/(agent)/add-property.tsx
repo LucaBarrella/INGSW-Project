@@ -16,6 +16,7 @@ import StepIndicator from '@/components/StepIndicator';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { router } from 'expo-router';
 import { propertySchema, PropertyFormData } from './schemas/propertySchema'; // Importa lo schema e il tipo
+import httpClient from '@/src/core/httpClient';
 // import { usePropertiesViewModel } from '@/src/hooks/usePropertiesViewModel';
 
 // Define the complete form data structure
@@ -60,11 +61,11 @@ import { propertySchema, PropertyFormData } from './schemas/propertySchema'; // 
 const fieldsByStep: Record<number, FieldName<PropertyFormData>[]> = {
   1: ['listingType', 'propertyType'],
   2: ['description', 'price', 'area'],
-  3: ['addressRequest', 'energyClass'],
+  3: ['addressRequest', 'energyClass', 'condition'],
   4: [
       'residentialCategory', 'rooms', 'bathrooms', 'floor', 'elevator', 'pool',
       'commercialCategory', 'commercialBathrooms', 'emergencyExit', 'constructionDate',
-      'garageCategory', 'ceilingHeight', 'fireSystem', 'floorLoad', 'offices', 'structure',
+      'garageCategory', 'numberOfFloors',
       'landCategory', 'soilType', 'slope'
      ] as any[],
   5: [], // Nessun campo RHF per le foto per ora TODO (garage)
@@ -79,15 +80,15 @@ export default function AddPropertyScreen() {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const loading = false;
   const viewModelError = null;
-  const createProperty = async (data: any) => {
-    console.log("Create property is temporarily disabled. Simulating success.");
-    return Promise.resolve({ success: true });
+  const createProperty = async (data: any, images: string[]) => {
+    const response = await httpClient.post('/properties', { data, images });
+    return response.data;
   };
 
   const { control, handleSubmit, watch, setValue, trigger, formState: { errors } } = useForm<PropertyFormData>({
     resolver: zodResolver(propertySchema), // Applica il resolver
     defaultValues: {
-      contractType: undefined, // Usa undefined per i tipi enum/literal opzionali con Zod
+      contractType: undefined,
       propertyType: undefined,
       description: '',
       price: '',
@@ -102,12 +103,12 @@ export default function AddPropertyScreen() {
         latitude: undefined,
         longitude: undefined,
       },
+      condition: undefined,
       energyClass: 'NOT_APPLIABLE', // Potrebbe richiedere un valore di default valido per l'enum/picker
       elevator: false,
       pool: false,
       emergencyExit: false,
-      fireSystem: false,
-      // Aggiungere altri default se necessario per Zod
+      hasSurveillance: false,
     },
     mode: 'onBlur', // Valida quando l'utente lascia il campo per un feedback migliore
   });
@@ -124,7 +125,7 @@ export default function AddPropertyScreen() {
       case 1:
         return (
           <>
-            <ListingTypeSelector control={control} name="listingType" rules={{ required: 'Seleziona un tipo di annuncio' }} errors={errors} />
+            <ListingTypeSelector control={control} name="contractType" rules={{ required: 'Seleziona un tipo di annuncio' }} errors={errors} />
             <Step1_PropertyType control={control} name="propertyType" rules={{ required: 'Seleziona un tipo di proprietà' }} errors={errors} />
             <PropertyTypeDescription selectedType={watchedPropertyType} />
           </>
@@ -168,13 +169,14 @@ export default function AddPropertyScreen() {
 
   // Funzione di submit finale
   const onSubmit: SubmitHandler<PropertyFormData> = async (data) => {
+    console.log("isSubmitting:", isSubmitting);
     if (isSubmitting) return; // Previene submit multipli
     setIsSubmitting(true);
 
     try {
       // 1. Preparazione Dati
       const propertyData: any = {
-        listingType: data.contractType,
+        contractType: data.contractType,
         propertyType: data.propertyType,
         description: data.description,
         price: parseFloat(data.price), // Zod assicura che sia un numero stringa valido
@@ -187,11 +189,10 @@ export default function AddPropertyScreen() {
       // Aggiungi campi specifici in base al tipo
       switch (data.propertyType) {
         case 'RESIDENTIAL':
-          // Con Zod, i tipi dovrebbero essere già corretti se la validazione passa
           propertyData.category = data.residentialCategory;
-          propertyData.rooms = parseInt(data.rooms, 10);
-          propertyData.bathrooms = parseInt(data.bathrooms, 10);
-          propertyData.floor = parseInt(data.floor, 10); // Zod assicura che sia un numero stringa valido
+          propertyData.rooms = data.rooms;
+          propertyData.bathrooms = data.bathrooms;
+          propertyData.floor = data.floor;
           propertyData.elevator = data.elevator;
           propertyData.pool = data.pool;
           break;
@@ -203,11 +204,9 @@ export default function AddPropertyScreen() {
           break;
         case 'GARAGE':
           propertyData.category = data.garageCategory;
-          propertyData.ceilingHeight = parseFloat(data.ceilingHeight);
-          propertyData.fireSystem = data.fireSystem;
-          propertyData.floorLoad = parseInt(data.floorLoad, 10);
-          propertyData.offices = parseInt(data.offices, 10);
-          propertyData.structure = data.structure;
+          propertyData.hasSurveillance = data.hasSurveillance;
+          propertyData.numberOfFloors = data.numberOfFloors;
+          propertyData.floor = data.floor;
           break;
         case 'LAND':
           propertyData.category = data.landCategory;
@@ -219,29 +218,8 @@ export default function AddPropertyScreen() {
       console.log('Property Data Prepared:', propertyData);
       console.log('Selected Images:', selectedImages);
 
-      // 2. Upload Immagini
-      // DA SISTEMARE: Implementare upload immagini reale (es. FormData o SDK Cloudinary/S3)
-      console.log("DA SISTEMARE: Uploading images...");
-      const uploadedImageUrls: string[] = [];
-      for (const uri of selectedImages) {
-        try {
-          // TODO DA SISTEMARE: Implementare upload reale
-          // const uploadResult = await uploadImage(uri);
-          // uploadedImageUrls.push(uploadResult.url);
-          console.log(`DA SISTEMARE: Upload not implemented for ${uri}`);
-        } catch (uploadError) {
-          console.error(`DA SISTEMARE: Upload failed for ${uri}:`, uploadError);
-          throw new Error(`DA SISTEMARE: Errore durante l'upload dell'immagine: ${uploadError}`);
-        }
-      }
-      console.log("DA SISTEMARE: Image uploads complete:", uploadedImageUrls);
-
-      // 3. Chiamata al ViewModel
-      // Aggiungi gli URL delle immagini ai dati della proprietà (il nome del campo dipende dal backend)
-      propertyData.imageUrls = uploadedImageUrls;
-
       // Chiamata al ViewModel
-      const response = await createProperty(propertyData);
+      const response = await createProperty(propertyData, selectedImages);
       console.log("ViewModel Response:", response); // Log della risposta (utile per debug)
 
       // 4. Gestione Risposta - Naviga alla schermata di feedback
@@ -310,7 +288,7 @@ export default function AddPropertyScreen() {
               title={isSubmitting || loading ? "Salvataggio..." : "Salva Immobile"}
               onPress={handleSubmit(onSubmit)}
               disabled={isSubmitting || loading}
-              className="py-3 px-4 flex-grow" // Padding e flex-grow per il pulsante finale
+              className="py-3 px-4 flex-grow"
             >
               {(isSubmitting || loading) && <ActivityIndicator color={buttonTextColor} style={{ marginLeft: 8 }} />}
             </ThemedButton>

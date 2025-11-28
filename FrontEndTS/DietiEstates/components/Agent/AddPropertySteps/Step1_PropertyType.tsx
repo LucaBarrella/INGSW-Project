@@ -5,6 +5,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { CategoryButton } from '@/components/Buyer/CategoryButton'; // Importato CategoryButton
+import { t } from 'i18next';
 
 // Define PropertyType based on current file
 export type PropertyType = 'RESIDENTIAL' | 'COMMERCIAL' | 'GARAGE' | 'LAND';
@@ -37,7 +38,7 @@ export default function Step1_PropertyType({ control, name, rules, errors }: Ste
       render={({ field: { onChange, value } }) => ( // Get onChange and value from field
         <ThemedView className="p-6">
           <ThemedText type="defaultSemiBold" className="mb-3 text-base">
-            Tipo di Proprietà
+            {t('propertyType')}
           </ThemedText>
           {/* Manteniamo la View per il layout flex */}
           <View className="flex-row flex-wrap justify-between gap-y-4">
