@@ -68,7 +68,6 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
       housenumber,
       city,
       county,
-      state,
       country,
     } = properties;
 
@@ -257,12 +256,12 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
       <Controller
         control={control}
         name="addressRequest.latitude"
-        render={() => null}
+        render={() => <></>}
       />
       <Controller
         control={control}
         name="addressRequest.longitude"
-        render={() => null}
+        render={() => <></>}
       />
 
       {/* Energy Class Selector using ActionSheet */}
@@ -273,7 +272,7 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
           const { showActionSheetWithOptions } = useActionSheet();
 
           const showEnergyClassOptions = () => {
-            const options = ['Seleziona classe...', ...energyClasses, 'Annulla'];
+            const options = ['Seleziona classe...', ...energyClasses.map(ec => t(ec)), 'Annulla'];
             const cancelButtonIndex = options.length - 1;
 
             showActionSheetWithOptions(
