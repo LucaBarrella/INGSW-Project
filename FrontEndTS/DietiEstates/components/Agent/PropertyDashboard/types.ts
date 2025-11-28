@@ -16,6 +16,8 @@ export interface DashboardStats {
   averageBookingsPerProperty: number;
 }
 
+export type PropertyCondition = "UNDER_CONSTRUCTION" | "NEW" | "RENOVATED" | "GOOD_CONDITION" | "TO_BE_RENOVATED" | "POOR_CONDITION"; 
+
 export interface PropertyDTO {
   id: number;
   address: {
@@ -34,7 +36,7 @@ export interface PropertyDTO {
   type: keyof Omit<PropertyFilters, "general">; // 'residential', 'commercial', 'industrial', 'land'
   propertyCategory: string;
   price: number; // Prezzo come numero
-  condition: "UNDER_CONSTRUCTION" | "NEW" | "RENOVATED" | "GOOD_CONDITION" | "TO_BE_RENOVATED" | "POOR_CONDITION"; // Stato dell'immobile
+  condition: PropertyCondition;
   createdAt: number[]; // Data di creazione
   updatedAt: number[]; // Data di aggiornamento
   imageUrl?: string; // URL dell'immagine principale (opzionale)

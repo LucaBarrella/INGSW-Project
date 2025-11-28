@@ -46,11 +46,12 @@ const basePropertySchema = z.object({
   title: stringRequired.min(5, 'Il titolo deve essere di almeno 5 caratteri'),
   description: stringRequired.min(20, 'La descrizione deve essere di almeno 20 caratteri'),
   price: positiveNumber,
-  size: positiveNumber,
+  area: positiveNumber,
   address: stringRequired,
   city: stringRequired,
   energyClass: z.string().min(1, 'Seleziona una classe energetica'),
   availability: z.boolean(),
+  condition: z.enum(["UNDER_CONSTRUCTION", "NEW", "RENOVATED", "GOOD_CONDITION", "TO_BE_RENOVATED", "POOR_CONDITION"], { required_error: 'Seleziona la condizione della proprietà' }),
 });
 
 // Schema completo che discrimina in base al tipo di proprietà
