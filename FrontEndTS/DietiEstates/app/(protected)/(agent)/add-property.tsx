@@ -68,7 +68,7 @@ const fieldsByStep: Record<number, FieldName<PropertyFormData>[]> = {
       'garageCategory', 'numberOfFloors',
       'landCategory', 'soilType', 'slope'
      ] as any[],
-  5: [], // Nessun campo RHF per le foto per ora TODO (garage)
+  5: [],
 };
 
 export default function AddPropertyScreen() {
@@ -81,9 +81,36 @@ export default function AddPropertyScreen() {
   const loading = false;
   const viewModelError = null;
   const createProperty = async (data: any, images: string[]) => {
-    const response = await httpClient.post('/properties', { data, images });
-    return response.data;
-  };
+  const formData = new FormData();
+  
+  // Add the property data as a JSON string directly
+  // Spring Boot's @RequestPart will parse this automatically
+  formData.append('property', {
+    string: JSON.stringify(data),
+    type: 'application/json'
+  } as any);
+  
+  // Add each image file
+  for (let i = 0; i < images.length; i++) {
+    const uri = images[i];
+    const filename = uri.split('/').pop() || `image_${i}.webp`;
+    
+    formData.append('images', {
+      uri: uri,
+      type: 'image/webp',
+      name: filename,
+    } as any);
+  }
+  
+  const response = await httpClient.post('/properties', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    timeout: 60000,
+  });
+  
+  return response.data;
+};
 
   const { control, handleSubmit, watch, setValue, trigger, formState: { errors } } = useForm<PropertyFormData>({
     resolver: zodResolver(propertySchema), // Applica il resolver
@@ -173,23 +200,26 @@ export default function AddPropertyScreen() {
     if (isSubmitting) return; // Previene submit multipli
     setIsSubmitting(true);
 
+    console.log('Submitting Data:', data);
+
     try {
       // 1. Preparazione Dati
       const propertyData: any = {
+        propertyCategory: {propertyType: data.propertyType, name: data.residentialCategory || data.commercialCategory || data.garageCategory || data.landCategory},
         contractType: data.contractType,
         propertyType: data.propertyType,
         description: data.description,
         price: parseFloat(data.price), // Zod assicura che sia un numero stringa valido
         area: parseInt(data.area), // Zod assicura che sia un numero stringa valido
         addressRequest: data.addressRequest,
-        energyClass: data.energyClass, // Zod assicura che sia un valore valido
-        // Aggiungi campi specifici basati su propertyType
+        energyRating: data.energyClass, // Zod assicura che sia un valore valido
+        condition: data.condition,
       };
 
       // Aggiungi campi specifici in base al tipo
       switch (data.propertyType) {
         case 'RESIDENTIAL':
-          propertyData.category = data.residentialCategory;
+          propertyData.propertyCategoryName = data.residentialCategory;
           propertyData.rooms = data.rooms;
           propertyData.bathrooms = data.bathrooms;
           propertyData.floor = data.floor;
@@ -197,19 +227,19 @@ export default function AddPropertyScreen() {
           propertyData.pool = data.pool;
           break;
         case 'COMMERCIAL':
-          propertyData.category = data.commercialCategory;
+          propertyData.propertyCategoryName = data.commercialCategory;
           propertyData.bathrooms = parseInt(data.commercialBathrooms, 10);
           propertyData.emergencyExit = data.emergencyExit;
           propertyData.constructionDate = parseInt(data.constructionDate, 10); // Zod assicura che sia un anno valido
           break;
         case 'GARAGE':
-          propertyData.category = data.garageCategory;
+          propertyData.propertyCategoryName = data.garageCategory;
           propertyData.hasSurveillance = data.hasSurveillance;
           propertyData.numberOfFloors = data.numberOfFloors;
           propertyData.floor = data.floor;
           break;
         case 'LAND':
-          propertyData.category = data.landCategory;
+          propertyData.propertyCategoryName = data.landCategory;
           propertyData.soilType = data.soilType;
           propertyData.slope = parseFloat(data.slope);
           break;
