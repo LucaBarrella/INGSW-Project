@@ -15,6 +15,7 @@ import httpClient from '@/src/core/httpClient';
 import { PlaceDTO } from '@/src/dto/response/PlaceDTO';
 import { ServiceCard } from '@/components/Property/ServiceCard';
 import MapView, { Marker } from 'react-native-maps';
+import { generatePropertyImageUrls } from '@/src/utils/imageUtils';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -124,7 +125,17 @@ const PropertyDetailScreen: React.FC = () => {
     );
   }
 
-  const images = ['https://via.placeholder.com/400x250']; // Placeholder temporaneo
+  const images = (() => {
+    // Prefer generated URLs when available; fall back to placeholder
+    const generated = property ? generatePropertyImageUrls((property as any).firstImageUrl, (property as any).numberOfImages) : [];
+    // DEBUG: log generated array from imageUtils and final images used in the UI
+    console.log('property-detail: property.firstImageUrl ->', (property as any)?.firstImageUrl);
+    console.log('property-detail: property.numberOfImages ->', (property as any)?.numberOfImages);
+    console.log('property-detail: generated image URLs ->', generated);
+    const imgs = (generated && generated.length > 0) ? generated : ['https://via.placeholder.com/400x250'];
+    console.log('property-detail: final images array ->', imgs);
+    return imgs;
+  })();
 
   return (
     <ThemedView style={styles.container}>
