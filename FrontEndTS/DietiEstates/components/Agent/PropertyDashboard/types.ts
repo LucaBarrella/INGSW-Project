@@ -70,6 +70,10 @@ export interface PropertyDTO {
   };
 }
 
+export function formatAddress(address: PropertyDTO['address']): string {
+  return `${address?.city} (${address?.province}, ${address?.country}) - ${address.street} ${address?.streetNumber}`;
+}
+
 export interface PropertyDetail extends PropertyDTO {
 
   agentFullName?: string;

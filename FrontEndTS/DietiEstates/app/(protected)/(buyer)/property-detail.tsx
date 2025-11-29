@@ -19,12 +19,9 @@ import { generatePropertyImageUrls } from '@/src/utils/imageUtils';
 import VisitApiService from '@/src/api/VisitApi';
 import { AvailabilityDTO } from '@/src/dto/response/AvailabilityDTO';
 import HistoryStorageService from '@/src/services (old)/history.service';
+import { formatAddress } from '@/components/Agent/PropertyDashboard/types';
 
 const { width: screenWidth } = Dimensions.get('window');
-
-function formatAddress(address: PropertyDTO['address']): string {
-  return `${address?.city} (${address?.province}, ${address?.country}) - ${address.street} ${address?.streetNumber}`;
-}
 
 const PropertyDetailScreen: React.FC = () => {
   const { propertyId } = useLocalSearchParams();

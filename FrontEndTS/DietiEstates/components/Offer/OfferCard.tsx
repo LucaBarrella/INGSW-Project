@@ -8,6 +8,9 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
+import { OfferResponseDTO } from '@/src/dto/response/OfferResponseDTO';
+import { formatAddress } from '../Agent/PropertyDashboard/types';
+import { t } from 'i18next';
 
 export interface Offer {
   id: string;
@@ -22,7 +25,7 @@ export interface Offer {
 }
 
 interface OfferCardProps {
-  offer: Offer;
+  offer: OfferResponseDTO;
 }
 
 const StatusBadge = ({ status, color, icon }: { 
@@ -49,21 +52,21 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
-  const getStatusInfo = (status: Offer['status']): { color: string; icon: IconName; text: string } => {
+  const getStatusInfo = (status: OfferResponseDTO['status']): { color: string; icon: IconName; text: string } => {
     switch (status) {
-      case 'accettata':
+      case 'ACCEPTED':
         return {
           color: colors.visitStatusAccepted,
           icon: 'checkmark-circle-outline',
           text: 'Accettata',
         };
-      case 'rifiutata':
+      case 'REJECTED':
         return {
           color: colors.visitStatusRejected,
           icon: 'close-circle-outline',
           text: 'Rifiutata',
         };
-      case 'in attesa':
+      case 'PENDING':
         return {
           color: colors.visitStatusPending,
           icon: 'time-outline',
@@ -84,7 +87,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
     <ThemedView className="bg-background rounded-xl m-4 shadow-lg border-border" style={{ backgroundColor: 'transparent' }}>
       <ThemedView className="relative" style={{ backgroundColor: 'transparent' }}>
         <Image 
-          source={{ uri: offer.imageUrl }} 
+          source={{ uri: offer.property.firstImageUrl }} 
           className="w-full h-52 rounded-t-xl"
           resizeMode="cover"
         />
@@ -99,14 +102,14 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
         {/* Address Section */}
         <View className="flex-row items-start gap-2">
           <Ionicons name="location-outline" size={20} color={colors.text} className="mt-0.5" />
-          <ThemedText className="text-lg font-semibold flex-1">{offer.address}</ThemedText>
+          <ThemedText className="text-lg font-semibold flex-1">{formatAddress(offer.property.address)}</ThemedText>
         </View>
         
         {/* Financial and Date Details */}
         <View className="flex-row justify-between items-center">
           <View className="flex-row items-center gap-1.5">
             <Ionicons name="cash-outline" size={16} color={colors.text} />
-            <ThemedText className="text-muted-foreground">{offer.amount}</ThemedText>
+            <ThemedText className="text-muted-foreground">{offer.price}€</ThemedText>
           </View>
           
           <View className="flex-row items-center gap-1.5">
@@ -116,7 +119,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
         </View>
         
         {/* Description */}
-        <ThemedText className="text-sm text-muted-foreground">{offer.actionDescription}</ThemedText>
+        <ThemedText className="text-sm text-muted-foreground">{offer.property.description}</ThemedText>
         
         {/* Action Button */}
         <TouchableOpacity
@@ -126,9 +129,9 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
           }}
         >
           <ThemedText className="text-base font-bold" style={{ color: colors.buttonTextColor }}>
-            {offer.actionText}
+            {t('withdraw_offer')}
           </ThemedText>
-          <Ionicons name={offer.actionIcon} size={22} color={colors.buttonTextColor} />
+          <Ionicons name={'help-circle-outline'} size={22} color={colors.buttonTextColor} />
         </TouchableOpacity>
       </ThemedView>
     </ThemedView>

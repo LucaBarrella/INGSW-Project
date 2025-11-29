@@ -14,6 +14,7 @@ const VisitsIcon = ({ color }: { color: string }) => <MaterialIcons name="calend
 const AgendaIcon = ({ color }: { color: string }) => <MaterialIcons name="event-note" size={24} color={color} />;
 const OffersIcon = ({ color }: { color: string }) => <MaterialIcons name="real-estate-agent" size={24} color={color} />;
 const ProfileIcon = ({ color }: { color: string }) => <MaterialIcons name="person" size={24} color={color} />;
+const ReceivedOffersIcon = ({ color }: { color: string }) => <MaterialIcons name="inbox" size={24} color={color} />;
 
 
 export default function AgentTabLayout() {
@@ -60,6 +61,13 @@ export default function AgentTabLayout() {
         options={{
           title: t('agent.tabs.offers'),
           tabBarIcon: OffersIcon
+        }}
+      />
+      <Tabs.Screen
+        name="receivedOffers"
+        options={{
+          title: t('agent.tabs.receivedOffers'),
+          tabBarIcon: ReceivedOffersIcon
         }}
       />
       <Tabs.Screen
