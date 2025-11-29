@@ -87,7 +87,7 @@ export default function HomeTab() {
     <ThemedView style={{ flex: 1, backgroundColor }}>
       {/* SearchAndFilter fissata in alto, contenuto scrollabile dentro ScrollView (pattern agente) */}
       <SearchAndFilter
-        placeholder="Cerca immobili..."
+        placeholder={t('searchPlaceholder')}
         categories={CATEGORIES}
         onSearchTrigger={handleSearchSubmitNavigate}
       />

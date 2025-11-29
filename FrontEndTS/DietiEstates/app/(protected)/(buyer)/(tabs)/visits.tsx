@@ -40,11 +40,11 @@ export default function VisitsTab() {
         showsVerticalScrollIndicator={false}
       >
         {loading ? (
-          <ThemedText className="text-center text-gray-500">Loading visits...</ThemedText>
+          <ThemedText className="text-center text-gray-500">{t('loadingVisits')}</ThemedText>
         ) : error ? (
           <ThemedText className="text-center text-red-500">Error: {error.message}</ThemedText>
         ) : visits && visits.length === 0 ? (
-          <ThemedText className="text-center text-gray-500">No visits found.</ThemedText>
+          <ThemedText className="text-center text-gray-500">{t('noVisitsFound')}</ThemedText>
         ) : (
           <ThemedView>
             {visits && visits.map((visit: VisitDTO) => (

@@ -15,6 +15,8 @@
   "logout": "Esci",
   "profileTab": "Profilo",
   "your_visits": "Le tue Visite",
+  "loadingVisits": "Caricamento visite...",
+  "noVisitsFound": "Nessuna visita trovata.",
   "no_offers_available": "Nessuna offerta disponibile",
   "offers": "Offerte",
   "loading": "Caricamento...",
@@ -56,7 +58,8 @@
   "visitRequestedMessage": "La tua richiesta di visita è stata inviata all'agente. Riceverai una conferma via email una volta che l'agente avrà approvato la tua richiesta.",
   "failedToRequestVisit": "Impossibile richiedere la visita",
   "pleaseTryAnotherTimeSlot": "Non è stato possibile richiedere una visita per l'orario specificato. Per favore prova un altro orario.",
-
+  "noDescriptionAvailable": "Descrizione non disponibile",
+  "searchPlaceholder": "Cerca immobile...",
 
   "setting": {
     "language": "Lingua"

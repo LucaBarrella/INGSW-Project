@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { VisitService } from '../services/VisitService';
 import { VisitRepository } from '../repositories/VisitRepository';
 import { VisitDTO } from '../dto/VisitDTO';
@@ -21,27 +22,25 @@ export const useBuyerVisits = (): UseBuyerVisitsResult => {
   const visitRepository = new VisitRepository();
   const visitService = new VisitService(visitRepository);
 
-  useEffect(() => {
-    const fetchVisits = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        console.log("[useBuyerVisits] Fetching visits");
-        const data: PagedVisitsDTO = await visitService.getVisitsByBuyer();
-        console.log(JSON.stringify(data));
-        const visitDTOs: VisitDTO[] = data.content;
-        setVisits(visitDTOs);
-      } catch (err) {
-        console.log("Failed to fetch buyer visits:", err);
-        setError(err as Error);
-      } finally {
-        console.log("[useBuyerVisits] Finished fetching visits");
-        setLoading(false);
-      }
-    };
+  const fetchVisits = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data: PagedVisitsDTO = await visitService.getVisitsByBuyer();
+      setVisits(data.content);
+    } catch (err) {
+      console.log("Failed to fetch buyer visits:", err);
+      setError(err as Error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchVisits();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchVisits();
+    }, [])
+  );
 
   return { visits, loading, error };
 };

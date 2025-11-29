@@ -210,13 +210,7 @@ const PropertyDetailScreen: React.FC = () => {
           <View style={styles.detailItem}>
             <ThemedIcon icon="material-symbols:home-outline" size={24} lightColor={themeColors.text} darkColor={themeColors.text} accessibilityLabel="Proprietà" />
             <ThemedText style={styles.detailText}>
-              Proprietà
-            </ThemedText>
-          </View>
-          <View style={styles.detailItem}>
-            <ThemedIcon icon="material-symbols:person-add-outline" size={24} lightColor={themeColors.text} darkColor={themeColors.text} accessibilityLabel="Agente" />
-            <ThemedText style={styles.detailText}>
-              Agente: {property.agent.id || 'N/A'}
+              {t('property_category.sub.' + property.propertyCategory)}
             </ThemedText>
           </View>
           <View style={styles.detailItem}>
@@ -236,7 +230,7 @@ const PropertyDetailScreen: React.FC = () => {
         {/*Description */}
         <View style={styles.descriptionContainer}>
           <ThemedText style={styles.descriptionText}>
-            {property.description || 'Descrizione non disponibile'}
+            {property.description || t('noDescriptionAvailable')}
           </ThemedText>
         </View>
 
