@@ -1,6 +1,7 @@
 import { VisitDTO } from '../dto/VisitDTO';
 import httpClient from '../core/httpClient';
 import { PagedVisitsDTO } from '../dto/response/PagedVisitsDTO';
+import { AvailabilityDTO } from '../dto/response/AvailabilityDTO';
 // Definisce i path relativi degli endpoint API per la gestione delle visite
 // NOTA: Gli endpoint per le visite non erano presenti nel file api.service.ts originale.
 // Vengono aggiunti qui come esempio. Sarà necessario definirli correttamente con il backend.
@@ -103,6 +104,11 @@ export const createVisit = async (propertyId: number, agentId: number, startTime
   return response.data;
 };
 
+export const getAvailableSlots = async (agentId: number | string): Promise<AvailabilityDTO[]> => {
+  const response = await httpClient.get<AvailabilityDTO[]>(`/agents/${agentId}/availabilities`);
+  return response.data;
+}
+
 /**
  * Annulla una visita pianificata.
  * @param visitId - L'ID della visita da annullare.
@@ -137,5 +143,6 @@ export default {
   updateVisitStatus,
   cancelVisit,
   confirmVisit,
-  createVisit
+  createVisit,
+  getAvailableSlots
 };

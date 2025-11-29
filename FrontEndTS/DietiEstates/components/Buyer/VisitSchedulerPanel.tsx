@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Alert, TouchableWithoutFeedback } from 'react-native';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import AnimatedSlideUpPanel from '../common/AnimatedSlideUpPanel';
 import { getMeteoForTheDay, getTimeFromIndex, getEmojiFromMeteoCode } from '../../src/services (old)/OpenMeteoApiService';
@@ -7,48 +7,53 @@ import { Ionicons } from '@expo/vector-icons';
 import { ThemedIcon } from '@/components/ThemedIcon';
 import { useVisits } from '@/src/hooks/useVisits';
 import { t } from 'i18next';
+import { AvailabilityDTO } from '@/src/dto/response/AvailabilityDTO';
 
 // --- Helper Functions ---
-const getDaysInMonth = (date: Date, availableDates: string[]) => {
+const getDaysInMonth = (date: Date, availabilities: AvailabilityDTO[]) => {
+  // Create a Set of available dates for faster lookup, normalized to midnight UTC
+  const availableDateStrings = new Set(
+    availabilities.map(a => {
+      const d = new Date(a.startTime * 1000);
+      d.setHours(0, 0, 0, 0);
+      return d.toISOString().split('T')[0];
+    })
+  );
+
   const year = date.getFullYear();
   const month = date.getMonth();
   const numDays = new Date(year, month + 1, 0).getDate();
   const days: Day[] = [];
   const today = new Date();
-  today.setHours(0, 0, 0, 0); // Normalize today to the start of the day
+  today.setHours(0, 0, 0, 0);
 
   for (let i = 1; i <= numDays; i++) {
     const dayDate = new Date(year, month, i);
-    dayDate.setHours(0, 0, 0, 0); // Normalize dayDate
+    dayDate.setHours(0, 0, 0, 0);
     const dateString = dayDate.toISOString().split('T')[0];
 
-    // Only add days that are today or in the future AND are available
+    // Only add days that are today or in the future
     const isPastDay = dayDate.getTime() < today.getTime();
-    const isAvailable = availableDates.includes(dateString);
+    const isAvailable = availableDateStrings.has(dateString);
 
-    if (!isPastDay) { // Only add days that are today or in the future
+    if (!isPastDay) {
       days.push({
         date: dayDate,
         dayName: dayDate.toLocaleDateString('en-US', { weekday: 'short' }),
         dayNumber: i,
         isToday: dayDate.getTime() === today.getTime(),
-        isAvailable: isAvailable, // Now correctly reflects if the date is in availableDates
+        isAvailable: isAvailable,
       });
     }
   }
   return days;
 };
 
-// --- Available Times ---
-const availableTimes = [
-  '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '14:00', '14:30'
-];
-
 // --- Interfaces ---
 interface VisitSchedulerPanelProps {
   isVisible: boolean;
   onClose: () => void;
-  availableDates: string[];
+  availableDates: AvailabilityDTO[];
   propertyId: number;
   agentId: number;
 }
@@ -86,6 +91,29 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
   const buttonTextColor = useThemeColor({}, 'buttonTextColor');
   const disabledColor = useThemeColor({}, 'visitStatusDeleted');
   const [isAgentAvailable, setIsAgentAvailable] = useState<boolean>(true);
+  const scrollViewRef = React.useRef<ScrollView>(null);
+
+
+  // --- Available Times ---
+  const availableTimes = () => {
+    if (!selectedDay) return [];
+
+    // read available slots for the selected day, get all "half hour" slots from start to end of availability
+    const availabilityForTheDay = availableDates.find(ad => { const curr = new Date(ad.startTime * 1000); curr.setHours(0, 0, 0, 0); return curr.getTime() === selectedDay.date.getTime(); });
+    if (!availabilityForTheDay) return [];
+
+    const slots: string[] = [];
+    const start = new Date(availabilityForTheDay.startTime * 1000);
+    const end = new Date(availabilityForTheDay.endTime * 1000);
+
+    for (let time = new Date(start); time < end; time.setMinutes(time.getMinutes() + 30)) {
+      const hours = time.getHours().toString().padStart(2, '0');
+      const minutes = time.getMinutes().toString().padStart(2, '0');
+      slots.push(`${hours}:${minutes}`);
+    }
+
+    return slots;
+  }
 
   // --- Effects ---
   useEffect(() => {
@@ -98,34 +126,46 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Find the earliest available date that is today or in the future
-    const firstAvailableDay = availableDates
-      .map(d => new Date(d))
-      .sort((a, b) => a.getTime() - b.getTime())
-      .find(d => d.getTime() >= today.getTime());
+    // When changing months, just update the days for the current month
+    // Don't reset currentDate or auto-select
+    const isInitialLoad = days.length === 0;
 
-    let initialDateToSet = new Date();
-    if (firstAvailableDay) {
-      initialDateToSet = firstAvailableDay;
+    if (isInitialLoad) {
+      // Initial load logic - find first available day
+      const firstAvailableDay = availableDates
+        .map(a => new Date(a.startTime * 1000).toISOString().split('T')[0])
+        .map(d => new Date(d))
+        .sort((a, b) => a.getTime() - b.getTime())
+        .find(d => d.getTime() >= today.getTime());
+
+      let initialDateToSet = new Date();
+      if (firstAvailableDay) {
+        initialDateToSet = firstAvailableDay;
+      } else {
+        initialDateToSet = today;
+        setIsAgentAvailable(false);
+      }
+
+      setCurrentDate(initialDateToSet);
+      setDays(getDaysInMonth(initialDateToSet, availableDates));
+
+      // Auto-select the first available day that is today or in the future
+      const dayToAutoSelect = getDaysInMonth(initialDateToSet, availableDates).find(
+        day => day.isAvailable && day.date.getTime() >= today.getTime()
+      );
+      if (dayToAutoSelect) {
+        setSelectedDay(dayToAutoSelect);
+      }
     } else {
-      initialDateToSet = today;
-      setIsAgentAvailable(false);
+      // Month change - just update days for current month
+      setDays(getDaysInMonth(currentDate, availableDates));
     }
-
-    setCurrentDate(initialDateToSet);
-    setDays(getDaysInMonth(initialDateToSet, availableDates));
-
-    // Auto-select the first available day that is today or in the future
-    const dayToAutoSelect = getDaysInMonth(initialDateToSet, availableDates).find(day => day.isAvailable && day.date.getTime() >= today.getTime());
-    if (dayToAutoSelect) {
-      setSelectedDay(dayToAutoSelect);
-    }
-  }, [availableDates]);
+  }, [availableDates, currentDate]); // Add currentDate to dependencies
 
 
   // --- Handlers ---
   const handleVisitConfirmation = () => {
-    if (selectedDay && selectedTime){
+    if (selectedDay && selectedTime) {
       createVisit(propertyId, agentId, selectedDay.date, selectedTime).then((result) => {
         if (result.success !== false) {
           Alert.alert(t('visitRequestedSuccessfully'), t('visitRequestedMessage'));
@@ -146,6 +186,9 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
     });
     setSelectedDay(null);
     setSelectedTime(null);
+    setTimeout(() => {
+      scrollViewRef.current?.scrollTo({ x: 0, animated: false });
+    }, 0);
   };
 
   const handleSelectDay = (day: Day) => {
@@ -179,107 +222,110 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
     >
       {isAgentAvailable ? (
         <>
-      <ScrollView showsVerticalScrollIndicator={false} className="flex-1 p-4 pb-0">
-        <Text style={{ color: textColor }} className="text-2xl font-bold text-center mb-4">Schedule Your Visit</Text>
+          <ScrollView showsVerticalScrollIndicator={false} className="flex-1 p-4 pb-0">
+            <Text style={{ color: textColor }} className="text-2xl font-bold text-center mb-4">Schedule Your Visit</Text>
 
-        {/* Month Selector */}
-        <View className="flex-row items-center justify-between px-2 py-2">
-          <TouchableOpacity onPress={() => handleMonthChange(-1)} className="p-2 rounded-full hover:bg-gray-100">
-            <Ionicons name="chevron-back" size={24} color={textSecondaryColor} />
-          </TouchableOpacity>
-          <Text style={{ color: textColor }} className="text-lg font-bold">
-            {currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-          </Text>
-          <TouchableOpacity onPress={() => handleMonthChange(1)} className="p-2 rounded-full hover:bg-gray-100">
-            <Ionicons name="chevron-forward" size={24} color={textSecondaryColor} />
-          </TouchableOpacity>
-        </View>
-
-        {/* Day Selector */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-2 px-4 py-2 -mx-4">
-          {days.map((day) => {
-            const isSelected = selectedDay?.date.getTime() === day.date.getTime();
-            const isDisabled = !day.isAvailable;
-
-            return (
-              <TouchableOpacity
-                key={day.date.toISOString()}
-                onPress={() => handleSelectDay(day)}
-                disabled={isDisabled}
-                className="flex flex-col items-center justify-center gap-1.5 h-20 w-14 shrink-0 rounded-xl p-2"
-                style={{
-                  backgroundColor: isSelected ? brandColor : (day.isToday && !isSelected ? mutedBackgroundColor : 'transparent'),
-                  borderColor: day.isToday && !isSelected ? brandColor : 'transparent',
-                  borderWidth: 1,
-                  opacity: isDisabled ? 0.5 : 1,
-                }}
-              >
-                <Text style={{ color: isSelected ? buttonTextColor : (day.isToday && !isSelected ? brandColor : textColor) }} className="text-sm font-medium">
-                  {day.dayName}
-                </Text>
-                <Text style={{ color: isSelected ? buttonTextColor : (day.isToday && !isSelected ? brandColor : textColor) }} className="text-lg font-bold">
-                  {day.dayNumber}
-                </Text>
+            {/* Month Selector */}
+            <View className="flex-row items-center justify-between px-2 py-2">
+              <TouchableOpacity onPress={() => handleMonthChange(-1)} className="p-2 rounded-full hover:bg-gray-100">
+                <Ionicons name="chevron-back" size={24} color={textSecondaryColor} />
               </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
+              <Text style={{ color: textColor }} className="text-lg font-bold">
+                {currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+              </Text>
+              <TouchableOpacity onPress={() => handleMonthChange(1)} className="p-2 rounded-full hover:bg-gray-100">
+                <Ionicons name="chevron-forward" size={24} color={textSecondaryColor} />
+              </TouchableOpacity>
+            </View>
 
-        {/* Time Selector */}
-        {selectedDay && (
-          <>
-            <Text style={{ color: textColor }} className="text-base font-semibold px-4 pt-6 pb-3">Available Times</Text>
-            <View className="flex-row flex-wrap justify-between px-4 pb-4">
-              {availableTimes.map(time => {
-                const isSelected = selectedTime === time;
+            {/* Day Selector */}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} ref={scrollViewRef} className="flex-row gap-2 px-4 py-2 -mx-4">
+              {days.map((day) => {
+                const isSelected = selectedDay?.date.getTime() === day.date.getTime();
+                const isDisabled = !day.isAvailable;
+
                 return (
-                  <TouchableOpacity
-                    key={time}
-                    onPress={() => setSelectedTime(time)}
-                    className="h-10 rounded-full items-center justify-center basis-[48%] mb-3"
-                    style={{
-                      backgroundColor: isSelected ? brandColor : brandColor+"32",
-                      borderColor: isSelected ? brandColor : borderColor,
-                      borderWidth: 1,
-                      flexDirection: 'row'
-                    }}
-                  >
-                    <ThemedIcon icon={`${getEmojiFromMeteoCode(meteo.get(time))}`} size={38} accessibilityLabel={''}></ThemedIcon>
-                    <Text style={{ color: isSelected ? buttonTextColor : textColor, fontWeight: isSelected ? 'bold' : 'normal' }}>
-                      {time}
-                    </Text>
-                  </TouchableOpacity>
+                  <TouchableWithoutFeedback key={day.date.toISOString()} onPress={()=>{}}>
+                    <View onStartShouldSetResponder={() => true}>
+                      <TouchableOpacity
+                        onPress={() => handleSelectDay(day)}
+                        disabled={isDisabled}
+                        className="flex flex-col items-center justify-center gap-1.5 h-20 w-14 shrink-0 rounded-xl p-2"
+                        style={{
+                          backgroundColor: isSelected ? brandColor : (day.isToday && !isSelected ? mutedBackgroundColor : 'transparent'),
+                          borderColor: day.isToday && !isSelected ? brandColor : 'transparent',
+                          borderWidth: 1,
+                          opacity: isDisabled ? 0.5 : 1,
+                        }}
+                      >
+                        <Text style={{ color: isSelected ? buttonTextColor : (day.isToday && !isSelected ? brandColor : textColor) }} className="text-sm font-medium">
+                          {day.dayName}
+                        </Text>
+                        <Text style={{ color: isSelected ? buttonTextColor : (day.isToday && !isSelected ? brandColor : textColor) }} className="text-lg font-bold">
+                          {day.dayNumber}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </TouchableWithoutFeedback>
                 );
               })}
-            </View>
-          </>
-        )}
-      </ScrollView>
+            </ScrollView>
 
-      {/* Footer Button */}
-      <View style={{ backgroundColor, borderTopColor: borderColor }} className="sticky bottom-0 p-4 pt-2 border-t mb-8">
-        <TouchableOpacity
-          disabled={!selectedDay || !selectedTime}
-          className="w-full h-12 rounded-full flex items-center justify-center"
-          style={{ backgroundColor: (!selectedDay || !selectedTime) ? disabledColor : brandColor }}
-          onPress={handleVisitConfirmation}
-        >
-          <Text style={{ color: buttonTextColor }} className="text-base font-bold">
-            {selectedTime ? `Confirm Visit for ${selectedTime}` : 'Select a time slot'}
-          </Text>
-        </TouchableOpacity>
-      </View>
-      </>)
-      : (
-        <View className="flex-1 items-center justify-center p-4">
-          <Text style={{ color: textColor }} className="text-xl font-semibold text-center mb-4">
-            {t('agentHasNoAvailability')}
-          </Text>
-          <Text style={{ color: textSecondaryColor }} className="text-center">
-            {t('pleaseTryAgainLaterOrContactAgent')}
-          </Text>
-        </View>
-      )}
+            {/* Time Selector */}
+            {selectedDay && (
+              <>
+                <Text style={{ color: textColor }} className="text-base font-semibold px-4 pt-6 pb-3">Available Times</Text>
+                <View className="flex-row flex-wrap justify-between px-4 pb-4">
+                  {availableTimes().map(time => {
+                    const isSelected = selectedTime === time;
+                    return (
+                      <TouchableOpacity
+                        key={time}
+                        onPress={() => setSelectedTime(time)}
+                        className="h-10 rounded-full items-center justify-center basis-[48%] mb-3"
+                        style={{
+                          backgroundColor: isSelected ? brandColor : brandColor + "32",
+                          borderColor: isSelected ? brandColor : borderColor,
+                          borderWidth: 1,
+                          flexDirection: 'row'
+                        }}
+                      >
+                        <ThemedIcon icon={`${getEmojiFromMeteoCode(meteo.get(time))}`} size={38} accessibilityLabel={''}></ThemedIcon>
+                        <Text style={{ color: isSelected ? buttonTextColor : textColor, fontWeight: isSelected ? 'bold' : 'normal' }}>
+                          {time}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              </>
+            )}
+          </ScrollView>
+
+          {/* Footer Button */}
+          <View style={{ backgroundColor, borderTopColor: borderColor }} className="sticky bottom-0 p-4 pt-2 border-t mb-8">
+            <TouchableOpacity
+              disabled={!selectedDay || !selectedTime}
+              className="w-full h-12 rounded-full flex items-center justify-center"
+              style={{ backgroundColor: (!selectedDay || !selectedTime) ? disabledColor : brandColor }}
+              onPress={handleVisitConfirmation}
+            >
+              <Text style={{ color: buttonTextColor }} className="text-base font-bold">
+                {selectedTime ? `Confirm Visit for ${selectedTime}` : 'Select a time slot'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </>)
+        : (
+          <View className="flex-1 items-center justify-center p-4">
+            <Text style={{ color: textColor }} className="text-xl font-semibold text-center mb-4">
+              {t('agentHasNoAvailability')}
+            </Text>
+            <Text style={{ color: textSecondaryColor }} className="text-center">
+              {t('pleaseTryAgainLaterOrContactAgent')}
+            </Text>
+          </View>
+        )}
     </AnimatedSlideUpPanel>
   );
 };
