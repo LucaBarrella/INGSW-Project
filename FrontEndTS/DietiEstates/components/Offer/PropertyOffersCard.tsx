@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { View, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { PropertyWithOffers, Offer, OfferStatus } from '@/src/dto/offers';
+import { PropertyWithOffers } from '@/src/dto/offers';
 import SingleOfferItem from './SingleOfferItem';
 
 interface PropertyOffersCardProps {
@@ -37,7 +37,7 @@ const PropertyOffersCard: React.FC<PropertyOffersCardProps> = ({
   };
 
   // Filtra solo le offerte attive
-  const activeOffers = property.offers.filter(offer => offer.status === OfferStatus.Active);
+  const activeOffers = property.offers.filter(offer => offer.status === 'PENDING');
   
   // Trova l'offerta più alta tra quelle attive
   const highestOffer = activeOffers.length > 0 

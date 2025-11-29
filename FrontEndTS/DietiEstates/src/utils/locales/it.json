@@ -18,6 +18,8 @@
   "loadingVisits": "Caricamento visite...",
   "noVisitsFound": "Nessuna visita trovata.",
   "no_offers_available": "Nessuna offerta disponibile",
+  "loading_offers": "Caricamento offerte...",
+  "error_loading_offers": "Errore durante il caricamento delle offerte.",
   "offers": "Offerte",
   "loading": "Caricamento...",
   "visit_requests": "Richieste di visita",
@@ -192,7 +194,8 @@
       "dashboard": "Dashboard",
       "visits": "Visite",
       "agenda": "Agenda",
-      "offers": "Offerte"
+      "offers": "Offerte",
+      "receivedOffers": "Offerte Ricevute"
     },
     "profile": {
       "title": "Profilo Agente",

@@ -3,6 +3,7 @@ import httpClient from '../core/httpClient';
 
 const offerEndpoints = {
     getOffers: '/offers',
+    getReceivedOffers: '/offers/agent_offers',
 } as const;
 
 export const getUserOffers = async (): Promise<OfferResponseDTO[]> => {
@@ -12,6 +13,14 @@ export const getUserOffers = async (): Promise<OfferResponseDTO[]> => {
   return response.data;
 };
 
+const getReceivedOffers = async (): Promise<OfferResponseDTO[]> => {
+  const url = offerEndpoints.getReceivedOffers;
+  const response = await httpClient.get(url);
+  console.log('Fetched received offers:', response.data);
+  return response.data;
+}
+
 export default {
-    getUserOffers
+    getUserOffers,
+    getReceivedOffers
 };

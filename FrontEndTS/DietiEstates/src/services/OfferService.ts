@@ -5,4 +5,7 @@ export class OfferService implements IOfferService {
     async getOffers(): Promise<OfferResponseDTO[]> {
         return OfferApiService.getUserOffers();
     }
+    async getReceivedOffers(): Promise<OfferResponseDTO[]> {
+        return OfferApiService.getReceivedOffers();
+    }
 }

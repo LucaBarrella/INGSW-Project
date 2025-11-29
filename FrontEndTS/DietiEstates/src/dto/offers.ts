@@ -1,12 +1,7 @@
 /**
  * Rappresenta lo stato di un'offerta.
  */
-export enum OfferStatus {
-  Active = 'active',
-  Accepted = 'accepted',
-  Rejected = 'rejected',
-  Archived = 'archived', // Stato per offerte cancellate dalla vista dell'agente
-}
+export type OfferStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'WITHDRAWN' | 'COUNTERED';
 
 /**
  * Rappresenta l'acquirente che ha effettuato l'offerta.
