@@ -71,6 +71,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
           data={properties}
           keyExtractor={item => String(item.id)}
           contentContainerStyle={{ padding: 16 }}
+          ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
           renderItem={({ item }) => (
             <BuyerPropertyCard
               property={item}
