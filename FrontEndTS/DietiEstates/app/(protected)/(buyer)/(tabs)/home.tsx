@@ -1,13 +1,12 @@
-import React, { useEffect } from 'react';
-import { View, ActivityIndicator, SafeAreaView, FlatList, ScrollView } from 'react-native';
-import { useRouter } from 'expo-router';
+import React from 'react';
+import { View, ActivityIndicator, FlatList, SafeAreaView } from 'react-native';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { BuyerPropertyCard } from '@/components/Buyer/BuyerPropertyCard';
 import { CategoryButton } from '@/components/Buyer/CategoryButton';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { SearchAndFilter, Categories } from '@/components/Buyer/SearchIntegration';
-// import ApiService from '@/src/services/api.service'; // Importa ApiService
 import useInfiniteHistory from '@/hooks/useInfiniteHistory';
 import HistoryPlaceholder from '@/components/Buyer/HistoryPlaceholder';
 import { useTranslation } from 'react-i18next';
@@ -70,84 +69,83 @@ export default function HomeTab() {
     });
   };
 
-  const handlePropertyPress = (propertyId: number) => { // Accetta ID numerico
-    // TODO: Navigare alla schermata dettagli immobile
-    console.log('Property pressed:', propertyId);
+  const handlePropertyPress = (propertyId: number) => {
+    router.push({
+      pathname: '/(protected)/(buyer)/property-detail',
+      params: { propertyId: propertyId.toString() },
+    });
   };
 
 
   // carica la cronologia al mount
-  useEffect(() => {
-    loadInitialHistory().catch((err) => {
-      console.error('[HomeTab] loadInitialHistory failed', err);
-    });
-  }, [loadInitialHistory]);
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log('[HomeTab] Screen focused, reloading history.');
+      loadInitialHistory().catch((err) => {
+        console.error('[HomeTab] loadInitialHistory failed on focus', err);
+      });
+    }, [loadInitialHistory])
+  );
+
+  const ListHeader = (
+    <View style={{ padding: 16, paddingBottom: 0 }}>
+      <View className="flex-row flex-wrap justify-between gap-y-4">
+        {Object.entries(CATEGORIES).map(([key, category]) => (
+          <View key={key} className="w-[48%]">
+            <CategoryButton
+              icon={CATEGORY_ICONS[key as keyof typeof CATEGORY_ICONS]}
+              label={t("property_category." + category.name)}
+              onPress={() => handleCategoryPress(key)}
+            />
+          </View>
+        ))}
+      </View>
+      <View className="mt-6 mb-4">
+        <ThemedText className="text-xl font-semibold">{t('propertiesYouHaveSeen')}</ThemedText>
+      </View>
+    </View>
+  );
+
+  const EmptyListComponent = (
+    <View style={{padding: 16, alignItems: 'center'}}>
+      {historyIsLoading ? (
+        <ActivityIndicator size="large" className="my-4" />
+      ) : historyError ? (
+        <ThemedText style={{ color: errorColor }} className="text-center my-4">
+          {historyError}
+        </ThemedText>
+      ) : (
+        <HistoryPlaceholder />
+      )}
+    </View>
+  );
 
   return (
     <ThemedView style={{ flex: 1, backgroundColor }}>
-      {/* SearchAndFilter fissata in alto, contenuto scrollabile dentro ScrollView (pattern agente) */}
       <SearchAndFilter
         placeholder={t('searchPlaceholder')}
         categories={CATEGORIES}
         onSearchTrigger={handleSearchSubmitNavigate}
       />
-
-      <ScrollView contentContainerStyle={{ padding: 16 }} className="flex-grow">
-        <View className="flex-row flex-wrap justify-between gap-y-4">
-          {Object.entries(CATEGORIES).map(([key, category]) => (
-            <View key={key} className="w-[48%]">
-              <CategoryButton
-                icon={CATEGORY_ICONS[key as keyof typeof CATEGORY_ICONS]}
-                label={t("property_category." + category.name)}
-                onPress={() => handleCategoryPress(key)}
-              />
-            </View>
-          ))}
-        </View>
-
-        <View className="mt-6">
-          <ThemedText className="text-xl font-semibold mb-4">{t('propertiesYouHaveSeen')}</ThemedText>
-
-          {historyIsLoading ? (
-            <ActivityIndicator size="large" className="my-4" />
-          ) : historyError ? (
-            <ThemedText style={{ color: errorColor }} className="text-center my-4">
-              {historyError}
-            </ThemedText>
-          ) : properties && properties.length === 0 ? (
-            <View style={{ alignItems: 'center' }}>
-              <HistoryPlaceholder />
-            </View>
-          ) : (
-            // Lista orizzontale dei recenti
-            <View className="w-full overflow-hidden">
-              <FlatList
-                data={properties}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                keyExtractor={(item) => String(item.id)}
-                contentContainerStyle={{ paddingHorizontal: 4 }}
-                style={{ width: '100%' }}
-                renderItem={({ item }) => (
-                  <ThemedView style={{ marginRight: 12, width: 280 }}>
-                    <BuyerPropertyCard
-                      property={item}
-                      onPress={() => handlePropertyPress(item.id)}
-                    />
-                  </ThemedView>
-                )}
-                ListFooterComponent={isFetchingMore ? <ActivityIndicator size="small" className="my-4" /> : null}
-                onEndReached={loadMoreHistory}
-                onEndReachedThreshold={0.5}
-                nestedScrollEnabled={false}
-              />
-            </View>
+      <SafeAreaView style={{ flex: 1 }}>
+        <FlatList
+          data={properties}
+          keyExtractor={(item) => String(item.id)}
+          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 80 }}
+          ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+          renderItem={({ item }) => (
+            <BuyerPropertyCard
+              property={item}
+              onPress={() => handlePropertyPress(item.id)}
+            />
           )}
-        </View>
-
-
-        <SafeAreaView style={{ height: 40 }} />
-      </ScrollView>
+          ListHeaderComponent={ListHeader}
+          ListEmptyComponent={EmptyListComponent}
+          ListFooterComponent={isFetchingMore ? <ActivityIndicator size="large" className="my-4" /> : null}
+          onEndReached={loadMoreHistory}
+          onEndReachedThreshold={0.5}
+        />
+      </SafeAreaView>
     </ThemedView>
   );
 }

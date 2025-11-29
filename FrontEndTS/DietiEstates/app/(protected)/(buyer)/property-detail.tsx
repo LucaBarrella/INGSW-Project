@@ -18,6 +18,7 @@ import MapView, { Marker } from 'react-native-maps';
 import { generatePropertyImageUrls } from '@/src/utils/imageUtils';
 import VisitApiService from '@/src/api/VisitApi';
 import { AvailabilityDTO } from '@/src/dto/response/AvailabilityDTO';
+import HistoryStorageService from '@/src/services (old)/history.service';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -99,6 +100,15 @@ const PropertyDetailScreen: React.FC = () => {
     };
     fetchAvailability();
   }, [property, propertyId]);
+
+  useEffect(() => {
+    if (property?.id) {
+      console.log(`[property-detail] Adding property ${property.id} to history.`);
+      HistoryStorageService.addPropertyToHistory(property.id).catch((err) => {
+        console.error('[property-detail] Failed to add property to history', err);
+      });
+    }
+  }, [property]);
 
   const handleBack = () => {
     router.back();

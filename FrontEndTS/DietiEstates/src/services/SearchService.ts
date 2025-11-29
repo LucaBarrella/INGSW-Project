@@ -15,6 +15,7 @@ import { SearchState } from '@/context/SearchContext';
 
 import FilterPayloadBuilder from '@/src/services/FilterPayloadBuilder';
 import type { SearchCriteria, Geolocation } from '@/src/dto/SearchDTO';
+import type { PropertyDetailDTO } from '@/src/dto/PropertyDetailsDTO';
 
 /** Carica lo stato (parte) persistito tramite il repository */
 export async function loadPersistedState(): Promise<Partial<SearchState>> {
@@ -43,6 +44,11 @@ export async function getSuggestions(query: string): Promise<PhotonFeature[]> {
 /** Salva i suggerimenti delegando al repository */
 export async function saveSuggestions(query: string, suggestions: PhotonFeature[]): Promise<void> {
   return SuggestionsRepository.saveSuggestions(query, suggestions);
+}
+
+/** Recupera i dettagli delle proprietà a partire dagli id (delegato al repository) */
+export async function getPropertiesByIds(propertyIds: string[]): Promise<PropertyDetailDTO[]> {
+  return SearchRepository.getPropertiesByIds(propertyIds);
 }
 
 export default {

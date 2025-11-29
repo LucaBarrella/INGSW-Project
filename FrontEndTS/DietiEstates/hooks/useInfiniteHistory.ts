@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import type { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
 import HistoryStorageService from '@/src/services (old)/history.service';
+import { getPropertiesByIds as searchGetPropertiesByIds } from '@/src/services/SearchService';
 
 const PAGE_LIMIT = 10;
 const MAX_IN_MEMORY = 50;
@@ -25,11 +26,34 @@ export default function useInfiniteHistory(): UseInfiniteHistoryState {
   const [hasMore, setHasMore] = useState<boolean>(true);
 
   const fetchPropertiesByIds = useCallback(async (ids: number[]) => {
-    // TODO: Implementare la nuova logica per il recupero dei dettagli delle proprietà.
-    // Per ora, simulo un array vuoto o dati di esempio.
-    console.log('[useInfiniteHistory] fetchPropertiesByIds: Simulazione di recupero dettagli proprietà per ID:', ids);
-    await new Promise(resolve => setTimeout(resolve, 300)); // Simula un ritardo di rete
-    return []; // Restituisce un array vuoto
+    if (!ids || ids.length === 0) return [];
+    // SearchService expects string ids
+    const idStrings = ids.map(String);
+    const dtos = await searchGetPropertiesByIds(idStrings);
+    
+    // Mappa i DTO restituiti al tipo UI PropertyDetail
+    const mapped = (dtos || []).map((d: any) => {
+      console.log('[useInfiniteHistory] Raw DTO for history item:', JSON.stringify(d, null, 2));
+      return {
+        id: d.id,
+        title: d.title || d.name || '',
+        address: d.address?.street ? `${d.address.street}, ${d.address.city}` : d.address,
+        price: d.price ?? 0,
+        imageUrl: d.firstImageUrl || '',
+        firstImageUrl: d.firstImageUrl || '', // Aggiunto per PropertyCard
+        type: d.propertyCategory || d.type || '',
+        condition: d.condition || d.status || '', // Modificato da status a condition
+        createdAt: d.createdAt ? new Date(d.createdAt) : new Date(),
+        updatedAt: d.updatedAt ? new Date(d.updatedAt) : new Date(),
+        agentId: d.agent?.id || d.id_agent || '',
+        propertyCategory: d.propertyCategory,
+        contractType: d.contract,
+        area: d.area,
+        numberOfBathrooms: d.numberOfBathrooms,
+        numberOfRooms: d.numberOfRooms,
+      } as unknown as PropertyDetail;
+    });
+    return mapped;
   }, []);
 
   const loadInitialHistory = useCallback(async () => {
