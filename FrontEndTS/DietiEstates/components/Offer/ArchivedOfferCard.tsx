@@ -3,22 +3,12 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { OfferResponseDTO } from '@/src/dto/response/OfferResponseDTO';
+import { formatAddress } from '../Agent/PropertyDashboard/types';
 
 export interface ArchivedOfferCardProps {
-  offer: {
-    id: string;
-    status: 'accepted' | 'rejected';
-    propertyImage: string;
-    propertyName: string;
-    propertyAddress: string;
-    offerAmount: number;
-    buyerName: string;
-    buyerId: string;
-    rejectionReason?: string;
-    offeror?: string;
-    proposal?: string;
-  };
-  onContactBuyer?: (buyerId: string) => void;
+  offer: OfferResponseDTO;
+  onContactBuyer: (email: string) => void;
 }
 
 export function ArchivedOfferCard({ offer, onContactBuyer }: ArchivedOfferCardProps) {
@@ -30,13 +20,13 @@ export function ArchivedOfferCard({ offer, onContactBuyer }: ArchivedOfferCardPr
   const buttonBackground = useThemeColor({}, 'buttonBackground');
   const buttonTextColor = useThemeColor({}, 'buttonTextColor');
 
-  const isAccepted = offer.status === 'accepted';
+  const isAccepted = offer.status === 'ACCEPTED';
 
   return (
     <ThemedView style={[styles.card, { borderColor: border, backgroundColor: backgroundMuted }]}>
       <View style={styles.imageContainer}>
         <Image
-          source={{ uri: offer.propertyImage }}
+          source={{ uri: offer.property.firstImageUrl || (offer.property.imageUrl ? offer.property.imageUrl[0] : '') }}
           style={[styles.propertyImage, !isAccepted && styles.grayscaleImage]}
         />
         <View style={[styles.statusBadge, { backgroundColor: isAccepted ? success : error }]}>
@@ -47,17 +37,17 @@ export function ArchivedOfferCard({ offer, onContactBuyer }: ArchivedOfferCardPr
       </View>
 
       <View style={styles.detailsContainer}>
-        <ThemedText style={styles.propertyName}>{offer.propertyName}</ThemedText>
-        <ThemedText style={[styles.propertyAddress, { color: textColor }]}>{offer.propertyAddress}</ThemedText>
-        <ThemedText style={styles.offerAmount}>Offerta: €{offer.offerAmount.toLocaleString('it-IT')}</ThemedText>
+        <ThemedText style={styles.propertyName}>{offer.property.propertyCategory}</ThemedText>
+        <ThemedText style={[styles.propertyAddress, { color: textColor }]}>{formatAddress(offer.property.address)}</ThemedText>
+        <ThemedText style={styles.offerAmount}>Offerta: €{offer.price.toLocaleString('it-IT')}</ThemedText>
 
         {isAccepted ? (
           <View style={styles.buyerInfo}>
             {/* UserIcon placeholder */}
-            <ThemedText style={styles.buyerName}>Acquirente: {offer.buyerName}</ThemedText>
+            <ThemedText style={styles.buyerName}>Acquirente: {offer.user.fullName}</ThemedText>
             <TouchableOpacity
               style={[styles.contactButton, { backgroundColor: buttonBackground }]}
-              onPress={() => onContactBuyer && onContactBuyer(offer.buyerId)}
+              onPress={() => onContactBuyer && onContactBuyer(offer.user.email)}
             >
               <Text style={[styles.contactButtonText, { color: buttonTextColor }]}>Contatta Acquirente</Text>
             </TouchableOpacity>
@@ -65,9 +55,8 @@ export function ArchivedOfferCard({ offer, onContactBuyer }: ArchivedOfferCardPr
         ) : (
           <View style={styles.rejectionLog}>
             <ThemedText style={styles.logTitle}>Log Rifiuto:</ThemedText>
-            {offer.offeror && <ThemedText style={styles.logText}>Offerente: {offer.offeror}</ThemedText>}
-            {offer.proposal && <ThemedText style={styles.logText}>Proposta: {offer.proposal}</ThemedText>}
-            {offer.rejectionReason && <ThemedText style={styles.logText}>Motivazione: {offer.rejectionReason}</ThemedText>}
+            <ThemedText style={styles.logText}>Offerente: {offer.user.fullName}</ThemedText>
+            <ThemedText style={styles.logText}>Proposta: {offer.price}</ThemedText>
           </View>
         )}
       </View>

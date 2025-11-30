@@ -1,8 +1,10 @@
 import React from 'react';
-import { FlatList, ActivityIndicator, StyleSheet } from 'react-native';
-import { ArchivedOfferCard, ArchivedOfferCardProps } from './ArchivedOfferCard';
+import { FlatList, ActivityIndicator, StyleSheet, Linking } from 'react-native';
+import { ArchivedOfferCard } from './ArchivedOfferCard';
 import { ThemedText } from '@/components/ThemedText';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { useOffers } from '@/src/hooks/useOffers';
+import { t } from 'i18next';
 
 interface ArchivedOffersListProps {
   filter: 'accepted' | 'rejected';
@@ -11,40 +13,40 @@ interface ArchivedOffersListProps {
 // Placeholder for the actual React Query hook
 // This hook should fetch archived offers based on the provided status filter
 function useGetArchivedOffers(status: 'accepted' | 'rejected') {
-  // TODO: Replace with actual API call using React Query
-  // const { data, isLoading, isError } = useQuery(['archived-offers', status], () =>
-  //   fetchArchivedOffers(status)
-  // );
+  const {loading, receivedOffers, fetchReceivedOffers, error} = useOffers();
 
-  // For now, return empty data
-  const data: Array<ArchivedOfferCardProps['offer']> = [];
-  const isLoading = false;
-  const isError = false;
+  React.useEffect(() => {
+    fetchReceivedOffers();
+  }, [status]);
 
-  return { data, isLoading, isError };
+  return { receivedOffers: receivedOffers.filter(offer => offer.status.toLowerCase() === status), loading, error };
+}
+
+const handleContactBuyer = (email: string) => {
+  Linking.openURL(`mailto:${email}`);
 }
 
 export function ArchivedOffersList({ filter }: ArchivedOffersListProps) {
-  const { data: offers, isLoading, isError } = useGetArchivedOffers(filter);
+  const { receivedOffers: offers, loading, error } = useGetArchivedOffers(filter);
   const textColor = useThemeColor({}, 'text');
 
-  if (isLoading) {
+  if (loading) {
     return <ActivityIndicator style={styles.loadingIndicator} size="large" color={textColor} />;
   }
 
-  if (isError) {
-    return <ThemedText style={[styles.errorText, { color: textColor }]}>Errore nel caricamento delle offerte.</ThemedText>;
+  if (error) {
+    return <ThemedText style={[styles.errorText, { color: textColor }]}>{t('errorLoadingOffers')}</ThemedText>;
   }
 
   if (!offers || offers.length === 0) {
-    return <ThemedText style={[styles.noOffersText, { color: textColor }]}>Nessuna offerta {filter === 'accepted' ? 'accettata' : 'rifiutata'} trovata.</ThemedText>;
+    return <ThemedText style={[styles.noOffersText, { color: textColor }]}>{t('noOffersFound', { status: t(`offer_status.${filter.toUpperCase()}`) })}</ThemedText>;
   }
 
   return (
     <FlatList
       data={offers}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) => <ArchivedOfferCard offer={item} />}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={({ item }) => <ArchivedOfferCard offer={item} onContactBuyer={handleContactBuyer} />}
       contentContainerStyle={styles.listContainer}
     />
   );

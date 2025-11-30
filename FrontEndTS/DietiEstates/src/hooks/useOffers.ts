@@ -27,7 +27,7 @@ export const useOffers = () => {
     setError(null);
     try {
       const data = (await offerService.getReceivedOffers());
-      setReceivedOffers(data.content);
+      setReceivedOffers(data.content); // TODO actually receives "paged" data
     } catch (err: any) {
       setError(err.message || 'Failed to fetch received offers');
     } finally {

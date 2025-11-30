@@ -18,7 +18,6 @@ export default function OffersTab() {
 
   useEffect(() => {
     if (!receivedOffers) return;
-    console.log(JSON.stringify(receivedOffers));
     receivedOffers.forEach(offer => {
       const propertyIndex = propertiesWithOffers.findIndex(p => p.id === offer.property.id.toString());
       let mappedOffer : Offer = {
@@ -56,17 +55,14 @@ export default function OffersTab() {
   };
 
   const handleAcceptHighestRejectOthers = async (propertyId: string) => {
-    console.log("Accept highest offer for propertyId: " + propertyId);
     const properties = propertiesWithOffers.filter(p => p.id === propertyId);
     if (properties.length === 0) return;
     const property = properties[0];
     const activeOffers = property.offers.filter(offer => offer.status === 'PENDING');
-    console.log("Active offers for propertyId " + propertyId + ": " + JSON.stringify(activeOffers));
     if (activeOffers.length === 0) return;
     const highestOffer = activeOffers.reduce((highest, current) => 
       current.amount > highest.amount ? current : highest
     );
-    console.log("Highest offer for propertyId " + propertyId + ": " + JSON.stringify(highestOffer));
 
     Alert.alert(
       t('confirmAcceptHighestOfferTitle'),

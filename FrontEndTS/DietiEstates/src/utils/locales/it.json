@@ -71,6 +71,8 @@
   "confirmAcceptHighestOfferMessage": "Sei sicuro di voler accettare l'offerta più alta per questo immobile (di {{amount}}€)? Tutte le altre offerte in sospeso verranno rifiutate automaticamente.",
   "confirmRejectOfferMessage": "Sei sicuro di voler rifiutare questa offerta?",
   "offerAcceptedSuccess": "Offerta Accettata",
+  "noOffersFound": "Nessuna offerta {{status}} trovata",
+  "errorLoadingOffers": "Errore nel caricamento delle offerte",
 
   "setting": {
     "language": "Lingua"
