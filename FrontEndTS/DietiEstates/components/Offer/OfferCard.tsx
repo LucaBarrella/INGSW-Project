@@ -11,6 +11,7 @@ import { Colors } from '@/constants/Colors';
 import { OfferResponseDTO } from '@/src/dto/response/OfferResponseDTO';
 import { formatAddress } from '../Agent/PropertyDashboard/types';
 import { t } from 'i18next';
+import { useOffers } from '@/src/hooks/useOffers';
 
 export interface Offer {
   id: string;
@@ -72,6 +73,12 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
           icon: 'time-outline',
           text: 'In attesa',
         };
+      case 'WITHDRAWN':
+        return {
+          color: colors.visitStatusWithdrawn,
+          icon: 'remove-circle-outline',
+          text: 'Ritirata',
+        };
       default:
         return {
           color: colors.text,
@@ -82,6 +89,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
   };
 
   const statusInfo = getStatusInfo(offer.status);
+  const { withdrawOffer } = useOffers();
 
   return (
     <ThemedView className="bg-background rounded-xl m-4 shadow-lg border-border" style={{ backgroundColor: 'transparent' }}>
@@ -122,17 +130,38 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
         <ThemedText className="text-sm text-muted-foreground">{offer.property.description}</ThemedText>
         
         {/* Action Button */}
-        <TouchableOpacity
+        {
+          (offer.status === 'PENDING') ? <TouchableOpacity
           className="w-full flex-row items-center justify-center gap-2 mt-2 px-4 py-3 rounded-lg"
           style={{
             backgroundColor: colors.buttonBackground,
+          }}
+          onPress={() => {
+            withdrawOffer(offer.property.id.toString());
           }}
         >
           <ThemedText className="text-base font-bold" style={{ color: colors.buttonTextColor }}>
             {t('withdraw_offer')}
           </ThemedText>
           <Ionicons name={'help-circle-outline'} size={22} color={colors.buttonTextColor} />
-        </TouchableOpacity>
+        </TouchableOpacity> : (
+          (offer.status === 'COUNTERED') && <TouchableOpacity
+            className="w-full flex-row items-center justify-center gap-2 mt-2 px-4 py-3 rounded-lg"
+            style={{
+              backgroundColor: colors.buttonBackground,
+            }}
+            onPress={() => {
+              console.log("accept countered offer");
+            }}
+          >
+            <ThemedText className="text-base font-bold" style={{ color: colors.buttonTextColor }}>
+              {t('accept_countered_offer')}
+            </ThemedText>
+            <Ionicons name={'swap-horizontal-outline'} size={22} color={colors.buttonTextColor} />
+          </TouchableOpacity>
+        )
+        }
+        
       </ThemedView>
     </ThemedView>
   );

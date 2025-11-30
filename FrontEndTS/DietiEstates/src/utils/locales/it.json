@@ -73,6 +73,23 @@
   "offerAcceptedSuccess": "Offerta Accettata",
   "noOffersFound": "Nessuna offerta {{status}} trovata",
   "errorLoadingOffers": "Errore nel caricamento delle offerte",
+  "yourOffer": "La tua offerta",
+  "askingPrice": "Prezzo richiesto",
+  "propertyAddress": "Indirizzo della proprietà",
+  "makeAnOffer": "Fai la tua offerta",
+  "enterAnAmountBelow": "La tua offerta deve essere inferiore al prezzo richiesto di {{price}}.",
+  "invalidOfferAmount": "Per favore inserisci un importo valido inferiore al prezzo richiesto.",
+  "bySubmittingOfferYouAgreeToOurTerms": "Inviando la tua offerta, accetti i nostri termini e condizioni. Questa non è un'offerta legalmente vincolante fino a quando entrambe le parti non l'avranno accettata.",
+  "submitOffer": "Invia Offerta",
+  "enterAnAmount": "Inserisci un importo",
+  "areYouSure": "Sei sicuro?",
+  "confirmSubmitOffer": "Confermi di voler inviare un'offerta di {{amount}} per la proprietà in {{address}}?",
+  "cancel": "Annulla",
+  "confirm": "Conferma",
+  "offerSubmitted": "Offerta Inviata",
+  "yourOfferHasBeenSubmitted": "La tua offerta è stata inviata con successo.",
+  "accept_countered_offer": "Accetta Controfferta",
+  "withdraw_offer": "Ritira Offerta",
 
   "setting": {
     "language": "Lingua"

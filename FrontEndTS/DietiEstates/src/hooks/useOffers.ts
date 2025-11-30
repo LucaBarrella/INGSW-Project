@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { OfferService } from '../services/OfferService';
 import { IOfferService } from '../services/interfaces/IOfferService';
 import { OfferResponseDTO } from '../dto/response/OfferResponseDTO';
+import { CreateOfferRequest } from '../dto/request/CreateOfferRequest.dto';
 
 export const useOffers = () => {
   const [offers, setOffers] = useState<OfferResponseDTO[]>([]);
@@ -71,6 +72,18 @@ export const useOffers = () => {
     }
   };
 
+  const createOffer = async (offerData: CreateOfferRequest) => {
+    setLoading(true);
+    setError(null);
+    try {
+      return await offerService.createOffer(offerData);
+    } catch (err: any) {
+      setError(err.message || 'Failed to create offer');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     offers,
     receivedOffers,
@@ -80,6 +93,7 @@ export const useOffers = () => {
     fetchReceivedOffers,
     acceptOffer,
     rejectOffer,
-    withdrawOffer
+    withdrawOffer,
+    createOffer
   };
 };

@@ -127,6 +127,10 @@ const PropertyDetailScreen: React.FC = () => {
     }
   };
 
+  console.log(JSON.stringify(property));
+  const optionalPropertyDetails = ['area', ''
+  ]
+
   const styles = createStyles(themeColors);
 
   if (fetchingProperty) {
@@ -309,6 +313,7 @@ const PropertyDetailScreen: React.FC = () => {
         onClose={() => setOfferPanelVisible(false)}
         propertyAddress={formatAddress(property?.address) || 'Indirizzo non disponibile'}
         askingPrice={property?.price ? property.price.toString() : '0'}
+        propertyId={property.id.toString()}
       />
 
       {/* Gallery Modal */}

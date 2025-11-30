@@ -1,3 +1,4 @@
+import { CreateOfferRequest } from "@/src/dto/request/CreateOfferRequest.dto";
 import { OfferResponseDTO } from "@/src/dto/response/OfferResponseDTO";
 export interface IOfferService {
     getOffers(): Promise<OfferResponseDTO[]>;
@@ -5,4 +6,5 @@ export interface IOfferService {
     acceptOffer(offerId: string): Promise<void>;
     rejectOffer(offerId: string): Promise<void>;
     withdrawOffer(offerId: string): Promise<void>;
+    createOffer(offerData: CreateOfferRequest): Promise<any>;
 }

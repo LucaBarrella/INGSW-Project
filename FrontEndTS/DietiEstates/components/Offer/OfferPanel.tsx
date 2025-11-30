@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import AnimatedSlideUpPanel from '@/components/common/AnimatedSlideUpPanel';
+import { t } from 'i18next';
+import { useOffers } from '@/src/hooks/useOffers';
 
 interface OfferPanelProps {
   isVisible: boolean;
   onClose: () => void;
+  propertyId: string;
   propertyAddress: string;
   askingPrice: string;
 }
@@ -18,9 +21,11 @@ const OfferPanel: React.FC<OfferPanelProps> = ({
   onClose,
   propertyAddress,
   askingPrice,
+  propertyId
 }) => {
   const [offerAmount, setOfferAmount] = useState('');
   const [isValidAmount, setIsValidAmount] = useState(false);
+  const {createOffer} = useOffers();
   
   // Theme colors
   const textColor = useThemeColor({}, 'text');
@@ -86,6 +91,31 @@ const OfferPanel: React.FC<OfferPanelProps> = ({
     }).format(price);
   };
 
+  const handleSubmit = () => {
+    Alert.alert(t('areYouSure'), t('confirmSubmitOffer', { amount: formatPrice(parseFloat(offerAmount)), address: propertyAddress }), [
+      {
+        text: t('cancel'),
+        style: 'cancel',
+      },
+      {
+        text: t('confirm'),
+        onPress: async () => {
+          const response = await createOffer({
+            price: parseFloat(offerAmount.replace(',', '.')),
+            propertyId
+          });
+          if (response.success !== false) {
+            Alert.alert(t('offerSubmitted'), t('yourOfferHasBeenSubmittedSuccessfully'));
+            onClose();
+          }
+          else {
+            Alert.alert(t('error'), t('failedToSubmitOffer'));
+          }
+        },
+      },
+    ]);
+  }
+
   return (
     <AnimatedSlideUpPanel
       isVisible={isVisible}
@@ -109,7 +139,7 @@ const OfferPanel: React.FC<OfferPanelProps> = ({
         <View className="flex-1 p-6">
           {/* Title */}
           <ThemedText className="text-2xl font-bold text-center mb-6" style={{ color: textColor }}>
-            Make Your Offer
+            {t('makeAnOffer')}
           </ThemedText>
 
           {/* Property Info Card */}
@@ -124,7 +154,7 @@ const OfferPanel: React.FC<OfferPanelProps> = ({
               <Ionicons name="home-outline" size={20} color={textColor} />
               <View className="flex-1">
                 <ThemedText className="font-semibold mb-1" style={{ color: textColor }}>
-                  Property Address
+                  {t('propertyAddress')}
                 </ThemedText>
                 <ThemedText className="text-sm" style={{ color: textSecondaryColor }}>
                   {propertyAddress}
@@ -136,7 +166,7 @@ const OfferPanel: React.FC<OfferPanelProps> = ({
               <Ionicons name="cash-outline" size={20} color={textColor} />
               <View className="flex-1">
                 <ThemedText className="font-semibold mb-1" style={{ color: textColor }}>
-                  Asking Price
+                  {t('askingPrice')}
                 </ThemedText>
                 <ThemedText className="text-sm" style={{ color: textSecondaryColor }}>
                   {formatPrice(parseFloat(askingPrice.replace(/[^\d.]/g, '')))}
@@ -148,7 +178,7 @@ const OfferPanel: React.FC<OfferPanelProps> = ({
           {/* Offer Amount Input */}
           <View className="mb-4">
             <ThemedText className="font-semibold mb-2" style={{ color: textColor }}>
-              Your Offer Amount
+              {t('yourOffer')}
             </ThemedText>
             <View className="relative">
               <View className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10">
@@ -166,7 +196,7 @@ const OfferPanel: React.FC<OfferPanelProps> = ({
                   paddingLeft: 40,
                   paddingRight: 40,
                   textAlign: 'center',
-                  lineHeight: 0,
+                  lineHeight: 1,
                 }}
                 value={formatCurrency(offerAmount)}
                 onChangeText={handleAmountChange}
@@ -179,21 +209,20 @@ const OfferPanel: React.FC<OfferPanelProps> = ({
             
             {/* Info Text */}
             <ThemedText className="text-sm mt-2" style={{ color: textSecondaryColor }}>
-              Your offer must be below the asking price.
+              {t('enterAnAmountBelow', { price: formatPrice(parseFloat(askingPrice.replace(/[^\d.]/g, ''))) })}
             </ThemedText>
             
             {/* Error Message */}
             {!isValidAmount && offerAmount && (
               <ThemedText className="text-sm mt-1" style={{ color: errorColor }}>
-                Please enter a valid amount below the asking price.
+                {t('invalidOfferAmount')}
               </ThemedText>
             )}
           </View>
 
           {/* Legal Text */}
           <ThemedText className="text-xs text-center mt-6 mb-8" style={{ color: textSecondaryColor }}>
-            By submitting your offer, you agree to our terms and conditions.
-            This is not a binding contract until both parties have accepted.
+            {t('bySubmittingOfferYouAgreeToOurTerms')}
           </ThemedText>
 
           {/* Submit Button */}
@@ -203,9 +232,10 @@ const OfferPanel: React.FC<OfferPanelProps> = ({
               backgroundColor: isValidAmount ? brandColor : 'rgba(107, 114, 128, 0.5)',
             }}
             disabled={!isValidAmount}
+            onPress={handleSubmit}
           >
             <ThemedText className="text-base font-bold" style={{ color: buttonTextColor }}>
-              {offerAmount ? 'Submit Offer' : 'Enter an Amount'}
+              {offerAmount ? t('submitOffer') : t('enterAnAmount')}
             </ThemedText>
           </TouchableOpacity>
         </View>
