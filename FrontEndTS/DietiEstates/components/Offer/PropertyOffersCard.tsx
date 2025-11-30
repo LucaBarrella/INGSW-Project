@@ -6,6 +6,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { PropertyWithOffers } from '@/src/dto/offers';
 import SingleOfferItem from './SingleOfferItem';
+import { t } from 'i18next';
 
 interface PropertyOffersCardProps {
   property: PropertyWithOffers;
@@ -13,6 +14,7 @@ interface PropertyOffersCardProps {
   onRejectOffer: (offerId: string) => void;
   onCounterOffer: (offerId: string) => void;
   onAcceptHighestRejectOthers: (propertyId: string) => void;
+  onInsertExternalOffer: (propertyId: string, propertyAddress: string, askingPrice: string) => void;
 }
 
 const PropertyOffersCard: React.FC<PropertyOffersCardProps> = ({
@@ -21,6 +23,7 @@ const PropertyOffersCard: React.FC<PropertyOffersCardProps> = ({
   onRejectOffer,
   onCounterOffer,
   onAcceptHighestRejectOthers,
+  onInsertExternalOffer
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const textColor = useThemeColor({}, 'text');
@@ -135,7 +138,7 @@ const PropertyOffersCard: React.FC<PropertyOffersCardProps> = ({
             onPress={() => onAcceptHighestRejectOthers(property.id)}
           >
             <ThemedText className="text-sm font-medium" style={{ color: 'white' }}>
-              Accetta Offerta più Alta & Rifiuta Altre
+              {t('acceptHighestRejectOthersButton')}
             </ThemedText>
           </TouchableOpacity>
 
@@ -156,8 +159,25 @@ const PropertyOffersCard: React.FC<PropertyOffersCardProps> = ({
       {isExpanded && activeOffers.length === 0 && (
         <View className="px-4 pb-4">
           <ThemedText className="text-center text-sm" style={{ color: secondaryColor }}>
-            Non ci sono offerte attive per questa proprietà.
+            {t('noActiveOffersForThisProperty')}
           </ThemedText>
+        </View>
+      )}
+
+      {/* Pulsante per inserire un'offerta esterna */}
+      {isExpanded && (
+        <View className="px-4 pb-4">
+          <TouchableOpacity
+            className="w-full h-10 rounded-lg flex items-center justify-center border"
+            style={{
+              borderColor: brandColor,
+            }}
+            onPress={() => onInsertExternalOffer(property.id, property.address, formatCurrency(property.price))}
+          >
+            <ThemedText className="text-sm font-medium" style={{ color: brandColor }}>
+              {t('insertExternalOfferButton')}
+            </ThemedText>
+          </TouchableOpacity>
         </View>
       )}
     </ThemedView>

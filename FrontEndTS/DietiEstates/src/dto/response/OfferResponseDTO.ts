@@ -4,7 +4,7 @@ import { UserInfo } from "../agenda";
 export interface OfferResponseDTO {
     id: number;
     property: PropertyDTO;
-    user: UserInfo;
+    user?: UserInfo;
     price: number;
     date: string; // ISO string
     status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'WITHDRAWN' | 'COUNTERED';

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
@@ -7,13 +7,25 @@ import { ThemedText } from "@/components/ThemedText";
 import { AgentPropertyCard } from "@/components/Agent/PropertyListing/AgentPropertyCard";
 import ThemedButton from "@/components/ThemedButton";
 import { PropertyDetail } from "@/components/Agent/PropertyDashboard/types"; // Importa il tipo unificato
-
-// TODO DA SISTEMARE: Implementare recupero proprietà reali dal server
-// const { data: properties, isLoading, error } = useQuery(['agent-properties'], fetchAgentProperties);
-const properties: PropertyDetail[] = [];
+import { t } from "i18next";
+import httpClient from "@/src/core/httpClient";
 
 export default function Properties() {
   const router = useRouter(); // Initialize router
+  const [properties, setProperties] = useState<PropertyDetail[]>([]);
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const response = await httpClient.get('/api/properties/agent_properties/');
+        setProperties(response.data);
+      } catch (error) {
+        console.error('Errore nel recupero delle proprietà:', error);
+      }
+    };
+
+    fetchProperties();
+  }, []);
 
   const handlePropertyClick = (propertyId: number) => { // Accetta ID numerico
     // Handle property click
@@ -34,7 +46,7 @@ export default function Properties() {
                 Immobili
               </ThemedText>
               <ThemedButton
-                title="Aggiungi immobile"
+                title={t('addProperty')}
                 onPress={handleAddProperty}
                 borderRadius={10}
                 className="px-4 py-2 rounded-md mb-0"
@@ -52,7 +64,7 @@ export default function Properties() {
               ))}
               {properties.length === 0 && (
                 <ThemedText className="text-center text-gray-500 mt-8">
-                  Nessun immobile disponibile
+                  {t('noPropertiesFound')}
                 </ThemedText>
               )}
             </ThemedView>

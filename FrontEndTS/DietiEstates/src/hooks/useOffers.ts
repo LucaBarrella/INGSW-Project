@@ -28,6 +28,7 @@ export const useOffers = () => {
     setError(null);
     try {
       const data = (await offerService.getReceivedOffers());
+      data.content.forEach(offer => console.log("offer: ", JSON.stringify(offer)));
       setReceivedOffers(data.content); // TODO actually receives "paged" data
     } catch (err: any) {
       setError(err.message || 'Failed to fetch received offers');
@@ -97,6 +98,18 @@ export const useOffers = () => {
     }
   };
 
+  const createExternalOffer = async (offerData: CreateOfferRequest) => {
+    setLoading(true);
+    setError(null);
+    try {
+      return await offerService.createExternalOffer(offerData);
+    } catch (err: any) {
+      setError(err.message || 'Failed to create external offer');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     offers,
     receivedOffers,
@@ -108,6 +121,7 @@ export const useOffers = () => {
     rejectOffer,
     withdrawOffer,
     counterOffer,
-    createOffer
+    createOffer,
+    createExternalOffer
   };
 };

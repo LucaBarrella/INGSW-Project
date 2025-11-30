@@ -20,6 +20,7 @@ interface OffersDashboardScreenProps {
   onRejectOffer: (offerId: string) => void;
   onCounterOffer: (offerId: string) => void;
   onAcceptHighestRejectOthers: (propertyId: string) => void;
+  onInsertExternalOffer: (propertyId: string, propertyAddress: string, askingPrice: string) => void;
 }
 
 const OffersDashboardScreen: React.FC<OffersDashboardScreenProps> = ({
@@ -31,6 +32,7 @@ const OffersDashboardScreen: React.FC<OffersDashboardScreenProps> = ({
   onRejectOffer,
   onCounterOffer,
   onAcceptHighestRejectOthers,
+  onInsertExternalOffer,
 }) => {
   const router = useRouter();
   const textColor = useThemeColor({}, 'text');
@@ -64,6 +66,7 @@ const OffersDashboardScreen: React.FC<OffersDashboardScreenProps> = ({
       onRejectOffer={onRejectOffer}
       onCounterOffer={onCounterOffer}
       onAcceptHighestRejectOthers={onAcceptHighestRejectOthers}
+      onInsertExternalOffer={onInsertExternalOffer}
     />
   );
 

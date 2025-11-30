@@ -14,6 +14,7 @@ interface OfferPanelProps {
   propertyId: string;
   propertyAddress: string;
   askingPrice: string;
+  external?: boolean;
 }
 
 const OfferPanel: React.FC<OfferPanelProps> = ({
@@ -21,11 +22,12 @@ const OfferPanel: React.FC<OfferPanelProps> = ({
   onClose,
   propertyAddress,
   askingPrice,
-  propertyId
+  propertyId,
+  external = false,
 }) => {
   const [offerAmount, setOfferAmount] = useState('');
   const [isValidAmount, setIsValidAmount] = useState(false);
-  const {createOffer} = useOffers();
+  const {createOffer, createExternalOffer} = useOffers();
   
   // Theme colors
   const textColor = useThemeColor({}, 'text');
@@ -100,15 +102,28 @@ const OfferPanel: React.FC<OfferPanelProps> = ({
       {
         text: t('confirm'),
         onPress: async () => {
-          const response = await createOffer({
-            price: parseFloat(offerAmount.replace(',', '.')),
-            propertyId
-          });
+          try{
+          let response = null;
+          if (external) {
+            response = await createExternalOffer({
+              price: parseFloat(offerAmount.replace(',', '.')),
+              propertyId
+            });
+          }
+          else {
+            response = await createOffer({
+              price: parseFloat(offerAmount.replace(',', '.')),
+              propertyId
+            });
+          }
           if (response.success !== false) {
             Alert.alert(t('offerSubmitted'), t('yourOfferHasBeenSubmittedSuccessfully'));
             onClose();
           }
           else {
+            Alert.alert(t('error'), t('failedToSubmitOffer'));
+          }
+          } catch (error) {
             Alert.alert(t('error'), t('failedToSubmitOffer'));
           }
         },

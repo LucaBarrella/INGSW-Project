@@ -41,7 +41,7 @@ export function ArchivedOfferCard({ offer, onContactBuyer }: ArchivedOfferCardPr
         <ThemedText style={[styles.propertyAddress, { color: textColor }]}>{formatAddress(offer.property.address)}</ThemedText>
         <ThemedText style={styles.offerAmount}>Offerta: €{offer.price.toLocaleString('it-IT')}</ThemedText>
 
-        {isAccepted ? (
+        {offer.user && (isAccepted ? (
           <View style={styles.buyerInfo}>
             {/* UserIcon placeholder */}
             <ThemedText style={styles.buyerName}>Acquirente: {offer.user.fullName}</ThemedText>
@@ -58,7 +58,7 @@ export function ArchivedOfferCard({ offer, onContactBuyer }: ArchivedOfferCardPr
             <ThemedText style={styles.logText}>Offerente: {offer.user.fullName}</ThemedText>
             <ThemedText style={styles.logText}>Proposta: {offer.price}</ThemedText>
           </View>
-        )}
+        ))}
       </View>
     </ThemedView>
   );

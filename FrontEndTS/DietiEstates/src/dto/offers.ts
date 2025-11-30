@@ -33,4 +33,5 @@ export interface PropertyWithOffers {
   address: string;
   imageUrl: string;
   offers: Offer[];
+  price: number;
 }

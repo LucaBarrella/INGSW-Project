@@ -1,5 +1,6 @@
 import { OfferResponseDTO } from '../dto/response/OfferResponseDTO';
 import httpClient from '../core/httpClient';
+import { CreateOfferRequest } from '../dto/request/CreateOfferRequest.dto';
 
 const offerEndpoints = {
     getOffers: '/offers',
@@ -40,8 +41,14 @@ const withdrawOffer = async (offerId: string): Promise<void> => {
     await httpClient.post(url);
 }
 
-const createOffer = async (offerData: { propertyId: string; amount: number }): Promise<any> => {
+const createOffer = async (offerData: CreateOfferRequest): Promise<any> => {
     const url = offerEndpoints.createOffer;
+    const response = await httpClient.post(url, offerData);
+    return response.data;
+}
+
+const createExternalOffer = async (offerData: CreateOfferRequest): Promise<any> => {
+    const url = offerEndpoints.createOffer + '/external';
     const response = await httpClient.post(url, offerData);
     return response.data;
 }
@@ -59,5 +66,6 @@ export default {
     rejectOffer,
     withdrawOffer,
     counterOffer,
-    createOffer
+    createOffer,
+    createExternalOffer
 };

@@ -9,6 +9,7 @@ import { useFocusEffect } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { t } from 'i18next';
 import { Alert, Platform, Modal, TextInput, View, TouchableOpacity, StyleSheet } from 'react-native';
+import OfferPanel from '@/components/Offer/OfferPanel';
 
 export default function OffersTab() {
   const backgroundColor = useThemeColor({}, 'background');
@@ -18,6 +19,7 @@ export default function OffersTab() {
 
   const [propertiesWithOffers, setPropertiesWithOffers] = useState<PropertyWithOffers[]>([]);
   const {receivedOffers, fetchReceivedOffers, loading, acceptOffer, rejectOffer, counterOffer} = useOffers();
+  const [offerPanelProps, setOfferPanelProps] = useState<{isVisible: boolean; propertyId: string; propertyAddress: string; askingPrice: string}>({isVisible: false, propertyId: '', propertyAddress: '', askingPrice: ''});
 
   useEffect(() => {
     if (!receivedOffers) return;
@@ -29,8 +31,8 @@ export default function OffersTab() {
         id: offer.id.toString(),
         amount: offer.price,
         buyer: {
-          id: offer.user.id?.toString() || '',
-          name: offer.user.fullName,
+          id: offer.user?.id?.toString() || '',
+          name: offer.user?.fullName || '',
         }
       };
       if (propertyIndex !== -1) {
@@ -41,6 +43,7 @@ export default function OffersTab() {
           address: formatAddress(offer.property.address),
           imageUrl: offer.property.firstImageUrl || (offer.property.imageUrl ? offer.property.imageUrl[0] : ''),
           offers: [mappedOffer],
+          price: offer.property.price
         });
       }
     });
@@ -148,6 +151,14 @@ export default function OffersTab() {
     );
   };
 
+  const handleInsertExternalOffer = async (propertyId: string, propertyAddress: string, askingPrice: string) => {
+    setOfferPanelProps({isVisible: true, propertyId, propertyAddress, askingPrice});
+  };
+
+  const handleOfferPanelClose = () => {
+    setOfferPanelProps({isVisible: false, propertyId: '', propertyAddress: '', askingPrice: ''});
+  }
+
   useFocusEffect(
     useCallback(() => {
       fetchReceivedOffers();
@@ -173,6 +184,7 @@ export default function OffersTab() {
         onRejectOffer={handleRejectOffer}
         onCounterOffer={handleCounterOffer}
         onAcceptHighestRejectOthers={handleAcceptHighestRejectOthers}
+        onInsertExternalOffer={handleInsertExternalOffer}
       />
 
       <Modal
@@ -217,6 +229,8 @@ export default function OffersTab() {
           </View>
         </View>
       </Modal>
+
+      <OfferPanel {...offerPanelProps} onClose={handleOfferPanelClose} external/>
     </ThemedView>
   );
 }

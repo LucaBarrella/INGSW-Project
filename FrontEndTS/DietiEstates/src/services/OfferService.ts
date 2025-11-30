@@ -24,4 +24,7 @@ export class OfferService implements IOfferService {
     async createOffer(offerData: CreateOfferRequest): Promise<any> {
         return OfferApiService.createOffer(offerData);
     }
+    async createExternalOffer(offerData: CreateOfferRequest): Promise<any> {
+        return OfferApiService.createExternalOffer(offerData);
+    }
 }

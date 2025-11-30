@@ -7,5 +7,7 @@ export interface IOfferService {
     rejectOffer(offerId: string): Promise<void>;
     withdrawOffer(offerId: string): Promise<any>;
     createOffer(offerData: CreateOfferRequest): Promise<any>;
+    createExternalOffer(offerData: CreateOfferRequest): Promise<any>;
     counterOffer(offerId: string, price: number): Promise<any>;
+
 }

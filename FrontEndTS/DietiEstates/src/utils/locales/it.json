@@ -96,6 +96,9 @@
   "no": "No",
   "hideOptionalDetails": "Nascondi Dettagli Opzionali",
   "showOptionalDetails": "Mostra Dettagli Opzionali",
+  "insertExternalOfferButton": "Inserisci Offerta Esterna",
+  "acceptHighestRejectOthersButton": "Accetta Offerta più Alta e Rifiuta Altre",
+  "noActiveOffersForThisProperty": "Non ci sono offerte attive per questa proprietà.",
 
   "setting": {
     "language": "Lingua"
