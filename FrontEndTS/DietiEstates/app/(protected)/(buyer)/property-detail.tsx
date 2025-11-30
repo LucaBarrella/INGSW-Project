@@ -39,6 +39,7 @@ const PropertyDetailScreen: React.FC = () => {
   const [fetchingProperty, setFetchingProperty] = useState(false);
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const [agentAvailabilities, setAgentAvailabilities] = useState<AvailabilityDTO[]>([]);
+  const [showOptionalDetails, setShowOptionalDetails] = useState(false);
 
   const scrollViewRef = useRef<ScrollView>(null);
   const { t } = useTranslation();
@@ -127,9 +128,9 @@ const PropertyDetailScreen: React.FC = () => {
     }
   };
 
-  console.log(JSON.stringify(property));
-  const optionalPropertyDetails = ['TODO', ''
-  ]
+  const optionalPropertyDetails = ['area', 'numberOfBathrooms', 'floor', 'numberOfFloors', 'yearBuilt', 'heating',
+    'energyClass', 'furnished', 'hasElevator', 'garden', 'parkingSpaces', 'swimmingPool', 'numberOfRooms', 'numberOfBedrooms',
+    'totalFloors', 'hasDisabledAccess', 'hasRoadAccess'];
 
   const styles = createStyles(themeColors);
 
@@ -154,12 +155,7 @@ const PropertyDetailScreen: React.FC = () => {
   const images = (() => {
     // Prefer generated URLs when available; fall back to placeholder
     const generated = property ? generatePropertyImageUrls((property as any).firstImageUrl, (property as any).numberOfImages) : [];
-    // DEBUG: log generated array from imageUtils and final images used in the UI
-    console.log('property-detail: property.firstImageUrl ->', (property as any)?.firstImageUrl);
-    console.log('property-detail: property.numberOfImages ->', (property as any)?.numberOfImages);
-    console.log('property-detail: generated image URLs ->', generated);
     const imgs = (generated && generated.length > 0) ? generated : ['https://via.placeholder.com/400x250'];
-    console.log('property-detail: final images array ->', imgs);
     return imgs;
   })();
 
@@ -211,7 +207,7 @@ const PropertyDetailScreen: React.FC = () => {
         <View style={styles.propertyInfo}>
           <ThemedText style={styles.title}>{formatAddress(property.address) || 'Immobile'}</ThemedText>
           <ThemedText style={styles.address}>
-            {property.address?.city || 'Indirizzo non disponibile'}
+            {property.address?.city || ''}
           </ThemedText>
           <ThemedText style={styles.price}>{formatPrice(property.price)}</ThemedText>
         </View>
@@ -244,7 +240,7 @@ const PropertyDetailScreen: React.FC = () => {
             {property.description || t('noDescriptionAvailable')}
           </ThemedText>
         </View>
-
+        
         {/* Tag/Badge */}
         <View style={styles.tagsContainer}>
           <View style={styles.tag}>
@@ -258,6 +254,50 @@ const PropertyDetailScreen: React.FC = () => {
             </ThemedText>
           </View>
         </View>
+
+        {/* Optional Property Details */}
+        <TouchableOpacity onPress={() => setShowOptionalDetails(!showOptionalDetails)} style={{ alignItems: 'center', marginBottom: 8 }}>
+          <ThemedText style={[styles.detailLabel, { marginHorizontal: 16, marginBottom: 8 }]}>
+            {showOptionalDetails ? t('hideOptionalDetails') : t('showOptionalDetails')}
+          </ThemedText>
+        </TouchableOpacity>
+        {showOptionalDetails && (
+          <View>
+            {optionalPropertyDetails.map((detailKey) => {
+              const detailValue = (property as any)[detailKey];
+              if (detailValue !== undefined && detailValue !== null) {
+                if (typeof detailValue === 'boolean') {
+                // Convert boolean to localized string
+                return (
+                  <View key={detailKey} style={styles.tabsContainer}>
+                    <ThemedText style={styles.detailLabel}>
+                      {t(`property_details.${detailKey}`)}: {detailValue ? t('yes') : t('no')}
+                    </ThemedText>
+                  </View>
+              );
+              }
+              else if (typeof detailValue === 'object' && (detailValue.name || detailValue.type))
+              {
+                return (
+                  <View key={detailKey} style={styles.tabsContainer}>
+                    <ThemedText style={styles.detailLabel}>
+                      {t(`property_details.${detailKey}`)}: {t(detailValue.name || detailValue.type)}
+                    </ThemedText>
+                  </View>
+                )
+              }
+              return (
+                <View key={detailKey} style={styles.tabsContainer}>
+                  <ThemedText style={styles.detailLabel}>
+                    {t(`property_details.${detailKey}`)}: {t(detailValue.toString())}
+                  </ThemedText>
+                </View>
+              );
+            }
+            return null;
+          })}
+        </View>
+        )}
 
         {/* Pulsanti di azione */}
         <View style={styles.actionButtons}>

@@ -90,6 +90,12 @@
   "yourOfferHasBeenSubmitted": "La tua offerta è stata inviata con successo.",
   "accept_countered_offer": "Accetta Controfferta",
   "withdraw_offer": "Ritira Offerta",
+  "yourOfferHasBeenSubmittedSuccessfully": "La tua offerta è stata inviata con successo.",
+  "failedToSubmitOffer": "Impossibile inviare l'offerta",
+  "yes": "Sì",
+  "no": "No",
+  "hideOptionalDetails": "Nascondi Dettagli Opzionali",
+  "showOptionalDetails": "Mostra Dettagli Opzionali",
 
   "setting": {
     "language": "Lingua"
@@ -117,6 +123,26 @@
     "RENOVATED": "ristrutturato",
     "GOOD_CONDITION": "buone condizioni",
     "NEW": "nuovo"
+  },
+
+  "property_details": {
+    "area": "superficie",
+    "numberOfBedrooms": "numero di camere da letto",
+    "numberOfRooms": "numero di stanze",
+    "numberOfBathrooms": "numero di bagni",
+    "floor": "piano",
+    "numberOfFloors": "numero di piani",
+    "totalFloors": "numero di piani",
+    "yearBuilt": "anno di costruzione",
+    "heating": "tipo di riscaldamento",
+    "energyClass": "classe energetica",
+    "furnished": "è arredato",
+    "hasElevator": "ascensore",
+    "garden": "giardino",
+    "parkingSpaces": "posti auto",
+    "swimmingPool": "piscina",
+    "hasDisabledAccess": "accesso per disabili",
+    "hasRoadAccess": "accesso stradale"
   },
 
   "property_category": {
