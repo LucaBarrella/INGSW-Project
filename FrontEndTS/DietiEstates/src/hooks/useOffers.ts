@@ -35,12 +35,51 @@ export const useOffers = () => {
     }
   };
 
+  const rejectOffer = async (offerId: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await offerService.rejectOffer(offerId);
+    } catch (err: any) {
+      setError(err.message || 'Failed to reject offer');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const acceptOffer = async (offerId: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await offerService.acceptOffer(offerId);
+    } catch (err: any) {
+      setError(err.message || 'Failed to accept offer');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const withdrawOffer = async (offerId: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await offerService.withdrawOffer(offerId);
+    } catch (err: any) {
+      setError(err.message || 'Failed to withdraw offer');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     offers,
     receivedOffers,
     loading,
     error,
     fetchOffers,
-    fetchReceivedOffers
+    fetchReceivedOffers,
+    acceptOffer,
+    rejectOffer,
+    withdrawOffer
   };
 };

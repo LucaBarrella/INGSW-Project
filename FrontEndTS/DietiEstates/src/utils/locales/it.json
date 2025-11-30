@@ -62,6 +62,15 @@
   "pleaseTryAnotherTimeSlot": "Non è stato possibile richiedere una visita per l'orario specificato. Per favore prova un altro orario.",
   "noDescriptionAvailable": "Descrizione non disponibile",
   "searchPlaceholder": "Cerca immobile...",
+  "loadingOffers": "Caricamento offerte...",
+  "noActiveOffers": "Nessuna offerta attiva",
+  "noActiveOffersSubtitle": "Non ci sono immobili con offerte attive al momento. Quando arriveranno nuove offerte, appariranno qui.",
+  "offersDashboardTitle": "Gestione Offerte",
+  "offersDashboardSubtitle": "Gestisci le offerte attive per i tuoi immobili",
+  "confirmAcceptHighestOfferTitle": "Conferma Accettazione Offerta Più Alta",
+  "confirmAcceptHighestOfferMessage": "Sei sicuro di voler accettare l'offerta più alta per questo immobile (di {{amount}}€)? Tutte le altre offerte in sospeso verranno rifiutate automaticamente.",
+  "confirmRejectOfferMessage": "Sei sicuro di voler rifiutare questa offerta?",
+  "offerAcceptedSuccess": "Offerta Accettata",
 
   "setting": {
     "language": "Lingua"
@@ -72,6 +81,14 @@
     "CONFIRMED": "confermata",
     "COMPLETED": "completata",
     "REJECTED": "rifiutata"
+  },
+
+  "offer_status": {
+    "PENDING": "in attesa",
+    "ACCEPTED": "accettata",
+    "REJECTED": "rifiutata",
+    "COUNTERED": "controfferta",
+    "WITHDRAWN": "ritirata"
   },
 
   "property_status": {

@@ -8,4 +8,13 @@ export class OfferService implements IOfferService {
     async getReceivedOffers(): Promise<OfferResponseDTO[]> {
         return OfferApiService.getReceivedOffers();
     }
+    async acceptOffer(offerId: string): Promise<void> {
+        return OfferApiService.acceptOffer(offerId);
+    }
+    async rejectOffer(offerId: string): Promise<void> {
+        return OfferApiService.rejectOffer(offerId);
+    }
+    async withdrawOffer(offerId: string): Promise<void> {
+        return OfferApiService.withdrawOffer(offerId);
+    }
 }

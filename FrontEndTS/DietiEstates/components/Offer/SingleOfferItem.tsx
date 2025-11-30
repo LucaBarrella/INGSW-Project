@@ -5,6 +5,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { Offer, OfferStatus } from '@/src/dto/offers';
+import { t } from 'i18next';
 
 interface SingleOfferItemProps {
   offer: Offer;
@@ -43,27 +44,18 @@ const SingleOfferItem: React.FC<SingleOfferItemProps> = ({
 
   const getStatusColor = (status: OfferStatus): string => {
     switch (status) {
-      case OfferStatus.Accepted:
+      case 'ACCEPTED':
         return successColor;
-      case OfferStatus.Rejected:
+      case 'REJECTED':
         return errorColor;
-      case OfferStatus.Active:
+      case 'PENDING':
+        return '#FFA500';
+      case 'COUNTERED':
+        return brandColor;
+      case 'WITHDRAWN':
         return brandColor;
       default:
         return textColor;
-    }
-  };
-
-  const getStatusText = (status: OfferStatus): string => {
-    switch (status) {
-      case OfferStatus.Accepted:
-        return 'Accettata';
-      case OfferStatus.Rejected:
-        return 'Rifiutata';
-      case OfferStatus.Active:
-        return 'Attiva';
-      default:
-        return status;
     }
   };
 
@@ -92,7 +84,7 @@ const SingleOfferItem: React.FC<SingleOfferItemProps> = ({
               color: getStatusColor(offer.status),
             }}
           >
-            {getStatusText(offer.status)}
+            {t(`offer_status.${offer.status}`)}
           </Text>
         </View>
       </View>
@@ -104,7 +96,7 @@ const SingleOfferItem: React.FC<SingleOfferItemProps> = ({
         </ThemedText>
       </View>
 
-      {offer.status === OfferStatus.Active && (
+      {offer.status === 'PENDING' && (
         <View className="flex-row gap-3">
           <TouchableOpacity
             className="flex-1 h-10 rounded-lg flex items-center justify-center"

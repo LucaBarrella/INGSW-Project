@@ -7,6 +7,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { PropertyWithOffers } from '@/src/dto/offers';
 import PropertyOffersCard from './PropertyOffersCard';
+import { t } from 'i18next';
 
 interface OffersDashboardScreenProps {
   // Queste props verranno sostituite dai custom hook di React Query
@@ -37,11 +38,10 @@ const OffersDashboardScreen: React.FC<OffersDashboardScreenProps> = ({
   const renderEmptyState = () => (
     <View className="flex-1 items-center justify-center p-8">
       <ThemedText className="text-lg font-semibold mb-2" style={{ color: textColor }}>
-        Nessuna offerta attiva
+        {t('noActiveOffers')}
       </ThemedText>
       <ThemedText className="text-center text-sm" style={{ color: secondaryColor }}>
-        Non ci sono immobili con offerte attive al momento.
-        Quando arriveranno nuove offerte, appariranno qui.
+        {t('noActiveOffersSubtitle')}
       </ThemedText>
     </View>
   );
@@ -50,7 +50,7 @@ const OffersDashboardScreen: React.FC<OffersDashboardScreenProps> = ({
     <View className="flex-1 items-center justify-center p-8">
       <ActivityIndicator size="large" color={textColor} />
       <ThemedText className="mt-4 text-sm" style={{ color: secondaryColor }}>
-        Caricamento offerte...
+        {t('loadingOffers')}
       </ThemedText>
     </View>
   );
@@ -79,10 +79,10 @@ const OffersDashboardScreen: React.FC<OffersDashboardScreenProps> = ({
       >
         <View>
           <ThemedText className="text-2xl font-bold" style={{ color: textColor }}>
-            Gestione Offerte
+            {t('offersDashboardTitle')}
           </ThemedText>
           <ThemedText className="text-sm mt-1" style={{ color: secondaryColor }}>
-            Gestisci le offerte attive per i tuoi immobili
+            {t('offersDashboardSubtitle')}
           </ThemedText>
         </View>
         <TouchableOpacity

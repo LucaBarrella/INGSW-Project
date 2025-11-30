@@ -6,13 +6,15 @@ import OffersDashboardScreen from '@/components/Offer/OffersDashboardScreen';
 import { useOffers } from '@/src/hooks/useOffers';
 import { formatAddress } from '@/components/Agent/PropertyDashboard/types';
 import { useFocusEffect } from 'expo-router';
+import { ThemedText } from '@/components/ThemedText';
+import { t } from 'i18next';
+import { Alert } from 'react-native';
 
 export default function OffersTab() {
   const backgroundColor = useThemeColor({}, 'background');
-  
-  const loading = false;
+
   const propertiesWithOffers: PropertyWithOffers[] = [];
-  const {receivedOffers, fetchReceivedOffers} = useOffers();
+  const {receivedOffers, fetchReceivedOffers, loading, acceptOffer, rejectOffer} = useOffers();
 
   useEffect(() => {
     if (!receivedOffers) return;
@@ -42,19 +44,51 @@ export default function OffersTab() {
   }, [receivedOffers]);
 
   const handleRefresh = async () => {
-    console.log("Refresh disabled");
+      fetchReceivedOffers();
   };
 
   const handleAcceptOffer = async (offerId: string) => {
-    console.log("Accept offer disabled");
+    await acceptOffer(offerId);
   };
 
   const handleRejectOffer = async (offerId: string) => {
-    console.log("Reject offer disabled");
+    await rejectOffer(offerId);
   };
 
   const handleAcceptHighestRejectOthers = async (propertyId: string) => {
-    console.log("Accept highest offer disabled");
+    console.log("Accept highest offer for propertyId: " + propertyId);
+    const properties = propertiesWithOffers.filter(p => p.id === propertyId);
+    if (properties.length === 0) return;
+    const property = properties[0];
+    const activeOffers = property.offers.filter(offer => offer.status === 'PENDING');
+    console.log("Active offers for propertyId " + propertyId + ": " + JSON.stringify(activeOffers));
+    if (activeOffers.length === 0) return;
+    const highestOffer = activeOffers.reduce((highest, current) => 
+      current.amount > highest.amount ? current : highest
+    );
+    console.log("Highest offer for propertyId " + propertyId + ": " + JSON.stringify(highestOffer));
+
+    Alert.alert(
+      t('confirmAcceptHighestOfferTitle'),
+      t('confirmAcceptHighestOfferMessage', { amount: highestOffer.amount }),
+      [
+        {
+          text: t('cancel'),
+          style: 'cancel',
+        },
+        {
+          text: t('confirm'),
+          onPress: async () => {
+            await acceptOffer(highestOffer.id);
+            for (const offer of activeOffers) {
+              if (offer.id !== highestOffer.id) {
+                await rejectOffer(offer.id);
+              }
+            }
+          },
+        },
+      ]
+    );
   };
 
   useFocusEffect(
@@ -62,6 +96,14 @@ export default function OffersTab() {
       fetchReceivedOffers();
     }, [])
   );
+  
+  if (loading) {
+    return (
+      <ThemedView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: backgroundColor }}>
+        <ThemedText>{t('loadingOffers')}</ThemedText>
+      </ThemedView>
+    );
+  }
 
   return (
     <ThemedView style={{ flex: 1, backgroundColor: backgroundColor }}>

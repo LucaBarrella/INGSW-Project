@@ -3,6 +3,9 @@ import httpClient from '../core/httpClient';
 
 const offerEndpoints = {
     getOffers: '/offers',
+    acceptOffer: '/offers/accept/{offerId}',
+    rejectOffer: '/offers/reject/{offerId}',
+    withdrawOffer: '/offers/withdraw/{offerId}',
     getReceivedOffers: '/offers/agent_offers',
 } as const;
 
@@ -20,7 +23,25 @@ const getReceivedOffers = async (): Promise<OfferResponseDTO[]> => {
   return response.data;
 }
 
+const acceptOffer = async (offerId: string): Promise<void> => {
+    const url = offerEndpoints.acceptOffer.replace('{offerId}', offerId);
+    await httpClient.post(url);
+}
+
+const rejectOffer = async (offerId: string): Promise<void> => {
+    const url = offerEndpoints.rejectOffer.replace('{offerId}', offerId);
+    await httpClient.post(url);
+}
+
+const withdrawOffer = async (offerId: string): Promise<void> => {
+    const url = offerEndpoints.withdrawOffer.replace('{offerId}', offerId);
+    await httpClient.post(url);
+}
+
 export default {
     getUserOffers,
-    getReceivedOffers
+    getReceivedOffers,
+    acceptOffer,
+    rejectOffer,
+    withdrawOffer
 };
