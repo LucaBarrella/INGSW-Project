@@ -155,6 +155,7 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
       );
       if (dayToAutoSelect) {
         setSelectedDay(dayToAutoSelect);
+        handleSelectDay(dayToAutoSelect);
       }
     } else {
       // Month change - just update days for current month
