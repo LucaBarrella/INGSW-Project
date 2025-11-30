@@ -1,20 +1,17 @@
 import * as React from 'react';
-import { TouchableOpacity, Image } from 'react-native';
+import { TouchableOpacity, Image, Alert } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
+import { PropertyDTO } from '@/components/Agent/PropertyDashboard/types';
 import { PropertyCharacteristicsDisplay, mapPropertyDetailToCharacteristics } from '@/components/Property/PropertyCharacteristicsDisplay';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import * as Haptics from 'expo-haptics';
-import ThemedButton from '@/components/ThemedButton';
-import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { useTranslation } from 'react-i18next';
+import ThemedButton from '@/components/ThemedButton';
 
 interface AgentPropertyCardProps {
-  property: PropertyDetail;
+  property: PropertyDTO;
   onPress: () => void;
-  onEdit: () => void;
-  onDelete: () => void;
   lightColor?: string;
   darkColor?: string;
 }
@@ -22,8 +19,6 @@ interface AgentPropertyCardProps {
 export const AgentPropertyCard: React.FC<AgentPropertyCardProps> = ({
   property,
   onPress,
-  onEdit,
-  onDelete,
   lightColor,
   darkColor
 }) => {
@@ -40,13 +35,6 @@ export const AgentPropertyCard: React.FC<AgentPropertyCardProps> = ({
     'propertyCardDetail'
   );
 
-  const deleteColor = useThemeColor(
-    { light: lightColor, dark: darkColor },
-    'error'
-  );
-
-  const [isDeleteDialogVisible, setIsDeleteDialogVisible] = React.useState(false);
-
   const handlePress = async () => {
     if (Haptics.impactAsync) {
       try {
@@ -58,18 +46,6 @@ export const AgentPropertyCard: React.FC<AgentPropertyCardProps> = ({
     onPress();
   };
 
-  const handleDeletePress = () => {
-    setIsDeleteDialogVisible(true);
-  };
-
-  const handleConfirmDelete = () => {
-    onDelete(); // Call the actual delete function passed from parent
-    setIsDeleteDialogVisible(false);
-  };
-
-  const handleCancelDelete = () => {
-    setIsDeleteDialogVisible(false);
-  };
 
   const placeholderImageUrl = 'https://placehold.co/600x400/000000/FFFFFF.webp?text=Image+Not+Found&font=Poppins';
   const { t } = useTranslation();
@@ -80,10 +56,10 @@ export const AgentPropertyCard: React.FC<AgentPropertyCardProps> = ({
         onPress={handlePress}
         className="rounded-xl shadow-md overflow-hidden"
         accessibilityRole="button"
-        accessibilityLabel={`Visualizza dettagli per ${t('property_category.'+property.propertyCategory)} in ${property.address.city}, ${t('property_status.'+property.status)}`}
+        accessibilityLabel={`Visualizza dettagli per ${t('property_category.sub.'+property.propertyCategory)} in ${property.address.city}, ${t('property_status.'+property.condition)}`}
       >
         <Image
-          source={{ uri: property.imageUrl || placeholderImageUrl }}
+          source={{ uri: property.firstImageUrl || property.imageUrl || (property.images && property.images.length > 0 ? property.images[0] : null) || placeholderImageUrl }}
           className="w-full h-48"
           resizeMode="cover"
         />
@@ -95,7 +71,7 @@ export const AgentPropertyCard: React.FC<AgentPropertyCardProps> = ({
             lightColor={textColor}
             darkColor={textColor}
           >
-            {t('property_category.'+property.propertyCategory)} in {property.address.city}, {t('property_status.'+property.status)}
+            {t('property_category.sub.'+property.propertyCategory)} in {property.address.city}, {t('property_status.'+property.condition)}
           </ThemedText>
           
           <ThemedText 
@@ -121,31 +97,15 @@ export const AgentPropertyCard: React.FC<AgentPropertyCardProps> = ({
             </ThemedText>
             <ThemedView className="flex-row gap-4 items-center" style={{ backgroundColor }}>
               <ThemedButton
-                title="Modifica"
-                onPress={onEdit}
+                title="Add External Offer"
+                onPress={()=>{Alert.alert("TODO");}}
                 borderRadius={10}
                 className="px-3 py-2 rounded-md"
               />
-              <ThemedButton
-                title="Elimina"
-                onPress={handleDeletePress}
-                borderRadius={10}
-                className="px-3 py-2 rounded-md"
-                lightColor={deleteColor}
-                darkColor={deleteColor}
-              />
-            </ThemedView>
+            </ThemedView>  
           </ThemedView>
         </ThemedView>
       </TouchableOpacity>
-      <ConfirmationDialog
-        visible={isDeleteDialogVisible}
-        onConfirm={handleConfirmDelete}
-        onCancel={handleCancelDelete}
-        customTitle="Conferma Eliminazione"
-        customMessage={`Sei sicuro di voler eliminare l'immobile?`}
-        confirmText="Elimina"
-      />
     </>
   );
 };
