@@ -128,7 +128,7 @@ const PropertyDetailScreen: React.FC = () => {
   };
 
   console.log(JSON.stringify(property));
-  const optionalPropertyDetails = ['area', ''
+  const optionalPropertyDetails = ['TODO', ''
   ]
 
   const styles = createStyles(themeColors);

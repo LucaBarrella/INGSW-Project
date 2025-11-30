@@ -18,6 +18,7 @@ interface OffersDashboardScreenProps {
   onRefresh: () => void;
   onAcceptOffer: (offerId: string) => void;
   onRejectOffer: (offerId: string) => void;
+  onCounterOffer: (offerId: string) => void;
   onAcceptHighestRejectOthers: (propertyId: string) => void;
 }
 
@@ -28,6 +29,7 @@ const OffersDashboardScreen: React.FC<OffersDashboardScreenProps> = ({
   onRefresh,
   onAcceptOffer,
   onRejectOffer,
+  onCounterOffer,
   onAcceptHighestRejectOthers,
 }) => {
   const router = useRouter();
@@ -60,6 +62,7 @@ const OffersDashboardScreen: React.FC<OffersDashboardScreenProps> = ({
       property={item}
       onAcceptOffer={onAcceptOffer}
       onRejectOffer={onRejectOffer}
+      onCounterOffer={onCounterOffer}
       onAcceptHighestRejectOthers={onAcceptHighestRejectOthers}
     />
   );

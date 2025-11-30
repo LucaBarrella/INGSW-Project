@@ -6,6 +6,7 @@ const offerEndpoints = {
     acceptOffer: '/offers/accept/{offerId}',
     rejectOffer: '/offers/reject/{offerId}',
     withdrawOffer: '/offers/withdraw/{offerId}',
+    counterOffer: '/offers/counter/{offerId}',
     getReceivedOffers: '/offers/agent_offers',
     createOffer: '/offers/create'
 } as const;
@@ -45,11 +46,18 @@ const createOffer = async (offerData: { propertyId: string; amount: number }): P
     return response.data;
 }
 
+const counterOffer = async (offerId: string, price: number): Promise<any> => {
+    const url = offerEndpoints.counterOffer.replace('{offerId}', offerId);
+    const response = await httpClient.post(url, price);
+    return response.data;
+}
+
 export default {
     getUserOffers,
     getReceivedOffers,
     acceptOffer,
     rejectOffer,
     withdrawOffer,
+    counterOffer,
     createOffer
 };

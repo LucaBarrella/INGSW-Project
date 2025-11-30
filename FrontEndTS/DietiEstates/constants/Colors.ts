@@ -33,7 +33,8 @@ export const Colors = {
     visitStatusAccepted: '#008000',
     visitStatusRejected: '#FF0000',
     visitStatusDeleted: '#A9A9A9',
-    visitStatusWithdrawn: '#FF69B4',
+    offerStatusWithdrawn: '#FF69B4',
+    offerStatusCountered: '#1E90FF',
 
     // Property card colors
     propertyCardBackground: '#FFFFFF',
@@ -75,7 +76,8 @@ export const Colors = {
     visitStatusAccepted: '#00FF00',
     visitStatusRejected: '#FF3333',
     visitStatusDeleted: '#C0C0C0',
-    visitStatusWithdrawn: '#FF69B4',
+    offerStatusWithdrawn: '#FF69B4',
+    offerStatusCountered: '#1E90FF',
 
     // Property card colors
     propertyCardBackground: darkSecondary,

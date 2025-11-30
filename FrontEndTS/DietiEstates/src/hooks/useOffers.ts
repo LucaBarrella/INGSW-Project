@@ -72,6 +72,19 @@ export const useOffers = () => {
     }
   };
 
+  const counterOffer = async (offerId: string, price: number) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await offerService.counterOffer(offerId, price);
+      return response;
+    } catch (err: any) {
+      setError(err.message || 'Failed to submit counter offer');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const createOffer = async (offerData: CreateOfferRequest) => {
     setLoading(true);
     setError(null);
@@ -94,6 +107,7 @@ export const useOffers = () => {
     acceptOffer,
     rejectOffer,
     withdrawOffer,
+    counterOffer,
     createOffer
   };
 };

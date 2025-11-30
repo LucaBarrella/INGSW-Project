@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ComponentProps } from 'react';
 
@@ -75,9 +75,15 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
         };
       case 'WITHDRAWN':
         return {
-          color: colors.visitStatusWithdrawn,
+          color: colors.offerStatusWithdrawn,
           icon: 'remove-circle-outline',
           text: 'Ritirata',
+        };
+      case 'COUNTERED':
+        return {
+          color: colors.offerStatusCountered,
+          icon: 'swap-horizontal-outline',
+          text: 'Controfferita',
         };
       default:
         return {
@@ -89,7 +95,30 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
   };
 
   const statusInfo = getStatusInfo(offer.status);
-  const { withdrawOffer } = useOffers();
+  const { withdrawOffer, acceptOffer } = useOffers();
+  const handleAcceptCounteredOffer = () => {
+    Alert.alert(
+      t('confirm_accept_countered_offer'),
+      '',
+      [
+        {
+          text: t('cancel'),
+          style: 'cancel',
+        },
+        {
+          text: t('accept'),
+          onPress: async () => {
+            const response = await acceptOffer(offer.id.toString());
+            if (response.success !== false) {
+              Alert.alert(t('offerAccepted'), t('youHaveAcceptedTheCounteredOfferSuccessfully'));
+            } else {
+              Alert.alert(t('error'), t('failedToAcceptCounteredOffer'));
+            }
+          },
+        },
+      ]
+    );
+  }
 
   return (
     <ThemedView className="bg-background rounded-xl m-4 shadow-lg border-border" style={{ backgroundColor: 'transparent' }}>
@@ -150,10 +179,8 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
             style={{
               backgroundColor: colors.buttonBackground,
             }}
-            onPress={() => {
-              console.log("accept countered offer");
-            }}
-          >
+            onPress={handleAcceptCounteredOffer}
+            >
             <ThemedText className="text-base font-bold" style={{ color: colors.buttonTextColor }}>
               {t('accept_countered_offer')}
             </ThemedText>

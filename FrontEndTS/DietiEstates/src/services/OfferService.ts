@@ -18,6 +18,9 @@ export class OfferService implements IOfferService {
     async withdrawOffer(offerId: string): Promise<void> {
         return OfferApiService.withdrawOffer(offerId);
     }
+    async counterOffer(offerId: string, price: number): Promise<any> {
+        return OfferApiService.counterOffer(offerId, price);
+    }
     async createOffer(offerData: CreateOfferRequest): Promise<any> {
         return OfferApiService.createOffer(offerData);
     }

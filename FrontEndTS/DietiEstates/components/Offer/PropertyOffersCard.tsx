@@ -11,6 +11,7 @@ interface PropertyOffersCardProps {
   property: PropertyWithOffers;
   onAcceptOffer: (offerId: string) => void;
   onRejectOffer: (offerId: string) => void;
+  onCounterOffer: (offerId: string) => void;
   onAcceptHighestRejectOthers: (propertyId: string) => void;
 }
 
@@ -18,6 +19,7 @@ const PropertyOffersCard: React.FC<PropertyOffersCardProps> = ({
   property,
   onAcceptOffer,
   onRejectOffer,
+  onCounterOffer,
   onAcceptHighestRejectOthers,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -144,6 +146,7 @@ const PropertyOffersCard: React.FC<PropertyOffersCardProps> = ({
               offer={offer}
               onAccept={onAcceptOffer}
               onReject={onRejectOffer}
+              onCounterOffer={onCounterOffer}
             />
           ))}
         </View>

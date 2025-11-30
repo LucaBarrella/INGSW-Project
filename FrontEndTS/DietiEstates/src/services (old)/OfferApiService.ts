@@ -10,8 +10,10 @@ const offerEndpoints = {
   getOfferById: '/offers/{offerId}',
   updateOffer: '/offers/{offerId}',
   deleteOffer: '/offers/{offerId}',
-  acceptOffer: '/offers/{offerId}/accept',
-  rejectOffer: '/offers/{offerId}/reject',
+  acceptOffer: '/offers/accept/{offerId}',
+  rejectOffer: '/offers/reject/{offerId}',
+  withdrawOffer: '/offers/withdraw/{offerId}',
+  counterOffer: '/offers/counter/{offerId}',
 } as const;
 
 /**
@@ -75,7 +77,6 @@ export const deleteOffer = async (offerId: string | number): Promise<{ success: 
  * @returns La risposta dell'API.
  */
 export const acceptOffer = async (offerId: string | number): Promise<{ success: boolean; message?: string }> => {
-  console.log('[OfferApiService] acceptOffer:', offerId);
   const url = offerEndpoints.acceptOffer.replace('{offerId}', offerId.toString());
   const response = await httpClient.post(url);
   return response.data;

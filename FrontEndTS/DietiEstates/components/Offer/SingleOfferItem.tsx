@@ -11,12 +11,14 @@ interface SingleOfferItemProps {
   offer: Offer;
   onAccept: (offerId: string) => void;
   onReject: (offerId: string) => void;
+  onCounterOffer: (offerId: string) => void;
 }
 
 const SingleOfferItem: React.FC<SingleOfferItemProps> = ({
   offer,
   onAccept,
   onReject,
+  onCounterOffer,
 }) => {
   const textColor = useThemeColor({}, 'text');
   const backgroundColor = useThemeColor({}, 'background');
@@ -107,7 +109,7 @@ const SingleOfferItem: React.FC<SingleOfferItemProps> = ({
             onPress={() => onReject(offer.id)}
           >
             <ThemedText className="text-sm font-medium" style={{ color: errorColor }}>
-              Rifiuta
+              {t('reject')}
             </ThemedText>
           </TouchableOpacity>
           <TouchableOpacity
@@ -118,7 +120,18 @@ const SingleOfferItem: React.FC<SingleOfferItemProps> = ({
             onPress={() => onAccept(offer.id)}
           >
             <ThemedText className="text-sm font-medium" style={{ color: 'white' }}>
-              Accetta
+              {t('accept')}
+            </ThemedText>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="flex-1 h-10 rounded-lg flex items-center justify-center"
+            style={{
+              backgroundColor: brandColor,
+            }}
+            onPress={() => onCounterOffer(offer.id)}
+          >
+            <ThemedText className="text-sm font-medium" style={{ color: 'white' }}>
+              {t('counter')}
             </ThemedText>
           </TouchableOpacity>
         </View>
