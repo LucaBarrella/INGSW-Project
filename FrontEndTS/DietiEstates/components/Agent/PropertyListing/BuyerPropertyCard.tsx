@@ -52,7 +52,7 @@ export const BuyerPropertyCard: React.FC<BuyerPropertyCardProps> = ({
       onPress={handlePress}
       className="rounded-xl shadow-md overflow-hidden"
       accessibilityRole="button"
-      accessibilityLabel={`Visualizza dettagli per ${t('property_category.'+property.propertyCategory)} in ${property.address.city}, ${t('property_status.'+property.status)}`}
+      accessibilityLabel={`Visualizza dettagli per ${t('property_category.'+property.propertyCategory)} in ${property.address.city}, ${t('property_status.'+property.condition)}`}
     >
       <Image
         source={{ uri: property.imageUrl || 'https://placehold.co/600x400.webp?text=Image+Not+Found' }}
@@ -88,7 +88,7 @@ export const BuyerPropertyCard: React.FC<BuyerPropertyCardProps> = ({
             €{property.price}
           </ThemedText>
           <ThemedButton
-            title="Dettagli"
+            title={t('home.detailsButton')}
             onPress={handlePress}
             borderRadius={10}
             className="px-4 py-2 rounded-md"

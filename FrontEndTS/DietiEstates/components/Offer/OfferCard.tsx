@@ -18,7 +18,8 @@ export interface Offer {
   address: string;
   amount: string;
   date: string;
-  status: 'accettata' | 'rifiutata' | 'in attesa';
+  // use API canonical status values; translation is handled via t('offer_status.X')
+  status: OfferResponseDTO['status'];
   imageUrl: string;
   actionText: string;
   actionIcon: IconName;
@@ -53,43 +54,52 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
+  // locale-aware formatting helpers (use runtime locale)
+  const locale = Intl?.DateTimeFormat?.().resolvedOptions()?.locale || 'it-IT';
+  const formatCurrency = (value: number | string) =>
+    new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(Number(value));
+  const formatDate = (iso?: string) => {
+    if (!iso) return '';
+    try { return new Date(iso).toLocaleDateString(locale); } catch { return iso; }
+  };
+
   const getStatusInfo = (status: OfferResponseDTO['status']): { color: string; icon: IconName; text: string } => {
     switch (status) {
       case 'ACCEPTED':
         return {
           color: colors.visitStatusAccepted,
           icon: 'checkmark-circle-outline',
-          text: 'Accettata',
+          text: t('offer_status.ACCEPTED'),
         };
       case 'REJECTED':
         return {
           color: colors.visitStatusRejected,
           icon: 'close-circle-outline',
-          text: 'Rifiutata',
+          text: t('offer_status.REJECTED'),
         };
       case 'PENDING':
         return {
           color: colors.visitStatusPending,
           icon: 'time-outline',
-          text: 'In attesa',
+          text: t('offer_status.PENDING'),
         };
       case 'WITHDRAWN':
         return {
           color: colors.offerStatusWithdrawn,
           icon: 'remove-circle-outline',
-          text: 'Ritirata',
+          text: t('offer_status.WITHDRAWN'),
         };
       case 'COUNTERED':
         return {
           color: colors.offerStatusCountered,
           icon: 'swap-horizontal-outline',
-          text: 'Controfferita',
+          text: t('offer_status.COUNTERED'),
         };
       default:
         return {
           color: colors.text,
           icon: 'help-circle-outline',
-          text: 'Sconosciuto',
+          text: t('offer_status.UNKNOWN'),
         };
     }
   };
@@ -108,10 +118,10 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
         {
           text: t('accept'),
           onPress: async () => {
-            const response = await acceptOffer(offer.id.toString());
-            if (response.success !== false) {
+            try {
+              await acceptOffer(offer.id.toString());
               Alert.alert(t('offerAccepted'), t('youHaveAcceptedTheCounteredOfferSuccessfully'));
-            } else {
+            } catch (err) {
               Alert.alert(t('error'), t('failedToAcceptCounteredOffer'));
             }
           },
@@ -146,12 +156,12 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
         <View className="flex-row justify-between items-center">
           <View className="flex-row items-center gap-1.5">
             <Ionicons name="cash-outline" size={16} color={colors.text} />
-            <ThemedText className="text-muted-foreground">{offer.price}€</ThemedText>
+            <ThemedText className="text-muted-foreground">{formatCurrency(offer.price)}</ThemedText>
           </View>
           
           <View className="flex-row items-center gap-1.5">
             <Ionicons name="calendar-outline" size={16} color={colors.text} />
-            <ThemedText className="text-muted-foreground">{offer.date}</ThemedText>
+            <ThemedText className="text-muted-foreground">{formatDate(offer.date)}</ThemedText>
           </View>
         </View>
         

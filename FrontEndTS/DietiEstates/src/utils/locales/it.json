@@ -20,7 +20,8 @@
   "no_offers_available": "Nessuna offerta disponibile",
   "loading_offers": "Caricamento offerte...",
   "error_loading_offers": "Errore durante il caricamento delle offerte.",
-  "offers": "Offerte",
+  "offers_one": "{{count}} Offerta",
+  "offers_other": "{{count}} Offerte",
   "loading": "Caricamento...",
   "visit_requests": "Richieste di visita",
   "date": "Data",
@@ -74,6 +75,19 @@
   "noOffersFound": "Nessuna offerta {{status}} trovata",
   "errorLoadingOffers": "Errore nel caricamento delle offerte",
   "yourOffer": "La tua offerta",
+  "offersArchived": {
+    "agent": {
+      "archiveTitle": "Archivio Offerte",
+      "acceptedOffers": "Offerte accettate",
+      "rejectedOffers": "Offerte rifiutate",
+      "offerAmount": "Offerta: €{{amount}}",
+      "buyerLabel": "Acquirente: {{name}}",
+      "contactBuyer": "Contatta Acquirente",
+      "rejectionLogTitle": "Log Rifiuto:",
+      "offererLabel": "Offerente: {{name}}",
+      "proposalAmount": "Proposta: €{{amount}}"
+    }
+  },
   "askingPrice": "Prezzo richiesto",
   "propertyAddress": "Indirizzo della proprietà",
   "makeAnOffer": "Fai la tua offerta",
@@ -121,7 +135,8 @@
     "ACCEPTED": "accettata",
     "REJECTED": "rifiutata",
     "COUNTERED": "controfferta",
-    "WITHDRAWN": "ritirata"
+    "WITHDRAWN": "ritirata",
+    "UNKNOWN": "sconosciuto"
   },
 
   "property_status": {
@@ -132,6 +147,20 @@
     "GOOD_CONDITION": "buone condizioni",
     "NEW": "nuovo"
   },
+
+  "property_state": {
+    "active": "Attivo",
+    "sold": "Venduto",
+    "rented": "Affittato",
+    "inactive": "Inattivo"
+  },
+
+  "statusLabel": "Stato",
+  "agentLabel": "Agente",
+  "priceLabel": "Prezzo",
+  "notSpecified": "Non specificato",
+  "planVisit": "Pianifica una visita",
+  "makeOffer": "Fai un'offerta",
 
   "property_details": {
     "area": "superficie",
@@ -175,6 +204,15 @@
       "Double Garage": "Garage Doppio",
       "Parking Space": "Posto Auto"
     }
+  },
+  "agenda": {
+    "title": "Agenda",
+    "today": "Oggi, {{date}}",
+    "dateShort": "{{date}}",
+    "confirmedSchedule": "Programma confermato",
+    "noAppointments": "Nessun appuntamento",
+    "emptyState": "...",
+    "pendingRequests": "Richieste in attesa"
   },
 
   "history_placeholder": {
@@ -287,6 +325,18 @@
       "profile": "Profilo",
       "offers": "Offerte"
     }
+  },
+  "profile": {
+    "addAgent": "Aggiungi Agente",
+    "addManager": "Aggiungi Manager",
+    "changePassword": "Cambia Password",
+    "chevronRight": "Vai",
+    "userProfile": "Profilo utente",
+    "logoutError": "Errore Logout",
+    "logoutErrorMessage": "Impossibile completare il logout. Riprova."
+  },
+  "home": {
+    "detailsButton": "Dettagli"
   },
 
   "forms": {

@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { VisitRequest } from '../../../src/dto/agenda';
 import TimelineEvent from './TimelineEvent';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { useTranslation } from 'react-i18next';
 
 interface ConfirmedScheduleProps {
   appointments: VisitRequest[];
@@ -13,6 +14,7 @@ interface ConfirmedScheduleProps {
 }
 
 const ConfirmedSchedule: React.FC<ConfirmedScheduleProps> = ({ appointments, isScheduleVisible, toggleScheduleVisibility, onDeleteAppointment }) => {
+  const { t, i18n } = useTranslation();
 
   const groupAndSlotAppointments = (appointments: VisitRequest[]): { type: 'event' | 'empty', data: VisitRequest[] | { startTime: Date; endTime: Date } }[] => {
     if (!appointments.length) return [];
@@ -51,7 +53,8 @@ const ConfirmedSchedule: React.FC<ConfirmedScheduleProps> = ({ appointments, isS
   const timelineItems = groupAndSlotAppointments(appointments);
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', hour12: false });
+    const locale = i18n.language || 'it-IT';
+    return date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false });
   };
 
   const textColor = useThemeColor({}, 'text');
@@ -63,7 +66,7 @@ const ConfirmedSchedule: React.FC<ConfirmedScheduleProps> = ({ appointments, isS
     <View className="p-4">
       <TouchableOpacity onPress={toggleScheduleVisibility} className="mb-4">
         <View className="flex-row justify-between items-center">
-          <Text style={{ color: textColor }} className="text-lg font-bold">Confirmed Schedule</Text>
+          <Text style={{ color: textColor }} className="text-lg font-bold">{t('agenda.confirmedSchedule')}</Text>
           <Ionicons name={isScheduleVisible ? 'chevron-up-outline' : 'chevron-down-outline'} size={24} color={secondaryTextColor} />
         </View>
       </TouchableOpacity>
@@ -74,7 +77,7 @@ const ConfirmedSchedule: React.FC<ConfirmedScheduleProps> = ({ appointments, isS
             {timelineItems.length > 0 ? (
               timelineItems.map((item, index) => {
                 if (item.type === 'event') {
-                  const group = item.data;
+                  const group = item.data as VisitRequest[];
                   return (
                     <TimelineEvent
                       key={index}
@@ -97,7 +100,7 @@ const ConfirmedSchedule: React.FC<ConfirmedScheduleProps> = ({ appointments, isS
                           backgroundColor: cardBackgroundColor,
                           borderColor: cardBorderColor
                         }}>
-                          <Text style={{ color: secondaryTextColor }} className="italic">No appointments</Text>
+                          <Text style={{ color: secondaryTextColor }} className="italic">{t('agenda.noAppointments')}</Text>
                         </View>
                       </View>
                     </View>
@@ -106,7 +109,7 @@ const ConfirmedSchedule: React.FC<ConfirmedScheduleProps> = ({ appointments, isS
               })
             ) : (
               <View className="items-center justify-center py-10">
-                <Text style={{ color: secondaryTextColor }} className="text-2xl">...</Text>
+                <Text style={{ color: secondaryTextColor }} className="text-2xl">{t('agenda.emptyState')}</Text>
               </View>
             )}
           </View>

@@ -3,6 +3,7 @@ import { TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedIcon } from '@/components/ThemedIcon';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { useTranslation } from 'react-i18next';
 
 export interface ProfileOptionRowProps {
   id: string;
@@ -21,6 +22,7 @@ export const ProfileOptionRow: React.FC<ProfileOptionRowProps> = ({
 }) => {
   const borderColor = useThemeColor({}, 'border');
   const textColor = useThemeColor({}, 'text'); // Colore per l'icona
+  const { t } = useTranslation();
 
   return (
     <TouchableOpacity
@@ -45,7 +47,7 @@ export const ProfileOptionRow: React.FC<ProfileOptionRowProps> = ({
       <ThemedIcon
         icon="material-symbols:chevron-right"
         size={24}
-        accessibilityLabel="Vai" // Potrebbe essere reso più specifico se necessario
+        accessibilityLabel={t('profile.chevronRight')} // accessibility label internazionale
       />
     </TouchableOpacity>
   );

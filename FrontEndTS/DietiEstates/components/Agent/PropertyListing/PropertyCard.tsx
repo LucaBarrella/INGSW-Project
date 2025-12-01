@@ -96,7 +96,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             €{property.price}
           </ThemedText>
           <ThemedButton
-            title="Dettagli"
+            title={t('home.detailsButton')}
             onPress={handlePress}
             borderRadius={10}
             className="px-4 py-2 rounded-md"

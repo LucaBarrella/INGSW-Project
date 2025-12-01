@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { t } from 'i18next';
 
 interface ArchiveFilterProps {
   selectedFilter: 'accepted' | 'rejected';
@@ -23,7 +24,7 @@ export function ArchiveFilter({ selectedFilter, onSelectFilter }: ArchiveFilterP
         onPress={() => onSelectFilter('accepted')}
       >
         <Text style={[styles.buttonText, { color: selectedFilter === 'accepted' ? buttonTextColor : text }]}>
-          Offerte Accettate
+          {t('offersArchived.agent.acceptedOffers')}
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
@@ -34,7 +35,7 @@ export function ArchiveFilter({ selectedFilter, onSelectFilter }: ArchiveFilterP
         onPress={() => onSelectFilter('rejected')}
       >
         <Text style={[styles.buttonText, { color: selectedFilter === 'rejected' ? buttonTextColor : text }]}>
-          Offerte Rifiutate
+          {t('offersArchived.agent.rejectedOffers')}
         </Text>
       </TouchableOpacity>
     </View>

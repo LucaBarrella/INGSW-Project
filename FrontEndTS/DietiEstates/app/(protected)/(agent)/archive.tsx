@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { ArchiveFilter } from '@/components/Offer/ArchiveFilter';
 import { ArchivedOffersList } from '@/components/Offer/ArchivedOffersList';
+import { t } from 'i18next';
 
 export default function ArchiveScreen() {
   const backgroundColor = useThemeColor({}, 'background');
@@ -14,7 +15,7 @@ export default function ArchiveScreen() {
   return (
     <ThemedView style={[styles.container, { backgroundColor: backgroundColor }]}>
       <ThemedText style={[styles.title, { color: textColor }]}>
-        Archivio Offerte
+        {t('offersArchived.agent.archiveTitle')}
       </ThemedText>
       <ArchiveFilter selectedFilter={selectedFilter} onSelectFilter={setSelectedFilter} />
       <ArchivedOffersList filter={selectedFilter} />

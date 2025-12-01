@@ -60,19 +60,19 @@ export default function ProfileTab() {
   const adminOptions: Array<Omit<ProfileOptionRowProps, 'isFirst'>> = [
     {
       id: 'add-agent',
-      title: 'Aggiungi Agente',
+      title: t('profile.addAgent'),
       icon: 'mdi:account-group',
       onPress: () => router.push('/(protected)/(admin)/add-agent')
     },
     {
       id: 'add-admin',
-      title: 'Aggiungi Amministratore',
+      title: t('profile.addManager'),
       icon: 'mdi:shield-account',
       onPress: () => router.push('/(protected)/(admin)/add-admin')
     },
     {
       id: 'change-password',
-      title: 'Cambia Password',
+      title: t('profile.changePassword'),
       icon: 'mdi:lock-reset',
       onPress: () => router.push('/(protected)/(admin)/change-password')
     }
@@ -94,7 +94,7 @@ export default function ProfileTab() {
           await logout();
         } catch (error) {
           console.error('Errore durante il logout:', error);
-          Alert.alert('Errore Logout', 'Impossibile completare il logout. Riprova.');
+          Alert.alert(t('profile.logoutError'), t('profile.logoutErrorMessage'));
         }
       }
     }

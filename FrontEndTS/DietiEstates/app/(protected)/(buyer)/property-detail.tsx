@@ -302,10 +302,10 @@ const PropertyDetailScreen: React.FC = () => {
         {/* Pulsanti di azione */}
         <View style={styles.actionButtons}>
           <TouchableOpacity style={styles.primaryButton} onPress={() => setVisitPanelVisible(true)}>
-            <ThemedText style={styles.primaryButtonText}>Pianifica una visita</ThemedText>
+            <ThemedText style={styles.primaryButtonText}>{t('planVisit')}</ThemedText>
           </TouchableOpacity>
           <TouchableOpacity style={styles.secondaryButton} onPress={() => setOfferPanelVisible(true)}>
-            <ThemedText style={styles.secondaryButtonText}>Fai un'offerta</ThemedText>
+            <ThemedText style={styles.secondaryButtonText}>{t('makeOffer')}</ThemedText>
           </TouchableOpacity>
         </View>
 

@@ -5,6 +5,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { OfferResponseDTO } from '@/src/dto/response/OfferResponseDTO';
 import { formatAddress } from '../Agent/PropertyDashboard/types';
+import { t } from 'i18next';
 
 export interface ArchivedOfferCardProps {
   offer: OfferResponseDTO;
@@ -31,7 +32,7 @@ export function ArchivedOfferCard({ offer, onContactBuyer }: ArchivedOfferCardPr
         />
         <View style={[styles.statusBadge, { backgroundColor: isAccepted ? success : error }]}>
           <ThemedText style={styles.statusText}>
-            {isAccepted ? 'OFFERTA ACCETTATA' : 'RIFIUTATA'}
+            {isAccepted ? t('offer_status.ACCEPTED') : t('offer_status.REJECTED')}
           </ThemedText>
         </View>
       </View>
@@ -39,24 +40,24 @@ export function ArchivedOfferCard({ offer, onContactBuyer }: ArchivedOfferCardPr
       <View style={styles.detailsContainer}>
         <ThemedText style={styles.propertyName}>{offer.property.propertyCategory}</ThemedText>
         <ThemedText style={[styles.propertyAddress, { color: textColor }]}>{formatAddress(offer.property.address)}</ThemedText>
-        <ThemedText style={styles.offerAmount}>Offerta: €{offer.price.toLocaleString('it-IT')}</ThemedText>
+        <ThemedText style={styles.offerAmount}>{t('offersArchived.agent.offerAmount', { amount: offer.price.toLocaleString('it-IT') })}</ThemedText>
 
         {offer.user && (isAccepted ? (
           <View style={styles.buyerInfo}>
             {/* UserIcon placeholder */}
-            <ThemedText style={styles.buyerName}>Acquirente: {offer.user.fullName}</ThemedText>
+            <ThemedText style={styles.buyerName}>{t('offersArchived.agent.buyerLabel', { name: offer.user.fullName })}</ThemedText>
             <TouchableOpacity
               style={[styles.contactButton, { backgroundColor: buttonBackground }]}
-              onPress={() => onContactBuyer && onContactBuyer(offer.user.email)}
+              onPress={() => onContactBuyer && onContactBuyer(offer.user?.email ?? '')}
             >
-              <Text style={[styles.contactButtonText, { color: buttonTextColor }]}>Contatta Acquirente</Text>
+              <Text style={[styles.contactButtonText, { color: buttonTextColor }]}>{t('offersArchived.agent.contactBuyer')}</Text>
             </TouchableOpacity>
           </View>
         ) : (
           <View style={styles.rejectionLog}>
-            <ThemedText style={styles.logTitle}>Log Rifiuto:</ThemedText>
-            <ThemedText style={styles.logText}>Offerente: {offer.user.fullName}</ThemedText>
-            <ThemedText style={styles.logText}>Proposta: {offer.price}</ThemedText>
+            <ThemedText style={styles.logTitle}>{t('offersArchived.agent.rejectionLogTitle')}</ThemedText>
+            <ThemedText style={styles.logText}>{t('offersArchived.agent.offererLabel', { name: offer.user.fullName })}</ThemedText>
+            <ThemedText style={styles.logText}>{t('offersArchived.agent.proposalAmount', { amount: offer.price })}</ThemedText>
           </View>
         ))}
       </View>
