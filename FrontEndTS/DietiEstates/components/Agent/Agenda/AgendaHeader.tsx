@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { Modal, TouchableOpacity, View } from 'react-native';
+import { Calendar } from 'react-native-calendars';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -15,6 +16,7 @@ const AgendaHeader: React.FC<AgendaHeaderProps> = ({ currentDate: controlledDate
   const { t, i18n } = useTranslation();
   const [internalDate, setInternalDate] = useState(new Date());
   const date = controlledDate ?? internalDate;
+  const [isCalendarVisible, setCalendarVisible] = useState(false);
   const agendaHeaderTextColor = useThemeColor({}, 'text');
   const agendaHeaderBackgroundColor = useThemeColor({}, 'backgroundMuted');
  
@@ -66,7 +68,7 @@ const AgendaHeader: React.FC<AgendaHeaderProps> = ({ currentDate: controlledDate
     <ThemedView className="p-4">
       <ThemedView className="flex-row justify-between items-center mb-4">
         <ThemedText type="title" style={{ color: agendaHeaderTextColor }}>{t('agenda.title')}</ThemedText>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => setCalendarVisible(true)}>
           <Ionicons name="calendar-outline" size={28} color={agendaHeaderTextColor} />
         </TouchableOpacity>
       </ThemedView>
@@ -78,6 +80,29 @@ const AgendaHeader: React.FC<AgendaHeaderProps> = ({ currentDate: controlledDate
         <TouchableOpacity onPress={handleNextDay}>
           <Ionicons name="chevron-forward" size={28} color={agendaHeaderTextColor} />
         </TouchableOpacity>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isCalendarVisible}
+          onRequestClose={() => {
+            setCalendarVisible(!isCalendarVisible);
+          }}
+        >
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+            <View style={{ backgroundColor: 'white', borderRadius: 20, padding: 35, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 4, elevation: 5 }}>
+              <Calendar
+                current={date.toISOString().split('T')[0]}
+                onDayPress={(day) => {
+                  updateDate(new Date(day.timestamp));
+                  setCalendarVisible(false);
+                }}
+                monthFormat={'MMMM yyyy'}
+                hideExtraDays={true}
+                firstDay={1}
+              />
+            </View>
+          </View>
+        </Modal>
       </ThemedView>
     </ThemedView>
   );
