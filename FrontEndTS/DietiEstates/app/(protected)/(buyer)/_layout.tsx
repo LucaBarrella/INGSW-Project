@@ -47,6 +47,18 @@ export default function BuyerLayout() {
           ),
         }}
       />
+      <Stack.Screen
+        name="settings"
+        options={{
+          headerShown: true,
+          title: 'Impostazioni',
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => router.back()} style={{ marginLeft: 10 }}>
+              <Ionicons name="arrow-back" size={24} color={tintColor} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
     </Stack>
   );
 }
