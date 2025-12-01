@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { ActivityIndicator, Alert } from 'react-native';
 import { useLocalSearchParams, Stack } from 'expo-router';
 import { useSearch } from '@/context/SearchContext';
@@ -11,7 +11,7 @@ import { SearchResultsView } from '@/components/Buyer/SearchResults/SearchResult
 export default function SearchResultsScreen() {
   // Legge params URL per titoli/categoria (solo lettura; il triggerSearch è stato rimosso)
   const params = useLocalSearchParams<{ category?: string; query?: string; contract?: 'rent' | 'sale' }>();
-  const { state } = useSearch();
+  const { state, setGeolocation } = useSearch();
   const { properties, isLoading, error, search } = useSearchProperties();
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
 
@@ -24,11 +24,18 @@ export default function SearchResultsScreen() {
     : params?.query || state.searchQuery || 'Ricerca';
 
   // Trigger search once after URL params are synced and storage is loaded
+  // Use a ref to ensure the initial search runs only once even if `search` identity changes
+  const initialSearchTriggeredRef = useRef(false);
   useEffect(() => {
-    if (!state.isLoadingFromStorage) {
-      search().catch(err => {
-        console.error('[SearchScreen] Initial search failed:', err);
-      });
+    if (!state.isLoadingFromStorage && !initialSearchTriggeredRef.current) {
+      initialSearchTriggeredRef.current = true;
+      (async () => {
+        try {
+          await search();
+        } catch (err) {
+          console.error('[SearchScreen] Initial search failed:', err);
+        }
+      })();
     }
   }, [state.isLoadingFromStorage, search]);
 
@@ -64,8 +71,13 @@ export default function SearchResultsScreen() {
           properties={properties}
           onSearchTrigger={search}
           onChangeCenter={(newLat, newLng) => {
-            state.geolocation = { lat: newLat, lon: newLng };
-            //trigger a new search with updated center
+            // Usa l'API del context per aggiornare la geolocalizzazione invece di mutare direttamente lo state
+            try {
+              setGeolocation({ lat: newLat, lon: newLng, label: undefined, radiusKm: undefined });
+            } catch (e) {
+              console.error('[SearchScreen] setGeolocation failed', e);
+            }
+            // trigger a new search with updated center (explicit user action)
             search().catch(err => {
               Alert.alert('Errore', 'Si è verificato un errore durante la ricerca con la nuova posizione.');
               console.error('[SearchScreen] search failed', err);

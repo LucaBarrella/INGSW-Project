@@ -32,12 +32,12 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const { t } = useTranslation();
 
   const { state, setGeolocation } = useSearch();
-
+  
   const [suggestions, setSuggestions] = useState<PhotonFeature[]>([]);
   const isSelectingRef = React.useRef(false);
   const lastQueryRef = React.useRef<string>(''); // Per tracciare l'ultima query inviata a Photon
   // Usa il repository/hook per suggerimenti persistenti e il conteggio filtri attivi
-  const { getSuggestions, saveSuggestions, activeFiltersCount: activeCountFromHook, updateFilter } = useSearchProperties();
+  const { getSuggestions, saveSuggestions, activeFiltersCount: activeCountFromHook, updateFilter, search } = useSearchProperties();
 
   // Suggestion persistence and caching delegated to SearchRepository via useSearchProperties.
   // No local AsyncStorage management here to keep the UI component simple.
@@ -90,9 +90,16 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     return () => clearTimeout(timer);
   }, [value, getSuggestions]); // Rimuovo state.geolocation dalle dipendenze
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (onSearchPress) {
       onSearchPress();
+    }
+    try {
+      await search();
+    } catch (e) {
+      // Non bloccare la UI se la ricerca fallisce; loggalo per debug
+      // eslint-disable-next-line no-console
+      console.error('[SearchBar] search failed', e);
     }
   };
 
@@ -118,15 +125,16 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         console.error('[SearchBar] updateFilter failed', e);
       }
     } else {
-      setGeolocation({ lat: 0, lon: 0, label, radiusKm });
+      // Il suggerimento non ha coordinate: NON impostare lat/lon a 0 (causa payload con latitude=0).
+      // Rimuoviamo la geolocalizzazione corrente e non scriviamo valori numerici di fallback nei filtri.
+      setGeolocation(null);
+      // Non aggiornare i filtri con centerLatitude/centerLongitude a 0:
+      // lasciamo che il FilterPayloadBuilder gestisca l'assenza di geolocalizzazione.
       try {
-        updateFilter('general', {
-          centerLatitude: 0,
-          centerLongitude: 0,
-          // Non aggiorniamo più il raggio qui, lasciamo che il builder usi il default o il valore modificato dall'utente.
-        });
+        // opzionalmente possiamo pulire i campi nel filtro se necessario, ma evitiamo di scrivere 0
+        // updateFilter('general', { centerLatitude: undefined, centerLongitude: undefined });
       } catch (e) {
-        console.error('[SearchBar] updateFilter failed', e);
+        console.error('[SearchBar] updateFilter skipped/failed', e);
       }
     }
     setSuggestions([]);

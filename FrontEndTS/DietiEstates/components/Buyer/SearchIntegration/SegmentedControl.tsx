@@ -9,8 +9,8 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 
 interface SegmentedControlProps<T extends string> {
   options: { label: string; value: T }[];
-  value: T;
-  onChange: (value: T) => void;
+  value: T | null; // Modificato per accettare null
+  onChange: (value: T | null) => void; // Modificato per accettare null
 }
 
 export function SegmentedControl<T extends string>({ 
@@ -24,8 +24,11 @@ export function SegmentedControl<T extends string>({
   const buttonTextColor = useThemeColor({}, "buttonTextColor");
 
   const handlePress = (newValue: T) => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    onChange(newValue);
+    // Chiamiamo onChange solo se il nuovo valore è diverso dal valore corrente
+    if (newValue !== value) {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      onChange(newValue);
+    }
   };
 
   return (
@@ -38,8 +41,8 @@ export function SegmentedControl<T extends string>({
           key={option.value}
           className={`flex-1 py-2 ${index > 0 ? 'ml-1' : ''}`}
           style={[
-            { 
-              backgroundColor: value === option.value ? tintColor : 'transparent',
+            {
+              backgroundColor: value !== null && value === option.value ? tintColor : 'transparent',
               borderRadius: 6
             }
           ]}
@@ -48,7 +51,7 @@ export function SegmentedControl<T extends string>({
           <ThemedText 
             className="text-center text-sm font-medium"
             style={{
-              color: value === option.value ? buttonTextColor : textColor
+              color: value !== null && value === option.value ? buttonTextColor : textColor
             }}
           >
             {option.label}

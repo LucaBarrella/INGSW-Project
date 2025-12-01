@@ -32,15 +32,27 @@ const updateFilterCategory = <TCategory extends Record<string, FilterState<any>>
   const updated = { ...existingCategory } as TCategory;
   for (const key of Object.keys(newFilters) as (keyof TCategory)[]) {
     const rawNewValue = newFilters[key];
+    console.log(`[SearchContext] updateFilterCategory - key: ${String(key)}, rawNewValue:`, rawNewValue);
 
     // Se non esiste lo stato corrente per questa chiave, creiamo un FilterState di fallback
     const existing = (updated[key] as unknown as FilterState<any>) ?? ({} as FilterState<any>);
+
+    // Normalizziamo eventuali wrapper FilterState passati nel payload:
+    // - Se il chiamante ha passato { value: X, isModified: ... } o un oggetto con .value,
+    //   usiamo il suo .value come nuovo valore effettivo. Manteniamo però rawNewValue
+    //   integro per controlli speciali (es. __forceIsModified).
+    let normalizedNewValue: any = rawNewValue;
+    if (normalizedNewValue != null && typeof normalizedNewValue === 'object') {
+      if ('value' in normalizedNewValue) {
+        normalizedNewValue = (normalizedNewValue as any).value;
+      }
+    }
 
     // Otteniamo il valore di default in modo robusto:
     // 1) dalla definizione di default della categoria (defaultCategoryDef)
     // 2) se non presente, dal file di configurazione globale ALL_FILTERS
     // 3) se non presente, dall'esistente.defaultValue
-    // 4) infine fallback a rawNewValue
+    // 4) infine fallback a normalizedNewValue
     let defaultValue: any = undefined;
     if (defaultCategoryDef && (defaultCategoryDef as any)[key as string] && (defaultCategoryDef as any)[key as string].defaultValue !== undefined) {
       defaultValue = (defaultCategoryDef as any)[key as string].defaultValue;
@@ -48,12 +60,23 @@ const updateFilterCategory = <TCategory extends Record<string, FilterState<any>>
       defaultValue = (ALL_FILTERS as any)[key as string].defaultValue;
     } else if (existing && (existing as any).defaultValue !== undefined) {
       defaultValue = (existing as any).defaultValue;
-    } else {
-      defaultValue = rawNewValue;
     }
+    console.log(`[SearchContext] updateFilterCategory - key: ${String(key)}, resolved defaultValue:`, defaultValue);
 
     // Normalizziamo il FilterState usando updateFilterState (determina isModified)
-    updated[key] = updateFilterState(existing as any, rawNewValue, defaultValue) as any;
+    const newState = updateFilterState(existing as any, normalizedNewValue, defaultValue) as any;
+    console.log(`[SearchContext] updateFilterState result - isModified: ${newState.isModified}, value:`, newState.value);
+    // La logica per forzare isModified a true per 'contract' è stata spostata qui
+    // per evitare il loop e garantire che sia marcato come modificato solo quando l'utente interagisce.
+    // Aggiunto controllo per evitare il loop: se il valore è lo stesso e non c'è forceIsModified, non forzare isModified.
+    if (String(key) === 'contract' && normalizedNewValue !== null && !deepEqual(normalizedNewValue, existing.value)) {
+      newState.isModified = true;
+    } else if (rawNewValue != null && typeof rawNewValue === 'object' && '__forceIsModified' in (rawNewValue as object) && (rawNewValue as any).__forceIsModified === true) { // Se è stato forzato dalla UI
+      newState.isModified = true;
+    } else if (String(key) === 'contract' && normalizedNewValue === null && existing.value !== null) { // Se il contratto viene resettato a null
+      newState.isModified = false;
+    }
+    updated[key] = newState;
   }
   return updated;
 };
@@ -82,8 +105,10 @@ export const initialSearchState: SearchState = {
   filters: defaultSearchCriteria,
   previousFilters: defaultSearchCriteria, // Inizializza allo stesso valore
   selectedMainCategoryInPanel: null,
-  // La persistenza è gestita da SearchRepository; il context resta puro.
-  isLoadingFromStorage: false,
+  // Indichiamo che al primo montaggio stiamo ancora caricando dallo storage:
+  // questo impedisce alla UI di lanciare ricerche o renderizzare risultati
+  // basandosi su filtri non ancora idratati.
+  isLoadingFromStorage: true,
   errorStorage: null,
 };
 
@@ -143,23 +168,19 @@ export const searchReducer = (state: SearchState, action: SearchAction): SearchS
     }
     case 'RESET_FILTERS': {
       const keepTransactionType = action.payload?.keepTransactionType === true;
-      const effectiveContract = keepTransactionType ? state.filters.general.contract.value : defaultSearchCriteria.general.contract.value;
-
       // Clona i default per evitare side-effect sul defaultSearchCriteria
       const resetFilters: any = JSON.parse(JSON.stringify(defaultSearchCriteria));
 
-      // Imposta contract al valore effettivo (può essere mantenuto o resettato).
-      // Dopo un RESET vogliamo che nessun filtro rimanga segnato come "modified",
-      // anche se manteniamo il tipo di transazione (keepTransactionType).
+      // Per il filtro 'contract', dopo un reset, vogliamo che sia sempre non selezionato (null)
+      // e non modificato, indipendentemente da keepTransactionType.
       resetFilters.general.contract = {
-        ...resetFilters.general.contract,
-        value: effectiveContract,
-        // Forziamo isModified a false: il reset ristabilisce lo stato "pulito"
+        value: null,
+        defaultValue: null,
         isModified: false,
       };
       
-      // PriceRange dipende dal tipo di contratto: usiamo i range per sale/rent come default post-reset
-      const pr = effectiveContract === 'rent' ? DEFAULT_PRICE_RANGES.rent.defaultRange : DEFAULT_PRICE_RANGES.sale.defaultRange;
+      // Per priceRange, se il contratto è stato resettato a null, usiamo il default per 'sale' come fallback
+      const pr = (resetFilters.general.contract.value === 'rent') ? DEFAULT_PRICE_RANGES.rent.defaultRange : DEFAULT_PRICE_RANGES.sale.defaultRange;
       resetFilters.general.priceRange = {
         ...resetFilters.general.priceRange,
         value: pr,
@@ -167,16 +188,32 @@ export const searchReducer = (state: SearchState, action: SearchAction): SearchS
         isModified: false,
       };
 
+      // Se keepTransactionType è true, ripristiniamo il valore del contratto precedente
+      // SOLO SE non era null (cioè, l'utente aveva selezionato esplicitamente "rent" o "sale")
+      // e lo marchiamo come modificato.
+      if (keepTransactionType && state.filters.general.contract.value !== null) {
+        resetFilters.general.contract.value = state.filters.general.contract.value;
+        resetFilters.general.contract.isModified = true;
+      }
+
       // Garantiamo che tutti gli altri FilterState abbiano value = defaultValue e isModified = false
       for (const catKey of Object.keys(resetFilters)) {
         const cat = resetFilters[catKey];
         if (!cat || typeof cat !== 'object') continue;
         for (const fKey of Object.keys(cat)) {
+          // Do not restore 'contract' or 'priceRange' in 'general' here since handled above
           if (catKey === 'general' && (fKey === 'contract' || fKey === 'priceRange')) continue;
           const fs = cat[fKey];
           if (fs && typeof fs === 'object' && 'defaultValue' in fs) {
-            fs.value = fs.defaultValue;
-            fs.isModified = false;
+            // Special-case: clear selected category/subcategory choices on RESET
+            if (fKey === 'category') {
+              fs.value = null;
+              fs.isModified = false;
+            } else {
+              // For other filters restore to their default value and mark as unmodified
+              fs.value = fs.defaultValue;
+              fs.isModified = false;
+            }
             cat[fKey] = fs;
           }
         }

@@ -1,29 +1,25 @@
-import SearchApi from '@/src/api/SearchApi';
-import { SearchPayload } from '@/src/services/FilterPayloadBuilder';
-import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
+import { FilterRequest } from '@/src/dto/request/FilterRequest.dto';
+import { PagedPropertyResponse } from '@/src/dto/response/PropertyResponse.dto';
 import { PropertyDetailDTO } from '@/src/dto/PropertyDetailsDTO';
+import SearchApi from '@/src/api/SearchApi';
 
-/**
- * SearchRepository
- * - Responsabilità: chiamate API relative alla ricerca di proprietà.
- * - Mantiene un'interfaccia minimale per la chiamata a SearchApi.
- */
+class SearchRepository {
+  private searchApi: typeof SearchApi;
 
-const SearchRepository = {
-  async searchProperties(payload: SearchPayload): Promise<{ content: PropertyDetail[]; totalElements?: number }> {
-    return SearchApi.searchProperties(payload);
-  },
+  constructor(searchApi: typeof SearchApi) {
+    this.searchApi = searchApi;
+  }
 
-  /**
-   * Recupera i dettagli delle proprietà a partire dagli id forniti.
-   * Fa da wrapper al metodo API SearchApi.getPropertiesByIds.
-   */
+  async searchProperties(
+    filter: FilterRequest,
+    pageable?: { page?: number; size?: number; sort?: string[] },
+  ): Promise<PagedPropertyResponse> {
+    return this.searchApi.searchProperties(filter, pageable);
+  }
+
   async getPropertiesByIds(propertyIds: string[]): Promise<PropertyDetailDTO[]> {
-    if (!Array.isArray(propertyIds)) {
-      throw new Error('Invalid parameter: propertyIds must be an array');
-    }
-    return SearchApi.getPropertiesByIds(propertyIds);
-  },
-};
+    return this.searchApi.getPropertiesByIds(propertyIds);
+  }
+}
 
 export default SearchRepository;

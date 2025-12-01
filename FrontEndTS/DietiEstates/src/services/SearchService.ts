@@ -1,60 +1,130 @@
-import { PhotonFeature } from '@/components/Buyer/SearchIntegration/types';
-import SearchRepository from '@/src/repositories/SearchRepository';
-import SuggestionsRepository from '@/src/repositories/SuggestionsRepository';
-import SearchStateRepository from '@/src/repositories/SearchStateRepository';
-import { SearchState } from '@/context/SearchContext';
+import { FilterRequest } from "../dto/request/FilterRequest.dto";
+import { PagedPropertyResponse } from "../dto/response/PropertyResponse.dto";
+import SearchRepository from "../repositories/SearchRepository";
+import SearchApi from "../api/SearchApi";
+import { FilterPayloadBuilder } from "./FilterPayloadBuilder";
+ 
+class SearchService {
+  private filterPayloadBuilder: FilterPayloadBuilder;
+  private searchRepository: SearchRepository;
+ 
+  constructor(
+    filterPayloadBuilder: FilterPayloadBuilder,
+    searchRepository: SearchRepository
+  ) {
+    this.filterPayloadBuilder = filterPayloadBuilder;
+    this.searchRepository = searchRepository;
+  }
+ 
+  async searchProperties(
+    filters: any, // This will be the UI state (SearchState)
+    page: number,
+    size: number
+  ): Promise<PagedPropertyResponse> {
+    console.log("SearchService: Received filters", filters);
+ 
+    // Fix: geolocation was sometimes lost because the UI stores it at state.geolocation
+    // while older code expected filters.geolocation. Build a resilient geolocation object
+    // preferring explicit state.geolocation, then falling back to values present in
+    // filters.filters.general.* (SearchCriteria shape).
+    const geolocationFromState = filters?.geolocation;
+    const generalFilters = filters?.filters?.general;
 
-/**
- * SearchService
- * - Contiene logica di business leggera relativa alla ricerca e ai filtri.
- * - Non fa chiamate HTTP dirette: delega al repository.
- * - Espone helper per:
- *    * orchestrare persistenza tramite il repository
- *    * invocare ricerche costruendo il payload tramite FilterPayloadBuilder
- */
+    // Fallback costruito a partire dai filtri generali (forma FilterState o primitiva)
+    const geolocationFallback = generalFilters
+      ? {
+          centerLatitude: generalFilters.centerLatitude?.value ?? generalFilters.centerLatitude,
+          centerLongitude: generalFilters.centerLongitude?.value ?? generalFilters.centerLongitude,
+          // manteniamo sia radiusInMeters che searchRadiusKm come possibili sorgenti
+          radiusInMeters: generalFilters.radiusInMeters?.value ?? generalFilters.radiusInMeters,
+          searchRadiusKm: generalFilters.searchRadiusKm?.value ?? generalFilters.searchRadiusKm,
+        }
+      : undefined;
 
-import FilterPayloadBuilder from '@/src/services/FilterPayloadBuilder';
-import type { SearchCriteria, Geolocation } from '@/src/dto/SearchDTO';
-import type { PropertyDetailDTO } from '@/src/dto/PropertyDetailsDTO';
+    // Start dal geolocation esplicita nello state se presente, altrimenti fallback dai filtri.
+    // IMPORTANTE: permettiamo ai filtri generali di sovrascrivere il solo raggio anche se esiste una geolocation esplicita.
+    let geolocation: any = geolocationFromState ?? geolocationFallback ?? undefined;
 
-/** Carica lo stato (parte) persistito tramite il repository */
-export async function loadPersistedState(): Promise<Partial<SearchState>> {
-  return SearchStateRepository.loadStateFromStorage();
+    if (generalFilters) {
+      // priorità: searchRadiusKm (può essere numero o range {min,max}) -> converti a metri
+      const rawSearchRadius = generalFilters.searchRadiusKm?.value ?? generalFilters.searchRadiusKm;
+      let overrideKm: number | undefined;
+      if (rawSearchRadius !== undefined && rawSearchRadius !== null) {
+        if (typeof rawSearchRadius === 'object') {
+          overrideKm = Number(rawSearchRadius.max ?? rawSearchRadius.value?.max ?? rawSearchRadius.value ?? rawSearchRadius.min ?? rawSearchRadius.value?.min);
+        } else {
+          overrideKm = Number(rawSearchRadius);
+        }
+        if (!Number.isFinite(overrideKm)) overrideKm = undefined;
+      }
+
+      // se è presente un override del raggio usalo (in metri)
+      if (overrideKm !== undefined) {
+        geolocation = { ...(geolocation ?? {}), radiusKm: overrideKm, radiusInMeters: overrideKm * 1000 };
+      } else if (generalFilters.radiusInMeters?.value !== undefined) {
+        geolocation = { ...(geolocation ?? {}), radiusInMeters: Number(generalFilters.radiusInMeters.value) };
+      }
+
+      // permetti anche override espliciti di centro
+      if (generalFilters.centerLatitude?.value !== undefined) {
+        geolocation = { ...(geolocation ?? {}), centerLatitude: generalFilters.centerLatitude.value };
+      }
+      if (generalFilters.centerLongitude?.value !== undefined) {
+        geolocation = { ...(geolocation ?? {}), centerLongitude: generalFilters.centerLongitude.value };
+      }
+    }
+ 
+    const filterRequest: FilterRequest = this.filterPayloadBuilder.build(filters, geolocation);
+ 
+    console.log("SearchService: Built FilterRequest", filterRequest);
+
+    if (
+      filterRequest.centerLatitude == null ||
+      filterRequest.centerLongitude == null ||
+      filterRequest.radiusInMeters == null
+    ) {
+      throw new Error(
+        "Invalid or missing geolocation fields"
+      );
+    }
+
+    try {
+      const properties = await this.searchRepository.searchProperties(
+        filterRequest,
+        { page, size }
+      );
+      return properties;
+    } catch (error) {
+      console.error("SearchService: Error during property search", error);
+      // Re-throw the error to be handled by the upper layer (e.g., the hook)
+      throw error;
+    }
+  }
+
+  async getPropertiesByIds(propertyIds: string[]): Promise<any[]> {
+    return this.searchRepository.getPropertiesByIds(propertyIds);
+  }
 }
 
-/** Salva lo stato corrente tramite repository */
-export async function persistState(state: SearchState): Promise<void> {
-  await SearchStateRepository.saveStateToStorage(state);
+export async function getPropertiesByIds(propertyIds: string[]) {
+  const repo = new SearchRepository(SearchApi);
+  return repo.getPropertiesByIds(propertyIds);
 }
-
-/** Invoca la ricerca tramite repository (costruendo il payload dai FilterState UI) */
-export async function searchProperties(filters: SearchCriteria, geolocation?: Geolocation | null) {
-  // Costruiamo il payload solo a partire dai filtri UI.
-  // NOTA: non includiamo più `query` nel payload — il backend deve ricevere solo
-  // centerLatitude/centerLongitude/radiusInMeters e gli altri filtri.
-  const payload = FilterPayloadBuilder.build(filters, geolocation);
-  return SearchRepository.searchProperties(payload as any);
-}
-
-/** Recupera suggerimenti delegando al repository */
-export async function getSuggestions(query: string): Promise<PhotonFeature[]> {
-  return SuggestionsRepository.getSuggestions(query);
-}
-
-/** Salva i suggerimenti delegando al repository */
-export async function saveSuggestions(query: string, suggestions: PhotonFeature[]): Promise<void> {
-  return SuggestionsRepository.saveSuggestions(query, suggestions);
-}
-
-/** Recupera i dettagli delle proprietà a partire dagli id (delegato al repository) */
-export async function getPropertiesByIds(propertyIds: string[]): Promise<PropertyDetailDTO[]> {
-  return SearchRepository.getPropertiesByIds(propertyIds);
-}
-
-export default {
-  loadPersistedState,
-  persistState,
-  searchProperties,
-  getSuggestions,
-  saveSuggestions,
+ 
+// Backward-compatible attachment: allow both
+// - import { getPropertiesByIds } from '.../SearchService' (preferred)
+// - SearchService.getPropertiesByIds(...) or (less common) getPropertiesByIds(serviceInstance, ids)
+;(SearchService as any).getPropertiesByIds = function (...args: any[]) {
+  // If called with a single array argument: treat as propertyIds
+  if (args.length === 1 && Array.isArray(args[0])) {
+    return getPropertiesByIds(args[0]);
+  }
+  // If called with (serviceInstance, ids)
+  if (args.length >= 2 && args[0] && typeof args[0].getPropertiesByIds === "function") {
+    return args[0].getPropertiesByIds(args[1]);
+  }
+  // Fallback: try to resolve first argument as ids
+  return getPropertiesByIds(args[0] || []);
 };
+ 
+export default SearchService;

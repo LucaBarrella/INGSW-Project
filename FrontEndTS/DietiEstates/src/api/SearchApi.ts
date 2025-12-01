@@ -1,27 +1,48 @@
 import httpClient from '@/src/core/httpClient';
-import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
-import { SearchPayload } from '@/src/services/FilterPayloadBuilder';
+import { FilterRequest } from '@/src/dto/request/FilterRequest.dto';
+import { PagedPropertyResponse, PropertyResponse } from '@/src/dto/response/PropertyResponse.dto';
+import ApiError from '@/src/core/errors/ApiError';
 import { PropertyDetailDTO } from '@/src/dto/PropertyDetailsDTO';
 
-type SearchResponse = {
-  content: PropertyDetail[]; // allineato alla risposta effettiva
-  totalElements?: number; // allineato alla risposta effettiva
-};
-
-const SearchApi = {
-  async searchProperties(payload: SearchPayload): Promise<SearchResponse> {
-    if (typeof payload !== 'object' || payload === null) {
-      throw new Error('Invalid parameter: payload must be an object');
+class SearchApi {
+  /**
+   * Esegue la chiamata POST /properties/search.
+   * Il body della richiesta è la combinazione di FilterRequest e dei parametri di paginazione (page/size/sort).
+   * @param filter: FilterRequest - l'oggetto FilterRequest completo.
+   * @param pageable: { page?: number; size?: number; sort?: string[] } - un oggetto opzionale per i parametri di paginazione.
+   * @returns Promise<PagedPropertyResponse> - la risposta paginata delle proprietà.
+   */
+  async searchProperties(
+    filter: FilterRequest,
+    pageable?: { page?: number; size?: number; sort?: string[] },
+  ): Promise<PagedPropertyResponse> {
+    if (typeof filter !== 'object' || filter === null) {
+      console.error('[SearchApi] Errore: Il parametro filter deve essere un oggetto.');
+      throw new ApiError(400, 'Richiesta non valida: il filtro deve essere un oggetto.');
     }
 
     try {
+      const payload = {
+        ...filter,
+        ...(pageable ? pageable : {}),
+      };
       console.log('[SearchApi] Payload finale inviato:', JSON.stringify(payload, null, 2));
+
       const response = await httpClient.post('/properties/search', payload);
-      return response.data as SearchResponse;
-    } catch (err) {
-      throw err;
+      console.log('[SearchApi] Risposta ricevuta:', JSON.stringify(response.data, null, 2));
+      return response.data as PagedPropertyResponse;
+    } catch (error: any) {
+      console.error('[SearchApi] Errore durante la ricerca delle proprietà:', error);
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      // Gestione di errori non ApiError (es. errori di rete generici)
+      throw new ApiError(
+        error.response?.status || 500,
+        error.response?.data?.message || 'Errore sconosciuto durante la ricerca delle proprietà.',
+      );
     }
-  },
+  }
 
   /**
    * Recupera i dettagli delle proprietà a partire dagli id forniti.
@@ -30,19 +51,26 @@ const SearchApi = {
    */
   async getPropertiesByIds(propertyIds: string[]): Promise<PropertyDetailDTO[]> {
     if (!Array.isArray(propertyIds)) {
-      throw new Error('Invalid parameter: propertyIds must be an array');
+      throw new ApiError(400, 'Richiesta non valida: propertyIds deve essere un array');
     }
     if (propertyIds.length > 100) {
-      throw new Error('Invalid parameter: propertyIds length must be <= 100');
+      throw new ApiError(400, 'Richiesta non valida: propertyIds length deve essere <= 100');
     }
 
     try {
       const response = await httpClient.post('/api/properties/history', { propertyIds });
       return response.data as PropertyDetailDTO[];
-    } catch (err) {
-      throw err;
+    } catch (error: any) {
+      console.error('[SearchApi] Errore durante il recupero delle proprietà per ID:', error);
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new ApiError(
+        error.response?.status || 500,
+        error.response?.data?.message || 'Errore sconosciuto durante il recupero delle proprietà per ID.',
+      );
     }
-  },
-};
+  }
+}
 
-export default SearchApi;
+export default new SearchApi();

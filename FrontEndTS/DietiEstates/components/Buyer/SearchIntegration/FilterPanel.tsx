@@ -15,7 +15,7 @@ import { useSearch } from "@/context/SearchContext";
 import useSearchProperties from '@/src/hooks/useSearchProperties';
 import useSearchUrlState from '@/src/hooks/useSearchUrlState';
 import { ALL_FILTERS, CATEGORY_FILTERS } from "@/config/filter-config";
-import { RESIDENTIAL_CATEGORIES, COMMERCIAL_CATEGORIES, GARAGE_CATEGORIES, LAND_CATEGORIES } from "./types"; //Dobbiamo creare GARAGE_CATEGORIES
+import usePropertyCategories from '@/src/hooks/usePropertyCategories'; // dinamico: scarica categorie/sottocategorie dal backend
 import type { FilterDefinition } from "./types";
 
 interface FilterPanelProps {
@@ -35,10 +35,12 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
   const translateY = useRef(new Animated.Value(2000)).current;
   const overlayOpacity = useRef(new Animated.Value(0)).current;
 
-  const { state, dispatch } = useSearch();
+  const { state } = useSearch();
   const { filters, selectedMainCategoryInPanel } = state;
   // Usa l'hook che espone updateFilter/resetFilters/search con logica di sanitizzazione
-  const { updateFilter, resetFilters, search } = useSearchProperties();
+  const { updateFilter, resetFilters, search, selectMainCategory } = useSearchProperties();
+  // Hook che scarica dinamicamente le categorie/sottocategorie dal backend
+  const { categoriesByType, isLoading: categoriesLoading, refresh: refreshCategories } = usePropertyCategories();
   // Hook per sincronizzare esplicitamente Context -> URL quando l'utente applica i filtri
   const { forceSyncUrl } = useSearchUrlState();
 
@@ -92,22 +94,9 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
     resetFilters(keepTransactionType);
   };
 
-  const selectCategory = (categoryKey: keyof typeof categoryStateToConfigMap | null) => {
-    dispatch({ type: 'SET_SELECTED_MAIN_CATEGORY_IN_PANEL', payload: categoryKey as any });
-    if (categoryKey) {
-      // imposta category di default se necessario (usiamo .value quando presente)
-      const existingCategoryState = (filters as any)[categoryKey];
-      const defaultCatValue = existingCategoryState?.category?.value ?? null;
-      if (!defaultCatValue) {
-        // se non esiste un valore corrente, proviamo a leggere il default dalla stessa categoria (se presente)
-        const fallbackDefault = existingCategoryState?.category?.defaultValue ?? null;
-        if (fallbackDefault !== null && fallbackDefault !== undefined) {
-          // usa l'hook per aggiornare la categoria
-          updateFilter(categoryKey as any, { category: fallbackDefault } as any);
-        }
-      }
-    }
-  };
+  /* selectCategory rimosso dal componente.
+     Ora si utilizza selectMainCategory fornito da useSearchProperties()
+     che centralizza dispatch e updateFilter necessari. */
 
   const updateGeneralFilter = (newFilters: Record<string, any>) => {
     // instrada verso l'hook che normalizza null/undefined e dispatcha
@@ -120,6 +109,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
   };
 
   const renderControl = (def: FilterDefinition, currentCategoryKey?: keyof typeof categoryStateToConfigMap) => {
+    console.log(`[FilterPanel] renderControl - def.key: ${def.key}, currentCategoryKey: ${currentCategoryKey}`);
     const isGeneral = !currentCategoryKey;
 
     // Recupera il FilterState e poi il suo valore; fallback su def.defaultValue
@@ -127,9 +117,21 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
       ? (filters.general as any)[def.key]
       : ((filters as any)[currentCategoryKey as string] ?? {})[def.key];
 
-    const value = rawState && typeof rawState === 'object' && 'value' in rawState
-      ? rawState.value
-      : (rawState !== undefined ? rawState : def.defaultValue);
+    // Unwrap ricorsivo: gestisce casi in cui il valore è avvolto in più livelli
+    // di { value } (es. legacy o payload malformati). Restituisce il valore primitivo
+    // se possibile, oppure l'oggetto non primitive più interno.
+    const unwrapValue = (v: any): any => {
+      if (v === undefined) return undefined;
+      if (v === null) return null;
+      if (typeof v !== 'object') return v;
+      if ('value' in v) return unwrapValue((v as any).value);
+      return v;
+    };
+
+    const unwrapped = unwrapValue(rawState);
+    // Assicuriamoci di srotolare anche il default configurato se per errore è un wrapper
+    const defaultUnwrapped = unwrapValue(def.defaultValue);
+    const value = unwrapped !== undefined ? unwrapped : (defaultUnwrapped !== undefined ? defaultUnwrapped : def.defaultValue);
 
     const onChange = (next: any) => {
       if (isGeneral) {
@@ -162,6 +164,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
             value={value ?? { min: def.min ?? 0, max: def.max ?? 0 }}
             onChange={onChange}
             formatValue={(v) => (def.unit ? `${v}${def.unit}` : `${v}`)}
+            type={def.key === 'size' ? 'size' : 'price'}
           />
         );
       case 'SegmentedControl':
@@ -190,8 +193,48 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
           <QuickNumericSelector
             key={def.key}
             label={def.label}
-            value={String(value ?? '')}
-            onValueChange={(v: string) => onChange(v)}
+            // UI component expects una stringa: srotoliamo profondamente eventuali wrapper
+            value={(() => {
+              try {
+                const display = unwrapValue(value);
+                if (display === null || display === undefined) return '';
+                // se è già primitivo
+                if (typeof display === 'number' || typeof display === 'string') return String(display);
+                // se è oggetto, cerchiamo proprietà numeriche comuni come value/defaultValue/min/max
+                if (typeof display === 'object') {
+                  const probe = (o: any): number | undefined => {
+                    if (o == null) return undefined;
+                    if (typeof o === 'number') return o;
+                    if (typeof o === 'string' && o.trim() !== '' && !Number.isNaN(Number(o))) return Number(o);
+                    const keys = ['value','defaultValue','min','max','minNumberOfFloors','minNumberOfRooms','minNumberOfBathrooms','floor'];
+                    for (const k of keys) {
+                      if (k in o) {
+                        const v = probe(o[k]);
+                        if (v !== undefined) return v;
+                      }
+                    }
+                    // ultima risorsa: cerca la prima proprietà numerica
+                    for (const k of Object.keys(o)) {
+                      const v = o[k];
+                      if (typeof v === 'number' && Number.isFinite(v)) return v;
+                      if (typeof v === 'string' && v.trim() !== '' && !Number.isNaN(Number(v))) return Number(v);
+                    }
+                    return undefined;
+                  };
+                  const found = probe(display);
+                  return found === undefined ? '' : String(found);
+                }
+                return '';
+              } catch (e) {
+                console.error('[FilterPanel] QuickNumericSelector value serialization error', e);
+                return '';
+              }
+            })()}
+            onValueChange={(v: string) => {
+              // Convertiamo stringa in numero se possibile, altrimenti inviamo null per il reset
+              const parsed = v === null || v === '' ? null : Number(v);
+              onChange(parsed);
+            }}
             minValue={def.min}
             maxValue={def.max}
             unit={def.unit}
@@ -249,7 +292,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
               </ThemedView>
 
               <ThemedView className="flex-row items-center" style={{ backgroundColor: tabIconDefault }}>
-                <TouchableOpacity onPress={() => handleReset(true)} className="mr-4 py-2 px-3">
+                <TouchableOpacity onPress={() => handleReset(false)} className="mr-4 py-2 px-3">
                   <ThemedText style={{ color: tintColor }}>Reset</ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={hidePanel} className="p-1">
@@ -266,6 +309,9 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
                 {renderControl(ALL_FILTERS.priceRange)}
                 {renderControl(ALL_FILTERS.size)}
                 {renderControl(ALL_FILTERS.searchRadiusKm)}
+                {renderControl(ALL_FILTERS.acceptedCondition)}
+                {renderControl(ALL_FILTERS.minEnergyRating)}
+                {renderControl(ALL_FILTERS.minYearBuilt)}
               </ThemedView>
 
               {!selectedMainCategoryInPanel ? (
@@ -277,7 +323,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
                     return (
                       <TouchableOpacity
                         key={catKey}
-                        onPress={() => selectCategory(stateKey as any)}
+                        onPress={() => selectMainCategory(stateKey as any)}
                         className="p-4 rounded-lg"
                         style={{ backgroundColor: isSelected ? tintColor : loginCardBackground }}
                       >
@@ -290,7 +336,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
                 </ThemedView>
               ) : (
                 <ThemedView>
-                  <TouchableOpacity onPress={() => selectCategory(null)} className="flex-row items-center mb-4 px-3 py-2 self-start rounded-lg" style={{ backgroundColor: loginCardBackground }}>
+                  <TouchableOpacity onPress={() => selectMainCategory(null)} className="flex-row items-center mb-4 px-3 py-2 self-start rounded-lg" style={{ backgroundColor: loginCardBackground }}>
                     <Ionicons name="swap-horizontal" size={20} color={tintColor} />
                     <ThemedText style={{ color: tintColor, marginLeft: 4 }}>Cambia Categoria</ThemedText>
                   </TouchableOpacity>
@@ -304,14 +350,12 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
                     console.log('[FilterPanel] selectedMainCategoryInPanel:', selectedMainCategoryInPanel, 'selectedCategoryConfigKey:', selectedCategoryConfigKey, 'resolved stateKey:', stateKey);
                     if (!stateKey) return null;
   
-                    const optionsMap: Record<string, string[]> = {
-                      residential: RESIDENTIAL_CATEGORIES as unknown as string[],
-                      commercial: COMMERCIAL_CATEGORIES as unknown as string[],
-                      garage: GARAGE_CATEGORIES as unknown as string[],
-                      land: LAND_CATEGORIES as unknown as string[],
-                    };
-  
-                    const opts = optionsMap[stateKey] || [];
+                    // Otteniamo le opzioni dinamiche dal backend via hook.
+                    // categoryStateToConfigMap mappa lo stato 'residential'|'commercial' -> 'RESIDENTIAL'|'COMMERCIAL'
+                    const configKey = categoryStateToConfigMap[stateKey as string];
+                    const opts = (configKey && categoriesByType && Array.isArray(categoriesByType[configKey]) && categoriesByType[configKey].length > 0)
+                      ? categoriesByType[configKey]
+                      : [];
                     // Debug: log opzioni trovate
                     // eslint-disable-next-line no-console
                     console.log('[FilterPanel] category options for', stateKey, opts);
@@ -332,6 +376,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
                           options={opts.map(o => ({ label: String(o), value: o }))}
                           value={currentValue}
                           onChange={(v: any) => {
+                            console.log(`[FilterPanel] onChange subcategory - stateKey: ${stateKey}, selected value:`, v);
                             // aggiorna la proprietà 'category' della categoria selezionata usando l'hook (normalizza valori)
                             updateCategoryFilter(stateKey as any, { category: v });
                           }}
@@ -343,7 +388,10 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
                   {/* Render dinamico dei filtri per la categoria selezionata */}
                   {filtersToRender.map((key: string) => {
                     const def: FilterDefinition = (ALL_FILTERS as any)[key];
-                    if (!def) return null;
+                    if (!def) {
+                      console.warn(`[FilterPanel] No filter definition found for key: ${key}`);
+                      return null;
+                    }
                     // Per i controlli della categoria passiamo la chiave di stato direttamente
                     const stateKey = selectedMainCategoryInPanel as keyof typeof categoryStateToConfigMap | undefined;
                     return renderControl(def, stateKey);

@@ -18,3 +18,17 @@ const authRepository = new AuthRepository(authApi, tokenService);
 
 // 4. Creation of the Service layer instance with Repository injection
 export const authService = new AuthService(authRepository);
+
+// Search Service Composition
+import SearchApi from "./api/SearchApi";
+import SearchRepository from "./repositories/SearchRepository";
+import { FilterPayloadBuilder } from "./services/FilterPayloadBuilder";
+import SearchService from "./services/SearchService";
+import categoriesService from "./services/CategoriesService";
+
+const searchRepository = new SearchRepository(SearchApi);
+const filterPayloadBuilder = new FilterPayloadBuilder();
+export const searchService = new SearchService(filterPayloadBuilder, searchRepository);
+
+// Centralized categories service (cached) — import from compositionRoot where convenient
+export const categories = categoriesService;

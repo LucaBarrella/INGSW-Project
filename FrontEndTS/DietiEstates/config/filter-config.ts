@@ -6,8 +6,9 @@ export const ALL_FILTERS: { [key: string]: FilterDefinition } = {
     key: 'contract',
     label: 'Tipo di Transazione',
     control: 'SegmentedControl',
-    options: ['sale', 'rent'],
-    defaultValue: 'sale'
+    // Allineato al DTO backend (valori in maiuscolo)
+    options: ['RENT', 'SALE'],
+    defaultValue: null
   },
   priceRange: {
     key: 'priceRange',
@@ -40,12 +41,13 @@ export const ALL_FILTERS: { [key: string]: FilterDefinition } = {
     defaultValue: { min: 1, max: 20 }
   },
   // Riscaldamento: non è più un filtro generale perché non applica a tutte le tipologie (es. LAND)
+  // Normalizziamo le opzioni per allinearle al DTO backend (Capitalized)
   heating: {
     key: 'heating',
     label: 'Riscaldamento',
     control: 'SegmentedControl',
-    options: ['gas', 'autonomous', 'centralized', 'pellet', 'electric'],
-    defaultValue: 'gas',
+    options: ['Centralized', 'Autonomous', 'Absent'],
+    defaultValue: 'Absent',
     categorySpecific: true
   },
 
@@ -77,16 +79,18 @@ export const ALL_FILTERS: { [key: string]: FilterDefinition } = {
     defaultValue: 0,
     categorySpecific: true
   },
+  minNumberOfFloors: {
+    key: 'minNumberOfFloors',
+    label: 'Numero minimo di piani',
+    control: 'QuickNumericSelector',
+    min: 1,
+    max: 10,
+    defaultValue: 1,
+    categorySpecific: true
+  },
   mustHaveElevator: {
     key: 'mustHaveElevator',
     label: 'Con ascensore',
-    control: 'Switch',
-    defaultValue: false,
-    categorySpecific: true
-  },
-  hasPool: {
-    key: 'hasPool',
-    label: 'Con piscina',
     control: 'Switch',
     defaultValue: false,
     categorySpecific: true
@@ -101,7 +105,6 @@ export const ALL_FILTERS: { [key: string]: FilterDefinition } = {
     min: 1800,
     max: new Date().getFullYear(),
     defaultValue: 1900,
-    categorySpecific: true
   },
 
   // Numero minimo di posti auto (minParkingSpaces)
@@ -115,14 +118,14 @@ export const ALL_FILTERS: { [key: string]: FilterDefinition } = {
     categorySpecific: true
   },
 
-  // Stato/condizione accettata (acceptedCondition) - semplificato rispetto all'API che accetta array
+  // Stato/condizione accettata (acceptedCondition) - allineato con API (array di status possibili)
   acceptedCondition: {
     key: 'acceptedCondition',
     label: 'Condizione accettata',
     control: 'SegmentedControl',
-    options: ['NEW', 'GOOD_CONDITION', 'RENOVATED', 'TO_RESTORE'],
-    defaultValue: 'GOOD_CONDITION',
-    categorySpecific: true
+    options: ['NEW', 'GOOD_CONDITION', 'RENOVATED', 'TO_BE_RENOVATED', 'POOR_CONDITION', 'UNDER_CONSTRUCTION'],
+    // Il backend si aspetta una lista; usiamo array per coerenza con FilterRequest DTO
+    defaultValue: ['GOOD_CONDITION'],
   },
 
   // Energia minima richiesta (minEnergyRating)
@@ -130,9 +133,9 @@ export const ALL_FILTERS: { [key: string]: FilterDefinition } = {
     key: 'minEnergyRating',
     label: 'Classe energetica minima',
     control: 'SegmentedControl',
-    options: ['A1','A2','B','C','D','E','F','G'],
+    // Allineato con API: includere A4 e A3 e NOT_APPLIABLE
+    options: ['A4','A3','A2','A1','B','C','D','E','F','G','NOT_APPLIABLE'],
     defaultValue: 'C',
-    categorySpecific: true
   },
 
   // Giardino accettato (acceptedGarden) -- mappa ai valori API
@@ -141,6 +144,7 @@ export const ALL_FILTERS: { [key: string]: FilterDefinition } = {
     label: 'Giardino',
     control: 'SegmentedControl',
     options: ['PRIVATE','SHARED','ABSENT'],
+    // Backend accetta una lista; il controllo UI è single-select -> default come stringa per compatibilità
     defaultValue: 'ABSENT',
     categorySpecific: true
   },
@@ -181,14 +185,6 @@ export const ALL_FILTERS: { [key: string]: FilterDefinition } = {
 
   // Filtri specifici per GARAGE
   // Filtri specifici per LAND
-  landType: {
-    key: 'landType',
-    label: 'Tipo di terreno',
-    control: 'SegmentedControl',
-    options: ['Agricultural Land', 'Building Plot', 'Industrial Land'],
-    defaultValue: 'Building Plot',
-    categorySpecific: true
-  },
   mustBeAccessibleFromStreet: {
     key: 'mustBeAccessibleFromStreet',
     label: 'Accesso stradale',
@@ -196,16 +192,6 @@ export const ALL_FILTERS: { [key: string]: FilterDefinition } = {
     defaultValue: false,
     categorySpecific: true
   },
-  slope: {
-    key: 'slope',
-    label: 'Inclinazione terreno',
-    control: 'QuickNumericSelector',
-    min: 0,
-    max: 45,
-    unit: '°',
-    defaultValue: 0,
-    categorySpecific: true
-  }
 };
 
 export const CATEGORY_FILTERS: CategoryFilterMap = {
@@ -215,30 +201,26 @@ export const CATEGORY_FILTERS: CategoryFilterMap = {
     'minNumberOfRooms',
     'minNumberOfBathrooms',
     'floor',
+    // Aggiunto: minNumberOfFloors è specificato nella API per RESIDENTIAL
+    'minNumberOfFloors',
     'mustHaveElevator',
-    'hasPool',
     'minParkingSpaces',
-    'acceptedCondition',
-    'minEnergyRating',
     'acceptedGarden',
-    'mustBeFurnished',
-    'minYearBuilt'
+    'mustBeFurnished'
   ],
   COMMERCIAL: [
-    // Commerciale supporta riscaldamento
-    'heating',
-    'mustHaveWheelchairAccess',
-    'mustHaveSurveillance',
-    'constructionYear'
+    'minNumberOfFloors',
+    'minNumberOfRooms',
+    'minNumberOfBathrooms',
+    'mustHaveWheelchairAccess'
   ],
   GARAGE: [
     // Garage non ha riscaldamento applicabile qui
-    'mustHaveSurveillance'
+    'mustHaveSurveillance',
+    'minNumberOfFloors'
   ],
   LAND: [
     // Land non mostra filtri di riscaldamento
-    'landType',
-    'mustBeAccessibleFromStreet',
-    'slope'
+    'mustBeAccessibleFromStreet'
   ]
 };
