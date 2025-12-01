@@ -43,9 +43,9 @@ export const COMMERCIAL_CATEGORIES = [
 ] as const;
 
 export const GARAGE_CATEGORIES = [
-  "Double Garage",
-  "Parking Space",
-  "Single Garage"
+  "Double_Garage",
+  "Parking_Space",
+  "Single_Garage"
 ] as const;
 
 export const LAND_CATEGORIES = [
@@ -82,7 +82,7 @@ export interface FilterState<T> {
  */
 export interface SearchCriteria {
   general: {
-    contract: FilterState<"rent" | "sale">;
+    contract: FilterState<"rent" | "sale" | null>;
     priceRange: FilterState<Range>;
     size: FilterState<Range>;
     searchRadiusKm: FilterState<Range>;
@@ -90,30 +90,40 @@ export interface SearchCriteria {
     centerLongitude: FilterState<number>;
     radiusInMeters: FilterState<number>;
     enabled: FilterState<boolean>;
+    // Filtri comuni dichiarati nel backend (acceptedCondition, minEnergyRating)
+    acceptedCondition: FilterState<string[] | undefined>;
+    minEnergyRating: FilterState<string | undefined>;
   };
   residential: {
     category: FilterState<ResidentialCategory>;
-    minNumberOfFloors: FilterState<number | undefined>;
+    minNumberOfFloors: FilterState<number | string | undefined>;
     minNumberOfRooms: FilterState<number | string>;
     minNumberOfBathrooms: FilterState<number | string>;
     floor: FilterState<string>;
     mustHaveElevator: FilterState<boolean>;
-    hasPool: FilterState<boolean>;
     minParkingSpaces: FilterState<number | undefined>;
+    // Filtri residenziali aggiuntivi coerenti con API/config
+    heating: FilterState<string | undefined>;
+    acceptedGarden: FilterState<string[] | undefined>;
+    mustBeFurnished: FilterState<boolean>;
+    minYearBuilt: FilterState<number | undefined>;
     enabled: FilterState<boolean>;
   };
   commercial: {
     category: FilterState<CommercialCategory>;
-    minNumberOfFloors: FilterState<number | undefined>;
-    minNumberOfRooms: FilterState<number | undefined>;
-    minNumberOfBathrooms: FilterState<number | undefined>;
+    minNumberOfFloors: FilterState<number | string>;
+    minNumberOfRooms: FilterState<number | string>;
+    minNumberOfBathrooms: FilterState<number | string>;
     mustHaveWheelchairAccess: FilterState<boolean>;
     constructionYear: FilterState<string | number>;
+    // Alcuni commercial possono avere heating (coerente con config)
+    heating: FilterState<string | undefined>;
     enabled: FilterState<boolean>;
   };
   garage: {
     category: FilterState<GarageCategory>;
-    minNumberOfFloors: FilterState<number | undefined>;
+    // Accettiamo anche stringhe per i numeric selectors per coerenza con gli altri controlli
+    minNumberOfFloors: FilterState<number | string | undefined>;
     mustHaveSurveillance: FilterState<boolean>;
     enabled: FilterState<boolean>;
   };
@@ -139,7 +149,7 @@ export const DEFAULT_RADIUS_IN_METERS = 20000;
  */
 export const defaultSearchCriteria: SearchCriteria = {
   general: {
-    contract: { value: 'sale', defaultValue: 'sale', isModified: false },
+    contract: { value: null, defaultValue: null, isModified: false },
     priceRange: { value: { min: 0, max: 500000 }, defaultValue: { min: 0, max: 500000 }, isModified: false },
     size: { value: { min: 20, max: 200 }, defaultValue: { min: 20, max: 200 }, isModified: false },
     searchRadiusKm: { value: { min: 1, max: 20 }, defaultValue: { min: 1, max: 20 }, isModified: false },
@@ -147,30 +157,41 @@ export const defaultSearchCriteria: SearchCriteria = {
     centerLongitude: { value: DEFAULT_CENTER_LONGITUDE, defaultValue: DEFAULT_CENTER_LONGITUDE, isModified: false },
     radiusInMeters: { value: DEFAULT_RADIUS_IN_METERS, defaultValue: DEFAULT_RADIUS_IN_METERS, isModified: false },
     enabled: { value: true, defaultValue: true, isModified: false },
+    // Allineati a FrontEndTS/DietiEstates/config/filter-config.ts (ALL_FILTERS)
+    acceptedCondition: { value: ['GOOD_CONDITION'], defaultValue: ['GOOD_CONDITION'], isModified: false },
+    minEnergyRating: { value: 'C', defaultValue: 'C', isModified: false },
   },
   residential: {
     category: { value: RESIDENTIAL_CATEGORIES[0], defaultValue: RESIDENTIAL_CATEGORIES[0], isModified: false },
-    minNumberOfFloors: { value: undefined, defaultValue: undefined, isModified: false },
-    minNumberOfRooms: { value: 1, defaultValue: 1, isModified: false },
-    minNumberOfBathrooms: { value: 1, defaultValue: 1, isModified: false },
+    // default coerente con ALL_FILTERS.minNumberOfFloors
+    minNumberOfFloors: { value: 1, defaultValue: 0, isModified: false },
+    minNumberOfRooms: { value: 1, defaultValue: 0, isModified: false },
+    minNumberOfBathrooms: { value: 1, defaultValue: 0, isModified: false },
     floor: { value: '0', defaultValue: '0', isModified: false },
     mustHaveElevator: { value: false, defaultValue: false, isModified: false },
-    hasPool: { value: false, defaultValue: false, isModified: false },
     minParkingSpaces: { value: 0, defaultValue: 0, isModified: false },
+    // Allineati a ALL_FILTERS defaults
+    heating: { value: 'Absent', defaultValue: 'Absent', isModified: false },
+    acceptedGarden: { value: ['ABSENT'], defaultValue: ['ABSENT'], isModified: false },
+    mustBeFurnished: { value: false, defaultValue: false, isModified: false },
+    minYearBuilt: { value: undefined, defaultValue: undefined, isModified: false },
     enabled: { value: false, defaultValue: false, isModified: false },
   },
   commercial: {
     category: { value: COMMERCIAL_CATEGORIES[0], defaultValue: COMMERCIAL_CATEGORIES[0], isModified: false },
-    minNumberOfFloors: { value: undefined, defaultValue: undefined, isModified: false },
-    minNumberOfRooms: { value: undefined, defaultValue: undefined, isModified: false },
-    minNumberOfBathrooms: { value: undefined, defaultValue: undefined, isModified: false },
+    minNumberOfFloors: { value: 1, defaultValue: 0, isModified: false },
+    minNumberOfRooms: { value: 1, defaultValue: 1, isModified: false },
+    minNumberOfBathrooms: { value: 1, defaultValue: 1, isModified: false },
     mustHaveWheelchairAccess: { value: false, defaultValue: false, isModified: false },
     constructionYear: { value: new Date().getFullYear(), defaultValue: new Date().getFullYear(), isModified: false },
+    // Allineato a ALL_FILTERS
+    heating: { value: 'Absent', defaultValue: 'Absent', isModified: false },
     enabled: { value: false, defaultValue: false, isModified: false },
   },
   garage: {
     category: { value: GARAGE_CATEGORIES[0], defaultValue: GARAGE_CATEGORIES[0], isModified: false },
-    minNumberOfFloors: { value: undefined, defaultValue: undefined, isModified: false },
+    // default coerente con ALL_FILTERS.minNumberOfFloors per coerenza tra categorie
+    minNumberOfFloors: { value: 1, defaultValue: 1, isModified: false },
     mustHaveSurveillance: { value: false, defaultValue: false, isModified: false },
     enabled: { value: false, defaultValue: false, isModified: false },
   },

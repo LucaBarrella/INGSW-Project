@@ -21,32 +21,33 @@ L'endpoint accetta un oggetto [`FilterRequest`](src/main/java/com/dieti/dietiest
 
 Il DTO [`FilterRequest`](src/main/java/com/dieti/dietiestatesbackend/dto/request/FilterRequest.java) contiene i seguenti campi:
 
-| Nome Parametro        | Tipo di Dato           | Obbligatorio/Facoltativo | Descrizione                                                          |
-| :-------------------- | :--------------------- | :----------------------- | :------------------------------------------------------------------- |
-| `category`            | String                 | Facoltativo              | Categoria della proprietà (es. "RESIDENTIAL", "COMMERCIAL", "GARAGE", "LAND"). |
-| `contract`            | String                 | Facoltativo              | Tipo di contratto (es. "SALE", "RENT").                              |
-| `minPrice`            | BigDecimal             | Facoltativo              | Prezzo minimo della proprietà.                                       |
-| `maxPrice`            | BigDecimal             | Facoltativo              | Prezzo massimo della proprietà.                                      |
-| `minArea`             | Integer                | Facoltativo              | Area minima in metri quadrati.                                       |
-| `minYearBuilt`        | Integer                | Facoltativo              | Anno minimo di costruzione.                                          |
-| `acceptedCondition`   | List<PropertyCondition> | Facoltativo              | Condizioni accettate della proprietà (es. "NEW", "TO_BE_RESTORED", "GOOD_CONDITION"). |
-| `minEnergyRating`     | EnergyRating           | Facoltativo              | Classificazione energetica minima (es. "A", "B", "C", "D", "E", "F", "G"). |
-| `centerLatitude`      | BigDecimal             | **Obbligatorio**         | Latitudine del centro della ricerca geografica.                      |
-| `centerLongitude`     | BigDecimal             | **Obbligatorio**         | Longitudine del centro della ricerca geografica.                     |
-| `radiusInMeters`      | Double                 | **Obbligatorio**         | Raggio di ricerca in metri dal centro specificato.                   |
-| `minNumberOfFloors`   | Integer                | Facoltativo              | Numero minimo di piani (per proprietà residenziali/commerciali).     |
-| `minNumberOfRooms`    | Integer                | Facoltativo              | Numero minimo di stanze (per proprietà residenziali).                |
-| `minNumberOfBathrooms`| Integer                | Facoltativo              | Numero minimo di bagni (per proprietà residenziali).                 |
-| `minParkingSpaces`    | Integer                | Facoltativo              | Numero minimo di posti auto (per garage o proprietà con garage).     |
-| `heating`             | String                 | Facoltativo              | Tipo di riscaldamento (es. "AUTONOMOUS", "CENTRALIZED", "PELLET").   |
-| `acceptedGarden`      | List<Garden>           | Facoltativo              | Tipi di giardino accettati (es. "PRIVATE", "SHARED").                |
-| `mustBeFurnished`     | Boolean                | Facoltativo              | `true` se la proprietà deve essere arredata.                         |
-| `mustHaveElevator`    | Boolean                | Facoltativo              | `true` se la proprietà deve avere un ascensore.                      |
-| `mustHaveWheelchairAccess` | Boolean           | Facoltativo              | `true` se la proprietà deve essere accessibile ai disabili.          |
-| `mustHaveSurveillance`| Boolean                | Facoltativo              | `true` se la proprietà deve avere sorveglianza.                      |
-| `mustBeAccessibleFromStreet` | Boolean        | Facoltativo              | `true` se il terreno deve essere accessibile dalla strada.           |
+| Nome Parametro             | Tipo di Dato           | Obbligatorio/Facoltativo | Valori Accettati / Note                                              | Descrizione                                                          |
+| :------------------------- | :--------------------- | :----------------------- | :------------------------------------------------------------------- | :------------------------------------------------------------------- |
+| `category`                 | String                 | Facoltativo              | Vedere la sezione "Enum `PropertyCategory`"                          | Categoria della proprietà.                                           |
+| `propertySubcategoryName`  | String                 | Facoltativo              | (es. Apartment, Villa, Office)                                       | Sottocategoria specifica della proprietà. Utilizzabile da solo o in combinazione con `category`. |
+| `contract`                 | String                 | Facoltativo              | "RENT", "SALE"                                                       | Tipo di contratto.                                                   |
+| `minPrice`                 | BigDecimal             | Facoltativo              | Valori numerici positivi.                                            | Prezzo minimo della proprietà.                                       |
+| `maxPrice`                 | BigDecimal             | Facoltativo              | Valori numerici positivi.                                            | Prezzo massimo della proprietà.                                      |
+| `minArea`                  | Integer                | Facoltativo              | Valori numerici positivi.                                            | Area minima in metri quadrati.                                       |
+| `minYearBuilt`             | Integer                | Facoltativo              | Anno valido (es. 1900-2025).                                         | Anno minimo di costruzione.                                          |
+| `acceptedCondition`        | List<PropertyCondition> | Facoltativo              | Vedere la sezione "Enum `PropertyCondition`"                         | Condizioni accettate della proprietà.                                |
+| `minEnergyRating`          | EnergyRating           | Facoltativo              | Vedere la sezione "Enum `EnergyRating`"                              | Classificazione energetica minima.                                   |
+| `centerLatitude`           | BigDecimal             | **Obbligatorio**         | Valori numerici validi per la latitudine (-90.0 a +90.0).            | Latitudine del centro della ricerca geografica.                      |
+| `centerLongitude`          | BigDecimal             | **Obbligatorio**         | Valori numerici validi per la longitudine (-180.0 a +180.0).         | Longitudine del centro della ricerca geografica.                     |
+| `radiusInMeters`           | Double                 | **Obbligatorio**         | Valori numerici positivi.                                            | Raggio di ricerca in metri dal centro specificato.                   |
+| `minNumberOfFloors`        | Integer                | Facoltativo              | Valori numerici positivi.                                            | Numero minimo di piani (per proprietà residenziali/commerciali).     |
+| `minNumberOfRooms`         | Integer                | Facoltativo              | Valori numerici positivi.                                            | Numero minimo di stanze (per proprietà residenziali).                |
+| `minNumberOfBathrooms`     | Integer                | Facoltativo              | Valori numerici positivi.                                            | Numero minimo di bagni (per proprietà residenziali).                 |
+| `minParkingSpaces`         | Integer                | Facoltativo              | Valori numerici positivi.                                            | Numero minimo di posti auto (per garage o proprietà con garage).     |
+| `heating`                  | String                 | Facoltativo              | "Centralized", "Autonomous", "Absent"                                | Tipo di riscaldamento.                                               |
+| `acceptedGarden`           | List<Garden>           | Facoltativo              | Vedere la sezione "Enum `Garden`"                                    | Tipi di giardino accettati.                                          |
+| `mustBeFurnished`          | Boolean                | Facoltativo              | `true` o `false`                                                     | `true` se la proprietà deve essere arredata.                         |
+| `mustHaveElevator`         | Boolean                | Facoltativo              | `true` o `false`                                                     | `true` se la proprietà deve avere un ascensore.                      |
+| `mustHaveWheelchairAccess` | Boolean                | Facoltativo              | `true` o `false`                                                     | `true` se la proprietà deve essere accessibile ai disabili.          |
+| `mustHaveSurveillance`     | Boolean                | Facoltativo              | `true` o `false`                                                     | `true` se la proprietà deve avere sorveglianza.                      |
+| `mustBeAccessibleFromStreet` | Boolean              | Facoltativo              | `true` o `false`                                                     | `true` se il terreno deve essere accessibile dalla strada.           |
 
-**Nota:** La maggior parte dei campi all'interno di `FilterRequest` sono facoltativi, ad eccezione dei parametri geografici (`centerLatitude`, `centerLongitude`, `radiusInMeters`) che sono **obbligatori** per tutte le query di ricerca.
+**Nota Importante:** I parametri geografici (`centerLatitude`, `centerLongitude`, `radiusInMeters`) sono **obbligatori** per tutte le query di ricerca. Questi parametri definiscono l'area geografica entro cui effettuare la ricerca. Se non specificati, la ricerca non potrà essere eseguita.
 
 ### Oggetto `Pageable`
 
@@ -79,6 +80,98 @@ Ogni oggetto `PropertyResponse` include i seguenti campi principali:
 | `firstImageUrl`   | String             | URL della prima immagine della proprietà.            |
 | `numberOfImages`  | int                | Numero totale di immagini disponibili per la proprietà. |
 
+## Dettaglio degli Enum e Valori Accettati
+
+Per garantire la coerenza e facilitare lo sviluppo del frontend, di seguito sono elencati i valori accettati per gli enum utilizzati nei filtri.
+
+### Enum `PropertyCategory`
+I valori per la categoria della proprietà sono stringhe che rappresentano i tipi principali di proprietà:
+*   `"RESIDENTIAL"`
+*   `"COMMERCIAL"`
+*   `"GARAGE"`
+*   `"LAND"`
+
+### Enum `PropertyCondition`
+I valori per la condizione della proprietà sono:
+*   `"NEW"`
+*   `"GOOD_CONDITION"`
+*   `"RENOVATED"`
+*   `"TO_BE_RENOVATED"`
+*   `"POOR_CONDITION"`
+*   `"UNDER_CONSTRUCTION"`
+
+### Enum `EnergyRating`
+I valori per la classificazione energetica sono:
+*   `"A4"`
+*   `"A3"`
+*   `"A2"`
+*   `"A1"`
+*   `"B"`
+*   `"C"`
+*   `"D"`
+*   `"E"`
+*   `"F"`
+*   `"G"`
+*   `"NOT_APPLIABLE"`
+
+### Enum `Garden`
+I valori per il tipo di giardino sono:
+*   `"PRIVATE"`
+*   `"SHARED"`
+*   `"ABSENT"`
+
+### Enum `Heating`
+I valori per il tipo di riscaldamento (come da contesto):
+*   `"Centralized"`
+*   `"Autonomous"`
+*   `"Absent"`
+
+### Enum `Contract`
+I valori per il tipo di contratto (come da contesto):
+*   `"RENT"`
+*   `"SALE"`
+
+## Applicabilità dei Filtri per Categoria di Proprietà
+
+I filtri disponibili nell'oggetto `FilterRequest` possono essere categorizzati in base alla loro applicabilità ai diversi tipi di proprietà. È fondamentale comprendere quali filtri sono validi per ciascuna `PropertyCategory` per costruire query di ricerca efficaci.
+
+### Filtri Comuni (applicabili a tutte le proprietà):
+*   [`category`](#) (per selezionare il tipo generale di proprietà: `RESIDENTIAL`, `COMMERCIAL`, `GARAGE`, `LAND`)
+*   [`propertySubcategoryName`](#) (applicabile se la categoria ha sottocategorie, es. `RESIDENTIAL` -> `Apartment`)
+*   [`contract`](#)
+*   [`minPrice`](#)
+*   [`maxPrice`](#)
+*   [`minArea`](#)
+*   [`minYearBuilt`](#)
+*   [`acceptedCondition`](#)
+*   [`minEnergyRating`](#)
+*   [`centerLatitude`](#) (obbligatorio)
+*   [`centerLongitude`](#) (obbligatorio)
+*   [`radiusInMeters`](#) (obbligatorio)
+
+### Filtri Specifici per Proprietà Residenziali (`PropertyCategory.RESIDENTIAL`):
+*   [`minNumberOfFloors`](#)
+*   [`minNumberOfRooms`](#)
+*   [`minNumberOfBathrooms`](#)
+*   [`minParkingSpaces`](#)
+*   [`heating`](#)
+*   [`acceptedGarden`](#)
+*   [`mustBeFurnished`](#)
+*   [`mustHaveElevator`](#)
+
+### Filtri Specifici per Proprietà Commerciali (`PropertyCategory.COMMERCIAL`):
+*   [`minNumberOfFloors`](#)
+*   [`minNumberOfRooms`](#)
+*   [`minNumberOfBathrooms`](#)
+*   [`mustHaveWheelchairAccess`](#)
+
+### Filtri Specifici per Garage (`PropertyCategory.GARAGE`):
+*   [`minNumberOfFloors`](#)
+*   [`mustHaveSurveillance`](#)
+
+### Filtri Specifici per Terreni (`PropertyCategory.LAND`):
+*   [`mustBeAccessibleFromStreet`](#)
+
 ## Esempi Pratici di Filtri e Possibilità di Ricerca
 
 Il sistema consente una ricerca flessibile combinando filtri comuni, specifici per categoria e geografici. La ricerca geografica (`centerLatitude`, `centerLongitude`, `radiusInMeters`) è obbligatoria per tutte le query di filtro.
@@ -88,6 +181,7 @@ Il sistema consente una ricerca flessibile combinando filtri comuni, specifici p
 ```json
 {
   "category": "RESIDENTIAL",
+  "propertySubcategoryName": "Apartment",
   "contract": "SALE",
   "minPrice": 100000,
   "maxPrice": 300000,
@@ -124,9 +218,13 @@ Il sistema consente una ricerca flessibile combinando filtri comuni, specifici p
 }
 ```
 
-**Nome del file:** `docs/API_Ricerca_Proprieta.md`
+### Esempio 4: Ricerca di proprietà con classificazione energetica specifica e riscaldamento centralizzato
 
-**Restrizioni:**
-*   Devi solo eseguire il lavoro descritto in queste istruzioni e non deviare.
-*   Al completamento, usa il tool `attempt_completion` per fornire un riepilogo conciso e completo dei tuoi risultati nel parametro `result`. Questo riepilogo sarà la fonte di verità per il tracciamento del progetto.
-*   Queste istruzioni sostituiscono qualsiasi istruzione generale che la tua modalità possa avere in conflitto.
+```json
+{
+  "minEnergyRating": "A1",
+  "heating": "Centralized",
+  "centerLatitude": 41.902782,
+  "centerLongitude": 12.496366,
+  "radiusInMeters": 7500
+}

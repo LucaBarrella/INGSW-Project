@@ -57,7 +57,7 @@ const RangeSliderComponent: React.FC<RangeSliderProps> = ({
     if (type === "price") {
       onChange({ min: 0, max: safeVal });
     } else if (type === "size") {
-      onChange({ min: safeVal, max: Infinity });
+      onChange({ min: safeVal, max: value.max });
     } else {
       onChange({ min: safeVal, max: safeVal });
     }
