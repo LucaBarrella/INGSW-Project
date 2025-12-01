@@ -2,7 +2,7 @@ import * as React from 'react';
 import { TouchableOpacity, Image } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
+import { formatAddress, PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
 import { PropertyCharacteristicsDisplay, mapPropertyDetailToCharacteristics } from '@/components/Property/PropertyCharacteristicsDisplay';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import * as Haptics from 'expo-haptics';
@@ -71,7 +71,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           lightColor={textColor}
           darkColor={textColor}
         >
-            {t('property_category.sub.'+property.propertyCategory)} in {property.address.toString()} - {t('property_status.'+property.condition)}
+            {t('property_category.sub.'+property.propertyCategory)} in {typeof property.address == 'string' ? property.address : formatAddress(property.address)} - {t('property_status.'+property.condition)}
         </ThemedText>
         
         <ThemedText 
