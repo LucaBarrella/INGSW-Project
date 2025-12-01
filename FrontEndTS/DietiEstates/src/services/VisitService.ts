@@ -29,7 +29,7 @@ export class VisitService implements IVisitService {
       let newVisit : VisitRequest = {
         id: visit.visit.id,
         property: {
-          id: "unset TODO",
+          id: "unset",
           address: `${visit.address.country}, ${visit.address.city} (${visit.address.province}), ${visit.address.street} ${visit.address.streetNumber}`,
           addressId: visit.address.id
         },

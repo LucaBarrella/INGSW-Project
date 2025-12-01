@@ -84,8 +84,6 @@ export default function useInfiniteHistory(): UseInfiniteHistoryState {
     setError(null);
     try {
       const nextPage = currentPage + 1;
-      // TODO: Implementare la nuova logica per il recupero della cronologia.
-      // Per ora, simulo un array vuoto o ID di esempio.
       const ids: number[] = await HistoryStorageService.getHistory(nextPage, PAGE_LIMIT);
       if (!ids || ids.length === 0) {
         setHasMore(false);

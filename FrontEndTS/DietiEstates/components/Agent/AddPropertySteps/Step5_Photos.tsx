@@ -10,7 +10,6 @@ import { ThemedIcon } from '@/components/ThemedIcon';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 interface Step5PhotosProps {
-  // TODO: Integrate with react-hook-form if needed, or manage state separately
   selectedImages: string[]; // Array of image URIs
   onImagesChange: (uris: string[]) => void;
 }

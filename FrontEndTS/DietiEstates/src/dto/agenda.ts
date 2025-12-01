@@ -16,7 +16,7 @@ export interface Property {
 
 export interface UserInfo {
   id?: number;
-  fullName: string; // TODO should replace with username (backend change needed)
+  fullName: string;
   email: string;
 }
 
