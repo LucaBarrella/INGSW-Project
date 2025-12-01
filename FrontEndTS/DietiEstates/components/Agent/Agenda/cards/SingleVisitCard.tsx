@@ -31,7 +31,7 @@ const SingleVisitCard: React.FC<SingleVisitCardProps> = ({ appointment, isConfli
       borderWidth: 1
     }} className="shadow rounded-lg p-3">
       <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)}>
-        <Text style={{ color: isConflict ? conflictTextColor : textColor }} className="text-base font-bold">{isConflict ? 'CONFLICT' : 'Single Visit'}</Text>
+        <Text style={{ color: isConflict ? conflictTextColor : textColor }} className="text-base font-bold">{isConflict ? t('CONFLICT') : t('Single Visit')}</Text>
         <Text style={{ color: isConflict ? conflictTextColor : secondaryTextColor }} className="text-xs mb-2">{time}</Text>
         
         <View className="flex-row items-center">

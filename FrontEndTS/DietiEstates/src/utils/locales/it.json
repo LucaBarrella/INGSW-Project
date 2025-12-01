@@ -75,6 +75,8 @@
   "noOffersFound": "Nessuna offerta {{status}} trovata",
   "errorLoadingOffers": "Errore nel caricamento delle offerte",
   "yourOffer": "La tua offerta",
+  "resolveConflict": "Risolvi Conflitto",
+
   "offersArchived": {
     "agent": {
       "archiveTitle": "Archivio Offerte",
@@ -118,6 +120,11 @@
   "ok": "OK",
   "warning": "Attenzione",
   "pleaseAddAtLeastOnePropertyImage": "Per favore, aggiungi almeno un'immagine della proprietà.",
+  "CONFLICT": "CONFLITTO",
+  "Single Visit": "Visita Singola",
+  "Group Visit": "Visita di Gruppo",
+  "cancelVisit": "Annulla Visita",
+  "selectVisitsToCancel": "Seleziona le visite da annullare",
 
   "setting": {
     "language": "Lingua"
@@ -127,7 +134,8 @@
     "PENDING": "in attesa",
     "CONFIRMED": "confermata",
     "COMPLETED": "completata",
-    "REJECTED": "rifiutata"
+    "REJECTED": "rifiutata",
+    "CANCELLED": "annullata"
   },
 
   "offer_status": {

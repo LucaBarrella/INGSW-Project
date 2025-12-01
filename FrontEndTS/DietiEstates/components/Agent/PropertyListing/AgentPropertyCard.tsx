@@ -95,14 +95,6 @@ export const AgentPropertyCard: React.FC<AgentPropertyCardProps> = ({
             >
               €{property.price}
             </ThemedText>
-            <ThemedView className="flex-row gap-4 items-center" style={{ backgroundColor }}>
-              <ThemedButton
-                title="Add External Offer"
-                onPress={()=>{Alert.alert("TODO");}}
-                borderRadius={10}
-                className="px-3 py-2 rounded-md"
-              />
-            </ThemedView>  
           </ThemedView>
         </ThemedView>
       </TouchableOpacity>
