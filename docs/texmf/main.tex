@@ -10,8 +10,9 @@
 \usepackage{multirow}
 \usepackage{float}
 \usepackage{tabularx}
+\usepackage{verbatim}
 \usepackage{hyperref}
-\usepackage{xcolor} % per colori dei link
+\usepackage{xcolor}
 \hypersetup{
     colorlinks=true,
     linkcolor=blue,
@@ -539,8 +540,16 @@ I risultati dei test automatici e delle valutazioni di usabilità sono stati ana
 Di seguito, vengono presentati i dettagli dei test automatici e della valutazione dell'usabilità condotta.
 
 \section{Test Automatici}
-I test automatici sono stati implementati per garantire la qualità del codice e il corretto funzionamento delle funzionalità principali.\\
-TODO
+I test automatici sono stati implementati per garantire la qualità del codice e il corretto funzionamento del sistema.\\
+A seguire, sono analizzate le tecniche di progettazione e gli strumenti utilizzati per il testing del back-end.
+
+\subsubsection{Strumenti Utilizzati}
+Per la stesura dei test è stato utilizzato il framework per applicazioni Java \textbf{JUnit 5}. Esso fornisce annotazioni e asserzioni per scrivere ed eseguire test in modo strutturato.\\
+Per poter testare classi in isolamento, è stato utilizzato il framework di mocking per Java \textbf{Mockito}. Il suo scopo è creare "oggetti finti" (mock) di dipendenze esterne di una classe. Ciò permette di testare classi con dipendenze complesse senza doverle effettivamente istanziare.
+
+\subsubsection{Esempi}
+Nelle sezioni seguenti, vengono analizzati quattro esempi di metodi testati, illustrando le strategie adottate per la progettazione, tra cui le classi di equivalenza individuate e coperte e i criteri di copertura strutturale per ogni singolo esempio.
+\clearpage
 
 \section{Valutazione dell'Usabilità}
 La valutazione dell'usabilità è stata condotta attraverso ispezioni sistematiche e test con utenti volontari.\\
