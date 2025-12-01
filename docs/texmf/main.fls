@@ -286,6 +286,10 @@ INPUT .\main.toc
 INPUT .\main.toc
 INPUT main.toc
 INPUT C:\Users\maryd\AppData\Local\Programs\MiKTeX\fonts\tfm\jknappen\ec\ecbx1000.tfm
+INPUT C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex\latex\base\t1cmtt.fd
+INPUT C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex\latex\base\t1cmtt.fd
+INPUT C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex\latex\base\t1cmtt.fd
+INPUT C:\Users\maryd\AppData\Local\Programs\MiKTeX\fonts\tfm\jknappen\ec\ectt1000.tfm
 OUTPUT main.toc
 INPUT C:\Users\maryd\AppData\Local\Programs\MiKTeX\fonts\tfm\jknappen\ec\ecrm2074.tfm
 INPUT C:\Users\maryd\AppData\Local\Programs\MiKTeX\fonts\tfm\jknappen\ec\ecbx2074.tfm
@@ -322,6 +326,7 @@ INPUT .\diagram\UseCaseDiagram.pdf
 INPUT .\diagram\UseCaseDiagram.pdf
 INPUT .\diagram\UseCaseDiagram.pdf
 INPUT .\diagram\UseCaseDiagram.pdf
+INPUT C:\Users\maryd\AppData\Local\Programs\MiKTeX\fonts\tfm\jknappen\ec\ectt1200.tfm
 INPUT .\figures\SonarQubeReport.png
 INPUT .\figures\SonarQubeReport.png
 INPUT .\figures\SonarQubeReport.png
@@ -332,6 +337,8 @@ INPUT .\figures\SonarQubeReport.png
 INPUT main.aux
 INPUT .\main.out
 INPUT .\main.out
+INPUT C:\Users\maryd\AppData\Local\MiKTeX\fonts\pk\ljfour\jknappen\ec\dpi600\ectt1200.pk
+INPUT C:\Users\maryd\AppData\Local\MiKTeX\fonts\pk\ljfour\jknappen\ec\dpi600\ectt1200.pk
 INPUT C:\Users\maryd\AppData\Local\MiKTeX\fonts\pk\ljfour\jknappen\ec\dpi600\ecti1000.pk
 INPUT C:\Users\maryd\AppData\Local\MiKTeX\fonts\pk\ljfour\jknappen\ec\dpi600\ecti1000.pk
 INPUT C:\Users\maryd\AppData\Local\MiKTeX\fonts\pk\ljfour\jknappen\ec\dpi600\tcrm1000.pk
@@ -342,6 +349,8 @@ INPUT C:\Users\maryd\AppData\Local\MiKTeX\fonts\pk\ljfour\jknappen\ec\dpi600\ecb
 INPUT C:\Users\maryd\AppData\Local\MiKTeX\fonts\pk\ljfour\jknappen\ec\dpi600\ecbx2074.pk
 INPUT C:\Users\maryd\AppData\Local\MiKTeX\fonts\pk\ljfour\jknappen\ec\dpi600\ecsl1000.pk
 INPUT C:\Users\maryd\AppData\Local\MiKTeX\fonts\pk\ljfour\jknappen\ec\dpi600\ecsl1000.pk
+INPUT C:\Users\maryd\AppData\Local\MiKTeX\fonts\pk\ljfour\jknappen\ec\dpi600\ectt1000.pk
+INPUT C:\Users\maryd\AppData\Local\MiKTeX\fonts\pk\ljfour\jknappen\ec\dpi600\ectt1000.pk
 INPUT C:\Users\maryd\AppData\Local\MiKTeX\fonts\pk\ljfour\jknappen\ec\dpi600\ecbx1000.pk
 INPUT C:\Users\maryd\AppData\Local\MiKTeX\fonts\pk\ljfour\jknappen\ec\dpi600\ecbx1000.pk
 INPUT C:\Users\maryd\AppData\Local\MiKTeX\fonts\pk\ljfour\jknappen\ec\dpi600\ecbx2488.pk

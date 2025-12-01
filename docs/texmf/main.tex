@@ -539,7 +539,221 @@ Per la stesura dei test è stato utilizzato il framework per applicazioni Java \
 Per poter testare classi in isolamento, è stato utilizzato il framework di mocking per Java \textbf{Mockito}. Il suo scopo è creare "oggetti finti" (mock) di dipendenze esterne di una classe. Ciò permette di testare classi con dipendenze complesse senza doverle effettivamente istanziare.
 
 \subsubsection{Esempi}
-Nelle sezioni seguenti, vengono analizzati quattro esempi di metodi testati, illustrando le strategie adottate per la progettazione, tra cui le classi di equivalenza individuate e coperte e i criteri di copertura strutturale per ogni singolo esempio.
+Nelle sezioni seguenti, vengono analizzati quattro esempi di metodi testati non banali e con almeno due parametri, illustrando le strategie adottate per la progettazione, tra cui le classi di equivalenza individuate e coperte e i criteri di copertura strutturale per ogni singolo esempio.
+\clearpage
+
+\subsection{Metodo 1: \texttt{createPropertyWithImages}}
+
+\subsubsection{Contesto}
+\begin{itemize}
+\item \textbf{Metodo testato}: \texttt{createPropertyWithImages(CreatePropertyRequest request,\\
+ List<MultipartFile> images)}
+\item \textbf{Scopo}: Creare una nuova proprietà caricando le immagini fornite, validandole, caricandole su Azure Blob Storage e salvando i dati della proprietà nel database. In caso di errore nella persistenza, il metodo esegue una logica di compensazione eliminando le immagini già caricate.
+\item \textbf{Test case}: \texttt{createPropertyWithImages\_dbSaveFails\_compensatesAndThrowsRuntimeException}
+\end{itemize}
+
+\subsubsection{Strategia}
+Il test verifica il comportamento del sistema in presenza di un errore nella fase di persistenza su database. L’obiettivo non è validare un output, ma assicurarsi che il flusso in condizioni di fallimento attivi correttamente la logica di compensazione e propaghi l’eccezione prevista.
+
+\begin{itemize}
+
+\item \textbf{Classi di equivalenza individuate}: 
+Le classi di equivalenza sono definite sui parametri del metodo:
+\begin{itemize}
+    \item \textbf{\texttt{request}}:
+    \begin{itemize}
+        \item CE-R1 (valida): request è non null e contiene tutti i campi necessari (classe valida del DTO).
+        \item CE-R2 (non valida): request è malformata → la validazione solleva un’eccezione.
+        \item CE-R3 (null): request = null → validazione fallisce immediatamente.
+    \end{itemize}
+    \item \textbf{\texttt{images}}:
+    \begin{itemize}
+        \item CE-I1 (lista vuota): images.size() == 0.
+        \item CE-I2 (lista con immagini valide): ogni elemento passa la validateImage().
+        \item CE-I3 (lista con almeno un'immagine non valida): la validazione solleva eccezione.
+        \item CE-I4 (lista null): images == null.
+    \end{itemize}
+\end{itemize}
+\item \textbf{Classi coperte dal test}:
+\begin{itemize}
+    \item CE-R1 e CE-I2: request valida e immagini valide.
+\end{itemize}
+
+\item \textbf{Copertura strutturale}:
+Il test esercita il ramo di gestione dell’eccezione generata durante la fase di persistenza, verificando l’esecuzione del blocco \texttt{catch} che implementa la compensazione. Questo garantisce la copertura del ramo alternativo (\textbf{branch coverage}) associato al fallimento del salvataggio su database.
+
+\item \textbf{Verifica}:
+La correttezza del comportamento è accertata tramite:
+
+\begin{itemize}
+\item \texttt{assertThrows()}, che conferma la propagazione della \texttt{PersistenceException} generata dal fallimento della persistenza;
+\item \texttt{verify(uploadImages)}, che attesta che l’upload è stato effettivamente tentato prima dell’errore;
+\item \texttt{verify(deleteImages)}, che verifica che la logica di compensazione sia stata eseguita a seguito dell’eccezione.
+\end{itemize}
+
+
+\end{itemize}
+
+\subsection{Metodo 2: \texttt{getAgentOffers}}
+
+\subsubsection{Contesto}
+\begin{itemize}
+\item \textbf{Metodo testato}: \texttt{getAgentOffers(Long agentId, Pageable pageable)}
+\item \textbf{Scopo}: Recuperare una pagina di offerte associate a un agente specifico, arricchendo i dati con informazioni sulla proprietà e sull’utente.
+\item \textbf{Test case}: \texttt{testGetAgentOffers\_Success}
+\end{itemize}
+
+\subsubsection{Strategia}
+Il test verifica lo stato restituito dal servizio, assicurandosi che i dati della pagina di offerte siano completi, corretti e correttamente mappati nei DTO di risposta, incluse le relazioni verso utente e proprietà.
+
+\begin{itemize}
+
+\item \textbf{Classi di equivalenza individuate}:  
+Le classi di equivalenza sono definite sui parametri del metodo:
+
+\begin{itemize}
+    \item \textbf{\texttt{agentId}}:
+    \begin{itemize}
+        \item CE-A1: \texttt{agentId} valido e corrispondente a un agente presente nel sistema.
+        \item CE-A2: \texttt{agentId} non valido o inesistente, cioè la query restituisce una pagina vuota.
+        \item CE-A3: \texttt{agentId} nullo.
+    \end{itemize}
+    \item \textbf{\texttt{pageable}}:
+    \begin{itemize}
+        \item CE-P1: paginazione valida (dimensione pagina e indice validi).
+        \item CE-P2: paginazione con dimensione zero o negativa.
+    \end{itemize}
+\end{itemize}
+
+\item \textbf{Classi coperte dal test}:
+\begin{itemize}
+    \item CE-A1 – \texttt{agentId} valido
+    \item CE-P1 – paginazione valida
+\end{itemize}
+
+\item \textbf{Verifica}:  
+La correttezza del metodo è accertata tramite:
+\begin{itemize}
+    \item \texttt{assertNotNull(result)} e \texttt{assertEquals(size, ...)} per validare la pagina e il numero di offerte.
+    \item Asserzioni sui singoli elementi della pagina per verificare:
+    \begin{itemize}
+        \item correttezza degli ID delle offerte,
+        \item presenza e correttezza delle relazioni verso utente (\texttt{User}) e proprietà (\texttt{Property}),
+        \item coerenza dei dati rispetto al mock configurato.
+    \end{itemize}
+    \item \texttt{verify(offerRepository, times(1))} per garantire che la query verso il repository sia stata effettivamente invocata.
+\end{itemize}
+
+
+\end{itemize}
+\clearpage
+
+\subsection{Metodo 3: \texttt{calculateBoundingBox}}
+
+\subsubsection{Contesto}
+\begin{itemize}
+\item \textbf{Metodo testato}: \texttt{calculateBoundingBox(BigDecimal centerLatitude,\\
+BigDecimal centerLongitude, double radiusMeters)}
+\item \textbf{Scopo}: Calcolare il bounding box di un cerchio definito da una latitudine, longitudine e raggio in metri, considerando il caso particolare del passaggio dell'antimeridiano.
+\item \textbf{Test case}: \texttt{testAntimeridianCrossingAndContainment}
+\end{itemize}
+
+\subsubsection{Strategia}
+Il test è un test di unità puro, focalizzato sui valori limite e sui casi particolari geografici. L’obiettivo è verificare sia la correttezza numerica del bounding box sia la gestione dei punti rispetto al passaggio dell’antimeridiano.
+
+\begin{itemize}
+
+\item \textbf{Classi di equivalenza}:  
+Le classi di equivalenza sono definite sui parametri del metodo:
+
+\begin{itemize}
+    \item \textbf{\texttt{centerLatitude}}:
+    \begin{itemize}
+        \item CE-L1: latitudine valida compresa tra -90° e 90°.
+        \item CE-L2: latitudine ai limiti ±90°.
+        \item CE-L3: latitudine nulla o fuori range.
+    \end{itemize}
+
+    \item \textbf{\texttt{centerLongitude}}:
+    \begin{itemize}
+        \item CE-Lo1: longitudine valida compresa tra -180° e 180°.
+        \item CE-Lo2: longitudine vicino ai limiti ±180° (test passaggio antimeridiano).
+        \item CE-Lo3: longitudine nulla o fuori range.
+    \end{itemize}
+
+    \item \textbf{\texttt{radiusMeters}}:
+    \begin{itemize}
+        \item CE-R1: raggio positivo e non nullo.
+        \item CE-R2: raggio nullo o negativo.
+    \end{itemize}
+\end{itemize}
+
+\item \textbf{Classi coperte dal test}:
+\begin{itemize}
+    \item CE-L1 – latitudine valida all’equatore (0°)
+    \item CE-Lo2 – longitudine vicina a 180° per verificare il passaggio dell’antimeridiano
+    \item CE-R1 – raggio positivo sufficiente a coprire il passaggio dell’antimeridiano
+\end{itemize}
+
+\item \textbf{Strategia di verifica}:  
+La correttezza è verificata attraverso:
+\begin{itemize}
+    \item Controllo del bounding box generato, in particolare \texttt{minLon > maxLon} per rilevare il passaggio dell’antimeridiano.
+    \item Verifica che punti all’interno del raggio (vicino a ±179.95°) siano inclusi nel bounding box (\texttt{isPointInBoundingBox()}).
+\end{itemize}
+
+\end{itemize}
+\clearpage
+
+\subsection{Metodo 4: \texttt{getAgentVisits}}
+
+\subsubsection{Contesto}
+\begin{itemize}
+\item \textbf{Metodo testato}: \texttt{getAgentVisits(Long agentId, Pageable pageable)}
+\item \textbf{Scopo}: Restituire una pagina di visite associate a un agente specifico, arricchendo i dati con informazioni sulla proprietà, indirizzo e utente, gestendo la paginazione.
+\item \textbf{Test case}: \texttt{testGetAgentVisits\_ReturnsPage}
+\end{itemize}
+
+\subsubsection{Strategia}
+Il test verifica l’interazione tra il servizio e il repository, assicurandosi che la pagina restituita contenga le informazioni corrette e che il repository venga interrogato con i parametri appropriati.
+
+\begin{itemize}
+
+\item \textbf{Classi di equivalenza}: 
+Le classi di equivalenza sono definite sui parametri del metodo:
+
+\begin{itemize}
+    \item \textbf{\texttt{agentId}}:
+    \begin{itemize}
+        \item CE-A1: \texttt{agentId} valido corrispondente a un agente esistente.
+        \item CE-A2: \texttt{agentId} non valido o inesistente → restituzione di pagina vuota.
+        \item CE-A3: \texttt{agentId} nullo → comportamento dipendente dal servizio/repository (potenziale eccezione).
+    \end{itemize}
+
+    \item \textbf{\texttt{pageable}}:
+    \begin{itemize}
+        \item CE-P1: paginazione valida (dimensione pagina e indice validi).
+        \item CE-P2: paginazione con dimensione zero o negativa → gestione prevista dal framework.
+    \end{itemize}
+\end{itemize}
+
+\item \textbf{Classi coperte dal test}:
+\begin{itemize}
+    \item CE-A1 – \texttt{agentId} valido
+    \item CE-P1 – paginazione valida
+\end{itemize}
+
+\item \textbf{Copertura strutturale}:  
+Il test copre l’unico percorso logico del metodo, garantendo la \textbf{statement coverage} dell’interazione tra servizio e repository.
+
+\item \textbf{Verifica}:  
+La correttezza è accertata tramite:
+\begin{itemize}
+    \item \texttt{assertEquals(result, mockPage)} per confermare che il servizio restituisca la pagina attesa;
+    \item \texttt{verify(visitRepository).getAgentVisits(agentId, pageable)} per garantire che il repository sia stato invocato con i parametri corretti.
+\end{itemize}
+
+\end{itemize}
 \clearpage
 
 \section{Valutazione dell'Usabilità}
