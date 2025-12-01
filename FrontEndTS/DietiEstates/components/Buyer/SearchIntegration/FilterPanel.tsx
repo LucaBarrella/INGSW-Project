@@ -14,8 +14,9 @@ import { withErrorBoundary } from "./ErrorBoundary";
 import { useSearch } from "@/context/SearchContext";
 import useSearchProperties from '@/src/hooks/useSearchProperties';
 import useSearchUrlState from '@/src/hooks/useSearchUrlState';
-import { ALL_FILTERS, CATEGORY_FILTERS } from "@/config/filter-config";
+import { useFilterConfig, CATEGORY_FILTERS } from "@/config/filter-config";
 import usePropertyCategories from '@/src/hooks/usePropertyCategories'; // dinamico: scarica categorie/sottocategorie dal backend
+import { useTranslation } from "react-i18next";
 import type { FilterDefinition } from "./types";
 
 interface FilterPanelProps {
@@ -35,6 +36,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
   const translateY = useRef(new Animated.Value(2000)).current;
   const overlayOpacity = useRef(new Animated.Value(0)).current;
 
+  const { t } = useTranslation();
   const { state } = useSearch();
   const { filters, selectedMainCategoryInPanel } = state;
   // Usa l'hook che espone updateFilter/resetFilters/search con logica di sanitizzazione
@@ -43,6 +45,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
   const { categoriesByType, isLoading: categoriesLoading, refresh: refreshCategories } = usePropertyCategories();
   // Hook per sincronizzare esplicitamente Context -> URL quando l'utente applica i filtri
   const { forceSyncUrl } = useSearchUrlState();
+  const ALL_FILTERS = useFilterConfig();
 
   const panelHeight = Dimensions.get('window').height * 0.8;
   const textColor = useThemeColor({}, "text");
@@ -147,7 +150,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
           return (
             <PriceInput
               key={def.key}
-              label="Prezzo massimo"
+              label={t('filterPanel.maxPrice')}
               value={value.max ?? 0}
               onChange={(newMax) => onChange({ min: 0, max: newMax })}
               quickOptions={[100000, 200000, 300000]}
@@ -172,7 +175,12 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
           <View key={def.key} className="mb-4">
             <ThemedText className="text-sm mb-2" style={{ color: textColor }}>{def.label}</ThemedText>
             <SegmentedControl
-              options={(def.options ?? []).map(o => ({ label: String(o), value: o }))}
+              options={(def.options ?? []).map(o => {
+                if (typeof o === 'object' && o !== null && 'label' in o && 'value' in o) {
+                  return { label: o.label, value: o.value };
+                }
+                return { label: String(o), value: o };
+              })}
               value={value}
               onChange={(v: any) => onChange(v)}
             />
@@ -304,7 +312,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
             <ScrollView className="flex-1 p-4">
               <ThemedView className="mb-6">
                 {/* Filtri generali */}
-                <ThemedText className="text-lg font-semibold mb-4" style={{ color: textColor }}>Filtri Generali</ThemedText>
+                <ThemedText className="text-lg font-semibold mb-4" style={{ color: textColor }}>{t('filterPanel.generalFilters')}</ThemedText>
                 {renderControl(ALL_FILTERS.contract)}
                 {renderControl(ALL_FILTERS.priceRange)}
                 {renderControl(ALL_FILTERS.size)}
@@ -328,7 +336,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
                         style={{ backgroundColor: isSelected ? tintColor : loginCardBackground }}
                       >
                         <ThemedText className="font-medium" style={{ color: isSelected ? '#fff' : textColor }}>
-                          {catKey}
+                          {t(`filters.category.${catKey}`)}
                         </ThemedText>
                       </TouchableOpacity>
                     );
@@ -338,7 +346,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
                 <ThemedView>
                   <TouchableOpacity onPress={() => selectMainCategory(null)} className="flex-row items-center mb-4 px-3 py-2 self-start rounded-lg" style={{ backgroundColor: loginCardBackground }}>
                     <Ionicons name="swap-horizontal" size={20} color={tintColor} />
-                    <ThemedText style={{ color: tintColor, marginLeft: 4 }}>Cambia Categoria</ThemedText>
+                    <ThemedText style={{ color: tintColor, marginLeft: 4 }}>{t('filterPanel.changeCategory')}</ThemedText>
                   </TouchableOpacity>
   
                   {/* Selettore sottocategoria (es. Appartamento, Loft, ...) */}
@@ -370,10 +378,10 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
                     return (
                       <ThemedView className="mb-4">
                         <ThemedText className="text-sm mb-2" style={{ color: textColor }}>
-                          Tipo ({String(stateKey)})
+                          {t('filters.category.label')} ({t(`filters.category.${stateKey}`)})
                         </ThemedText>
                         <SegmentedControl
-                          options={opts.map(o => ({ label: String(o), value: o }))}
+                          options={opts.map(o => ({ label: t(`filters.category.options.${o}`), value: o }))}
                           value={currentValue}
                           onChange={(v: any) => {
                             console.log(`[FilterPanel] onChange subcategory - stateKey: ${stateKey}, selected value:`, v);

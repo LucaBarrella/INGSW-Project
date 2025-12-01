@@ -403,4 +403,136 @@
       }
     }
   }
+,
+  "filters": {
+    "contract": {
+      "label": "Transaction Type",
+      "options": {
+        "RENT": "Rent",
+        "SALE": "Sale"
+      }
+    },
+    "priceRange": {
+      "label": "Price"
+    },
+    "size": {
+      "label": "Size"
+    },
+    "searchRadiusKm": {
+      "label": "Search Radius (km)"
+    },
+    "heating": {
+      "label": "Heating",
+      "options": {
+        "Centralized": "Centralized",
+        "Autonomous": "Autonomous",
+        "Absent": "Absent"
+      }
+    },
+    "minNumberOfRooms": {
+      "label": "Minimum number of rooms"
+    },
+    "minNumberOfBathrooms": {
+      "label": "Minimum number of bathrooms"
+    },
+    "floor": {
+      "label": "Floor"
+    },
+    "minNumberOfFloors": {
+      "label": "Minimum number of floors"
+    },
+    "mustHaveElevator": {
+      "label": "With elevator"
+    },
+    "minYearBuilt": {
+      "label": "Minimum year of construction"
+    },
+    "minParkingSpaces": {
+      "label": "Minimum parking spaces"
+    },
+    "acceptedCondition": {
+      "label": "Accepted condition",
+      "options": {
+        "NEW": "New",
+        "GOOD_CONDITION": "Good condition",
+        "RENOVATED": "Renovated",
+        "TO_BE_RENOVATED": "To be renovated",
+        "POOR_CONDITION": "Poor condition",
+        "UNDER_CONSTRUCTION": "Under construction"
+      }
+    },
+    "minEnergyRating": {
+      "label": "Minimum energy rating",
+      "options": {
+        "A4": "A4",
+        "A3": "A3",
+        "A2": "A2",
+        "A1": "A1",
+        "B": "B",
+        "C": "C",
+        "D": "D",
+        "E": "E",
+        "F": "F",
+        "G": "G",
+        "NOT_APPLIABLE": "Not applicable"
+      }
+    },
+    "acceptedGarden": {
+      "label": "Garden",
+      "options": {
+        "PRIVATE": "Private",
+        "SHARED": "Shared",
+        "ABSENT": "Absent"
+      }
+    },
+    "mustBeFurnished": {
+      "label": "Furnished"
+    },
+    "mustHaveWheelchairAccess": {
+      "label": "Wheelchair access"
+    },
+    "mustHaveSurveillance": {
+      "label": "Surveillance system"
+    },
+    "constructionYear": {
+      "label": "Year of construction"
+    },
+    "mustBeAccessibleFromStreet": {
+      "label": "Street access"
+    },
+    "category": {
+        "label": "Category",
+        "RESIDENTIAL": "Residential",
+        "COMMERCIAL": "Commercial",
+        "GARAGE": "Garage",
+        "LAND": "Land",
+        "options": {
+            "Apartment": "Apartment",
+            "Villa": "Villa",
+            "Studio": "Studio",
+            "Penthouse": "Penthouse",
+            "Townhouse": "Townhouse",
+            "Office": "Office",
+            "Shop": "Shop",
+            "Restaurant": "Restaurant",
+            "Warehouse": "Warehouse",
+            "Building Plot": "Building Plot",
+            "Agricultural Land": "Agricultural Land",
+            "Industrial Land": "Industrial Land",
+            "Single Garage": "Single Garage",
+            "Double Garage": "Double Garage",
+            "Parking Space": "Parking Space"
+        }
+    }
+  },
+  "units": {
+    "squareMeters": "m²",
+    "kilometers": "km"
+  }
+,
+  "filterPanel": {
+    "generalFilters": "General Filters",
+    "maxPrice": "Maximum price",
+    "changeCategory": "Change Category"
+  }
 }

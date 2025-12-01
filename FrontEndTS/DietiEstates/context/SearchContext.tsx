@@ -8,7 +8,7 @@ import {
   defaultSearchCriteria,
 } from '../src/dto/SearchDTO'; // Corretto il percorso di importazione
 import SearchStateRepository from '../src/repositories/SearchStateRepository';
-import { ALL_FILTERS } from '../config/filter-config';
+import { FILTERS_CONFIG } from '../config/filter-config';
 
 // Helper functions: pure, piccole e fortemente tipizzate
 const deepEqual = (a: unknown, b: unknown): boolean => {
@@ -50,14 +50,14 @@ const updateFilterCategory = <TCategory extends Record<string, FilterState<any>>
 
     // Otteniamo il valore di default in modo robusto:
     // 1) dalla definizione di default della categoria (defaultCategoryDef)
-    // 2) se non presente, dal file di configurazione globale ALL_FILTERS
+    // 2) se non presente, dal file di configurazione globale FILTERS_CONFIG
     // 3) se non presente, dall'esistente.defaultValue
     // 4) infine fallback a normalizedNewValue
     let defaultValue: any = undefined;
     if (defaultCategoryDef && (defaultCategoryDef as any)[key as string] && (defaultCategoryDef as any)[key as string].defaultValue !== undefined) {
       defaultValue = (defaultCategoryDef as any)[key as string].defaultValue;
-    } else if ((ALL_FILTERS as any) && (ALL_FILTERS as any)[key as string] && (ALL_FILTERS as any)[key as string].defaultValue !== undefined) {
-      defaultValue = (ALL_FILTERS as any)[key as string].defaultValue;
+    } else if ((FILTERS_CONFIG as any) && (FILTERS_CONFIG as any)[key as string] && (FILTERS_CONFIG as any)[key as string].defaultValue !== undefined) {
+      defaultValue = (FILTERS_CONFIG as any)[key as string].defaultValue;
     } else if (existing && (existing as any).defaultValue !== undefined) {
       defaultValue = (existing as any).defaultValue;
     }

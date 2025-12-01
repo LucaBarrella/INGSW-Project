@@ -186,7 +186,7 @@ export interface FilterDefinition {
   key: string;
   label: string;
   control: FilterControlType;
-  options?: string[];
+  options?: (string | { label: string; value: string })[];
   min?: number;
   max?: number;
   step?: number;
