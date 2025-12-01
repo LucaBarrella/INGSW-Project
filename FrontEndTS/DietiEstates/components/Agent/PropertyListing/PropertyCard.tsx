@@ -71,7 +71,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           lightColor={textColor}
           darkColor={textColor}
         >
-            {t('property_category.'+property.propertyCategory)} in {property.address?.city || 'N/A'}, {t('property_status.'+property.condition)}
+            {t('property_category.sub.'+property.propertyCategory)} in {property.address.toString()} - {t('property_status.'+property.condition)}
         </ThemedText>
         
         <ThemedText 

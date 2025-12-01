@@ -99,6 +99,11 @@
   "insertExternalOfferButton": "Inserisci Offerta Esterna",
   "acceptHighestRejectOthersButton": "Accetta Offerta più Alta e Rifiuta Altre",
   "noActiveOffersForThisProperty": "Non ci sono offerte attive per questa proprietà.",
+  "validationError": "Errore di Validazione",
+  "pleaseSelectValidAddressFromSuggestions": "Per favore, assicurati di aver selezionato un indirizzo valido dai suggerimenti in alto per permetterci di geolocalizzare la tua proprietà.",
+  "ok": "OK",
+  "warning": "Attenzione",
+  "pleaseAddAtLeastOnePropertyImage": "Per favore, aggiungi almeno un'immagine della proprietà.",
 
   "setting": {
     "language": "Lingua"

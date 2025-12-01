@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Alert, TouchableWithoutFeedback } from 'react-native';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import AnimatedSlideUpPanel from '../common/AnimatedSlideUpPanel';
-import { getMeteoForTheDay, getTimeFromIndex, getEmojiFromMeteoCode } from '../../src/services (old)/OpenMeteoApiService';
+import { getMeteoForTheDay, getTimeFromIndex, getEmojiFromMeteoCode } from '../../src/api/OpenMeteoApiService';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedIcon } from '@/components/ThemedIcon';
 import { useVisits } from '@/src/hooks/useVisits';

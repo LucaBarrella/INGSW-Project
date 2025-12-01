@@ -42,7 +42,7 @@ export default function VisitsTab() {
         {loading ? (
           <ThemedText className="text-center text-gray-500">{t('loadingVisits')}</ThemedText>
         ) : error ? (
-          <ThemedText className="text-center text-red-500">Error: {error.message}</ThemedText>
+          <ThemedText className="text-center text-red-500">{t('error')}: {error.message}</ThemedText>
         ) : visits && visits.length === 0 ? (
           <ThemedText className="text-center text-gray-500">{t('noVisitsFound')}</ThemedText>
         ) : (

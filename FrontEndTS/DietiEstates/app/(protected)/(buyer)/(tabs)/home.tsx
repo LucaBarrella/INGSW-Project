@@ -37,7 +37,7 @@ export default function HomeTab() {
   const router = useRouter();
   const { t } = useTranslation();
   const backgroundColor = useThemeColor({}, 'background');
-  const errorColor = useThemeColor({}, 'tint'); // Placeholder per colore errore
+  const errorColor = useThemeColor({}, 'tint');
 
   const {
     properties,
@@ -54,12 +54,6 @@ export default function HomeTab() {
       params: { category, triggerSearch: 'true' }
     });
   };
-
-  // handleSearch is no longer needed here as SearchAndFilter updates the context directly.
-  // Navigation will be triggered by onSearchSubmitNavigate.
-
-  // handleFiltersChange is no longer needed here as FilterPanel updates the context directly.
-  // The search results page will react to context changes.
 
   const handleSearchSubmitNavigate = () => {
     console.log('[HomeTab] Navigating to search results page with triggerSearch=true.');

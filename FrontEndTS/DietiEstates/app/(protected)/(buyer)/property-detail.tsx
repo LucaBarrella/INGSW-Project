@@ -18,7 +18,7 @@ import MapView, { Marker } from 'react-native-maps';
 import { generatePropertyImageUrls } from '@/src/utils/imageUtils';
 import VisitApiService from '@/src/api/VisitApi';
 import { AvailabilityDTO } from '@/src/dto/response/AvailabilityDTO';
-import HistoryStorageService from '@/src/services (old)/history.service';
+import HistoryStorageService from '@/src/api/history.service';
 import { formatAddress } from '@/components/Agent/PropertyDashboard/types';
 
 const { width: screenWidth } = Dimensions.get('window');
@@ -130,7 +130,7 @@ const PropertyDetailScreen: React.FC = () => {
 
   const optionalPropertyDetails = ['area', 'numberOfBathrooms', 'floor', 'numberOfFloors', 'yearBuilt', 'heating',
     'energyClass', 'furnished', 'hasElevator', 'garden', 'parkingSpaces', 'swimmingPool', 'numberOfRooms', 'numberOfBedrooms',
-    'totalFloors', 'hasDisabledAccess', 'hasRoadAccess'];
+    'totalFloors', 'hasDisabledAccess', 'hasRoadAccess', 'parkingSpaces'];
 
   const styles = createStyles(themeColors);
 

@@ -51,7 +51,7 @@ export default function Properties() {
           <ScrollView contentContainerStyle={{}} className="flex-grow p-6 pb-20">
             <ThemedView className="flex-row justify-between items-center mb-10">
               <ThemedText type="title" className="text-2xl leading-none">
-                {t('yourProperties')}
+                {t('myProperties')}
               </ThemedText>
               <ThemedButton
                 title={t('addProperty')}

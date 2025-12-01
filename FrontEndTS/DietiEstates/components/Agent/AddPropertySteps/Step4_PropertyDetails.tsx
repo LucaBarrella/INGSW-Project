@@ -21,7 +21,6 @@ const residentialCategories = ['Apartment', 'Villa', 'Penthouse', 'Townhouse'];
 const commercialCategories = ['Office', 'Shop', 'Warehouse', 'Restaurant'];
 const landCategories = ['Building Plot', 'Agricultural Land', 'Industrial Land'];
 const garageCategories = ['Single Garage', 'Double Garage', 'Parking Space'];
-const soilTypes = ['Argilloso', 'Sabbioso', 'Limoso', 'Ghiaioso'];
 
 export default function Step4_PropertyDetails({ control, errors, propertyType }: Step4PropertyDetailsProps) {
   const textColor = useThemeColor({}, 'text');
@@ -37,7 +36,6 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
       <Controller
         control={control}
         name="residentialCategory"
-        // rules rimosse
         render={({ field: { onChange, value } }) => {
           const { showActionSheetWithOptions } = useActionSheet();
 
@@ -69,7 +67,7 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
                 style={{ borderColor: errors.residentialCategory ? themeErrorColor : borderColor, backgroundColor: backgroundColor }}
                 onPress={showResidentialCategoryOptions}
               >
-                <ThemedText style={{ color: value ? textColor : textColor + '80' }}> {/* Cambia colore testo se selezionato, placeholder opacizzato */}
+                <ThemedText style={{ color: value ? textColor : textColor + '80' }}>
                   {value ? t(`property_category.sub.${value}`) : t('selectCategory')}
                 </ThemedText>
               </Pressable>
@@ -126,6 +124,18 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
            error={!!errors.numberOfFloors}
            errorMessage={errors.numberOfFloors?.message as string}
          />
+      )} />
+      <Controller control={control} name="parkingSpaces" render={({ field: { onChange, onBlur, value } }) => (
+        <LabelInput
+          label="Posti Auto"
+          placeholder="Es. 1"
+          onBlur={onBlur}
+          onChangeText={onChange}
+          value={value}
+          keyboardType="numeric"
+          error={!!errors.parkingSpaces}
+          errorMessage={errors.parkingSpaces?.message as string}
+        />
       )} />
       
       <Controller

@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import type { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
-import HistoryStorageService from '@/src/services (old)/history.service';
+import HistoryStorageService from '@/src/api/history.service';
 import { getPropertiesByIds as searchGetPropertiesByIds } from '@/src/services/SearchService';
 
 const PAGE_LIMIT = 10;

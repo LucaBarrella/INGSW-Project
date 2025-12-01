@@ -17,7 +17,8 @@ const residentialDetailsSchema = z.object({
   numberOfBathrooms: positiveNumberGreaterThanZero,
   heatingType: z.enum(['Absent', 'Autonomous', 'Centralized'], { required_error: 'Seleziona il tipo di riscaldamento' }),
   garden: z.enum(['ABSENT', 'PRIVATE', 'SHARED'], { required_error: 'Seleziona il tipo di giardino' }),
-  isFurnished: z.boolean(), /* TODO numero di posti auto ? */
+  isFurnished: z.boolean(),
+  parkingSpaces: positiveNumber,
 });
 
 // Schema per i dettagli commerciali

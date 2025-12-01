@@ -17,6 +17,7 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import { router } from 'expo-router';
 import { propertySchema, PropertyFormData } from './schemas/propertySchema'; // Importa lo schema e il tipo
 import httpClient from '@/src/core/httpClient';
+import { t } from 'i18next';
 // import { usePropertiesViewModel } from '@/src/hooks/usePropertiesViewModel';
 
 // Define the complete form data structure
@@ -65,7 +66,7 @@ const fieldsByStep: Record<number, FieldName<PropertyFormData>[]> = {
   4: [
       'residentialCategory', 'rooms', 'bathrooms', 'floor', 'elevator', 'pool',
       'commercialCategory', 'commercialBathrooms', 'emergencyExit', 'constructionDate',
-      'garageCategory', 'numberOfFloors',
+      'garageCategory', 'numberOfFloors', 'parkingSpaces',
       'landCategory', 'garden', 'numberOfBathrooms', 'numberOfRooms', 'isFurnished', 'heatingType', 'hasRoadAccess'
      ] as any[],
   5: [],
@@ -185,9 +186,9 @@ export default function AddPropertyScreen() {
       console.log("Validation Errors for Step", currentStep, ":", errors); // Log per debug specifico dello step
       if (errors.addressRequest?.latitude || errors.addressRequest?.longitude) {
         Alert.alert(
-          "Errore di Validazione",
-          "Per favore, assicurati di aver selezionato un indirizzo valido dai suggerimenti in alto per permetterci di geolocalizzare la tua proprietà.",
-          [{ text: "OK" }]
+          t("validationError"),
+          t("pleaseSelectValidAddressFromSuggestions"),
+          [{ text: t("ok") }]
         );
       }
       // Gli errori verranno mostrati automaticamente dai componenti grazie a RHF e alla modalità onBlur/onChange
@@ -198,9 +199,8 @@ export default function AddPropertyScreen() {
 
   // Funzione di submit finale
   const onSubmit: SubmitHandler<PropertyFormData> = async (data) => {
-    console.log("isSubmitting:", isSubmitting);
     if (selectedImages.length === 0) {
-      Alert.alert("Attenzione", "Per favore, aggiungi almeno un'immagine della proprietà.");
+      Alert.alert(t("warning"), t("pleaseAddAtLeastOnePropertyImage"));
       return;
     }
     if (isSubmitting) return; // Previene submit multipli
@@ -235,6 +235,7 @@ export default function AddPropertyScreen() {
           propertyData.garden = data.garden;
           propertyData.isFurnished = data.isFurnished;
           propertyData.heatingType = data.heatingType;
+          propertyData.parkingSpaces = data.parkingSpaces;
           break;
         case 'COMMERCIAL':
           propertyData.propertyCategoryName = data.commercialCategory;
