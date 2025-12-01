@@ -154,10 +154,10 @@
   },
 
   "property_category": {
-    "commercial_property": "proprietà commerciale",
-    "residential_property": "proprietà residenziale",
-    "land": "terreno",
-    "garage": "autorimessa",
+    "commercial_property": "Commerciale",
+    "residential_property": "Residenziale",
+    "land": "Terreno",
+    "garage": "Autorimessa",
     "sub": {
       "Apartment": "Appartamento",
       "Villa": "Villa",
