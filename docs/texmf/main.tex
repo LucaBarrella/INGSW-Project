@@ -10,6 +10,14 @@
 \usepackage{multirow}
 \usepackage{float}
 \usepackage{tabularx}
+\usepackage{hyperref}
+\usepackage{xcolor} % per colori dei link
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue
+}
+
 
 
 \Universita{Università degli Studi di Napoli Federico II}
@@ -540,13 +548,32 @@ I test con utenti volontari hanno coinvolto sessioni di utilizzo dell'applicazio
 Le informazioni ottenute sono state utilizzate per identificare aree di miglioramento e ottimizzare l'esperienza utente complessiva.\\
 
 \section{SonarQube}
-SonarQube è stato utilizzato per l'analisi della qualità del codice, individuando potenziali problemi e aree di miglioramento.\\
+Lo strumento di analisi della qualità del codice SonarQube è stato utilizzato per il lato back-end di DietiEstates, individuando potenziali problemi e aree di miglioramento.\\
 L'analisi ha permesso di identificare vulnerabilità, code smells e duplicazioni, contribuendo a mantenere un codice pulito, facilmente manutenibile e scalabile.\\
-I risultati dell'analisi sono stati integrati nel processo di sviluppo, consentendo di apportare le necessarie correzioni e miglioramenti al codice.
+I risultati dell'analisi sono stati integrati nel processo di sviluppo, consentendo di apportare le necessarie correzioni e miglioramenti al codice. \\
+Il report corrente suggerisce che non sono presenti issue aperte e che il Quality Gate è stato superato, come visibile attraverso \href{https://sonarcloud.io/project/overview?id=TheFabbest\_DietiEstates25-backend}{SonarCloud}.
+TODO aggiungere screenshot del report
+
 
 \section{Accessibilità}
 TODO
 Per garantire l'accessibilità dell'applicazione, sono state adottate le linee guida WCAG livello AA\@.\\
 Sono stati usati strumenti automatici per verificare la conformità alle linee guida, ad esempio nella scelta dei colori, identificando e correggendo eventuali problemi di accessibilità.\\
+TODO aggiungere palette
+
+\appendix
+\chapter{Evidenza di versioning}
+Il versioning del codice sorgente è stato gestito tramite \textbf{Git} con hosting del repository su \textbf{GitHub}. \\
+Git è un sistema di versionamento distribuito che registra in modo incrementale lo stato dei file tramite commit, mantenendo uno storico completo e permettendo branching e merging. Ogni copia locale è un repository completo. GitHub è invece una piattaforma remota che ospita repository Git, aggiungendo funzionalità di collaborazione come pull request e issue tracking. Il suo utilizzo ha permesso di tracciare la storia delle modifiche, facilitare la collaborazione tra i membri del team e integrare il controllo qualità con SonarQube.\\
+E' possibile visualizzare i repository del \href{https://github.com/TheFabbest/DietiEstates25-backend}{back-end} e del \href{https://github.com/LucaBarrella/INGSW-Project}{front-end} pubblicamente.
+
+\subsubsection{Dati riepilogativi} TODO
+\begin{itemize}
+    \item \textbf{Numero di contributors}:
+    \item \textbf{Numero di commit}: 
+    \item \textbf{Frequenza dei commit}:
+\end{itemize}
+
+\clearpage
 
 \end{document}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.1.30)  27 NOV 2025 18:14
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.1.30)  1 DEC 2025 01:08
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -363,27 +363,126 @@ Package: array 2023/10/16 v2.5g Tabular extension package (FMi)
 \TX@delta=\dimen265
 \TX@cols=\count296
 \TX@ftn=\toks36
-) (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdftex.def
+) (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+Package: hyperref 2023-11-26 v7.01g Hypertext links for LaTeX
+ (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
+Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
+) (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefinekeys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+) (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.sty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+) (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty
+Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
+) (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/latex/letltxmacro\letltxmacro.sty
+Package: letltxmacro 2019/12/03 v1.6 Let assignment for LaTeX macros (HO)
+) (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+Package: nameref 2023-11-26 v2.56 Cross-referencing by name of section
+ (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty
+Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
+) (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettitlestring.sty
+Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
+ (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
+))
+\c@section@level=\count297
+)
+\@linkdim=\dimen266
+\Hy@linkcounter=\count298
+\Hy@pagecounter=\count299
+ (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
+File: pd1enc.def 2023-11-26 v7.01g Hyperref: PDFDocEncoding definition (HO)
+Now handling font encoding PD1 ...
+... no UTF-8 mapping file for font encoding PD1
+) (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
+Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
+)
+\Hy@SavedSpaceFactor=\count300
+ (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
+File: puenc.def 2023-11-26 v7.01g Hyperref: PDF Unicode definition (HO)
+Now handling font encoding PU ...
+... no UTF-8 mapping file for font encoding PU
+)
+Package hyperref Info: Hyper figures OFF on input line 4181.
+Package hyperref Info: Link nesting OFF on input line 4186.
+Package hyperref Info: Hyper index ON on input line 4189.
+Package hyperref Info: Plain pages OFF on input line 4196.
+Package hyperref Info: Backreferencing OFF on input line 4201.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4448.
+\c@Hy@tempcnt=\count301
+ (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
+\Urlmuskip=\muskip16
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 4786.
+\XeTeXLinkMargin=\dimen267
+ (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
+ (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO)
+))
+\Fld@menulength=\count302
+\Field@Width=\dimen268
+\Fld@charsize=\dimen269
+Package hyperref Info: Hyper figures OFF on input line 6065.
+Package hyperref Info: Link nesting OFF on input line 6070.
+Package hyperref Info: Hyper index ON on input line 6073.
+Package hyperref Info: backreferencing OFF on input line 6080.
+Package hyperref Info: Link coloring OFF on input line 6085.
+Package hyperref Info: Link coloring with OCG OFF on input line 6090.
+Package hyperref Info: PDF/A mode OFF on input line 6095.
+ (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/latex/base\atbegshi-ltx.sty
+Package: atbegshi-ltx 2021/01/10 v1.0c Emulation of the original atbegshi
+package with kernel methods
+)
+\Hy@abspage=\count303
+\c@Item=\count304
+\c@Hfootnote=\count305
+)
+Package hyperref Info: Driver (autodetected): hpdftex.
+ (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
+File: hpdftex.def 2023-11-26 v7.01g Hyperref driver for pdfTeX
+ (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/latex/base\atveryend-ltx.sty
+Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atveryend package
+with kernel methods
+)
+\Fld@listcount=\count306
+\c@bookmark@seq@number=\count307
+ (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfilecheck.sty
+Package: rerunfilecheck 2025-06-21 v1.11 Rerun checks for auxiliary files (HO)
+ (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquecounter.sty
+Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
+)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 284.
+)
+\Hy@SectionHShift=\skip54
+)
+Package hyperref Info: Option `colorlinks' set `true' on input line 19.
+ (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdftex.def
 File: l3backend-pdftex.def 2024-01-04 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count297
+\l__color_backend_stack_int=\count308
 \l__pdf_internal_box=\box69
 ) (main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 33.
-LaTeX Font Info:    ... okay on input line 33.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 33.
-LaTeX Font Info:    ... okay on input line 33.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 33.
-LaTeX Font Info:    ... okay on input line 33.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 33.
-LaTeX Font Info:    ... okay on input line 33.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 33.
-LaTeX Font Info:    ... okay on input line 33.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 33.
-LaTeX Font Info:    ... okay on input line 33.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 33.
-LaTeX Font Info:    ... okay on input line 33.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -421,16 +520,16 @@ LaTeX Font Info:    ... okay on input line 33.
 
 (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count298
-\scratchdimen=\dimen266
+\scratchcounter=\count309
+\scratchdimen=\dimen270
 \scratchbox=\box70
-\nofMPsegments=\count299
-\nofMParguments=\count300
+\nofMPsegments=\count310
+\nofMParguments=\count311
 \everyMPshowfont=\toks37
-\MPscratchCnt=\count301
-\MPscratchDim=\dimen267
-\MPnumerator=\count302
-\makeMPintoPDFobject=\count303
+\MPscratchCnt=\count312
+\MPscratchDim=\dimen271
+\MPnumerator=\count313
+\makeMPintoPDFobject=\count314
 \everyMPtoPDFconversion=\toks38
 ) (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
@@ -438,12 +537,17 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 48
  (C:\Users\maryd\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
-LaTeX Info: Redefining \it@ocap on input line 33.
-LaTeX Info: Redefining \it@ccap on input line 33.
-<figures/logo-federico-II.pdf, id=4, 501.79471pt x 499.8675pt>
+LaTeX Info: Redefining \it@ocap on input line 41.
+LaTeX Info: Redefining \it@ccap on input line 41.
+Package hyperref Info: Link coloring ON on input line 41.
+ (main.out) (main.out)
+\@outlinefile=\write4
+\openout4 = `main.out'.
+
+<figures/logo-federico-II.pdf, id=130, 501.79471pt x 499.8675pt>
 File: figures/logo-federico-II.pdf Graphic file (type pdf)
 <use figures/logo-federico-II.pdf>
-Package pdftex.def Info: figures/logo-federico-II.pdf  used on input line 36.
+Package pdftex.def Info: figures/logo-federico-II.pdf  used on input line 44.
 (pdftex.def)             Requested size: 99.58464pt x 99.20135pt.
  [1
 
@@ -456,15 +560,15 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <5> on input line 4.
 )
-\tf@toc=\write4
-\openout4 = `main.toc'.
+\tf@toc=\write5
+\openout5 = `main.toc'.
 
  [3] [4
 
 ]
 Capitolo 0.
 
-Underfull \hbox (badness 10000) in paragraph at lines 43--45
+Underfull \hbox (badness 10000) in paragraph at lines 51--53
 
  []
 
@@ -472,37 +576,37 @@ Underfull \hbox (badness 10000) in paragraph at lines 43--45
 
 ]
 Capitolo 1.
-<figures/youngclientPersona.pdf, id=38, 1445.4pt x 813.0375pt>
+<figures/youngclientPersona.pdf, id=202, 1445.4pt x 813.0375pt>
 File: figures/youngclientPersona.pdf Graphic file (type pdf)
 <use figures/youngclientPersona.pdf>
-Package pdftex.def Info: figures/youngclientPersona.pdf  used on input line 76.
+Package pdftex.def Info: figures/youngclientPersona.pdf  used on input line 84.
 (pdftex.def)             Requested size: 443.57848pt x 249.50821pt.
-<figures/oldclientPersona.pdf, id=39, 1445.4pt x 813.0375pt>
+<figures/oldclientPersona.pdf, id=203, 1445.4pt x 813.0375pt>
 File: figures/oldclientPersona.pdf Graphic file (type pdf)
 <use figures/oldclientPersona.pdf>
-Package pdftex.def Info: figures/oldclientPersona.pdf  used on input line 82.
+Package pdftex.def Info: figures/oldclientPersona.pdf  used on input line 90.
 (pdftex.def)             Requested size: 443.57848pt x 249.50821pt.
 [7] [8 <./figures/youngclientPersona.pdf> <./figures/oldclientPersona.pdf>]
-<figures/reagentPersona.pdf, id=90, 1445.4pt x 813.0375pt>
+<figures/reagentPersona.pdf, id=258, 1445.4pt x 813.0375pt>
 File: figures/reagentPersona.pdf Graphic file (type pdf)
 <use figures/reagentPersona.pdf>
-Package pdftex.def Info: figures/reagentPersona.pdf  used on input line 93.
+Package pdftex.def Info: figures/reagentPersona.pdf  used on input line 101.
 (pdftex.def)             Requested size: 443.57848pt x 249.50821pt.
  [9
 
  <./figures/reagentPersona.pdf>]
-<figures/adminPersona.pdf, id=115, 1445.4pt x 813.0375pt>
+<figures/adminPersona.pdf, id=285, 1445.4pt x 813.0375pt>
 File: figures/adminPersona.pdf Graphic file (type pdf)
 <use figures/adminPersona.pdf>
-Package pdftex.def Info: figures/adminPersona.pdf  used on input line 104.
+Package pdftex.def Info: figures/adminPersona.pdf  used on input line 112.
 (pdftex.def)             Requested size: 443.57848pt x 249.50821pt.
  [10
 
  <./figures/adminPersona.pdf>] [11] [12]
-<diagram/UseCaseDiagram.pdf, id=146, 847.24525pt x 1155.35632pt>
+<diagram/UseCaseDiagram.pdf, id=320, 847.24525pt x 1155.35632pt>
 File: diagram/UseCaseDiagram.pdf Graphic file (type pdf)
 <use diagram/UseCaseDiagram.pdf>
-Package pdftex.def Info: diagram/UseCaseDiagram.pdf  used on input line 154.
+Package pdftex.def Info: diagram/UseCaseDiagram.pdf  used on input line 162.
 (pdftex.def)             Requested size: 399.21791pt x 648.21448pt.
 
 Overfull \vbox (47.90498pt too high) has occurred while \output is active []
@@ -525,33 +629,34 @@ Capitolo 2.
 ]
 Capitolo 3.
 
-Underfull \hbox (badness 10000) in paragraph at lines 538--541
+Underfull \hbox (badness 10000) in paragraph at lines 546--549
 
  []
 
-[27]
-Underfull \hbox (badness 10000) in paragraph at lines 548--551
+[27] [28]
+Appendice A.
+[29
 
- []
-
-[28] (main.aux)
+] (main.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-04>
  ***********
+Package rerunfilecheck Info: File `main.out' has not changed.
+(rerunfilecheck)             Checksum: 399A24FF52542D13710BF5B3476D0A41;5032.
  ) 
 Here is how much of TeX's memory you used:
- 15708 strings out of 474486
- 321800 string characters out of 5743755
- 1939542 words of memory out of 5000000
- 37695 multiletter control sequences out of 15000+600000
+ 22164 strings out of 474486
+ 422265 string characters out of 5743755
+ 1940542 words of memory out of 5000000
+ 43976 multiletter control sequences out of 15000+600000
  569655 words of font info for 52 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 117i,10n,121p,563b,273s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 117i,10n,121p,611b,529s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecti1000.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1000.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1440.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx2074.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecsl1000.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1000.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx2488.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1000.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1200.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1200.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\eccc2488.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\eccc1200.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\eccc1440.pk><C:/Users/maryd/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on main.pdf (28 pages, 12649697 bytes).
+Output written on main.pdf (29 pages, 12683702 bytes).
 PDF statistics:
- 656 PDF objects out of 1000 (max. 8388607)
- 0 named destinations out of 1000 (max. 500000)
- 49 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 909 PDF objects out of 1000 (max. 8388607)
+ 92 named destinations out of 1000 (max. 500000)
+ 297 words of extra memory for PDF output out of 10000 (max. 10000000)
 
