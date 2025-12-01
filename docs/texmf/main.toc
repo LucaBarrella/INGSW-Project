@@ -54,7 +54,15 @@
 \contentsline {subsubsection}{Strumenti Utilizzati}{27}{section*.26}%
 \contentsline {subsubsection}{Esempi}{27}{section*.27}%
 \contentsline {section}{\numberline {3.2}Valutazione dell'Usabilità}{28}{section.3.2}%
-\contentsline {section}{\numberline {3.3}SonarQube}{28}{section.3.3}%
-\contentsline {section}{\numberline {3.4}Accessibilità}{28}{section.3.4}%
-\contentsline {chapter}{\numberline {A}Evidenza di versioning}{29}{appendix.Alph1}%
-\contentsline {subsubsection}{Dati riepilogativi}{29}{section*.28}%
+\contentsline {subsection}{\numberline {3.2.1}Expert Review (Ispezione Euristica)}{28}{subsection.3.2.1}%
+\contentsline {subsubsection}{Checklist Euristica e Risultati}{28}{section*.28}%
+\contentsline {subsection}{\numberline {3.2.2}Test con Utenti}{29}{subsection.3.2.2}%
+\contentsline {subsubsection}{Soggetti Reclutati}{29}{section*.29}%
+\contentsline {subsubsection}{Procedura Sperimentale}{30}{section*.30}%
+\contentsline {subsubsection}{Metriche Considerate}{30}{section*.31}%
+\contentsline {subsubsection}{Survey}{30}{section*.32}%
+\contentsline {subsubsection}{Risultati finali}{30}{section*.33}%
+\contentsline {section}{\numberline {3.3}SonarQube}{31}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Accessibilità}{31}{section.3.4}%
+\contentsline {chapter}{\numberline {A}Evidenza di versioning}{33}{appendix.Alph1}%
+\contentsline {subsubsection}{Dati riepilogativi}{33}{section*.34}%

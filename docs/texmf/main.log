@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.1.30)  1 DEC 2025 02:04
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.1.30)  1 DEC 2025 03:11
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -549,7 +549,7 @@ Package hyperref Info: Link coloring ON on input line 42.
 \@outlinefile=\write4
 \openout4 = `main.out'.
 
-<figures/logo-federico-II.pdf, id=130, 501.79471pt x 499.8675pt>
+<figures/logo-federico-II.pdf, id=138, 501.79471pt x 499.8675pt>
 File: figures/logo-federico-II.pdf Graphic file (type pdf)
 <use figures/logo-federico-II.pdf>
 Package pdftex.def Info: figures/logo-federico-II.pdf  used on input line 45.
@@ -581,18 +581,18 @@ Underfull \hbox (badness 10000) in paragraph at lines 52--54
 
 ]
 Capitolo 1.
-<figures/youngclientPersona.pdf, id=202, 1445.4pt x 813.0375pt>
+<figures/youngclientPersona.pdf, id=212, 1445.4pt x 813.0375pt>
 File: figures/youngclientPersona.pdf Graphic file (type pdf)
 <use figures/youngclientPersona.pdf>
 Package pdftex.def Info: figures/youngclientPersona.pdf  used on input line 85.
 (pdftex.def)             Requested size: 443.57848pt x 249.50821pt.
-<figures/oldclientPersona.pdf, id=203, 1445.4pt x 813.0375pt>
+<figures/oldclientPersona.pdf, id=213, 1445.4pt x 813.0375pt>
 File: figures/oldclientPersona.pdf Graphic file (type pdf)
 <use figures/oldclientPersona.pdf>
 Package pdftex.def Info: figures/oldclientPersona.pdf  used on input line 91.
 (pdftex.def)             Requested size: 443.57848pt x 249.50821pt.
 [7] [8 <./figures/youngclientPersona.pdf> <./figures/oldclientPersona.pdf>]
-<figures/reagentPersona.pdf, id=258, 1445.4pt x 813.0375pt>
+<figures/reagentPersona.pdf, id=268, 1445.4pt x 813.0375pt>
 File: figures/reagentPersona.pdf Graphic file (type pdf)
 <use figures/reagentPersona.pdf>
 Package pdftex.def Info: figures/reagentPersona.pdf  used on input line 102.
@@ -600,7 +600,7 @@ Package pdftex.def Info: figures/reagentPersona.pdf  used on input line 102.
  [9
 
  <./figures/reagentPersona.pdf>]
-<figures/adminPersona.pdf, id=285, 1445.4pt x 813.0375pt>
+<figures/adminPersona.pdf, id=295, 1445.4pt x 813.0375pt>
 File: figures/adminPersona.pdf Graphic file (type pdf)
 <use figures/adminPersona.pdf>
 Package pdftex.def Info: figures/adminPersona.pdf  used on input line 113.
@@ -608,7 +608,7 @@ Package pdftex.def Info: figures/adminPersona.pdf  used on input line 113.
  [10
 
  <./figures/adminPersona.pdf>] [11] [12]
-<diagram/UseCaseDiagram.pdf, id=320, 847.24525pt x 1155.35632pt>
+<diagram/UseCaseDiagram.pdf, id=330, 847.24525pt x 1155.35632pt>
 File: diagram/UseCaseDiagram.pdf Graphic file (type pdf)
 <use diagram/UseCaseDiagram.pdf>
 Package pdftex.def Info: diagram/UseCaseDiagram.pdf  used on input line 163.
@@ -634,36 +634,59 @@ Capitolo 2.
 ]
 Capitolo 3.
 [27]
-Underfull \hbox (badness 10000) in paragraph at lines 555--558
-
+Underfull \hbox (badness 10000) in paragraph at lines 590--590
+[]|\T1/cmr/bx/n/10 Minimizzare il
  []
 
-[28
+
+Underfull \hbox (badness 10000) in paragraph at lines 590--590
+[]|\T1/cmr/bx/n/10 Uscite chia-ra-
+ []
+
+
+Underfull \hbox (badness 5817) in paragraph at lines 590--590
+[]|\T1/cmr/bx/n/10 Buoni mes-sag-gi
+ []
+
+
+Underfull \hbox (badness 1838) in paragraph at lines 590--590
+[]|\T1/cmr/bx/n/10 Prevenzione de-
+ []
+
+
+Underfull \hbox (badness 7468) in paragraph at lines 590--590
+[]|\T1/cmr/bx/n/10 Aiuto e do-cu-
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [28
+
+] [29] [30] [31] [32
 
 ]
 Appendice A.
-[29
-
-] (main.aux)
+[33] (main.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-04>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 399A24FF52542D13710BF5B3476D0A41;5032.
+(rerunfilecheck)             Checksum: C76D2A4F5AACCF6E128EBE3C25461A5A;5427.
  ) 
 Here is how much of TeX's memory you used:
- 22205 strings out of 474486
- 423135 string characters out of 5743755
+ 22229 strings out of 474486
+ 423428 string characters out of 5743755
  1940542 words of memory out of 5000000
- 44013 multiletter control sequences out of 15000+600000
+ 44019 multiletter control sequences out of 15000+600000
  569655 words of font info for 52 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  117i,10n,121p,611b,529s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecti1000.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1000.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1440.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx2074.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecsl1000.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1000.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx2488.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1000.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1200.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1200.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\eccc2488.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\eccc1200.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\eccc1440.pk><C:/Users/maryd/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on main.pdf (29 pages, 12684977 bytes).
+Output written on main.pdf (33 pages, 12703963 bytes).
 PDF statistics:
- 912 PDF objects out of 1000 (max. 8388607)
- 94 named destinations out of 1000 (max. 500000)
- 297 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 978 PDF objects out of 1000 (max. 8388607)
+ 112 named destinations out of 1000 (max. 500000)
+ 313 words of extra memory for PDF output out of 10000 (max. 10000000)
 

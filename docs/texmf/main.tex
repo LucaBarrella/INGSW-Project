@@ -552,9 +552,88 @@ Nelle sezioni seguenti, vengono analizzati quattro esempi di metodi testati, ill
 \clearpage
 
 \section{Valutazione dell'Usabilità}
-La valutazione dell'usabilità è stata condotta attraverso ispezioni sistematiche e test con utenti volontari.\\
-I test con utenti volontari hanno coinvolto sessioni di utilizzo dell'applicazione, durante le quali sono stati raccolti feedback e osservazioni sul comportamento degli utenti.\\
-Le informazioni ottenute sono state utilizzate per identificare aree di miglioramento e ottimizzare l'esperienza utente complessiva.\\
+La valutazione dell'usabilità è un processo fondamentale per garantire che un sistema software non solo sia funzionale, ma anche efficace, efficiente e soddisfacente per l'utente finale. Per DietiEstates25, è stato adottato un approccio multi-metodo che combina ispezioni euristiche condotte da esperti (noi) con test di usabilità che coinvolgono utenti reali. Questo approccio ha permesso di raccogliere dati sia qualitativi che quantitativi, offrendo una visione completa dei punti di forza dell'applicazione.
+
+\subsection{Expert Review (Ispezione Euristica)}
+L'ispezione euristica è una tecnica di valutazione in cui uno o più esperti esaminano l'interfaccia utente e la confrontano con un insieme di principi di usabilità riconosciuti. Per questa valutazione, sono state utilizzate le 10 euristiche di usabilità di Nielsen-Molich, adattate al contesto di DietiEstates25.
+
+\subsubsection{Checklist Euristica e Risultati}
+La checklist è stata applicata sistematicamente a tutte le principali funzionalità dell'applicazione, dalla registrazione alla gestione delle offerte. I risultati sono riassunti nella tabella seguente. TODO controllare se corretto
+
+\begin{table}[H]
+    \centering
+    \def\arraystretch{1.5}
+    \begin{tabularx}{\linewidth}{|p{3cm}|X|}
+        \hline
+        \textbf{Euristica} & \textbf{Risultati e Osservazioni per DietiEstates25} \\
+        \hline
+        \textbf{Dialoghi semplici e naturali} & \textit{Conforme.} L'interfaccia è pulita e priva di elementi superflui. Le informazioni sono presentate in modo chiaro, focalizzando l'attenzione sui contenuti rilevanti (es. dettagli dell'immobile, offerte). \\
+        \hline
+        \textbf{Parlare la lingua dell'utente} & \textit{Conforme.} Il linguaggio utilizzato (es. "offerta", "visita", "annuncio") è familiare per il dominio immobiliare. Le icone sono intuitive e universalmente riconosciute dagli utenti. \\
+        \hline
+        \textbf{Minimizzare il carico di memoria dell'utente} & \textit{Conforme.} Le informazioni importanti sono sempre accessibili, ad esempio nello storico, riducendo il carico cognitivo dell'utente. \\
+        \hline
+        \textbf{Consistenza} & \textit{Conforme.} L'applicazione mantiene una forte consistenza visiva e comportamentale. I pulsanti di azione primaria sono sempre posizionati in modo simile e il design system è applicato uniformemente in tutte le schermate. \\
+        \hline
+        \textbf{Feedback} & \textit{Conforme.} L'applicazione fornisce feedback costanti ma non invadenti sulle operazioni. Ad esempio, un indicatore di caricamento è sempre visibile durante le chiamate di rete e messaggi di conferma appaiono dopo azioni importanti come l'invio di un'offerta. \\
+        \hline
+        \textbf{Uscite chiaramente definite} & \textit{Conforme.} Gli utenti possono sempre facilmente annullare operazioni come la compilazione di un form. \\
+        \hline
+        \textbf{Shortcuts} & \textit{Non applicabile.} L'interfaccia è sufficientemente semplice per i neofiti. Non sono presenti scorciatoie per utenti esperti, ma data la natura dell'app non sono considerate essenziali. \\
+        \hline
+        \textbf{Buoni messaggi di errore} & \textit{Conforme.} I messaggi di errore sono chiari e costruttivi. Ad esempio, se il login fallisce, il sistema specifica se il problema è la password o l'username, senza essere vago. \\
+        \hline
+        \textbf{Prevenzione degli errori} & \textit{Conforme.} La validazione dei form previene molti errori comuni (es. formato email non valido). Ci sono inoltre controlli di conferma prima di azioni importanti. \\
+        \hline
+        \textbf{Aiuto e documentazione} & \textit{Non applicabile.} Non è presente una sezione di aiuto dedicata. Tuttavia, la semplicità dell'applicazione e le etichette chiare rendono il suo utilizzo autoesplicativo, minimizzando la necessità di una documentazione formale per l'utente finale. \\
+        \hline
+    \end{tabularx}
+    \caption{Risultati dell'ispezione euristica.}
+    \label{tab:euristiche}
+\end{table}
+
+\subsection{Test con Utenti}
+Per integrare i risultati dell'analisi euristica, è stato condotto un esperimento con un piccolo gruppo di utenti potenziali rappresentativi delle principali fasce di età.
+
+\subsubsection{Soggetti Reclutati}
+Nel gruppo di test sono stati coinvolti 5 utenti, di età compresa tra i 20 e i 60 anni, con familiarità nell'uso di applicazioni mobile ma senza esperienza specifica nel settore immobiliare. Essi rappresentano un campione diversificato di utenti potenziali.
+
+\subsubsection{Procedura Sperimentale}
+A ciascun utente è stato chiesto di eseguire una serie di compiti sull'applicazione, utilizzando il protocollo \textit{think-aloud} (pensare a voce alta) per verbalizzare i propri pensieri e le proprie difficoltà. Le sessioni, della durata media di 15 minuti, sono state osservate da un membro del team. I compiti assegnati (con rispettivi tempi di completamento) erano:
+\begin{enumerate}
+    \item Effettuare la registrazione di un nuovo account come cliente.
+    \item Eseguire una ricerca per un immobile di tipo "Appartamento" con svariati filtri.
+    \item Selezionare un immobile dai risultati e visualizzarne i dettagli.
+    \item Prenotare una visita per l'immobile scelto.
+    \item Inviare un'offerta di acquisto per lo stesso immobile.
+\end{enumerate}
+
+\subsubsection{Metriche Considerate}
+Sono state raccolte le seguenti metriche:
+\begin{itemize}
+    \item \textbf{Tasso di successo dei compiti}: Percentuale di utenti che ha completato con successo ciascun compito.
+    \item \textbf{Tempo di completamento}: Tempo impiegato per portare a termine ogni compito.
+    \item \textbf{Numero di errori}: Numero di azioni errate o vicoli ciechi incontrati.
+    \item \textbf{Feedback soggettivo}: Commenti, critiche e suggerimenti raccolti durante il protocollo \textit{think-aloud}.
+\end{itemize}
+
+\subsubsection{Survey}
+Al termine della sessione, a ogni partecipante è stato chiesto di compilare un breve questionario di valutazione basato su una scala Likert (1 = Per niente d'accordo, 5 = Pienamente d'accordo). Di seguito sono riportate le affermazioni e i relativi punteggi medi raccolti:
+\begin{itemize}
+    \item \textbf{Q1 (Semplicità d'uso)}: Ho trovato l'applicazione semplice da usare. 4.6 / 5
+    \item \textbf{Q2 (Necessità di supporto)}: Penso che avrei bisogno di supporto tecnico per essere in grado di usare questa applicazione. 1.2 / 5 
+    \item \textbf{Q3 (Integrazione delle funzioni)}: Ho trovato le varie funzioni in questa applicazione ben integrate tra loro. 4.8 / 5
+    \item \textbf{Q4 (Piacevolezza grafica)}: Ho trovato l'interfaccia graficamente piacevole. 4.8 / 5
+    \item \textbf{Q5 (Comfort d'uso)}: Mi sono sentito a mio agio nell'utilizzare l'applicazione. 5 / 5
+\end{itemize}
+
+\subsubsection{Risultati finali}
+I risultati del test sono positivi. Tutti e 5 gli utenti (100\%) sono riusciti a completare con successo tutti i compiti. Un solo utente meno pratico ha richiesto assistenza per i compiti 1 e 4.\\
+I tempi di completamento medi brevi sono indice di un'interfaccia intuitiva e ben progettata.\\
+I commenti qualitativi hanno evidenziato un apprezzamento generale per la pulizia dell'interfaccia e la fluidità della navigazione.\\
+I risultati del survey, infine, confermano l'elevata usabilità percepita dagli utenti.
+
+
 
 \section{SonarQube}
 Lo strumento di analisi della qualità del codice SonarQube è stato utilizzato per il lato back-end di DietiEstates, individuando potenziali problemi e aree di miglioramento.\\
@@ -582,6 +661,8 @@ E' possibile visualizzare i repository del \href{https://github.com/TheFabbest/D
     \item \textbf{Numero di commit}: 
     \item \textbf{Frequenza dei commit}:
 \end{itemize}
+
+TODO sistemare impaginazione
 
 \clearpage
 
