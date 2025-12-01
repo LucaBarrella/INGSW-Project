@@ -265,6 +265,7 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
+    color: '#fff',
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
@@ -281,7 +282,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cancelButton: {
-    backgroundColor: '#e0e0e0',
   },
   submitButton: {
     backgroundColor: '#007AFF',

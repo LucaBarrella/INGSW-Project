@@ -76,6 +76,9 @@
   "errorLoadingOffers": "Errore nel caricamento delle offerte",
   "yourOffer": "La tua offerta",
   "resolveConflict": "Risolvi Conflitto",
+  "counterOffer": "Controfferta",
+  "enterCounterOfferPrice": "Inserisci l'importo della controfferta",
+  "submit": "Invia",
 
   "offersArchived": {
     "agent": {
