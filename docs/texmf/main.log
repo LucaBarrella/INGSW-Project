@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.1.30)  1 DEC 2025 15:30
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.1.30)  1 DEC 2025 16:02
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -638,14 +638,14 @@ Capitolo 2.
 Capitolo 3.
 [27]
 LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <12> not available
-(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 545.
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 541.
 
-Overfull \hbox (15.61691pt too wide) in paragraph at lines 552--553
+Overfull \hbox (15.61691pt too wide) in paragraph at lines 548--549
 []\T1/cmr/bx/n/10 Test ca-se\T1/cmr/m/n/10 : \T1/cmtt/m/n/10 createPropertyWithImages_dbSaveFails_compensatesAndThrowsRuntimeException 
  []
 
 LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 563.
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 559.
 [28
 
 ] [29] [30
@@ -653,27 +653,27 @@ LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <10> not available
 ] [31
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 795--795
+Underfull \hbox (badness 10000) in paragraph at lines 791--791
 []|\T1/cmr/bx/n/10 Minimizzare il
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 795--795
+Underfull \hbox (badness 10000) in paragraph at lines 791--791
 []|\T1/cmr/bx/n/10 Uscite chia-ra-
  []
 
 
-Underfull \hbox (badness 5817) in paragraph at lines 795--795
+Underfull \hbox (badness 5817) in paragraph at lines 791--791
 []|\T1/cmr/bx/n/10 Buoni mes-sag-gi
  []
 
 
-Underfull \hbox (badness 1838) in paragraph at lines 795--795
+Underfull \hbox (badness 1838) in paragraph at lines 791--791
 []|\T1/cmr/bx/n/10 Prevenzione de-
  []
 
 
-Underfull \hbox (badness 7468) in paragraph at lines 795--795
+Underfull \hbox (badness 7468) in paragraph at lines 791--791
 []|\T1/cmr/bx/n/10 Aiuto e do-cu-
  []
 
@@ -686,7 +686,7 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 <figures/SonarQubeReport.png, id=507, 1407.75937pt x 642.90187pt>
 File: figures/SonarQubeReport.png Graphic file (type png)
 <use figures/SonarQubeReport.png>
-Package pdftex.def Info: figures/SonarQubeReport.png  used on input line 850.
+Package pdftex.def Info: figures/SonarQubeReport.png  used on input line 846.
 (pdftex.def)             Requested size: 443.57848pt x 202.57402pt.
  [35 <./figures/SonarQubeReport.png>] [36
 
@@ -709,7 +709,7 @@ Here is how much of TeX's memory you used:
  1141 hyphenation exceptions out of 8191
  117i,10n,121p,611b,529s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1200.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecti1000.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1000.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1440.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx2074.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecsl1000.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1000.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1000.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx2488.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1000.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1200.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1200.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\eccc2488.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\eccc1200.pk> <C:\Users\maryd\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\eccc1440.pk>
-Output written on main.pdf (37 pages, 12782497 bytes).
+Output written on main.pdf (37 pages, 12782281 bytes).
 PDF statistics:
  1120 PDF objects out of 1200 (max. 8388607)
  129 named destinations out of 1000 (max. 500000)

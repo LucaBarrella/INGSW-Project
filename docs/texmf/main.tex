@@ -172,21 +172,19 @@ Descritti i requisiti funzionali di DietiEstates25, è necessario specificare i 
 \subsection{Requisiti non funzionali}
 I requisiti non funzionali fanno riferimento a caratteristiche del sistema come qualità, prestazioni, affidabilità e sicurezza.\\
 Il Committente richiede che l'applicazione sia performante ed affidabile, attraverso cui gli utenti possano fruire delle funzionalità in modo intuitivo, rapido e piacevole. Tali richieste possono essere suddivise in più sezioni e tradotte nel seguente modo.
-%TODO vedere come funziona l'applicazione e modificare di conseguenza
 \subsubsection{Requisiti di performance}
 La performance riguarda la capacità del sistema di elaborare e restituire informazioni in modo rapido, efficiente e fluido, garantendo tempi di risposta minimi. Assumendo condizioni di connettività ad internet ottimali, si individuano e rispettano i seguenti requisiti:
 \begin{itemize}
-    \item L'applicazione deve garantire un caricamento delle pagine rapido e immediato, non superiore a TODO secondi.
-    \item Il sistema deve restituire risultati alla ricerca di immobili in modo istantaneo, con un tempo massimo di TODO secondi.
-    \item L'applicazione deve supportare contemporaneamente almeno TODO utenti senza cali di prestazioni.
-    \item Il caricamento dedegli immobili deve avvenire velocemente, entro TODO secondi dalla conferma.
+    \item L'applicazione deve garantire un caricamento delle pagine rapido e immediato, non superiore a 2 secondi.
+    \item Il sistema deve restituire risultati alla ricerca di immobili in modo istantaneo, con un tempo massimo di 5 secondi.
+    \item Il caricamento degli immobili deve avvenire velocemente, entro 10 secondi dalla conferma.
 \end{itemize}
 
 \subsubsection{Requisiti di affidabilità}
 L'affidabilità misura la capacità del sistema di funzionare correttamente e continuativamente, gestendo eventuali errori senza perdita di dati o interruzione del servizio. Si individuano rispettano i seguenti requisiti:
 \begin{itemize}
     \item L'applicazione deve garantire una disponibilità del servizio pressoché totale, con un uptime non inferiore al 99.5\%.
-    \item In caso di malfunzionamento, il sistema deve ripristinarsi completamente in meno di TODO secondi.
+    \item In caso di malfunzionamento, il sistema deve ripristinarsi completamente in meno di 10 secondi.
     \item Il sistema deve gestire eventuali errori in modo trasparente, senza interrompere l'esperienza di navigazione dell'utente se non in casi di malfunzionamento critico.
     \item L'applicazione deve possedere meccanismi di ripristino che consentano il recupero completo dei dati in caso di guasto.
 \end{itemize}
@@ -194,7 +192,7 @@ L'affidabilità misura la capacità del sistema di funzionare correttamente e co
 \subsubsection{Requisiti di usabilità}
 L'usabilità valuta la facilità di utilizzo dell'applicazione, misurando quanto l'interfaccia sia intuitiva, comprensibile e piacevole per l'utente finale. Si individuano rispettano i seguenti requisiti:
 \begin{itemize}
-    \item L'interfaccia utente deve consentire di completare qualsiasi azione principale con non più di TODO click.
+    \item L'interfaccia utente deve consentire di completare qualsiasi azione principale con non più di 4 click.
     \item L'applicazione deve adattarsi perfettamente a schermi di qualsiasi dimensione, garantendo una visualizzazione ottimale.
     \item L'applicazione deve rispettare le linee guida di accessibilità WCAG livello AA\@.
     \item Il design deve garantire chiarezza assoluta di bottoni e menu, rendendone immediata la comprensione.
@@ -220,7 +218,6 @@ I requisiti di dominio di DietiEstates25 sono specifiche derivanti dalla conosce
     \item Il sistema fornirà linee guida chiare per la compilazione degli annunci, richiamando i principi di trasparenza previsti dal Codice Civile in materia di compravendita.
     \item Le credenziali di accesso saranno protette mediante tecniche di hashing, in linea con le best practice di sicurezza informatica.
     \item L'applicazione limiterà l'accesso ai dati personali, garantendo la protezione delle informazioni sensibili.
-    \item Il sistema conserverà uno storico base delle versioni delle offerte, permettendone la tracciabilità. %TODO? permettere la tracciabilità delle modifiche degli ANNUNCI
 \end{itemize}
 
 \section{Esempi di casi d'uso}
@@ -367,7 +364,6 @@ Per illustrare meglio il funzionamento del sistema, si formalizzano di seguito a
 
 \section{Glossario}
 Sono di seguito definiti alcuni termini che sono stati utilizzati nel corso del capitolo.
-%TODO fare riferimenti nel testo
 \begin{itemize}
   \item \textbf{Figma}: Strumento di progettazione di interfacce utente e prototipazione basato sul web, utilizzato per creare i mock-up.
   \item \textbf{GDPR (General Data Protection Regulation)}: Regolamento europeo che disciplina il trattamento dei dati personali e la protezione della privacy.
@@ -763,7 +759,7 @@ La valutazione dell'usabilità è un processo fondamentale per garantire che un 
 L'ispezione euristica è una tecnica di valutazione in cui uno o più esperti esaminano l'interfaccia utente e la confrontano con un insieme di principi di usabilità riconosciuti. Per questa valutazione, sono state utilizzate le 10 euristiche di usabilità di Nielsen-Molich, adattate al contesto di DietiEstates25.
 
 \subsubsection{Checklist Euristica e Risultati}
-La checklist è stata applicata sistematicamente a tutte le principali funzionalità dell'applicazione, dalla registrazione alla gestione delle offerte. I risultati sono riassunti nella tabella seguente. TODO controllare se corretto
+La checklist è stata applicata sistematicamente a tutte le principali funzionalità dell'applicazione, dalla registrazione alla gestione delle offerte. I risultati sono riassunti nella tabella seguente.
 
 \begin{table}[H]
     \centering
