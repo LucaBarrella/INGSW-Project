@@ -6,6 +6,7 @@ import RequestCard from './RequestCard';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { useTranslation } from 'react-i18next';
 
 interface PendingRequestsProps {
   requests: VisitRequest[];
@@ -16,6 +17,7 @@ interface PendingRequestsProps {
 }
 
 const PendingRequests: React.FC<PendingRequestsProps> = ({ requests, onAccept, onDecline, isRequestsVisible, toggleRequestsVisibility }) => {
+  const { t } = useTranslation();
   const textColor = useThemeColor({}, 'text');
   const blueColor = useThemeColor({}, 'info'); // Assuming 'info' color can be used for blue elements
 
@@ -24,7 +26,7 @@ const PendingRequests: React.FC<PendingRequestsProps> = ({ requests, onAccept, o
       <TouchableOpacity onPress={toggleRequestsVisibility} className="mb-4">
         <ThemedView className="flex-row justify-between items-center">
           <ThemedView className="flex-row items-center">
-            <Text style={{ color: textColor }} className="text-lg font-bold">Pending Requests</Text>
+            <Text style={{ color: textColor }} className="text-lg font-bold">{t('agenda.pendingRequests')}</Text>
             <ThemedView className="ml-3 rounded-full w-7 h-7 items-center justify-center shadow-md" style={{ backgroundColor: blueColor }}>
               <ThemedText type="defaultSemiBold" style={{ color: useThemeColor({}, 'white') }}>{requests.length}</ThemedText>
             </ThemedView>

@@ -3,6 +3,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedIcon } from '@/components/ThemedIcon';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { useTranslation } from 'react-i18next';
 
 interface UserInfoCardProps {
   name: string;
@@ -23,6 +24,8 @@ export const UserInfoCard: React.FC<UserInfoCardProps> = ({
 }) => {
   const borderColor = useThemeColor({}, 'border');
   const textColor = useThemeColor({}, 'text'); // Colore per l'icona
+  const { t } = useTranslation();
+  const resolvedIconLabel = iconLabel ?? t('profile.userProfile');
 
   return (
     <ThemedView
@@ -32,7 +35,7 @@ export const UserInfoCard: React.FC<UserInfoCardProps> = ({
       <ThemedIcon
         icon={iconName}
         size={60}
-        accessibilityLabel={iconLabel}
+        accessibilityLabel={resolvedIconLabel}
         lightColor={textColor} // Applica il colore del testo all'icona per tema chiaro
         darkColor={textColor} // Applica il colore del testo all'icona per tema scuro
       />

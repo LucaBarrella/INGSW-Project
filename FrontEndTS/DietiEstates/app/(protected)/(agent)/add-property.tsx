@@ -80,36 +80,40 @@ export default function AddPropertyScreen() {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const loading = false;
   const createProperty = async (data: any, images: string[]) => {
-  const formData = new FormData();
-  
-  // Add the property data as a JSON string directly
-  // Spring Boot's @RequestPart will parse this automatically
-  formData.append('property', {
-    string: JSON.stringify(data),
-    type: 'application/json'
-  } as any);
-  
-  // Add each image file
-  for (let i = 0; i < images.length; i++) {
-    const uri = images[i];
-    const filename = uri.split('/').pop() || `image_${i}.webp`;
+    const formData = new FormData();
     
-    formData.append('images', {
-      uri: uri,
-      type: 'image/webp',
-      name: filename,
+    // Add the property data as a JSON string directly
+    // Spring Boot's @RequestPart will parse this automatically
+    formData.append('property', {
+      string: JSON.stringify(data),
+      type: 'application/json'
     } as any);
-  }
-  
-  const response = await httpClient.post('/properties', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-    timeout: 60000,
-  });
-  
-  return response.data;
-};
+    
+    // Add each image file
+    for (let i = 0; i < images.length; i++) {
+      const uri = images[i];
+      const filename = uri.split('/').pop() || `image_${i}.webp`;
+      
+      formData.append('images', {
+        uri: uri,
+        type: 'image/webp',
+        name: filename,
+      } as any);
+    }
+    
+    try {
+      const response = await httpClient.post('/properties', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        timeout: 60000,
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error uploading property:', error);
+      return null;
+    }
+  };
 
   const { control, handleSubmit, watch, setValue, trigger, formState: { errors } } = useForm<PropertyFormData>({
     resolver: zodResolver(propertySchema), // Applica il resolver

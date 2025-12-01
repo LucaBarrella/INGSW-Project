@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { useTranslation } from 'react-i18next';
  
 type AgendaHeaderProps = {
   currentDate?: Date;
@@ -11,6 +12,7 @@ type AgendaHeaderProps = {
 };
  
 const AgendaHeader: React.FC<AgendaHeaderProps> = ({ currentDate: controlledDate, onCurrentDateChange }) => {
+  const { t, i18n } = useTranslation();
   const [internalDate, setInternalDate] = useState(new Date());
   const date = controlledDate ?? internalDate;
   const agendaHeaderTextColor = useThemeColor({}, 'text');
@@ -36,18 +38,34 @@ const AgendaHeader: React.FC<AgendaHeaderProps> = ({ currentDate: controlledDate
     updateDate(newDate);
   };
  
+  const capitalize = (value: string) => {
+    if (!value) return value;
+    return `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
+  };
+
+  const getDateParts = (target: Date) => {
+    const locale = i18n.language || 'it-IT';
+    const parts = new Intl.DateTimeFormat(locale, { weekday: 'short', day: 'numeric', month: 'short' }).formatToParts(target);
+    const day = parts.find((part) => part.type === 'day')?.value ?? '';
+    const month = capitalize(parts.find((part) => part.type === 'month')?.value ?? '');
+    const weekday = capitalize(parts.find((part) => part.type === 'weekday')?.value ?? '');
+    return { day, month, weekday };
+  };
+
   const formatDate = (d: Date) => {
     const today = new Date();
+    const { day, month, weekday } = getDateParts(d);
+    const dayMonthString = `${day} ${month}`;
     if (d.toDateString() === today.toDateString()) {
-      return `Today, ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+      return t('agenda.today', { date: dayMonthString });
     }
-    return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    return t('agenda.dateShort', { date: `${weekday}, ${dayMonthString}` });
   };
  
   return (
     <ThemedView className="p-4">
       <ThemedView className="flex-row justify-between items-center mb-4">
-        <ThemedText type="title" style={{ color: agendaHeaderTextColor }}>My Agenda</ThemedText>
+        <ThemedText type="title" style={{ color: agendaHeaderTextColor }}>{t('agenda.title')}</ThemedText>
         <TouchableOpacity>
           <Ionicons name="calendar-outline" size={28} color={agendaHeaderTextColor} />
         </TouchableOpacity>

@@ -89,7 +89,7 @@ const PropertyOffersCard: React.FC<PropertyOffersCardProps> = ({
           <View className="flex-row items-center mb-2">
             <Ionicons name="document-text-outline" size={14} color={secondaryColor} />
             <ThemedText className="ml-1 text-sm" style={{ color: secondaryColor }}>
-              {activeOffers.length} Offerte{activeOffers.length !== 1 ? '' : 'a'}
+              {t(activeOffers.length === 1 ? 'offers_one' : 'offers_other', { count: activeOffers.length })}
             </ThemedText>
           </View>
 
@@ -143,7 +143,7 @@ const PropertyOffersCard: React.FC<PropertyOffersCardProps> = ({
           </TouchableOpacity>
 
           {/* Lista offerte ordinate */}
-          {sortedOffers.map((offer, index) => (
+          {sortedOffers.map((offer) => (
             <SingleOfferItem
               key={offer.id}
               offer={offer}

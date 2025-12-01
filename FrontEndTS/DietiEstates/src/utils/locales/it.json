@@ -20,7 +20,8 @@
   "no_offers_available": "Nessuna offerta disponibile",
   "loading_offers": "Caricamento offerte...",
   "error_loading_offers": "Errore durante il caricamento delle offerte.",
-  "offers": "Offerte",
+  "offers_one": "{{count}} Offerta",
+  "offers_other": "{{count}} Offerte",
   "loading": "Caricamento...",
   "visit_requests": "Richieste di visita",
   "date": "Data",
@@ -74,6 +75,19 @@
   "noOffersFound": "Nessuna offerta {{status}} trovata",
   "errorLoadingOffers": "Errore nel caricamento delle offerte",
   "yourOffer": "La tua offerta",
+  "offersArchived": {
+    "agent": {
+      "archiveTitle": "Archivio Offerte",
+      "acceptedOffers": "Offerte accettate",
+      "rejectedOffers": "Offerte rifiutate",
+      "offerAmount": "Offerta: €{{amount}}",
+      "buyerLabel": "Acquirente: {{name}}",
+      "contactBuyer": "Contatta Acquirente",
+      "rejectionLogTitle": "Log Rifiuto:",
+      "offererLabel": "Offerente: {{name}}",
+      "proposalAmount": "Proposta: €{{amount}}"
+    }
+  },
   "askingPrice": "Prezzo richiesto",
   "propertyAddress": "Indirizzo della proprietà",
   "makeAnOffer": "Fai la tua offerta",
@@ -121,7 +135,8 @@
     "ACCEPTED": "accettata",
     "REJECTED": "rifiutata",
     "COUNTERED": "controfferta",
-    "WITHDRAWN": "ritirata"
+    "WITHDRAWN": "ritirata",
+    "UNKNOWN": "sconosciuto"
   },
 
   "property_status": {
@@ -132,6 +147,20 @@
     "GOOD_CONDITION": "buone condizioni",
     "NEW": "nuovo"
   },
+
+  "property_state": {
+    "active": "Attivo",
+    "sold": "Venduto",
+    "rented": "Affittato",
+    "inactive": "Inattivo"
+  },
+
+  "statusLabel": "Stato",
+  "agentLabel": "Agente",
+  "priceLabel": "Prezzo",
+  "notSpecified": "Non specificato",
+  "planVisit": "Pianifica una visita",
+  "makeOffer": "Fai un'offerta",
 
   "property_details": {
     "area": "superficie",
@@ -175,6 +204,15 @@
       "Double Garage": "Garage Doppio",
       "Parking Space": "Posto Auto"
     }
+  },
+  "agenda": {
+    "title": "Agenda",
+    "today": "Oggi, {{date}}",
+    "dateShort": "{{date}}",
+    "confirmedSchedule": "Programma confermato",
+    "noAppointments": "Nessun appuntamento",
+    "emptyState": "...",
+    "pendingRequests": "Richieste in attesa"
   },
 
   "history_placeholder": {
@@ -288,6 +326,18 @@
       "offers": "Offerte"
     }
   },
+  "profile": {
+    "addAgent": "Aggiungi Agente",
+    "addManager": "Aggiungi Manager",
+    "changePassword": "Cambia Password",
+    "chevronRight": "Vai",
+    "userProfile": "Profilo utente",
+    "logoutError": "Errore Logout",
+    "logoutErrorMessage": "Impossibile completare il logout. Riprova."
+  },
+  "home": {
+    "detailsButton": "Dettagli"
+  },
 
   "forms": {
     "confirmation": {
@@ -352,5 +402,137 @@
         "birthDate": "Data di nascita non valida"
       }
     }
+  }
+,
+  "filters": {
+    "contract": {
+      "label": "Tipo di Transazione",
+      "options": {
+        "RENT": "Affitto",
+        "SALE": "Vendita"
+      }
+    },
+    "priceRange": {
+      "label": "Prezzo"
+    },
+    "size": {
+      "label": "Dimensione"
+    },
+    "searchRadiusKm": {
+      "label": "Raggio di ricerca (km)"
+    },
+    "heating": {
+      "label": "Riscaldamento",
+      "options": {
+        "Centralized": "Centralizzato",
+        "Autonomous": "Autonomo",
+        "Absent": "Assente"
+      }
+    },
+    "minNumberOfRooms": {
+      "label": "Numero minimo di camere"
+    },
+    "minNumberOfBathrooms": {
+      "label": "Numero minimo di bagni"
+    },
+    "floor": {
+      "label": "Piano"
+    },
+    "minNumberOfFloors": {
+      "label": "Numero minimo di piani"
+    },
+    "mustHaveElevator": {
+      "label": "Con ascensore"
+    },
+    "minYearBuilt": {
+      "label": "Anno di costruzione minimo"
+    },
+    "minParkingSpaces": {
+      "label": "Posti auto minimi"
+    },
+    "acceptedCondition": {
+      "label": "Condizione accettata",
+      "options": {
+        "NEW": "Nuovo",
+        "GOOD_CONDITION": "Buone condizioni",
+        "RENOVATED": "Ristrutturato",
+        "TO_BE_RENOVATED": "Da ristrutturare",
+        "POOR_CONDITION": "Cattive condizioni",
+        "UNDER_CONSTRUCTION": "In costruzione"
+      }
+    },
+    "minEnergyRating": {
+      "label": "Classe energetica minima",
+      "options": {
+        "A4": "A4",
+        "A3": "A3",
+        "A2": "A2",
+        "A1": "A1",
+        "B": "B",
+        "C": "C",
+        "D": "D",
+        "E": "E",
+        "F": "F",
+        "G": "G",
+        "NOT_APPLIABLE": "Non applicabile"
+      }
+    },
+    "acceptedGarden": {
+      "label": "Giardino",
+      "options": {
+        "PRIVATE": "Privato",
+        "SHARED": "Condiviso",
+        "ABSENT": "Assente"
+      }
+    },
+    "mustBeFurnished": {
+      "label": "Arredato"
+    },
+    "mustHaveWheelchairAccess": {
+      "label": "Accesso per disabili"
+    },
+    "mustHaveSurveillance": {
+      "label": "Sistema di sorveglianza"
+    },
+    "constructionYear": {
+      "label": "Anno di costruzione"
+    },
+    "mustBeAccessibleFromStreet": {
+      "label": "Accesso stradale"
+    },
+    "category": {
+        "label": "Categoria",
+        "RESIDENTIAL": "Residenziale",
+        "COMMERCIAL": "Commerciale",
+        "GARAGE": "Garage",
+        "LAND": "Terreno",
+        "options": {
+            "Apartment": "Appartamento",
+            "Villa": "Villa",
+            "Studio": "Monolocale",
+            "Penthouse": "Attico",
+            "Townhouse": "Casa a schiera",
+            "Office": "Ufficio",
+            "Shop": "Negozio",
+            "Restaurant": "Ristorante",
+            "Warehouse": "Magazzino",
+            "Building Plot": "Lotto Edificabile",
+            "Agricultural Land": "Terreno Agricolo",
+            "Industrial Land": "Terreno Industriale",
+            "Single Garage": "Garage Singolo",
+            "Double Garage": "Garage Doppio",
+            "Parking Space": "Posto Auto"
+        }
+    }
+  },
+  "units": {
+    "squareMeters": "m²",
+    "kilometers": "km"
+  }
+,
+  "filterPanel": {
+    "generalFilters": "Filtri Generali",
+    "maxPrice": "Prezzo massimo",
+    "changeCategory": "Cambia Categoria"
   }
 }
