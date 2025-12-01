@@ -162,7 +162,7 @@ export const searchReducer = (state: SearchState, action: SearchAction): SearchS
         const newFilters = payload.newFilters as Partial<Record<string, any>>;
         updatedFilters[categoryKey] = updateFilterCategory(state.filters[categoryKey] as any, newFilters, (defaultSearchCriteria as any)[categoryKey]);
       }
-
+      
       newState = { ...state, previousFilters: state.filters, filters: updatedFilters };
       break;
     }
@@ -228,9 +228,20 @@ export const searchReducer = (state: SearchState, action: SearchAction): SearchS
       };
       break;
     }
-    case 'SET_SELECTED_MAIN_CATEGORY_IN_PANEL':
-      newState = { ...state, selectedMainCategoryInPanel: action.payload };
+    case 'SET_SELECTED_MAIN_CATEGORY_IN_PANEL': {
+      const newCategory = action.payload;
+      const oldCategory = state.selectedMainCategoryInPanel;
+      const updatedFilters = { ...state.filters };
+
+      if (newCategory !== oldCategory && oldCategory) {
+        const oldCategoryKey = oldCategory as keyof Omit<SearchCriteria, 'general'>;
+        // Clona profondamente l'oggetto di default per evitare problemi di riferimento e di tipo
+        updatedFilters[oldCategoryKey] = JSON.parse(JSON.stringify(defaultSearchCriteria[oldCategoryKey]));
+      }
+
+      newState = { ...state, filters: updatedFilters, selectedMainCategoryInPanel: newCategory };
       break;
+    }
     case 'SET_GEOLOCATION':
       newState = { ...state, previousGeolocation: state.geolocation, geolocation: action.payload };
       break;
