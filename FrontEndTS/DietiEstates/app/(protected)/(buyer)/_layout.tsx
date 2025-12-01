@@ -33,6 +33,11 @@ export default function BuyerLayout() {
           title: '',
           animation: 'slide_from_right',
           headerBackTitle: 'Home',
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => router.back()} style={{ marginLeft: 10 }}>
+              <Ionicons name="arrow-back" size={24} color={tintColor} />
+            </TouchableOpacity>
+          ),
         }}
       />
       <Stack.Screen
