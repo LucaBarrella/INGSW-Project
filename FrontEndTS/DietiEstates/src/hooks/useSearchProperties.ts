@@ -216,11 +216,13 @@ export default function useSearchProperties() {
    */
   const resetFilters = useCallback((keepTransactionType?: boolean) => {
     try {
+      console.log('[useSearchProperties] Resetting filters. Keep transaction type:', keepTransactionType);
       if (typeof keepTransactionType === 'boolean') {
         dispatch({ type: 'RESET_FILTERS', payload: { keepTransactionType } });
       } else {
         dispatch({ type: 'RESET_FILTERS' });
       }
+      console.log('[useSearchProperties] Dispatching SET_GEOLOCATION: null');
       dispatch({ type: 'SET_GEOLOCATION', payload: null });
  
       // Resetta anche la paginazione locale

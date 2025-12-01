@@ -222,6 +222,7 @@ export const searchReducer = (state: SearchState, action: SearchAction): SearchS
       newState = {
         ...state,
         searchQuery: '',
+        geolocation: null, // Azzera anche la geolocalizzazione qui
         filters: resetFilters as SearchCriteria,
         selectedMainCategoryInPanel: null,
       };
@@ -305,14 +306,13 @@ export const SearchProvider = ({ children }: { children: ReactNode }) => {
     if (state.isLoadingFromStorage) return;
     const persist = async () => {
       try {
-        await SearchStateRepository.saveFilters(state.filters);
+        await SearchStateRepository.saveStateDebounced(state);
       } catch (e) {
-        console.error('[SearchContext] Error saving filters to storage', e);
-        // Non dispatchiamo un errore di storage qui per non bloccare l'UI; il reducer ha already a SET_STORAGE_ERROR action if needed
+        console.error('[SearchContext] Error saving state to storage', e);
       }
     };
     persist();
-  }, [state.filters, state.isLoadingFromStorage]);
+  }, [state, state.isLoadingFromStorage]);
 
   const setGeolocation = (g: Geolocation | null) => {
     dispatch({ type: 'SET_GEOLOCATION', payload: g });

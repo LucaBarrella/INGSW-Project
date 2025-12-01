@@ -61,9 +61,12 @@ const SearchStateRepository = {
   async saveStateToStorage(state: SearchState): Promise<void> {
     try {
       // Save or remove keys depending on equality with initial state to avoid unnecessary writes
-      if (state.searchQuery !== initialSearchState.searchQuery) {
+      // BUG FIX: Correctly save or remove searchQuery
+      if (state.searchQuery) {
+        console.log('[SearchStateRepository] Saving searchQuery to storage:', state.searchQuery);
         await AsyncStorage.setItem(SEARCH_QUERY_KEY, state.searchQuery);
       } else {
+        console.log('[SearchStateRepository] searchQuery is empty, removing from storage.');
         await AsyncStorage.removeItem(SEARCH_QUERY_KEY);
       }
 
@@ -81,11 +84,12 @@ const SearchStateRepository = {
         await AsyncStorage.removeItem(SELECTED_MAIN_CATEGORY_KEY);
       }
 
-      const geoString = JSON.stringify(state.geolocation);
-      const initialGeoString = JSON.stringify(initialSearchState.geolocation);
-      if (geoString !== initialGeoString) {
-        await AsyncStorage.setItem(GEOLOCATION_KEY, geoString);
+      // BUG FIX: Correctly save or remove geolocation
+      if (state.geolocation) {
+        console.log('[SearchStateRepository] Saving geolocation to storage:', state.geolocation);
+        await AsyncStorage.setItem(GEOLOCATION_KEY, JSON.stringify(state.geolocation));
       } else {
+        console.log('[SearchStateRepository] Geolocation is null, removing from storage.');
         await AsyncStorage.removeItem(GEOLOCATION_KEY);
       }
     } catch (e) {
@@ -119,39 +123,33 @@ const SearchStateRepository = {
   },
 
   // Debounce helper: mantiene lo stato di salvataggio pendente
-  _pendingFiltersSaveTimer: null as ReturnType<typeof setTimeout> | null,
-  _pendingFiltersPayload: null as SearchCriteria | null,
-
-  async saveFilters(filters: SearchCriteria): Promise<void> {
+  _pendingStateSaveTimer: null as ReturnType<typeof setTimeout> | null,
+  _pendingStatePayload: null as SearchState | null,
+ 
+  async saveStateDebounced(state: SearchState): Promise<void> {
     // Aggiorna il payload pendente e (re)programma il debounce
     try {
-      (SearchStateRepository as any)._pendingFiltersPayload = filters;
+      this._pendingStatePayload = state;
       const debounceMs = 500;
-      if ((SearchStateRepository as any)._pendingFiltersSaveTimer) {
-        clearTimeout((SearchStateRepository as any)._pendingFiltersSaveTimer);
+      if (this._pendingStateSaveTimer) {
+        clearTimeout(this._pendingStateSaveTimer);
       }
-      (SearchStateRepository as any)._pendingFiltersSaveTimer = setTimeout(async () => {
+      this._pendingStateSaveTimer = setTimeout(async () => {
         try {
-          const payload = (SearchStateRepository as any)._pendingFiltersPayload as SearchCriteria;
-          const payloadString = JSON.stringify(payload);
-          const defaultString = JSON.stringify(defaultSearchCriteria);
-          if (payloadString === defaultString) {
-            // Se i filtri sono uguali ai default, rimuoviamo la chiave per risparmiare spazio
-            await AsyncStorage.removeItem(FILTERS_KEY);
-            console.log('[SearchStateRepository] Filters equal to defaults — removed from AsyncStorage');
-          } else {
-            await AsyncStorage.setItem(FILTERS_KEY, payloadString);
-            console.log('[SearchStateRepository] Filters saved to AsyncStorage');
+          const payload = this._pendingStatePayload;
+          if (payload) {
+            await this.saveStateToStorage(payload);
+            console.log('[SearchStateRepository] Debounced state saved to AsyncStorage');
           }
         } catch (e) {
-          console.error('[SearchStateRepository] Error saving filters to storage', e);
+          console.error('[SearchStateRepository] Error saving debounced state to storage', e);
         } finally {
-          (SearchStateRepository as any)._pendingFiltersSaveTimer = null;
-          (SearchStateRepository as any)._pendingFiltersPayload = null;
+          this._pendingStateSaveTimer = null;
+          this._pendingStatePayload = null;
         }
       }, debounceMs);
     } catch (e) {
-      console.error('[SearchStateRepository] saveFilters scheduling failed', e);
+      console.error('[SearchStateRepository] saveStateDebounced scheduling failed', e);
       throw e;
     }
   },
