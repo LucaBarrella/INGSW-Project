@@ -15,52 +15,13 @@ import ThemedButton from '@/components/ThemedButton';
 import StepIndicator from '@/components/StepIndicator';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { router } from 'expo-router';
-import { propertySchema, PropertyFormData } from './schemas/propertySchema'; // Importa lo schema e il tipo
+import { propertySchema, PropertyFormData, customErrorMap } from './schemas/propertySchema'; // Importa lo schema e il tipo
 import httpClient from '@/src/core/httpClient';
 import { t } from 'i18next';
-// import { usePropertiesViewModel } from '@/src/hooks/usePropertiesViewModel';
-
-// Define the complete form data structure
-// interface PropertyFormData { // Rimosso, ora importato dallo schema
-//   // Step 1
-  // listingType: ListingType | null;
-  // propertyType: PropertyType | null;
-  // // Step 2
-  // title: string;
-  // description: string;
-  // price: string;
-  // size: string;
-  // // Step 3
-  // address: string;
-  // city: string;
-  // energyClass: string;
-  // availability: boolean;
-  // // Step 4
-  // residentialCategory?: string;
-  // rooms?: string;
-  // bathrooms?: string;
-  // floor?: string;
-  // elevator?: boolean;
-  // pool?: boolean;
-  // commercialCategory?: string;
-  // commercialBathrooms?: string;
-  // emergencyExit?: boolean;
-  // constructionDate?: string;
-  // industrialCategory?: string;
-  // ceilingHeight?: string;
-  // fireSystem?: boolean;
-  // floorLoad?: string;
-  // offices?: string;
-  // structure?: string;
-  // landCategory?: string;
-  // soilType?: string;
-  // slope?: string;i
-//   // Step 5 - Images handled separately
-// }
 
 // Mapping dei campi per step per la validazione
 const fieldsByStep: Record<number, FieldName<PropertyFormData>[]> = {
-  1: ['listingType', 'propertyType'],
+  1: ['contractType', 'propertyType'],
   2: ['description', 'price', 'area'],
   3: ['addressRequest', 'energyClass', 'condition'],
   4: [
@@ -116,7 +77,7 @@ export default function AddPropertyScreen() {
   };
 
   const { control, handleSubmit, watch, setValue, trigger, formState: { errors } } = useForm<PropertyFormData>({
-    resolver: zodResolver(propertySchema), // Applica il resolver
+    resolver: zodResolver(propertySchema, { errorMap: customErrorMap }), // Applica il resolver con customErrorMap
     defaultValues: {
       contractType: undefined,
       propertyType: undefined,

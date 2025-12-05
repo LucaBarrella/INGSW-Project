@@ -1,5 +1,12 @@
 import { z } from 'zod';
 
+export const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
+  if (issue.code === z.ZodIssueCode.invalid_union_discriminator) {
+    return { message: 'Seleziona il tipo di immobile' };
+  }
+  return { message: ctx.defaultError };
+};
+
 // Tipi di base che saranno utilizzati in più schemi
 const stringRequired = z.string().min(1, 'Campo richiesto');
 const positiveNumber = z.string().regex(/^\d+$/, 'Deve essere un numero positivo');

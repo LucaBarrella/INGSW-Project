@@ -54,7 +54,7 @@ export default function Properties() {
                 {t('myProperties')}
               </ThemedText>
               <ThemedButton
-                title={t('addProperty')}
+                title={"+"}
                 onPress={handleAddProperty}
                 borderRadius={10}
                 className="px-4 py-2 rounded-md mb-0"

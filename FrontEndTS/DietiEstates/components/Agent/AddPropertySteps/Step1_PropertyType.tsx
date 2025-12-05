@@ -35,32 +35,28 @@ export default function Step1_PropertyType({ control, name, rules, errors }: Ste
       control={control}
       name={name}
       rules={rules}
-      render={({ field: { onChange, value } }) => ( // Get onChange and value from field
+      render={({ field: { onChange, value } }) => (
         <ThemedView className="p-6">
           <ThemedText type="defaultSemiBold" className="mb-3 text-base">
             {t('propertyType')}
           </ThemedText>
-          {/* Manteniamo la View per il layout flex */}
+          
           <View className="flex-row flex-wrap justify-between gap-y-4">
             {propertyTypes.map(({ type, label, icon }) => {
-              const isSelected = value === type; // Use value from RHF
+              const isSelected = value === type;
               return (
-                // Aggiungiamo una View wrapper per controllare la larghezza
                 <View key={type} className="w-[48%]">
                   <CategoryButton
                     icon={icon}
                     label={label}
                     onPress={() => onChange(type)}
                     isSelected={isSelected}
-
-                    // Nota: CategoryButton usa p-4, non aspect-square.
-                    // L'aspetto potrebbe variare leggermente.
                   />
                 </View>
               );
             })}
           </View>
-          {/* Visualizzazione errore rimane invariata */}
+          
           {errors[name] && (
             <ThemedText className="mt-2 text-sm" style={{ color: errorColor }}>
               {errors[name]?.message as string}

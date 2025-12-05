@@ -136,7 +136,9 @@
   "failedToWithdrawOffer": "Impossibile ritirare l'offerta.",
   "youHaveAcceptedTheCounteredOfferSuccessfully": "Hai accettato la controfferta con successo.",
   "failedToAcceptCounteredOffer": "Impossibile accettare la controfferta.",
-
+  "noPropertiesFound": "Nessuna proprietà trovata.",
+  "propertyType": "Tipo di Proprietà",
+  
   "setting": {
     "language": "Lingua"
   },
