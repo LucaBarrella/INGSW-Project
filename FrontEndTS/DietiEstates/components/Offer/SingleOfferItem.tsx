@@ -6,6 +6,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { Offer, OfferStatus } from '@/src/dto/offers';
 import { t } from 'i18next';
+import { parseLocalDateTime } from '../Agent/PropertyDashboard/types';
 
 interface SingleOfferItemProps {
   offer: Offer;
@@ -36,8 +37,14 @@ const SingleOfferItem: React.FC<SingleOfferItemProps> = ({
     }).format(amount);
   };
 
-  const formatDate = (dateString: string): string => {
-    return new Date(dateString).toLocaleDateString('it-IT', {
+  const formatDate = (dateString: string | number[]): string => {
+    let date: Date;
+    if (typeof dateString === 'string') {
+      date = new Date(dateString);
+    } else {
+      date = parseLocalDateTime(dateString);
+    }
+    return date.toLocaleDateString('it-IT', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric'

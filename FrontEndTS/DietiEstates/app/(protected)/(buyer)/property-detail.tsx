@@ -19,7 +19,7 @@ import { generatePropertyImageUrls } from '@/src/utils/imageUtils';
 import VisitApiService from '@/src/api/VisitApi';
 import { AvailabilityDTO } from '@/src/dto/response/AvailabilityDTO';
 import HistoryStorageService from '@/src/api/history.service';
-import { formatAddress } from '@/components/Agent/PropertyDashboard/types';
+import { formatAddress, parseLocalDateTime } from '@/components/Agent/PropertyDashboard/types';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -51,12 +51,6 @@ const PropertyDetailScreen: React.FC = () => {
     'public_transport': 'material-symbols:train',
     'leisure': 'material-symbols:park',
   }
-
-  function parseLocalDateTime(dateArray: number[]): Date {
-    const [year, month, day, hour, minute, second, nanosecond] = dateArray;
-    // Note: JavaScript months are 0-indexed, but Java months are 1-indexed
-    return new Date(year, month - 1, day, hour, minute, second, nanosecond / 1000000);
-}
 
   useEffect(() => {
     const fetchPropertyDetails = async () => {

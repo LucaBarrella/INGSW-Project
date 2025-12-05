@@ -74,6 +74,12 @@ export function formatAddress(address: PropertyDTO['address']): string {
   return `${address?.city} (${address?.province}, ${address?.country}) - ${address.street} ${address?.streetNumber}`;
 }
 
+export function parseLocalDateTime(dateArray: number[]): Date {
+  const [year, month, day, hour, minute, second, nanosecond] = dateArray;
+  // Note: JavaScript months are 0-indexed, but Java months are 1-indexed
+  return new Date(year, month - 1, day, hour, minute, second, nanosecond / 1000000);
+}
+
 export interface PropertyDetail extends PropertyDTO {
 
   agentFullName?: string;
