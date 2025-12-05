@@ -150,26 +150,24 @@ export class FilterPayloadBuilder {
       const s = String(val).trim();
       if (!s) return undefined;
       const up = s.toUpperCase();
-
-      // If already a top-level category value, accept it (map INDUSTRIAL -> COMMERCIAL as fallback)
+  
       if (['RESIDENTIAL', 'COMMERCIAL', 'GARAGE', 'LAND', 'INDUSTRIAL'].includes(up)) {
         if (up === 'INDUSTRIAL') return 'COMMERCIAL' as PropertyCategory;
         return up as PropertyCategory;
       }
-
-      // try exact match against known subcategory lists (case-insensitive)
+  
       const lower = s.toLowerCase();
       if (RESIDENTIAL_CATEGORIES.some(c => String(c).toLowerCase() === lower)) return 'RESIDENTIAL';
       if (COMMERCIAL_CATEGORIES.some(c => String(c).toLowerCase() === lower)) return 'COMMERCIAL';
       if (GARAGE_CATEGORIES.some(c => String(c).toLowerCase() === lower)) return 'GARAGE';
       if (LAND_CATEGORIES.some(c => String(c).toLowerCase() === lower)) return 'LAND';
-
-      // heuristic fallbacks based on keywords (best-effort)
-      if (lower.includes('negozio') || lower.includes('shop') || lower.includes('ufficio') || lower.includes('ristor') || lower.includes('locale')) return 'COMMERCIAL';
-      if (lower.includes('appart') || lower.includes('villa') || lower.includes('casa') || lower.includes('attico') || lower.includes('loft')) return 'RESIDENTIAL';
-      if (lower.includes('garage') || lower.includes('parking')) return 'GARAGE';
-      if (lower.includes('terreno') || lower.includes('edific') || lower.includes('pascolo') || lower.includes('coltiv')) return 'LAND';
-
+  
+      // English / alternate keyword fallbacks (cover UI values in different locales)
+      if (['shop', 'store', 'office', 'restaurant', 'commercial', 'industrial', 'retail', 'restaurant'].some(k => lower.includes(k))) return 'COMMERCIAL';
+      if (['apartment', 'flat', 'house', 'home', 'villa', 'attic', 'loft', 'residential', 'appart'].some(k => lower.includes(k))) return 'RESIDENTIAL';
+      if (['garage', 'parking', 'parking space'].some(k => lower.includes(k))) return 'GARAGE';
+      if (['land', 'plot', 'field', 'farm', 'terreno', 'pascolo', 'coltiv', 'edific'].some(k => lower.includes(k))) return 'LAND';
+  
       return undefined;
     };
 
@@ -179,6 +177,23 @@ export class FilterPayloadBuilder {
     } else {
       const resolvedFromSections = normalizeToPropertyCategory(catFromSections);
       if (resolvedFromSections) requestAny.category = resolvedFromSections as PropertyCategory;
+    }
+    
+    // If still no top-level category resolved, try UI's selectedMainCategoryInPanel (or similar keys)
+    if (!requestAny.category) {
+      const uiSelected = (filters && (filters.selectedMainCategoryInPanel ?? (filters as any).selectedMainCategory)) ?? undefined;
+      if (typeof uiSelected === 'string' && uiSelected.trim().length > 0) {
+        const sel = uiSelected.trim().toLowerCase();
+        const mapped = sel === 'residential' ? 'RESIDENTIAL'
+          : sel === 'commercial' ? 'COMMERCIAL'
+          : sel === 'garage' ? 'GARAGE'
+          : sel === 'land' ? 'LAND'
+          : sel === 'industrial' ? 'COMMERCIAL'
+          : undefined;
+        if (mapped) {
+          requestAny.category = mapped as PropertyCategory;
+        }
+      }
     }
 
     // If a more specific subcategory label exists (es. "Apartment"), include it in the payload
