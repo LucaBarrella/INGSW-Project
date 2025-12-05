@@ -28,17 +28,17 @@ const getReceivedOffers = async (): Promise<OfferResponseDTO[]> => {
 
 const acceptOffer = async (offerId: string): Promise<void> => {
     const url = offerEndpoints.acceptOffer.replace('{offerId}', offerId);
-    await httpClient.post(url);
+    return await httpClient.post(url);
 }
 
 const rejectOffer = async (offerId: string): Promise<void> => {
     const url = offerEndpoints.rejectOffer.replace('{offerId}', offerId);
-    await httpClient.post(url);
+    return await httpClient.post(url);
 }
 
 const withdrawOffer = async (offerId: string): Promise<void> => {
     const url = offerEndpoints.withdrawOffer.replace('{offerId}', offerId);
-    await httpClient.post(url);
+    return await httpClient.post(url);
 }
 
 const createOffer = async (offerData: CreateOfferRequest): Promise<any> => {

@@ -44,7 +44,7 @@ const OffersScreen: React.FC = () => {
         </ThemedView>
         <FlatList
           data={offers}
-          renderItem={({ item }) => <OfferCard offer={item} />}
+          renderItem={({ item }) => <OfferCard offer={item} onUpdate={fetchOffers}/>}
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 16, backgroundColor: background }}
           ListEmptyComponent={

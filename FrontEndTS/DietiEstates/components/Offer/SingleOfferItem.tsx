@@ -82,7 +82,7 @@ const SingleOfferItem: React.FC<SingleOfferItemProps> = ({
             {formatCurrency(offer.amount)}
           </ThemedText>
           <ThemedText className="text-sm" style={{ color: textColor }}>
-            Offerta del {formatDate(offer.createdAt)}
+            {t('offerDate')} {formatDate(offer.createdAt)}
           </ThemedText>
         </View>
         <View className="flex items-end">

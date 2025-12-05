@@ -128,6 +128,14 @@
   "Group Visit": "Visita di Gruppo",
   "cancelVisit": "Annulla Visita",
   "selectVisitsToCancel": "Seleziona le visite da annullare",
+  "offerDate": "Offerta del: ",
+  "offerAccepted": "Offerta Accettata",
+  "offerRejected": "Offerta Rifiutata",
+  "offerWithdrawn": "Offerta Ritirata",
+  "youHaveWithdrawnTheOfferSuccessfully": "Hai ritirato l'offerta con successo.",
+  "failedToWithdrawOffer": "Impossibile ritirare l'offerta.",
+  "youHaveAcceptedTheCounteredOfferSuccessfully": "Hai accettato la controfferta con successo.",
+  "failedToAcceptCounteredOffer": "Impossibile accettare la controfferta.",
 
   "setting": {
     "language": "Lingua"

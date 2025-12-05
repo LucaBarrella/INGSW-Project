@@ -65,8 +65,11 @@ export const useOffers = () => {
     setLoading(true);
     setError(null);
     try {
-      await offerService.withdrawOffer(offerId);
+      const response = await offerService.withdrawOffer(offerId);
+      console.log("withdraw success response: ", response);
+      return response;
     } catch (err: any) {
+      console.log("withdraw error: ", err.message);
       setError(err.message || 'Failed to withdraw offer');
     } finally {
       setLoading(false);

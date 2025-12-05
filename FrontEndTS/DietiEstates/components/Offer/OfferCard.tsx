@@ -28,6 +28,7 @@ export interface Offer {
 
 interface OfferCardProps {
   offer: OfferResponseDTO;
+  onUpdate: () => void;
 }
 
 const StatusBadge = ({ status, color, icon }: { 
@@ -50,7 +51,7 @@ const StatusBadge = ({ status, color, icon }: {
   );
 };
 
-const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
+const OfferCard: React.FC<OfferCardProps> = ({ offer, onUpdate }) => {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
@@ -106,6 +107,34 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
 
   const statusInfo = getStatusInfo(offer.status);
   const { withdrawOffer, acceptOffer } = useOffers();
+
+  const handleWithdrawOffer = (offerId: string) => {
+    Alert.alert(
+      t('confirm_withdraw_offer'),
+      '',
+      [
+        {
+          text: t('cancel'),
+          style: 'cancel',
+        },
+        {
+          text: t('withdraw'),
+          onPress: async () => {
+            try {
+              const response = await withdrawOffer(offerId);
+              if (response.success !== false) {
+                Alert.alert(t('offerWithdrawn'), t('youHaveWithdrawnTheOfferSuccessfully'));
+                onUpdate();
+              }
+            } catch (err) {
+              Alert.alert(t('error'), t('failedToWithdrawOffer'));
+            }
+          },
+        },
+      ]
+    );
+  };
+
   const handleAcceptCounteredOffer = () => {
     Alert.alert(
       t('confirm_accept_countered_offer'),
@@ -119,8 +148,14 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
           text: t('accept'),
           onPress: async () => {
             try {
-              await acceptOffer(offer.id.toString());
-              Alert.alert(t('offerAccepted'), t('youHaveAcceptedTheCounteredOfferSuccessfully'));
+              const response = await acceptOffer(offer.id.toString());
+              if (response.success !== false) {
+                Alert.alert(t('offerAccepted'), t('youHaveAcceptedTheCounteredOfferSuccessfully'));
+                onUpdate();
+              }
+              else {
+                Alert.alert(t('error'), t('failedToAcceptCounteredOffer'));
+              }
             } catch (err) {
               Alert.alert(t('error'), t('failedToAcceptCounteredOffer'));
             }
@@ -129,7 +164,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
       ]
     );
   }
-
+  
   return (
     <ThemedView className="bg-background rounded-xl m-4 shadow-lg border-border" style={{ backgroundColor: 'transparent' }}>
       <ThemedView className="relative" style={{ backgroundColor: 'transparent' }}>
@@ -176,7 +211,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer }) => {
             backgroundColor: colors.buttonBackground,
           }}
           onPress={() => {
-            withdrawOffer(offer.property.id.toString());
+            handleWithdrawOffer(offer.property.id.toString());
           }}
         >
           <ThemedText className="text-base font-bold" style={{ color: colors.buttonTextColor }}>
