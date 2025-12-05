@@ -47,7 +47,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ lightColor, darkColor, ...props }
 
   return (
     <ThemedView className="transform scale-90 md:scale-100 max-w-md p-8 rounded-2xl w-10/12 shadow-lg mt-[12%] mb-[10%]" style={{ backgroundColor: cardBackground }} {...props}>
-      <ThemedText className="py-5 text-center" style={{ fontSize: 36, color: labelColor }}>
+      <ThemedText className="py-5 text-center" style={{ fontSize: 36, color: labelColor, lineHeight: 36 }}>
         {t('auth.screens.login.title')}
       </ThemedText>
       <ThemedText className="text-lg mb-6 text-center" style={{ color: labelColor }}>

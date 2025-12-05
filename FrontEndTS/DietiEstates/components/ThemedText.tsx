@@ -25,7 +25,7 @@ export function ThemedText({
       style={[{ color }, style]}
       className={clsx(
         type === 'default' && 'text-base leading-6',
-        type === 'title' && 'text-4xl font-bold leading-8',
+        type === 'title' && 'text-4xl font-bold leading-6',
         type === 'defaultSemiBold' && 'text-base leading-6 font-semibold',
         type === 'subtitle' && 'text-xl font-bold',
         type === 'link' && 'text-base leading-7 text-blue-600',

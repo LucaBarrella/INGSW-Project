@@ -28,7 +28,7 @@ export function ArchivedOfferCard({ offer, onContactBuyer }: ArchivedOfferCardPr
       <View style={styles.imageContainer}>
         <Image
           source={{ uri: offer.property.firstImageUrl || (offer.property.imageUrl ? offer.property.imageUrl[0] : '') }}
-          style={[styles.propertyImage, !isAccepted && styles.grayscaleImage]}
+          style={[styles.propertyImage]}
         />
         <View style={[styles.statusBadge, { backgroundColor: isAccepted ? success : error }]}>
           <ThemedText style={styles.statusText}>
@@ -38,7 +38,7 @@ export function ArchivedOfferCard({ offer, onContactBuyer }: ArchivedOfferCardPr
       </View>
 
       <View style={styles.detailsContainer}>
-        <ThemedText style={styles.propertyName}>{offer.property.propertyCategory}</ThemedText>
+        <ThemedText style={styles.propertyName}>{t(`property_category.sub.${offer.property.propertyCategory}`)}</ThemedText>
         <ThemedText style={[styles.propertyAddress, { color: textColor }]}>{formatAddress(offer.property.address)}</ThemedText>
         <ThemedText style={styles.offerAmount}>{t('offersArchived.agent.offerAmount', { amount: offer.price.toLocaleString('it-IT') })}</ThemedText>
 
@@ -81,10 +81,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 150,
     resizeMode: 'cover',
-  },
-  grayscaleImage: {
-    // filter: 'grayscale(100%)', // This will not work directly in React Native, needs a color matrix filter
-    // For grayscale, consider using a ColorMatrixImageFilters library or a custom shader if needed.
   },
   statusBadge: {
     position: 'absolute',

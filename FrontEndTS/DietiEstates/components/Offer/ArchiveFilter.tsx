@@ -12,7 +12,6 @@ export function ArchiveFilter({ selectedFilter, onSelectFilter }: ArchiveFilterP
   const buttonBackground = useThemeColor({}, 'buttonBackground');
   const buttonTextColor = useThemeColor({}, 'buttonTextColor');
   const text = useThemeColor({}, 'text');
-  const background = useThemeColor({}, 'background');
   const borderColor = useThemeColor({}, 'border');
   return (
     <View style={[styles.container, { borderColor: borderColor }]}>

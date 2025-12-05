@@ -10,6 +10,7 @@ import { Provider } from '@/src/dto/Provider';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../context/AuthContext';
 import { User } from '@/src/entity/User'; // Importa l'interfaccia User
+import { t } from 'i18next';
  
 type RegistrationFormData = {
   username: string;
@@ -42,10 +43,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
 
   const { register, error, validationErrors, resetValidationErrors, handlePostAuthNavigation } = useAuth();
 
-  React.useEffect(() => {
-    // La gestione degli errori ora è centralizzata nel context, non è più necessario clearError() qui
-  }, [formData.email, formData.password, formData.name, formData.surname, formData.username]);
-
   const handleSubmit = async () => {
     console.log("Validation Errors before submit:", validationErrors); // Aggiunto log
     // Ora la validazione è gestita dentro useAuthHook.register.
@@ -74,8 +71,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ lightColor, darkCol
 
   return (
     <ThemedView className="mt-[10%] mb-[10%] max-w-md p-8 rounded-2xl w-10/12 shadow-lg" style={{ backgroundColor: cardBackground }} {...props}>
-      <ThemedText className="py-5 text-center" style={{ fontSize: 36, color: labelColor }}>Benvenuto</ThemedText>
-      <ThemedText className="text-lg mb-6 text-center" style={{ color: labelColor }}>Registrati</ThemedText>
+      <ThemedText className="py-5 text-center" style={{ fontSize: 36, color: labelColor, lineHeight: 40 }}>{t('auth.screens.signup.title')}</ThemedText>
+      <ThemedText className="text-lg mb-6 text-center" style={{ color: labelColor }}>{t('auth.screens.signup.subtitle')}</ThemedText>
 
       {error && (
         <ThemedText style={{ color: 'red', textAlign: 'center', marginBottom: 10 }}>
