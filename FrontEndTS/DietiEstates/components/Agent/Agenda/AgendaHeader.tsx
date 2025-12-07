@@ -67,7 +67,7 @@ const AgendaHeader: React.FC<AgendaHeaderProps> = ({ currentDate: controlledDate
   return (
     <ThemedView className="p-4">
       <ThemedView className="flex-row justify-between items-center mb-4">
-        <ThemedText type="title" style={{ color: agendaHeaderTextColor }}>{t('agenda.title')}</ThemedText>
+        <ThemedText type="title" style={{ color: agendaHeaderTextColor, lineHeight: 36}}>{t('agenda.title')}</ThemedText>
         <TouchableOpacity onPress={() => setCalendarVisible(true)}>
           <Ionicons name="calendar-outline" size={28} color={agendaHeaderTextColor} />
         </TouchableOpacity>

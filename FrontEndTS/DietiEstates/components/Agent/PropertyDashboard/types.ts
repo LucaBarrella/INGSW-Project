@@ -71,7 +71,10 @@ export interface PropertyDTO {
 }
 
 export function formatAddress(address: PropertyDTO['address']): string {
-  return `${address?.city} (${address?.province}, ${address?.country}) - ${address.street} ${address?.streetNumber}`;
+  if (address.province) {
+    return `${address?.city} (${address?.province}, ${address?.country}) - ${address.street} ${address?.streetNumber}`;
+  }
+  return `${address?.city} (${address?.country}) - ${address.street} ${address?.streetNumber}`;
 }
 
 export function parseLocalDateTime(dateArray: number[]): Date {

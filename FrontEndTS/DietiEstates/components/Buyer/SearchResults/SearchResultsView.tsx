@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, FlatList, Pressable, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, FlatList, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedIcon } from '@/components/ThemedIcon';
