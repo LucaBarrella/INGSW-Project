@@ -133,11 +133,12 @@ const PropertyOffersCard: React.FC<PropertyOffersCardProps> = ({
           <TouchableOpacity
             className="w-full h-10 rounded-lg mb-4 flex items-center justify-center"
             style={{
-              backgroundColor: brandColor,
+              backgroundColor: brandColor + '20',
+              borderColor: brandColor,
             }}
             onPress={() => onAcceptHighestRejectOthers(property.id)}
           >
-            <ThemedText className="text-sm font-medium" style={{ color: 'white' }}>
+            <ThemedText className="text-sm font-medium">
               {t('acceptHighestRejectOthersButton')}
             </ThemedText>
           </TouchableOpacity>

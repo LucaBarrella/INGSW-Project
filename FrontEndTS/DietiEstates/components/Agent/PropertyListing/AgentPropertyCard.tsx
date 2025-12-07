@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TouchableOpacity, Image, Alert } from 'react-native';
+import { TouchableOpacity, Image } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { PropertyDTO } from '@/components/Agent/PropertyDashboard/types';
@@ -7,7 +7,6 @@ import { PropertyCharacteristicsDisplay, mapPropertyDetailToCharacteristics } fr
 import { useThemeColor } from '@/hooks/useThemeColor';
 import * as Haptics from 'expo-haptics';
 import { useTranslation } from 'react-i18next';
-import ThemedButton from '@/components/ThemedButton';
 
 interface AgentPropertyCardProps {
   property: PropertyDTO;

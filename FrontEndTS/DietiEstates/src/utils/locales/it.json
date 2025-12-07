@@ -113,7 +113,7 @@
   "accept_countered_offer": "Accetta Controfferta",
   "withdraw_offer": "Ritira Offerta",
   "yourOfferHasBeenSubmittedSuccessfully": "La tua offerta è stata inviata con successo.",
-  "failedToSubmitOffer": "Impossibile inviare l'offerta",
+  "failedToSubmitOffer": "Impossibile inviare l'offerta, hai già accettato un'offerta per questa proprietà?",
   "yes": "Sì",
   "no": "No",
   "hideOptionalDetails": "Nascondi Dettagli Opzionali",

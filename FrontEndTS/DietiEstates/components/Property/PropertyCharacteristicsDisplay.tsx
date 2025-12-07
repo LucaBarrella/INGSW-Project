@@ -4,6 +4,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedIcon } from '@/components/ThemedIcon';
 import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { t } from 'i18next';
 
 interface CharacteristicItemProps {
   iconName: string;
@@ -67,7 +68,7 @@ export const PropertyCharacteristicsDisplay: React.FC<PropertyCharacteristicsDis
 
     <View className="flex-row flex-wrap mt-2 gap-2.5 mb-4">
       <CharacteristicItem iconName="material-symbols:square-foot" value={property.sqft} unit="mq" />
-      <CharacteristicItem iconName="material-symbols:flash-on" value={property.energyClass} />
+      <CharacteristicItem iconName="material-symbols:flash-on" value={t(property.energyClass)} />
 
       {property.propertyType === "residential" && (
         <>
