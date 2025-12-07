@@ -122,22 +122,24 @@ const SingleOfferItem: React.FC<SingleOfferItemProps> = ({
           <TouchableOpacity
             className="flex-1 h-10 rounded-lg flex items-center justify-center"
             style={{
-              backgroundColor: brandColor,
+              backgroundColor: successColor + '20',
+              borderColor: successColor,
             }}
             onPress={() => onAccept(offer.id)}
           >
-            <ThemedText className="text-sm font-medium" style={{ color: 'white' }}>
+            <ThemedText className="text-sm font-medium" style={{ color:  successColor }}>
               {t('accept')}
             </ThemedText>
           </TouchableOpacity>
           <TouchableOpacity
             className="flex-1 h-10 rounded-lg flex items-center justify-center"
             style={{
-              backgroundColor: brandColor,
+              backgroundColor: brandColor + '20',
+              borderColor: brandColor,
             }}
             onPress={() => onCounterOffer(offer.id)}
           >
-            <ThemedText className="text-sm font-medium" style={{ color: 'white' }}>
+            <ThemedText className="text-sm font-medium" style={{ color: brandColor }}>
               {t('counter')}
             </ThemedText>
           </TouchableOpacity>

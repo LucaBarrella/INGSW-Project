@@ -172,7 +172,7 @@ const PropertyOffersCard: React.FC<PropertyOffersCardProps> = ({
             style={{
               borderColor: brandColor,
             }}
-            onPress={() => onInsertExternalOffer(property.id, property.address, formatCurrency(property.price))}
+            onPress={() => onInsertExternalOffer(property.id, property.address, property?.price ? property.price.toString() : '0')}
           >
             <ThemedText className="text-sm font-medium" style={{ color: brandColor }}>
               {t('insertExternalOfferButton')}

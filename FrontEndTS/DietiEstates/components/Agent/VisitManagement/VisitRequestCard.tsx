@@ -34,7 +34,7 @@ export const VisitRequestCard: React.FC<VisitRequestCardProps> = ({
   };
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: number;
     if (deleteCountdown !== null && deleteCountdown > 0) {
       timer = setInterval(() => {
         setDeleteCountdown((prev) => (prev !== null ? prev - 1 : null));

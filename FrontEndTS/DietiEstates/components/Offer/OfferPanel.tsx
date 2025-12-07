@@ -44,11 +44,7 @@ const OfferPanel: React.FC<OfferPanelProps> = ({
     const numericAmount = parseFloat(amount);
     if (isNaN(numericAmount) || numericAmount <= 0) return false;
     
-    // Check if amount is less than asking price
-    const askingPriceNumeric = parseFloat(askingPrice.replace(/[^\d,]/g, '').replace(',', '.'));
-    if (isNaN(askingPriceNumeric)) return false;
-    
-    return numericAmount < askingPriceNumeric;
+    return true;
   };
 
   const handleAmountChange = (text: string) => {
@@ -221,11 +217,6 @@ const OfferPanel: React.FC<OfferPanelProps> = ({
                 returnKeyType="done"
               />
             </View>
-            
-            {/* Info Text */}
-            <ThemedText className="text-sm mt-2" style={{ color: textSecondaryColor }}>
-              {t('enterAnAmountBelow', { price: formatPrice(parseFloat(askingPrice.replace(/[^\d.]/g, ''))) })}
-            </ThemedText>
             
             {/* Error Message */}
             {!isValidAmount && offerAmount && (

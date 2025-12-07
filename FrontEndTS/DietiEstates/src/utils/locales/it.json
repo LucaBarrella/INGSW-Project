@@ -79,6 +79,9 @@
   "counterOffer": "Controfferta",
   "enterCounterOfferPrice": "Inserisci l'importo della controfferta",
   "submit": "Invia",
+  "reject": "Rifiuta",
+  "accept": "Accetta",
+  "counter": "Controfferta",
 
   "offersArchived": {
     "agent": {

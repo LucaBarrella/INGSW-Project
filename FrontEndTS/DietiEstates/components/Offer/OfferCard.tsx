@@ -217,7 +217,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, onUpdate }) => {
           <ThemedText className="text-base font-bold" style={{ color: colors.buttonTextColor }}>
             {t('withdraw_offer')}
           </ThemedText>
-          <Ionicons name={'help-circle-outline'} size={22} color={colors.buttonTextColor} />
+          <Ionicons name={'arrow-undo-circle-outline'} size={22} color={colors.buttonTextColor} />
         </TouchableOpacity> : (
           (offer.status === 'COUNTERED') && <TouchableOpacity
             className="w-full flex-row items-center justify-center gap-2 mt-2 px-4 py-3 rounded-lg"
