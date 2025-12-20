@@ -18,7 +18,6 @@
   "loadingVisits": "Loading visits...",
   "noVisitsFound": "No visits found.",
   "no_offers_available": "No offers available",
-  "loading_offers": "Loading offers...",
   "error_loading_offers": "Error loading offers.",
   "offers_one": "{{count}} Offer",
   "offers_other": "{{count}} Offers",

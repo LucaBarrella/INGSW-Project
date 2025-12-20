@@ -24,7 +24,7 @@ const OffersScreen: React.FC = () => {
   if (loading) {
     return (
       <ThemedView className="flex-1 justify-center items-center" style={{ backgroundColor: background }}>
-        <ThemedText className="text-lg" style={{ color: headerText }}>{t('loading_offers')}...</ThemedText>
+        <ThemedText className="text-lg" style={{ color: headerText }}>{t('loadingOffers')}</ThemedText>
       </ThemedView>
     );
   }
