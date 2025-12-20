@@ -63,7 +63,9 @@
   "pleaseTryAnotherTimeSlot": "Non è stato possibile richiedere una visita per l'orario specificato. Per favore prova un altro orario.",
   "noDescriptionAvailable": "Descrizione non disponibile",
   "searchPlaceholder": "Cerca immobile...",
+  "offers":"Offerte",
   "loadingOffers": "Caricamento offerte...",
+  "confirm_withdraw_offer": "Conferma ritiro offerta",
   "noActiveOffers": "Nessuna offerta attiva",
   "noActiveOffersSubtitle": "Non ci sono immobili con offerte attive al momento. Quando arriveranno nuove offerte, appariranno qui.",
   "offersDashboardTitle": "Gestione Offerte",
@@ -82,6 +84,7 @@
   "reject": "Rifiuta",
   "accept": "Accetta",
   "counter": "Controfferta",
+  "withdraw": "Ritira",
 
   "offersArchived": {
     "agent": {
