@@ -643,6 +643,7 @@ const createStyles = (themeColors: typeof Colors.light) => StyleSheet.create({
   servicesGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    gap: 12,
   },
   agentCard: {
     flexDirection: 'row',
