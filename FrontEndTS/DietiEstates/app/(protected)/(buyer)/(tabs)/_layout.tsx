@@ -9,14 +9,20 @@ import { HapticTab } from '@/components/HapticTab';
 export default function BuyerTabLayout() {
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
+  const headerBg = Colors[colorScheme ?? 'light'].background;
+  const tintColor = Colors[colorScheme ?? 'light'].text;
 
   return (
     <Tabs
       tabBar={(props) => <CustomTabBar {...props} />}
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
+        headerShown: true,
         tabBarButton: HapticTab,
+        headerTitleStyle: { fontFamily: 'Poppins', fontSize: 18 },
+        headerStyle: { backgroundColor: headerBg },
+        headerTintColor: tintColor,
+        headerShadowVisible: false,
       }}>
       <Tabs.Screen
         name="home"

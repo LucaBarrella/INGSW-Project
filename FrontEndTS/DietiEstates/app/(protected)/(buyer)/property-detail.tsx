@@ -413,17 +413,6 @@ const createStyles = (themeColors: typeof Colors.light) => StyleSheet.create({
     alignItems: 'center',
     padding: 16,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 50,
-    paddingBottom: 10,
-    backgroundColor: themeColors.background,
-    borderBottomWidth: 1,
-    borderBottomColor: themeColors.border,
-  },
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',

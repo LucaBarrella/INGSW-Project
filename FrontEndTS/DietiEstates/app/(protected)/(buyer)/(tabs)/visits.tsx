@@ -28,12 +28,6 @@ export default function VisitsTab() {
 
   return (
     <ThemedView style={{ flex: 1, backgroundColor }}>
-      <ThemedView className="p-4 bg-white">
-        <ThemedText className="text-xl font-semibold">
-          {t('your_visits')}
-        </ThemedText>
-      </ThemedView>
-      
       <ScrollView
         className="flex-1 px-4"
         contentContainerStyle={{ paddingVertical: 20 }}

@@ -3,8 +3,10 @@ import React from 'react';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 export default function BuyerLayout() {
+  const { t } = useTranslation();
 
   const headerBg = useThemeColor({}, 'background');
   const tintColor = useThemeColor({}, 'text');
@@ -16,9 +18,10 @@ export default function BuyerLayout() {
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
-        headerTitleStyle: { fontFamily: 'Poppins' },
+        headerTitleStyle: { fontFamily: 'Poppins', fontSize: 18 },
         headerStyle: { backgroundColor: headerBg },
         headerTintColor: tintColor,
+        headerShadowVisible: false,
       }}
     >
       <Stack.Screen
@@ -44,7 +47,7 @@ export default function BuyerLayout() {
         name="property-detail"
         options={{
           headerShown: true,
-          title: 'Dettaglio Immobile',
+          title: t('property_detail'),
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={{ marginLeft: 10 }}>
               <Ionicons name="arrow-back" size={24} color={tintColor} />
@@ -56,7 +59,7 @@ export default function BuyerLayout() {
         name="settings"
         options={{
           headerShown: true,
-          title: 'Impostazioni',
+          title: t('settings'),
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={{ marginLeft: 10 }}>
               <Ionicons name="arrow-back" size={24} color={tintColor} />

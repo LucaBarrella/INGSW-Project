@@ -83,7 +83,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
 
   return (
     <ThemedView className="flex-1">
-      <View className="flex-row items-center py-2 pr-2 border-b" style={{ borderColor: useThemeColor({}, 'border') }}>
+      <View className="flex-row items-center pr-2 border-b" style={{ borderColor: useThemeColor({}, 'border') }}>
         <View className="flex-1 mr-2">
           <SearchAndFilter
             placeholder={t('searchPlaceholder')}

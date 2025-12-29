@@ -111,12 +111,6 @@ export default function ProfileTab() {
 
   return (
     <ThemedView style={{ flex: 1, backgroundColor }}>
-      <ThemedView className="p-4">
-        <ThemedText className="text-xl font-semibold">
-          {t('profileTab')}
-        </ThemedText>
-      </ThemedView>
-
       <ScrollView
         className="flex-1 px-4"
         contentContainerStyle={{ paddingVertical: 20 }}

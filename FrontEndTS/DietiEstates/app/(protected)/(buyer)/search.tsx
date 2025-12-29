@@ -45,7 +45,6 @@ export default function SearchResultsScreen() {
       <Stack.Screen
         options={{
           title: searchTitle,
-          headerTitleStyle: { fontSize: 18 }
         }}
       />
       

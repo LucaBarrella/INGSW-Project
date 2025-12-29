@@ -39,9 +39,6 @@ const OffersScreen: React.FC = () => {
 
   return (
     <ThemedView className="flex-1" style={{ backgroundColor: background }}>
-        <ThemedView className="flex-row items-center p-4 pb-2 justify-center">
-          <ThemedText className="text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center" style={{ color: headerText }}>{t('offers')}</ThemedText>
-        </ThemedView>
         <FlatList
           data={offers}
           renderItem={({ item }) => <OfferCard offer={item} onUpdate={fetchOffers}/>}
