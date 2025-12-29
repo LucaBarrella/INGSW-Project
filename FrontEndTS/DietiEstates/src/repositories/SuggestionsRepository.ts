@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import PhotonApi from '@/src/api/PhotonApi';
 import { PhotonFeature } from '@/components/Buyer/SearchIntegration/types';
+import GeocodingService from '../services/GeocodingService';
 
 /**
  * SuggestionsRepository
@@ -20,6 +20,8 @@ const MAX_RECENT_QUERIES = 20;
 const inMemorySuggestionsCache: Map<string, PhotonFeature[]> = new Map();
 const inMemoryAccessFrequency: Map<string, number> = new Map();
 let suggestionsCacheLoaded = false;
+
+const geocodingService = new GeocodingService();
 
 const normalizeKey = (q: string) => String(q || '').trim().toLowerCase();
 
@@ -116,7 +118,8 @@ const SuggestionsRepository = {
   async getSuggestions(query: string, limit = 6): Promise<PhotonFeature[]> {
     await loadSuggestionsCacheIfNeeded();
     const q = String(query || '').trim();
-    if (!q) return [];
+    // Limite minimo di 3 caratteri per evitare ricerche troppo generiche e BAN
+    if (!q || q.length < 3) return [];
 
     const qLower = normalizeKey(q);
 
@@ -140,7 +143,7 @@ const SuggestionsRepository = {
 
     // Cache miss: fetch remote
     try {
-      const features = await PhotonApi.getAutocompleteSuggestions(q, limit);
+      const features = await geocodingService.getSuggestions(q, limit);
       if (features && features.length > 0) {
         await SuggestionsRepository.saveSuggestions(q, features);
         return features.slice(0, limit);

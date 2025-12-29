@@ -1,12 +1,14 @@
 import React, { useEffect, useRef } from "react";
-import { ScrollView, TouchableOpacity, Animated, Platform, StyleSheet, Modal, Easing, Dimensions, View, Switch, Alert } from "react-native";
+import { ScrollView, TouchableOpacity, Animated, Platform, StyleSheet, Modal, Easing, Dimensions, View, Alert } from "react-native";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { RangeSlider } from "./RangeSlider";
 import { PriceInput } from "./PriceInput";
 import { SegmentedControl } from "./SegmentedControl";
+import { ChipSelector } from "./ChipSelector";
 import { QuickNumericSelector } from "./QuickNumericSelector";
+import { CustomToggle } from "./CustomToggle";
 import { LabelInput } from "@/components/LabelInput";
 import { Ionicons } from "@expo/vector-icons";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -15,7 +17,7 @@ import { useSearch } from "@/context/SearchContext";
 import useSearchProperties from '@/src/hooks/useSearchProperties';
 import useSearchUrlState from '@/src/hooks/useSearchUrlState';
 import { useFilterConfig, CATEGORY_FILTERS } from "@/config/filter-config";
-import usePropertyCategories from '@/src/hooks/usePropertyCategories'; // dinamico: scarica categorie/sottocategorie dal backend
+import usePropertyCategories from '@/src/hooks/usePropertyCategories';
 import { useTranslation } from "react-i18next";
 import type { FilterDefinition } from "./types";
 
@@ -35,24 +37,21 @@ const categoryStateToConfigMap: Record<string, string> = {
 const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onApplyAndNavigate }) => {
   const translateY = useRef(new Animated.Value(2000)).current;
   const overlayOpacity = useRef(new Animated.Value(0)).current;
+  const detailsOpacity = useRef(new Animated.Value(0)).current;
 
   const { t } = useTranslation();
   const { state } = useSearch();
   const { filters, selectedMainCategoryInPanel } = state;
-  // Usa l'hook che espone updateFilter/resetFilters/search con logica di sanitizzazione
   const { updateFilter, resetFilters, search, selectMainCategory } = useSearchProperties();
-  // Hook che scarica dinamicamente le categorie/sottocategorie dal backend
-  const { categoriesByType, isLoading: categoriesLoading, refresh: refreshCategories } = usePropertyCategories();
-  // Hook per sincronizzare esplicitamente Context -> URL quando l'utente applica i filtri
+  const { categoriesByType } = usePropertyCategories();
   const { forceSyncUrl } = useSearchUrlState();
   const ALL_FILTERS = useFilterConfig();
 
-  const panelHeight = Dimensions.get('window').height * 0.8;
+  const panelHeight = Dimensions.get('window').height * 0.85;
   const textColor = useThemeColor({}, "text");
   const tintColor = useThemeColor({}, "tint");
-  const tabIconDefault = useThemeColor({}, "tabBarBackground");
   const backgroundPrimary = useThemeColor({}, "background");
-  const loginCardBackground = useThemeColor({}, "loginCardBackground");
+  const backgroundMuted = useThemeColor({}, "backgroundMuted");
   const buttonBackground = useThemeColor({}, "buttonBackground");
   const buttonTextColor = useThemeColor({}, "buttonTextColor");
 
@@ -63,66 +62,64 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
       Animated.parallel([
         Animated.timing(translateY, {
           toValue: 0,
-          duration: 300,
+          duration: 400,
           useNativeDriver: true,
-          easing: Easing.out(Easing.cubic),
+          easing: Easing.out(Easing.back(0.5)),
         }),
         Animated.timing(overlayOpacity, {
           toValue: 1,
-          duration: 200,
+          duration: 300,
           useNativeDriver: true,
         }),
       ]).start();
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    if (selectedMainCategoryInPanel) {
+      detailsOpacity.setValue(0);
+      Animated.timing(detailsOpacity, {
+        toValue: 1,
+        duration: 400,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [selectedMainCategoryInPanel]);
+
   const hidePanel = () => {
     Animated.parallel([
       Animated.timing(translateY, {
         toValue: 2000,
-        duration: 250,
+        duration: 300,
         useNativeDriver: true,
         easing: Easing.in(Easing.cubic),
       }),
       Animated.timing(overlayOpacity, {
         toValue: 0,
-        duration: 200,
+        duration: 250,
         useNativeDriver: true,
       }),
     ]).start(() => onClose());
   };
 
   const handleReset = (keepTransactionType = true) => {
-    // Usa l'hook per mantenere la logica centralizzata
     resetFilters(keepTransactionType);
   };
 
-  /* selectCategory rimosso dal componente.
-     Ora si utilizza selectMainCategory fornito da useSearchProperties()
-     che centralizza dispatch e updateFilter necessari. */
-
   const updateGeneralFilter = (newFilters: Record<string, any>) => {
-    // instrada verso l'hook che normalizza null/undefined e dispatcha
     updateFilter('general', newFilters as any);
   };
 
   const updateCategoryFilter = (categoryKey: keyof typeof categoryStateToConfigMap, newFilters: Record<string, any>) => {
-    // instrada verso l'hook per aggiornamenti delle categorie
     updateFilter(categoryKey as any, newFilters as any);
   };
 
   const renderControl = (def: FilterDefinition, currentCategoryKey?: keyof typeof categoryStateToConfigMap) => {
-    console.log(`[FilterPanel] renderControl - def.key: ${def.key}, currentCategoryKey: ${currentCategoryKey}`);
     const isGeneral = !currentCategoryKey;
-
-    // Recupera il FilterState e poi il suo valore; fallback su def.defaultValue
     const rawState = isGeneral
       ? (filters.general as any)[def.key]
       : ((filters as any)[currentCategoryKey as string] ?? {})[def.key];
 
-    // Unwrap ricorsivo: gestisce casi in cui il valore è avvolto in più livelli
-    // di { value } (es. legacy o payload malformati). Restituisce il valore primitivo
-    // se possibile, oppure l'oggetto non primitive più interno.
     const unwrapValue = (v: any): any => {
       if (v === undefined) return undefined;
       if (v === null) return null;
@@ -132,7 +129,6 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
     };
 
     const unwrapped = unwrapValue(rawState);
-    // Assicuriamoci di srotolare anche il default configurato se per errore è un wrapper
     const defaultUnwrapped = unwrapValue(def.defaultValue);
     const value = unwrapped !== undefined ? unwrapped : (defaultUnwrapped !== undefined ? defaultUnwrapped : def.defaultValue);
 
@@ -171,9 +167,26 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
           />
         );
       case 'SegmentedControl':
+        if (def.key === 'acceptedCondition' || (def.options && def.options.length > 3)) {
+          return (
+            <View key={def.key} style={styles.controlContainer}>
+              <ThemedText style={styles.controlLabel}>{def.label}</ThemedText>
+              <ChipSelector
+                options={(def.options ?? []).map(o => {
+                  if (typeof o === 'object' && o !== null && 'label' in o && 'value' in o) {
+                    return { label: o.label, value: o.value };
+                  }
+                  return { label: String(o), value: o };
+                })}
+                value={value}
+                onChange={(v: any) => onChange(v)}
+              />
+            </View>
+          );
+        }
         return (
-          <View key={def.key} className="mb-4">
-            <ThemedText className="text-sm mb-2" style={{ color: textColor }}>{def.label}</ThemedText>
+          <View key={def.key} style={styles.controlContainer}>
+            <ThemedText style={styles.controlLabel}>{def.label}</ThemedText>
             <SegmentedControl
               options={(def.options ?? []).map(o => {
                 if (typeof o === 'object' && o !== null && 'label' in o && 'value' in o) {
@@ -188,9 +201,9 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
         );
       case 'Switch':
         return (
-          <View key={def.key} className="flex-row justify-between items-center mb-4">
-            <ThemedText style={{ color: textColor }}>{def.label}</ThemedText>
-            <Switch
+          <View key={def.key} style={[styles.switchCard, { backgroundColor: backgroundPrimary }]}>
+            <ThemedText style={styles.switchLabel}>{def.label}</ThemedText>
+            <CustomToggle
               value={!!value}
               onValueChange={(v) => onChange(v)}
             />
@@ -201,14 +214,15 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
           <QuickNumericSelector
             key={def.key}
             label={def.label}
-            // UI component expects una stringa: srotoliamo profondamente eventuali wrapper
+            showPresets={def.key !== 'minYearBuilt'}
+            minValue={def.min}
+            maxValue={def.max}
+            unit={def.unit}
             value={(() => {
               try {
                 const display = unwrapValue(value);
                 if (display === null || display === undefined) return '';
-                // se è già primitivo
                 if (typeof display === 'number' || typeof display === 'string') return String(display);
-                // se è oggetto, cerchiamo proprietà numeriche comuni come value/defaultValue/min/max
                 if (typeof display === 'object') {
                   const probe = (o: any): number | undefined => {
                     if (o == null) return undefined;
@@ -221,7 +235,6 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
                         if (v !== undefined) return v;
                       }
                     }
-                    // ultima risorsa: cerca la prima proprietà numerica
                     for (const k of Object.keys(o)) {
                       const v = o[k];
                       if (typeof v === 'number' && Number.isFinite(v)) return v;
@@ -234,18 +247,13 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
                 }
                 return '';
               } catch (e) {
-                console.error('[FilterPanel] QuickNumericSelector value serialization error', e);
                 return '';
               }
             })()}
             onValueChange={(v: string) => {
-              // Convertiamo stringa in numero se possibile, altrimenti inviamo null per il reset
               const parsed = v === null || v === '' ? null : Number(v);
               onChange(parsed);
             }}
-            minValue={def.min}
-            maxValue={def.max}
-            unit={def.unit}
           />
         );
       case 'LabelInput':
@@ -261,183 +269,399 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
     }
   };
 
-  // determina le categorie disponibili dalla config
   const availableCategories = Object.keys(CATEGORY_FILTERS);
-
   const selectedCategoryConfigKey = selectedMainCategoryInPanel
     ? categoryStateToConfigMap[selectedMainCategoryInPanel as string]
     : null;
 
   const filtersToRender = selectedCategoryConfigKey
     ? (CATEGORY_FILTERS as any)[selectedCategoryConfigKey] ?? []
-    : // se nessuna categoria selezionata, mostriamo filtri generali + sintesi categorie
-      [];
+    : [];
 
   return (
     <Modal visible={isOpen} transparent animationType="none" onRequestClose={hidePanel}>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.5)', opacity: overlayOpacity }]}>
+        <Animated.View style={[styles.overlay, { opacity: overlayOpacity }]}>
           <TouchableOpacity style={StyleSheet.absoluteFill} onPress={hidePanel} activeOpacity={1} />
         
-          <Animated.View style={[{
-            position: 'absolute', bottom: 0, left: 0, right: 0, height: panelHeight,
-            backgroundColor: backgroundPrimary, borderTopLeftRadius: 30, borderTopRightRadius: 30,
-            transform: [{ translateY }], ...Platform.select({ ios: { shadowColor: '#000', shadowOffset: { width: 0, height: -3 }, shadowOpacity: 0.2, shadowRadius: 8 }, android: { elevation: 8 } })
+          <Animated.View style={[styles.panel, { 
+            height: panelHeight,
+            backgroundColor: backgroundPrimary,
+            transform: [{ translateY }]
           }]}>
-            <ThemedView className="items-center pt-2 rounded-t-2xl" style={{ backgroundColor: tabIconDefault }}>
-              <ThemedView className="w-12 h-1 rounded-full mb-2" style={{ backgroundColor: textColor }} />
-            </ThemedView>
+            {/* Modal Handle */}
+            <View style={styles.handleContainer}>
+              <View style={[styles.handle, { backgroundColor: textColor }]} />
+            </View>
 
-            <ThemedView className="flex-row justify-between items-center px-4 pb-4" style={{ backgroundColor: tabIconDefault }}>
-              <ThemedView className="flex-row items-center" style={{ backgroundColor: tabIconDefault }}>
-                <Ionicons name="funnel" size={24} color={tintColor} />
-                <ThemedView className="ml-3" style={{ backgroundColor: tabIconDefault }}>
-                  <ThemedText className="text-lg font-semibold" style={{ color: textColor }}>Filtri</ThemedText>
-                  <ThemedText className="text-sm" style={{ color: textColor }}>
-                    {selectedMainCategoryInPanel ? String(selectedMainCategoryInPanel) : "Seleziona una categoria"}
+            {/* Header */}
+            <View style={[styles.header, { borderBottomColor: textColor + '10' }]}>
+              <View style={styles.headerLeft}>
+                <View style={[styles.headerIcon, { backgroundColor: tintColor + '12' }]}>
+                  <Ionicons name="funnel" size={20} color={tintColor} />
+                </View>
+                <View style={styles.headerTextContainer}>
+                  <ThemedText type="defaultSemiBold" style={{ fontSize: 17 }}>Filtri</ThemedText>
+                  <ThemedText style={[styles.headerSubtitle, { color: textColor, opacity: 0.6 }]}>
+                    {selectedMainCategoryInPanel ? t(`filters.category.${categoryStateToConfigMap[selectedMainCategoryInPanel as string]}`) : t('filterPanel.selectCategory')}
                   </ThemedText>
-                </ThemedView>
-              </ThemedView>
+                </View>
+              </View>
 
-              <ThemedView className="flex-row items-center" style={{ backgroundColor: tabIconDefault }}>
-                <TouchableOpacity onPress={() => handleReset(false)} className="mr-4 py-2 px-3">
-                  <ThemedText style={{ color: tintColor }}>Reset</ThemedText>
+              <View style={styles.headerRight}>
+                <TouchableOpacity
+                  onPress={() => handleReset(false)}
+                  style={[styles.resetButton, { backgroundColor: useThemeColor({ light: 'rgba(0,0,0,0.05)', dark: 'rgba(255,255,255,0.15)' }, 'backgroundMuted') }]}
+                >
+                  <ThemedText style={{ color: useThemeColor({ light: tintColor, dark: textColor }, 'text'), fontWeight: '800', fontSize: 13 }}>Reset</ThemedText>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={hidePanel} className="p-1">
-                  <Ionicons name="close" size={24} color={textColor} />
+                <TouchableOpacity
+                  onPress={hidePanel}
+                  style={[styles.closeButton, { backgroundColor: useThemeColor({ light: 'rgba(0,0,0,0.05)', dark: 'rgba(255,255,255,0.15)' }, 'backgroundMuted') }]}
+                >
+                  <Ionicons name="close" size={18} color={useThemeColor({ light: textColor, dark: textColor }, 'text')} />
                 </TouchableOpacity>
-              </ThemedView>
-            </ThemedView>
+              </View>
+            </View>
 
-            <ScrollView className="flex-1 p-4">
-              <ThemedView className="mb-6">
-                {/* Filtri generali */}
-                <ThemedText className="text-lg font-semibold mb-4" style={{ color: textColor }}>{t('filterPanel.generalFilters')}</ThemedText>
+            <ScrollView className="flex-1 px-6 pt-4" showsVerticalScrollIndicator={false}>
+              {/* Sezione Budget e Transazione */}
+              <View style={[styles.card, { backgroundColor: backgroundMuted }]}>
+                <View className="flex-row items-center mb-5">
+                  <Ionicons name="wallet-outline" size={14} color={textColor} style={{ opacity: 0.4, marginRight: 8 }} />
+                  <ThemedText style={styles.sectionTitle}>Budget & Transazione</ThemedText>
+                </View>
                 {renderControl(ALL_FILTERS.contract)}
                 {renderControl(ALL_FILTERS.priceRange)}
-                {renderControl(ALL_FILTERS.size)}
+              </View>
+
+              {/* Sezione Localizzazione e Dimensioni */}
+              <View style={[styles.card, { backgroundColor: backgroundMuted }]}>
+                <View className="flex-row items-center mb-5">
+                  <Ionicons name="location-outline" size={14} color={textColor} style={{ opacity: 0.4, marginRight: 8 }} />
+                  <ThemedText style={styles.sectionTitle}>Localizzazione & Spazi</ThemedText>
+                </View>
                 {renderControl(ALL_FILTERS.searchRadiusKm)}
+                {renderControl(ALL_FILTERS.size)}
+              </View>
+
+              {/* Sezione Caratteristiche Generali */}
+              <View style={[styles.card, { backgroundColor: backgroundMuted }]}>
+                <View className="flex-row items-center mb-5">
+                  <Ionicons name="options-outline" size={14} color={textColor} style={{ opacity: 0.4, marginRight: 8 }} />
+                  <ThemedText style={styles.sectionTitle}>Caratteristiche</ThemedText>
+                </View>
                 {renderControl(ALL_FILTERS.acceptedCondition)}
                 {renderControl(ALL_FILTERS.minEnergyRating)}
                 {renderControl(ALL_FILTERS.minYearBuilt)}
-              </ThemedView>
+              </View>
 
               {!selectedMainCategoryInPanel ? (
-                <ThemedView className="grid grid-cols-2 gap-4">
-                  {availableCategories.map((catKey) => {
-                    // mappiamo la chiave config uppercase al corrispondente stato (reverse map)
-                    const stateKey = Object.keys(categoryStateToConfigMap).find(k => categoryStateToConfigMap[k] === catKey) as keyof typeof categoryStateToConfigMap | undefined;
-                    const isSelected = stateKey ? selectedMainCategoryInPanel === stateKey : false;
-                    return (
-                      <TouchableOpacity
-                        key={catKey}
-                        onPress={() => selectMainCategory(stateKey as any)}
-                        className="p-4 rounded-lg"
-                        style={{ backgroundColor: isSelected ? tintColor : loginCardBackground }}
-                      >
-                        <ThemedText className="font-medium" style={{ color: isSelected ? '#fff' : textColor }}>
-                          {t(`filters.category.${catKey}`)}
-                        </ThemedText>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </ThemedView>
+                <View style={styles.categorySection}>
+                  <ThemedText type="subtitle" style={styles.categoryTitle}>Tipologia</ThemedText>
+                  <View style={styles.categoryGrid}>
+                    {availableCategories.map((catKey) => {
+                      const stateKey = Object.keys(categoryStateToConfigMap).find(k => categoryStateToConfigMap[k] === catKey) as keyof typeof categoryStateToConfigMap | undefined;
+                      const isSelected = stateKey ? selectedMainCategoryInPanel === stateKey : false;
+                      return (
+                        <TouchableOpacity
+                          key={catKey}
+                          onPress={() => selectMainCategory(stateKey as any)}
+                          style={[
+                            styles.categoryButton,
+                            {
+                              backgroundColor: isSelected ? tintColor : backgroundMuted,
+                              borderColor: isSelected ? tintColor : textColor + '10'
+                            }
+                          ]}
+                        >
+                          <ThemedText style={[styles.categoryButtonText, { color: isSelected ? buttonTextColor : textColor }]}>
+                            {t(`filters.category.${catKey}`)}
+                          </ThemedText>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+                </View>
               ) : (
-                <ThemedView>
-                  <TouchableOpacity onPress={() => selectMainCategory(null)} className="flex-row items-center mb-4 px-3 py-2 self-start rounded-lg" style={{ backgroundColor: loginCardBackground }}>
-                    <Ionicons name="swap-horizontal" size={20} color={tintColor} />
-                    <ThemedText style={{ color: tintColor, marginLeft: 4 }}>{t('filterPanel.changeCategory')}</ThemedText>
-                  </TouchableOpacity>
+                <Animated.View style={{ opacity: detailsOpacity }}>
+                  <View style={styles.categoryHeader}>
+                    <ThemedText type="subtitle" style={{ fontSize: 18 }}>Tipologia</ThemedText>
+                    <TouchableOpacity
+                      onPress={() => selectMainCategory(null)}
+                      style={[styles.changeCategoryButton, { backgroundColor: textColor + '05' }]}
+                    >
+                      <Ionicons name="swap-horizontal" size={14} color={tintColor} />
+                      <ThemedText style={{ color: tintColor, marginLeft: 5, fontSize: 12, fontWeight: '700' }}>Cambia</ThemedText>
+                    </TouchableOpacity>
+                  </View>
   
-                  {/* Selettore sottocategoria (es. Appartamento, Loft, ...) */}
                   {(() => {
-                    // Usa direttamente selectedMainCategoryInPanel (già 'residential'|'commercial'|'garage'|'land')
                     const stateKey = selectedMainCategoryInPanel as keyof typeof categoryStateToConfigMap | undefined;
-                    // Debug: log stato corrente per investigare perché le opzioni non compaiono
-                    // eslint-disable-next-line no-console
-                    console.log('[FilterPanel] selectedMainCategoryInPanel:', selectedMainCategoryInPanel, 'selectedCategoryConfigKey:', selectedCategoryConfigKey, 'resolved stateKey:', stateKey);
                     if (!stateKey) return null;
-  
-                    // Otteniamo le opzioni dinamiche dal backend via hook.
-                    // categoryStateToConfigMap mappa lo stato 'residential'|'commercial' -> 'RESIDENTIAL'|'COMMERCIAL'
                     const configKey = categoryStateToConfigMap[stateKey as string];
                     const opts = (configKey && categoriesByType && Array.isArray(categoriesByType[configKey]) && categoriesByType[configKey].length > 0)
                       ? categoriesByType[configKey]
                       : [];
-                    // Debug: log opzioni trovate
-                    // eslint-disable-next-line no-console
-                    console.log('[FilterPanel] category options for', stateKey, opts);
                     if (opts.length === 0) return null;
-  
-                    // Il filtro category è un FilterState<...>; usiamo .value per il controllo UI
                     const rawCategoryState = ((filters as any)[stateKey] || {}).category;
                     const currentValue = rawCategoryState && typeof rawCategoryState === 'object' && 'value' in rawCategoryState
                       ? rawCategoryState.value
                       : (rawCategoryState ?? undefined);
 
                     return (
-                      <ThemedView className="mb-4">
-                        <ThemedText className="text-sm mb-2" style={{ color: textColor }}>
-                          {t('filters.category.label')} ({t(`filters.category.${stateKey}`)})
+                      <View style={[styles.card, { backgroundColor: backgroundMuted }]}>
+                        <View className="flex-row items-center mb-5">
+                          <Ionicons name="grid-outline" size={14} color={textColor} style={{ opacity: 0.4, marginRight: 8 }} />
+                          <ThemedText style={styles.sectionTitle}>Sottocategoria</ThemedText>
+                        </View>
+                        <ThemedText style={[styles.controlLabel, { marginBottom: 16 }]}>
+                          {t('filters.category.label')} ({t(`filters.category.${categoryStateToConfigMap[stateKey as string]}`)})
                         </ThemedText>
-                        <SegmentedControl
+                        <ChipSelector
                           options={opts.map(o => ({ label: t(`filters.category.options.${o}`), value: o }))}
                           value={currentValue}
                           onChange={(v: any) => {
-                            console.log(`[FilterPanel] onChange subcategory - stateKey: ${stateKey}, selected value:`, v);
-                            // aggiorna la proprietà 'category' della categoria selezionata usando l'hook (normalizza valori)
                             updateCategoryFilter(stateKey as any, { category: v });
                           }}
                         />
-                      </ThemedView>
-                    );
-                  })()}
-  
-                  {/* Render dinamico dei filtri per la categoria selezionata */}
+                    </View>
+                  );
+                })()}
+
+                <View style={[styles.card, { backgroundColor: backgroundMuted, marginBottom: 40 }]}>
+                  <View className="flex-row items-center mb-5">
+                    <Ionicons name="list-outline" size={14} color={textColor} style={{ opacity: 0.4, marginRight: 8 }} />
+                    <ThemedText style={styles.sectionTitle}>Dettagli Specifici</ThemedText>
+                  </View>
                   {filtersToRender.map((key: string) => {
-                    const def: FilterDefinition = (ALL_FILTERS as any)[key];
-                    if (!def) {
-                      console.warn(`[FilterPanel] No filter definition found for key: ${key}`);
-                      return null;
-                    }
-                    // Per i controlli della categoria passiamo la chiave di stato direttamente
-                    const stateKey = selectedMainCategoryInPanel as keyof typeof categoryStateToConfigMap | undefined;
-                    return renderControl(def, stateKey);
-                  })}
-                </ThemedView>
+                      const def: FilterDefinition = (ALL_FILTERS as any)[key];
+                      if (!def) return null;
+                      const stateKey = selectedMainCategoryInPanel as keyof typeof categoryStateToConfigMap | undefined;
+                      return renderControl(def, stateKey);
+                    })}
+                </View>
+                </Animated.View>
               )}
             </ScrollView>
 
-            <ThemedView className="px-4 pt-4 pb-8 border-t border-gray-200 dark:border-gray-700" style={{ backgroundColor: backgroundPrimary }}>
+            {/* Footer */}
+            <View style={[styles.footer, { backgroundColor: backgroundPrimary, borderTopColor: textColor + '08' }]}>
               <TouchableOpacity
                 onPress={async () => {
                   hidePanel();
                   try {
-                    // Esegui la ricerca direttamente dall'hook (disaccoppia da URL)
                     await search();
-                    // Sincronizza l'URL solo dopo che la ricerca è stata effettivamente applicata
-                    try { forceSyncUrl(); } catch (e) { console.error('[FilterPanel] forceSyncUrl failed', e); }
-                    // Se il chiamante vuole anche navigare/aggiornare la UI, invoca la callback
+                    try { forceSyncUrl(); } catch (e) {}
                     if (onApplyAndNavigate) onApplyAndNavigate();
                   } catch (err) {
                     Alert.alert('Errore', 'Si è verificato un errore durante la ricerca. Riprova.');
-                    // eslint-disable-next-line no-console
-                    console.error('[FilterPanel] search failed', err);
                   }
                 }}
-                className="p-4 rounded-lg items-center flex-row justify-center"
-                style={{ backgroundColor: buttonBackground }}
+                style={[styles.applyButton, { backgroundColor: buttonBackground }]}
               >
                 <Ionicons name="search" size={20} color={buttonTextColor} style={{ marginRight: 8 }} />
-                <ThemedText className="text-white font-semibold" style={{ color: buttonTextColor }}>Cerca</ThemedText>
+                <ThemedText style={[styles.applyButtonText, { color: buttonTextColor }]}>Cerca</ThemedText>
               </TouchableOpacity>
-            </ThemedView>
+            </View>
           </Animated.View>
         </Animated.View>
       </GestureHandlerRootView>
     </Modal>
   );
 };
+
+const styles = StyleSheet.create({
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  panel: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: -4 },
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
+      },
+      android: {
+        elevation: 8,
+      },
+    }),
+  },
+  handleContainer: {
+    alignItems: 'center',
+    paddingTop: 12,
+  },
+  handle: {
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    opacity: 0.15,
+    alignSelf: 'center',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingVertical: 20,
+    borderBottomWidth: 1,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTextContainer: {
+    marginLeft: 14,
+  },
+  headerSubtitle: {
+    fontSize: 11,
+    fontWeight: '700',
+    opacity: 0.5,
+    marginTop: 1,
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  resetButton: {
+    marginRight: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  closeButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  card: {
+    marginBottom: 24,
+    padding: 24,
+    borderRadius: 32,
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.03)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.02,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  sectionTitle: {
+    fontSize: 9,
+    fontWeight: '700',
+    opacity: 0.4,
+    textTransform: 'uppercase',
+    letterSpacing: 2.5,
+  },
+  controlContainer: {
+    marginBottom: 24,
+  },
+  controlLabel: {
+    fontSize: 14,
+    fontWeight: '700',
+    marginBottom: 12,
+  },
+  switchCard: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 24,
+    padding: 20,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.05)',
+  },
+  switchLabel: {
+    fontWeight: '700',
+    fontSize: 15,
+  },
+  categorySection: {
+    marginTop: 8,
+  },
+  categoryTitle: {
+    fontSize: 18,
+    marginBottom: 16,
+    paddingHorizontal: 4,
+  },
+  categoryGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  categoryButton: {
+    width: '48%',
+    padding: 20,
+    borderRadius: 24,
+    marginBottom: 16,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
+  },
+  categoryButtonText: {
+    fontWeight: '700',
+    textAlign: 'center',
+    fontSize: 14,
+  },
+  categoryHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+    paddingHorizontal: 4,
+  },
+  changeCategoryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  footer: {
+    paddingHorizontal: 24,
+    paddingTop: 16,
+    paddingBottom: Platform.OS === 'ios' ? 40 : 24,
+    borderTopWidth: 1,
+  },
+  applyButton: {
+    height: 56,
+    borderRadius: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  applyButtonText: {
+    fontSize: 16,
+    fontWeight: '700',
+  },
+});
 
 export const FilterPanel = withErrorBoundary(FilterPanelComponent, {
   onError: (error, errorInfo) => {

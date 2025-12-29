@@ -2,25 +2,28 @@ import * as React from 'react';
 import { TouchableOpacity, Image } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { formatAddress, PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
+import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
 import { PropertyCharacteristicsDisplay, mapPropertyDetailToCharacteristics } from '@/components/Property/PropertyCharacteristicsDisplay';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import * as Haptics from 'expo-haptics';
 import ThemedButton from '@/components/ThemedButton';
 import { useTranslation } from 'react-i18next';
+import { formatPrice, getPropertyImage, safeGetAddress } from '@/src/utils/uiHelpers';
 
 interface PropertyCardProps {
-  property: PropertyDetail; // Usa il tipo unificato
+  property: PropertyDetail;
   onPress: () => void;
   lightColor?: string;
   darkColor?: string;
+  showCharacteristics?: boolean;
 }
 
 export const PropertyCard: React.FC<PropertyCardProps> = ({
   property,
   onPress,
   lightColor,
-  darkColor
+  darkColor,
+  showCharacteristics = true
 }) => {
   const backgroundColor = useThemeColor(
     { light: lightColor, dark: darkColor }, 
@@ -46,7 +49,6 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
     onPress();
   };
 
-  const placeholderImageUrl = 'https://placehold.co/600x400/000000/FFFFFF.webp?text=Image+Not+Found&font=Poppins';
   const { t } = useTranslation();
 
 
@@ -58,8 +60,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
       accessibilityLabel={`Visualizza dettagli per ${t('property_category.'+property.propertyCategory)} in ${property.address?.city || 'N/A'}, ${t('property_status.'+property.condition)}`}
     >
       <Image
-        // Usa un placeholder se imageUrl non è definito
-        source={{ uri: property.firstImageUrl || placeholderImageUrl }}
+        source={{ uri: getPropertyImage(property) }}
         className="w-full h-48"
         resizeMode="cover"
       />
@@ -71,7 +72,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           lightColor={textColor}
           darkColor={textColor}
         >
-            {t('property_category.sub.'+property.propertyCategory)} in {typeof property.address == 'string' ? property.address : formatAddress(property.address)} - {t('property_status.'+property.condition)}
+            {t('property_category.sub.'+property.propertyCategory)} in {safeGetAddress(property.address).display} - {t('property_status.'+property.condition)}
         </ThemedText>
         
         <ThemedText 
@@ -83,9 +84,9 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           {property.description}
         </ThemedText>
 
-        {/* >>> INIZIO INTEGRAZIONE CARATTERISTICHE <<< */}
-        <PropertyCharacteristicsDisplay property={mapPropertyDetailToCharacteristics(property)} />
-        {/* >>> FINE INTEGRAZIONE CARATTERISTICHE <<< */}
+        {showCharacteristics && (
+          <PropertyCharacteristicsDisplay property={mapPropertyDetailToCharacteristics(property)} />
+        )}
 
         <ThemedView className="flex-row justify-between items-center" style={{ backgroundColor }}>
           <ThemedText
@@ -93,7 +94,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             className="text-xl"
             style={{ color: textColor }}
           >
-            €{property.price}
+            {formatPrice(property.price)}
           </ThemedText>
           <ThemedButton
             title={t('home.detailsButton')}

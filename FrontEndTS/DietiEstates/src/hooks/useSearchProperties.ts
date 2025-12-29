@@ -234,7 +234,17 @@ export default function useSearchProperties() {
   }, [dispatch]);
 
   const getSuggestions = useCallback(async (query: string) => {
-    return SuggestionsRepository.getSuggestions(query);
+    // Il debounce è fondamentale per evitare BAN dalle API di geocoding (specialmente Nominatim).
+    // Implementiamo un debounce manuale tramite un timer salvato in una ref.
+    return new Promise<any[]>((resolve) => {
+      if ((getSuggestions as any).timeout) {
+        clearTimeout((getSuggestions as any).timeout);
+      }
+      (getSuggestions as any).timeout = setTimeout(async () => {
+        const results = await SuggestionsRepository.getSuggestions(query);
+        resolve(results);
+      }, 400); // 400ms di ritardo
+    });
   }, []);
   
   const saveSuggestions = useCallback(async (query: string, suggestions: any[]) => {

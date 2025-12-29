@@ -53,15 +53,16 @@ export default function VisitsTab() {
                 <ThemedText>{t('time')}: {new Date(visit.visit.startTime).toLocaleTimeString()}</ThemedText>
                 <ThemedText>{t('address')}: {visit.address.city} ({visit.address.country}) {visit.address.street} {visit.address.streetNumber}</ThemedText>
                 <ThemedView style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
-                  <ThemedText><ThemedView
+                  <ThemedView
                     style={{
                       width: 10,
                       height: 10,
                       borderRadius: 6,
                       backgroundColor: getStatusColor(visit.visit.status),
-                      margin: 8,
+                      marginRight: 8,
                     }}
-                  /> {t(`visit_status.${visit.visit.status.toUpperCase()}`)}</ThemedText>
+                  />
+                  <ThemedText>{t(`visit_status.${visit.visit.status.toUpperCase()}`)}</ThemedText>
                 </ThemedView>
               </ThemedView>
             ))}

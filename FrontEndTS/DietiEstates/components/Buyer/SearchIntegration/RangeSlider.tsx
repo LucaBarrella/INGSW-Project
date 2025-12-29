@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { ThemedView } from "@/components/ThemedView";
-import { ThemedText } from "@/components/ThemedText";
+import { View, StyleSheet, Dimensions } from "react-native";
 import Slider from "@react-native-community/slider";
+import { ThemedText } from "@/components/ThemedText";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { withErrorBoundary } from "./ErrorBoundary";
+import * as Haptics from 'expo-haptics';
 import type { RangeSliderProps } from "./types";
 
 export const formatCurrency = (value: number): string => {
@@ -15,7 +15,11 @@ export const formatCurrency = (value: number): string => {
   return `€${value.toLocaleString('it-IT')}`;
 };
 
-const RangeSliderComponent: React.FC<RangeSliderProps> = ({
+/**
+ * RangeSlider component for selecting a range of values.
+ * Features a modern design with haptic feedback on interaction.
+ */
+export const RangeSlider: React.FC<RangeSliderProps> = ({
   title,
   value,
   onChange,
@@ -28,8 +32,7 @@ const RangeSliderComponent: React.FC<RangeSliderProps> = ({
 }) => {
   const textColor = useThemeColor({}, "text");
   const tintColor = useThemeColor({}, "buttonBackground");
-  const backgroundColor = useThemeColor({}, "tabIconDefault");
-  const tabIconDefault = useThemeColor({}, "text");
+  const backgroundMuted = useThemeColor({}, "backgroundMuted");
 
   const initialDisplayValue = type === "price" ? value.max : value.min;
   const [tempValue, setTempValue] = useState(initialDisplayValue);
@@ -38,7 +41,12 @@ const RangeSliderComponent: React.FC<RangeSliderProps> = ({
     setTempValue(initialDisplayValue);
   }, [value]);
 
-  // Assicuriamoci che displayValue sia sempre all'interno del range
+  const triggerHaptic = () => {
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    } catch (e) {}
+  };
+
   const ensureInRange = (val: number): number => {
     if (val < min) return min;
     if (val > max) return max;
@@ -50,6 +58,11 @@ const RangeSliderComponent: React.FC<RangeSliderProps> = ({
       return formatCurrency(val);
     }
     return `${val}${unit}`;
+  };
+
+  const handleValueChange = (val: number) => {
+    setTempValue(val);
+    triggerHaptic();
   };
 
   const handleSlidingComplete = (val: number) => {
@@ -66,72 +79,82 @@ const RangeSliderComponent: React.FC<RangeSliderProps> = ({
   const finalFormatValue = formatValue || defaultFormatValue;
 
   return (
-    <ThemedView className="mb-6">
-      <ThemedView className="flex-row justify-between items-center mb-4">
-        <ThemedView>
-          <ThemedText
-            className="text-base font-medium"
-            style={{ color: textColor }}
-          >
-            {title}
-          </ThemedText>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <View>
+          <ThemedText style={[styles.title, { color: textColor }]}>{title}</ThemedText>
           {type === "price" && (
-            <ThemedText
-              className="text-xs mt-1"
-              style={{ color: tabIconDefault }}
-            >
+            <ThemedText style={[styles.subtitle, { color: textColor, opacity: 0.7 }]}>
               Trascina per modificare
             </ThemedText>
           )}
-        </ThemedView>
-        <ThemedText
-          className="text-sm font-medium"
-          style={{ color: textColor }}
-        >
+        </View>
+        <ThemedText style={[styles.valueDisplay, { color: tintColor }]}>
           {finalFormatValue(tempValue)}
         </ThemedText>
-      </ThemedView>
-      <ThemedView className="px-2">
+      </View>
+      
+      <View style={styles.sliderWrapper}>
         <Slider
           minimumValue={min}
           maximumValue={max}
           step={step}
           value={tempValue}
-          onValueChange={setTempValue}
+          onValueChange={handleValueChange}
           onSlidingComplete={handleSlidingComplete}
           minimumTrackTintColor={tintColor}
-          maximumTrackTintColor={backgroundColor}
+          maximumTrackTintColor={backgroundMuted}
           thumbTintColor={tintColor}
-          style={{ width: "100%", height: 40 }}
+          style={styles.slider}
         />
-        <ThemedView className="flex-row justify-between mt-1">
-          <ThemedText 
-            className="text-xs"
-            style={{ color: tabIconDefault }}
-          >
-            {finalFormatValue(min)}
-          </ThemedText>
-          <ThemedText 
-            className="text-xs"
-            style={{ color: tabIconDefault }}
-          >
-            {finalFormatValue(max)}
-          </ThemedText>
-        </ThemedView>
-      </ThemedView>
-    </ThemedView>
+      </View>
+      
+      <View style={styles.footer}>
+        <ThemedText style={[styles.limitText, { color: textColor }]}>{finalFormatValue(min)}</ThemedText>
+        <ThemedText style={[styles.limitText, { color: textColor }]}>{finalFormatValue(max)}</ThemedText>
+      </View>
+    </View>
   );
 };
 
-export const RangeSlider = withErrorBoundary<RangeSliderProps>(RangeSliderComponent, {
-  onError: (error, errorInfo) => {
-    console.error("RangeSlider Error:", error, errorInfo);
+const styles = StyleSheet.create({
+  container: {
+    marginBottom: 24,
   },
-  fallbackComponent: (
-    <ThemedView className="p-4">
-      <ThemedText className="text-red-500">
-        Unable to load range slider. Please try again later.
-      </ThemedText>
-    </ThemedView>
-  ),
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 12,
+  },
+  title: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  subtitle: {
+    fontSize: 11,
+    marginTop: 2,
+  },
+  valueDisplay: {
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  sliderWrapper: {
+    height: 40,
+    justifyContent: 'center',
+  },
+  slider: {
+    width: '100%',
+    height: 40,
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 4,
+  },
+  limitText: {
+    fontSize: 11,
+    fontWeight: '600',
+    opacity: 0.6,
+  },
 });

@@ -4,8 +4,8 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { OfferResponseDTO } from '@/src/dto/response/OfferResponseDTO';
-import { formatAddress } from '../Agent/PropertyDashboard/types';
 import { t } from 'i18next';
+import { formatPrice, getPropertyImage, safeGetAddress } from '@/src/utils/uiHelpers';
 
 export interface ArchivedOfferCardProps {
   offer: OfferResponseDTO;
@@ -27,7 +27,7 @@ export function ArchivedOfferCard({ offer, onContactBuyer }: ArchivedOfferCardPr
     <ThemedView style={[styles.card, { borderColor: border, backgroundColor: backgroundMuted }]}>
       <View style={styles.imageContainer}>
         <Image
-          source={{ uri: offer.property.firstImageUrl || (offer.property.imageUrl ? offer.property.imageUrl[0] : '') }}
+          source={{ uri: getPropertyImage(offer.property) }}
           style={[styles.propertyImage]}
         />
         <View style={[styles.statusBadge, { backgroundColor: isAccepted ? success : error }]}>
@@ -39,8 +39,8 @@ export function ArchivedOfferCard({ offer, onContactBuyer }: ArchivedOfferCardPr
 
       <View style={styles.detailsContainer}>
         <ThemedText style={styles.propertyName}>{t(`property_category.sub.${offer.property.propertyCategory}`)}</ThemedText>
-        <ThemedText style={[styles.propertyAddress, { color: textColor }]}>{formatAddress(offer.property.address)}</ThemedText>
-        <ThemedText style={styles.offerAmount}>{t('offersArchived.agent.offerAmount', { amount: offer.price.toLocaleString('it-IT') })}</ThemedText>
+        <ThemedText style={[styles.propertyAddress, { color: textColor }]}>{safeGetAddress(offer.property.address).display}</ThemedText>
+        <ThemedText style={styles.offerAmount}>{t('offersArchived.agent.offerAmount', { amount: formatPrice(offer.price) })}</ThemedText>
 
         {offer.user && (isAccepted ? (
           <View style={styles.buyerInfo}>
@@ -57,7 +57,7 @@ export function ArchivedOfferCard({ offer, onContactBuyer }: ArchivedOfferCardPr
           <View style={styles.rejectionLog}>
             <ThemedText style={styles.logTitle}>{t('offersArchived.agent.rejectionLogTitle')}</ThemedText>
             <ThemedText style={styles.logText}>{t('offersArchived.agent.offererLabel', { name: offer.user.fullName })}</ThemedText>
-            <ThemedText style={styles.logText}>{t('offersArchived.agent.proposalAmount', { amount: offer.price })}</ThemedText>
+            <ThemedText style={styles.logText}>{t('offersArchived.agent.proposalAmount', { amount: formatPrice(offer.price) })}</ThemedText>
           </View>
         ))}
       </View>

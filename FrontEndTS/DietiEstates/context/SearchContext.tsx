@@ -32,7 +32,6 @@ const updateFilterCategory = <TCategory extends Record<string, FilterState<any>>
   const updated = { ...existingCategory } as TCategory;
   for (const key of Object.keys(newFilters) as (keyof TCategory)[]) {
     const rawNewValue = newFilters[key];
-    console.log(`[SearchContext] updateFilterCategory - key: ${String(key)}, rawNewValue:`, rawNewValue);
 
     // Se non esiste lo stato corrente per questa chiave, creiamo un FilterState di fallback
     const existing = (updated[key] as unknown as FilterState<any>) ?? ({} as FilterState<any>);
@@ -61,11 +60,9 @@ const updateFilterCategory = <TCategory extends Record<string, FilterState<any>>
     } else if (existing && (existing as any).defaultValue !== undefined) {
       defaultValue = (existing as any).defaultValue;
     }
-    console.log(`[SearchContext] updateFilterCategory - key: ${String(key)}, resolved defaultValue:`, defaultValue);
 
     // Normalizziamo il FilterState usando updateFilterState (determina isModified)
     const newState = updateFilterState(existing as any, normalizedNewValue, defaultValue) as any;
-    console.log(`[SearchContext] updateFilterState result - isModified: ${newState.isModified}, value:`, newState.value);
     // La logica per forzare isModified a true per 'contract' è stata spostata qui
     // per evitare il loop e garantire che sia marcato come modificato solo quando l'utente interagisce.
     // Aggiunto controllo per evitare il loop: se il valore è lo stesso e non c'è forceIsModified, non forzare isModified.
@@ -139,7 +136,6 @@ const SearchContext = createContext<SearchContextType | undefined>(undefined);
 
 // 2. Implementare il Reducer (searchReducer)
 export const searchReducer = (state: SearchState, action: SearchAction): SearchState => {
-  console.log('[SearchContext] Action Dispatched:', action.type, 'Payload:', 'payload' in action ? action.payload : 'N/A');
   let newState: SearchState;
 
   switch (action.type) {
@@ -255,7 +251,6 @@ export const searchReducer = (state: SearchState, action: SearchAction): SearchS
         isLoadingFromStorage: false,
         errorStorage: null,
       };
-      console.log('[SearchContext] HYDRATE_STATE applied. isLoadingFromStorage: false');
       break;
     case 'LOAD_STATE_FROM_STORAGE':
       newState = {
@@ -264,11 +259,9 @@ export const searchReducer = (state: SearchState, action: SearchAction): SearchS
         isLoadingFromStorage: false,
         errorStorage: null,
       };
-      console.log('[SearchContext] State loaded from storage. isLoadingFromStorage: false');
       break;
     case 'SET_STORAGE_LOADING':
       newState = { ...state, isLoadingFromStorage: action.payload };
-      console.log('[SearchContext] isLoadingFromStorage set to:', action.payload);
       break;
     case 'SET_STORAGE_ERROR':
       newState = { ...state, errorStorage: action.payload, isLoadingFromStorage: false };
@@ -277,7 +270,6 @@ export const searchReducer = (state: SearchState, action: SearchAction): SearchS
     default:
       newState = state;
   }
-  console.log('[SearchContext] New State:', newState);
   return newState;
 };
 
@@ -300,7 +292,6 @@ export const SearchProvider = ({ children }: { children: ReactNode }) => {
         if (partialState.geolocation !== undefined) hydratePayload.geolocation = partialState.geolocation;
         if (storedFilters) hydratePayload.filters = storedFilters;
         dispatch({ type: 'HYDRATE_STATE', payload: hydratePayload });
-        console.log('[SearchContext] Hydrated from storage', hydratePayload);
       } catch (e) {
         console.error('[SearchContext] Error hydrating from storage', e);
         dispatch({ type: 'SET_STORAGE_ERROR', payload: 'Errore caricamento filtri da storage' });

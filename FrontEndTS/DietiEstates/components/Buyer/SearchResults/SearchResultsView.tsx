@@ -4,7 +4,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedIcon } from '@/components/ThemedIcon';
 import { SearchAndFilter } from '../SearchIntegration/SearchAndFilter';
-import { BuyerPropertyCard } from '../BuyerPropertyCard';
+import { PropertyCard } from '@/components/Agent/PropertyListing/PropertyCard';
 import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import MapView, { Marker } from 'react-native-maps';
@@ -125,7 +125,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
           contentContainerStyle={{ padding: 16 }}
           ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
           renderItem={({ item }) => (
-            <BuyerPropertyCard
+            <PropertyCard
               property={item}
               onPress={() => handleDetailsPress(item.id)}
             />

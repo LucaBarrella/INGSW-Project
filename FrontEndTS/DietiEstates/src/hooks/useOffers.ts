@@ -28,8 +28,7 @@ export const useOffers = () => {
     setError(null);
     try {
       const data = (await offerService.getReceivedOffers());
-      data.content.forEach(offer => console.log("offer: ", JSON.stringify(offer)));
-      setReceivedOffers(data.content);
+      setReceivedOffers(data);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch received offers');
     } finally {
@@ -53,7 +52,8 @@ export const useOffers = () => {
     setLoading(true);
     setError(null);
     try {
-      await offerService.acceptOffer(offerId);
+      const response = await offerService.acceptOffer(offerId);
+      return response;
     } catch (err: any) {
       setError(err.message || 'Failed to accept offer');
     } finally {
@@ -66,10 +66,8 @@ export const useOffers = () => {
     setError(null);
     try {
       const response = await offerService.withdrawOffer(offerId);
-      console.log("withdraw success response: ", response);
       return response;
     } catch (err: any) {
-      console.log("withdraw error: ", err.message);
       setError(err.message || 'Failed to withdraw offer');
     } finally {
       setLoading(false);

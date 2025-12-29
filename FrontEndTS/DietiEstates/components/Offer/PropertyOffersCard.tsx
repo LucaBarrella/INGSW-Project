@@ -7,6 +7,7 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import { PropertyWithOffers } from '@/src/dto/offers';
 import SingleOfferItem from './SingleOfferItem';
 import { t } from 'i18next';
+import { formatPrice, getPropertyImage } from '@/src/utils/uiHelpers';
 
 interface PropertyOffersCardProps {
   property: PropertyWithOffers;
@@ -32,14 +33,6 @@ const PropertyOffersCard: React.FC<PropertyOffersCardProps> = ({
   const brandColor = useThemeColor({}, 'tint');
   const secondaryColor = useThemeColor({}, 'propertyCardDetail');
 
-  const formatCurrency = (amount: number): string => {
-    return new Intl.NumberFormat('it-IT', {
-      style: 'currency',
-      currency: 'EUR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(amount);
-  };
 
   // Filtra solo le offerte attive
   const activeOffers = property.offers.filter(offer => offer.status === 'PENDING');
@@ -74,7 +67,7 @@ const PropertyOffersCard: React.FC<PropertyOffersCardProps> = ({
         {/* Immagine proprietà */}
         <View className="w-24 h-24">
           <Image
-            source={{ uri: property.imageUrl }}
+            source={{ uri: getPropertyImage(property) }}
             className="w-full h-full rounded-l-xl"
             resizeMode="cover"
           />
@@ -97,7 +90,7 @@ const PropertyOffersCard: React.FC<PropertyOffersCardProps> = ({
             <View className="flex-row items-center">
               <Ionicons name="trending-up-outline" size={14} color={brandColor} />
               <ThemedText className="ml-1 text-sm font-semibold" style={{ color: brandColor }}>
-                Offerta più alta: {formatCurrency(highestOffer.amount)}
+                Offerta più alta: {formatPrice(highestOffer.amount)}
               </ThemedText>
             </View>
           )}

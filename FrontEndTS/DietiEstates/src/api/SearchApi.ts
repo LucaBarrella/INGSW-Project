@@ -1,10 +1,14 @@
 import httpClient from '@/src/core/httpClient';
 import { FilterRequest } from '@/src/dto/request/FilterRequest.dto';
-import { PagedPropertyResponse, PropertyResponse } from '@/src/dto/response/PropertyResponse.dto';
+import { PagedPropertyResponse } from '@/src/dto/response/PropertyResponse.dto';
 import ApiError from '@/src/core/errors/ApiError';
 import { PropertyDetailDTO } from '@/src/dto/PropertyDetailsDTO';
+import { PlaceDTO } from '@/src/dto/response/PlaceDTO';
+import axios from 'axios';
 
 class SearchApi {
+  private placesCache = new Map<string, { data: PlaceDTO[], timestamp: number }>();
+  private CACHE_TTL = 1000 * 60 * 5; // 5 minuti
   /**
    * Esegue la chiamata POST /properties/search.
    * Il body della richiesta è la combinazione di FilterRequest e dei parametri di paginazione (page/size/sort).
@@ -69,6 +73,47 @@ class SearchApi {
         error.response?.status || 500,
         error.response?.data?.message || 'Errore sconosciuto durante il recupero delle proprietà per ID.',
       );
+    }
+  }
+
+  /**
+   * Recupera i servizi nelle vicinanze per una proprietà.
+   * GET /api/properties/{id}/places
+   */
+  async getNearbyServices(propertyId: string | number, signal?: AbortSignal, retries = 1): Promise<PlaceDTO[]> {
+    const cacheKey = propertyId.toString();
+    const cached = this.placesCache.get(cacheKey);
+    if (cached && (Date.now() - cached.timestamp < this.CACHE_TTL)) {
+      console.log(`[SearchApi] Returning cached places for property ${propertyId}`);
+      return cached.data;
+    }
+
+    const startTime = Date.now();
+    try {
+      console.log(`[SearchApi] Fetching nearby services for property ${propertyId}...`);
+      const response = await httpClient.get<PlaceDTO[]>(`/api/properties/${propertyId}/places`, { signal });
+      const duration = Date.now() - startTime;
+      console.log(`[SearchApi] Nearby services fetched in ${duration}ms`);
+      
+      this.placesCache.set(cacheKey, { data: response.data, timestamp: Date.now() });
+      return response.data;
+    } catch (error: any) {
+      const duration = Date.now() - startTime;
+      if (axios.isCancel(error)) {
+        console.log(`[SearchApi] Request for property ${propertyId} places was canceled.`);
+        throw error;
+      }
+
+      const isTimeout = error.code === 'ECONNABORTED' || error.message?.includes('timeout') || error.status === 408;
+      
+      if (retries > 0 && isTimeout) {
+        console.warn(`[SearchApi] Timeout fetching places for ${propertyId}. Retrying... (${retries} left)`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        return this.getNearbyServices(propertyId, signal, retries - 1);
+      }
+
+      console.error(`[SearchApi] Error fetching nearby services after ${duration}ms:`, error);
+      throw error;
     }
   }
 }

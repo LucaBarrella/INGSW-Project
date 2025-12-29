@@ -9,8 +9,8 @@ declare module 'axios' {
   }
 }
 
-const BASE_URL = 'https://thefabbest-dietiestates25.hf.space'
-// const BASE_URL = 'https://ropesthrills-dietiestates25.hf.space';
+// const BASE_URL = 'https://thefabbest-dietiestates25.hf.space'
+const BASE_URL = 'https://ropesthrills-dietiestates25.hf.space';
       
 const TIMEOUT = 10000;
 
@@ -122,6 +122,10 @@ const performRefresh = async (originalRequest: InternalAxiosRequestConfig) => {
 httpClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
+    if (axios.isCancel(error) || error.name === 'CanceledError' || error.message === 'canceled') {
+      return Promise.reject(error);
+    }
+
     const statusCode = error.response?.status ?? 0;
     const originalRequest = error.config as InternalAxiosRequestConfig | undefined;
 
@@ -146,8 +150,13 @@ httpClient.interceptors.response.use(
       const userMessage = mapStatusToMessage(statusCode);
       return Promise.reject(new ApiError(statusCode, userMessage));
     } else if (error.request) {
-      console.error('[httpClient] Errore di rete o nessuna risposta dal server:', error.request);
-      return Promise.reject(new ApiError(0, 'Nessuna risposta dal server. Controlla la tua connessione.'));
+      const isTimeout = error.code === 'ECONNABORTED' || error.message?.includes('timeout');
+      console.error(`[httpClient] Errore di rete o nessuna risposta dal server (Timeout: ${isTimeout}):`, {
+        code: error.code,
+        message: error.message,
+        url: error.config?.url
+      });
+      return Promise.reject(new ApiError(0, isTimeout ? 'Il server ha impiegato troppo tempo a rispondere. Riprova.' : 'Nessuna risposta dal server. Controlla la tua connessione.'));
     } else {
       console.error('[httpClient] Errore configurazione richiesta Axios:', error.message);
       return Promise.reject(new ApiError(0, 'Errore nella configurazione della richiesta.'));

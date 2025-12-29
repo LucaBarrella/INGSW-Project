@@ -39,15 +39,6 @@ export default function SearchResultsScreen() {
     }
   }, [state.isLoadingFromStorage, search]);
 
-  useEffect(() => {
-    console.log('[SearchScreen] Properties state updated:', properties);
-  }, [properties]);
-
-  useEffect(() => {
-    if (error) {
-      console.log('[SearchScreen] Error state updated:', error);
-    }
-  }, [error]);
 
   return (
     <ThemedView className="flex-1">

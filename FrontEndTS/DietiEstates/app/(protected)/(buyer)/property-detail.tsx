@@ -19,7 +19,10 @@ import { generatePropertyImageUrls } from '@/src/utils/imageUtils';
 import VisitApiService from '@/src/api/VisitApi';
 import { AvailabilityDTO } from '@/src/dto/response/AvailabilityDTO';
 import HistoryStorageService from '@/src/api/history.service';
-import { formatAddress, parseLocalDateTime } from '@/components/Agent/PropertyDashboard/types';
+import { parseLocalDateTime } from '@/components/Agent/PropertyDashboard/types';
+import { formatPrice, safeGetAddress } from '@/src/utils/uiHelpers';
+import SearchApi from '@/src/api/SearchApi';
+import axios from 'axios';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -47,40 +50,48 @@ const PropertyDetailScreen: React.FC = () => {
   const iconNames: { [key: string]: string } = {
     'education': 'material-symbols:school',
     'healthcare': 'material-symbols:local-hospital',
-    'commercial': 'material-symbols:material-symbols:shopping-bag',
+    'commercial': 'material-symbols:shopping-bag',
     'public_transport': 'material-symbols:train',
     'leisure': 'material-symbols:park',
   }
 
   useEffect(() => {
+    const abortController = new AbortController();
+
     const fetchPropertyDetails = async () => {
       if (!propertyId) return;
       setFetchingProperty(true);
       try {
-        const response = await httpClient.get<PropertyDTO>(`/properties/details/${propertyId}`);
-        console.log("Property: ", response.data);
+        const response = await httpClient.get<PropertyDTO>(`/properties/details/${propertyId}`, { signal: abortController.signal });
         setProperty(response.data);
       } catch (error) {
-        // no alert, continue silently (error message is shown anyway when not fetching anymore)
-        console.error('Error fetching property details:', error);
+        if (!axios.isCancel(error)) {
+          console.error('Error fetching property details:', error);
+        }
       } finally {
         setFetchingProperty(false);
       }
     }
+
     const fetchNearbyServices = async () => {
       if (!propertyId) return;
-      httpClient.get<PlaceDTO[]>(`/api/properties/${propertyId}/places`).then(response => {
-        console.log('Fetched nearby services:', response.data);
-        setPlaces(response.data);
-      }).catch(error => {
-        // no alert, continue silently
-        console.error('Error fetching nearby services:', error);
-      });
+      try {
+        const data = await SearchApi.getNearbyServices(propertyId as string, abortController.signal);
+        setPlaces(data);
+      } catch (error) {
+        if (!axios.isCancel(error)) {
+          console.error('Error fetching nearby services:', error);
+        }
+      }
     };
     
     fetchPropertyDetails();
     fetchNearbyServices();
-  }, []);
+
+    return () => {
+      abortController.abort();
+    };
+  }, [propertyId]);
 
   useEffect(() => {
     const fetchAvailability = async () => {
@@ -95,7 +106,6 @@ const PropertyDetailScreen: React.FC = () => {
 
   useEffect(() => {
     if (property?.id) {
-      console.log(`[property-detail] Adding property ${property.id} to history.`);
       HistoryStorageService.addPropertyToHistory(property.id).catch((err) => {
         console.error('[property-detail] Failed to add property to history', err);
       });
@@ -106,14 +116,6 @@ const PropertyDetailScreen: React.FC = () => {
     router.back();
   };
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('it-IT', {
-      style: 'currency',
-      currency: 'EUR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(price);
-  };
 
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const slide = Math.ceil(event.nativeEvent.contentOffset.x / event.nativeEvent.layoutMeasurement.width);
@@ -124,7 +126,7 @@ const PropertyDetailScreen: React.FC = () => {
 
   const optionalPropertyDetails = ['area', 'numberOfBathrooms', 'floor', 'numberOfFloors', 'yearBuilt', 'heating',
     'energyClass', 'furnished', 'hasElevator', 'garden', 'parkingSpaces', 'swimmingPool', 'numberOfRooms', 'numberOfBedrooms',
-    'totalFloors', 'hasDisabledAccess', 'hasRoadAccess', 'parkingSpaces'];
+    'totalFloors', 'hasDisabledAccess', 'hasRoadAccess'];
 
   const styles = createStyles(themeColors);
 
@@ -199,7 +201,7 @@ const PropertyDetailScreen: React.FC = () => {
 
         {/* Titolo, indirizzo e prezzo */}
         <View style={styles.propertyInfo}>
-          <ThemedText style={styles.title}>{formatAddress(property.address) || 'Immobile'}</ThemedText>
+          <ThemedText style={styles.title}>{safeGetAddress(property.address).display || 'Immobile'}</ThemedText>
           <ThemedText style={styles.address}>
             {property.address?.city || ''}
           </ThemedText>
@@ -345,7 +347,7 @@ const PropertyDetailScreen: React.FC = () => {
       <OfferPanel
         isVisible={isOfferPanelVisible}
         onClose={() => setOfferPanelVisible(false)}
-        propertyAddress={formatAddress(property?.address) || 'Indirizzo non disponibile'}
+        propertyAddress={safeGetAddress(property?.address).display || 'Indirizzo non disponibile'}
         askingPrice={property?.price ? property.price.toString() : '0'}
         propertyId={property.id.toString()}
       />
@@ -506,13 +508,14 @@ const createStyles = (themeColors: typeof Colors.light) => StyleSheet.create({
     flexWrap: 'wrap',
     marginHorizontal: 16,
     marginBottom: 16,
-    gap: 8,
   },
   tag: {
     backgroundColor: themeColors.tabBarBackground,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
+    marginRight: 8,
+    marginBottom: 8,
   },
   tagText: {
     fontSize: 12,
@@ -640,7 +643,6 @@ const createStyles = (themeColors: typeof Colors.light) => StyleSheet.create({
   servicesGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
   },
   agentCard: {
     flexDirection: 'row',

@@ -17,7 +17,7 @@ export const SuggestionsDisplayer: React.FC<SuggestionsDisplayerProps> = ({
         <FlatList
             data={suggestions.filter(suggestion => {
                 if (!filterType) return true;
-                else {console.log(suggestion.properties?.type); return suggestion.properties?.type === filterType;}
+                return suggestion.properties?.type === filterType;
             })}
             keyboardShouldPersistTaps="handled"
             keyExtractor={(item, index) => `${item.properties?.osm_id ?? item.label ?? 'suggestion'}-${index}`}

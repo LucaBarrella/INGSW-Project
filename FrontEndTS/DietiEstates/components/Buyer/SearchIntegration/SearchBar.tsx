@@ -50,7 +50,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     }
 
     const q = value?.trim() ?? '';
-    console.log(`[SearchBar useEffect] q: "${q}", geolocation: ${JSON.stringify(state.geolocation)}, lastQuery: "${lastQueryRef.current}"`);
 
     if (state.geolocation && q === state.geolocation.label) {
       setSuggestions([]);
@@ -60,7 +59,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     if (!q) {
       setSuggestions([]);
       lastQueryRef.current = '';
-      console.log('[SearchBar] Query is empty, clearing suggestions');
       return;
     }
 
@@ -69,7 +67,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
     // Evita chiamate per query troppo corte (meno di 2 caratteri)
     if (q.length < 2) {
-      console.log('[SearchBar] Skipping suggestions - query too short:', q);
       setSuggestions([]);
       return;
     }

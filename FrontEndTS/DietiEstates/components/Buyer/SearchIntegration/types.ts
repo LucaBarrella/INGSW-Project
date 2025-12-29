@@ -107,6 +107,8 @@ export interface QuickNumericSelectorProps {
   maxValue?: number;
   minValue?: number;
   unit?: string;
+  presets?: string[];
+  showPresets?: boolean;
 }
 
 export interface CategorySpecificFiltersProps {

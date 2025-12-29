@@ -9,9 +9,9 @@ import { ThemedView } from '@/components/ThemedView';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
 import { OfferResponseDTO } from '@/src/dto/response/OfferResponseDTO';
-import { formatAddress } from '../Agent/PropertyDashboard/types';
 import { t } from 'i18next';
 import { useOffers } from '@/src/hooks/useOffers';
+import { formatPrice, getPropertyImage, safeGetAddress } from '@/src/utils/uiHelpers';
 
 export interface Offer {
   id: string;
@@ -31,17 +31,19 @@ interface OfferCardProps {
   onUpdate: () => void;
 }
 
-const StatusBadge = ({ status, color, icon }: { 
-  status: string; 
-  color: string; 
-  icon: IconName 
+const StatusBadge = ({ status, color, icon }: {
+  status: string;
+  color: string;
+  icon: IconName
 }) => {
+  const normalizedColor = color.startsWith('#') ? color : '#000000';
+  
   return (
-    <ThemedView 
+    <ThemedView
       className="absolute top-3 right-3 flex-row items-center gap-1.5 px-3 py-1.5 rounded-full"
-      style={{ 
-        backgroundColor: `${color}99`, 
-        borderColor: `${color}40`,
+      style={{
+        backgroundColor: normalizedColor.length === 7 ? `${normalizedColor}99` : normalizedColor,
+        borderColor: normalizedColor.length === 7 ? `${normalizedColor}40` : normalizedColor,
         borderWidth: 1,
       }}
     >
@@ -57,8 +59,6 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, onUpdate }) => {
 
   // locale-aware formatting helpers (use runtime locale)
   const locale = Intl?.DateTimeFormat?.().resolvedOptions()?.locale || 'it-IT';
-  const formatCurrency = (value: number | string) =>
-    new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(Number(value));
   const formatDate = (iso?: string) => {
     if (!iso) return '';
     try { return new Date(iso).toLocaleDateString(locale); } catch { return iso; }
@@ -168,8 +168,8 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, onUpdate }) => {
   return (
     <ThemedView className="bg-background rounded-xl m-4 shadow-lg border-border" style={{ backgroundColor: 'transparent' }}>
       <ThemedView className="relative" style={{ backgroundColor: 'transparent' }}>
-        <Image 
-          source={{ uri: offer.property.firstImageUrl }} 
+        <Image
+          source={{ uri: getPropertyImage(offer.property) }}
           className="w-full h-52 rounded-t-xl"
           resizeMode="cover"
         />
@@ -184,14 +184,14 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, onUpdate }) => {
         {/* Address Section */}
         <View className="flex-row items-start gap-2">
           <Ionicons name="location-outline" size={20} color={colors.text} className="mt-0.5" />
-          <ThemedText className="text-lg font-semibold flex-1">{formatAddress(offer.property.address)}</ThemedText>
+          <ThemedText className="text-lg font-semibold flex-1">{safeGetAddress(offer.property.address).display}</ThemedText>
         </View>
         
         {/* Financial and Date Details */}
         <View className="flex-row justify-between items-center">
           <View className="flex-row items-center gap-1.5">
             <Ionicons name="cash-outline" size={16} color={colors.text} />
-            <ThemedText className="text-muted-foreground">{formatCurrency(offer.price)}</ThemedText>
+            <ThemedText className="text-muted-foreground">{formatPrice(offer.price)}</ThemedText>
           </View>
           
           <View className="flex-row items-center gap-1.5">

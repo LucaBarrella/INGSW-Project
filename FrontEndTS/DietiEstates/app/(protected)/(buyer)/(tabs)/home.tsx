@@ -3,7 +3,7 @@ import { View, ActivityIndicator, FlatList, SafeAreaView } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
-import { BuyerPropertyCard } from '@/components/Buyer/BuyerPropertyCard';
+import { PropertyCard } from '@/components/Agent/PropertyListing/PropertyCard';
 import { CategoryButton } from '@/components/Buyer/CategoryButton';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { SearchAndFilter, Categories } from '@/components/Buyer/SearchIntegration';
@@ -56,7 +56,6 @@ export default function HomeTab() {
   };
 
   const handleSearchSubmitNavigate = () => {
-    console.log('[HomeTab] Navigating to search results page with triggerSearch=true.');
     router.push({
       pathname: '/(protected)/(buyer)/search',
       params: { triggerSearch: 'true' }
@@ -74,7 +73,6 @@ export default function HomeTab() {
   // carica la cronologia al mount
   useFocusEffect(
     React.useCallback(() => {
-      console.log('[HomeTab] Screen focused, reloading history.');
       loadInitialHistory().catch((err) => {
         console.error('[HomeTab] loadInitialHistory failed on focus', err);
       });
@@ -128,7 +126,7 @@ export default function HomeTab() {
           contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 80 }}
           ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
           renderItem={({ item }) => (
-            <BuyerPropertyCard
+            <PropertyCard
               property={item}
               onPress={() => handlePropertyPress(item.id)}
             />
