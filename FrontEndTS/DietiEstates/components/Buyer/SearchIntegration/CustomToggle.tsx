@@ -10,10 +10,10 @@ interface CustomToggleProps {
 
 /**
  * CustomToggle component for a modern, high-contrast switch.
- * Perfectly emulates macOS proportions and alignment.
+ * Perfectly emulates IOS proportions and alignment.
  */
 export const CustomToggle: React.FC<CustomToggleProps> = ({ value, onValueChange }) => {
-  const tintColor = "#007AFF"; // macOS Blue
+  const tintColor = "#007AFF"; // IOS Blue
   const backgroundMuted = useThemeColor({ light: '#D1D1D6', dark: '#39393D' }, "backgroundMuted");
   const white = "#FFFFFF";
   
