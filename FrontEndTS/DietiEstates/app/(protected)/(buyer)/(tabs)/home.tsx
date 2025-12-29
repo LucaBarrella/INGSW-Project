@@ -81,17 +81,6 @@ export default function HomeTab() {
 
   const ListHeader = (
     <View style={{ padding: 16, paddingBottom: 0 }}>
-      <View className="flex-row flex-wrap justify-between gap-y-4">
-        {Object.entries(CATEGORIES).map(([key, category]) => (
-          <View key={key} className="w-[48%]">
-            <CategoryButton
-              icon={CATEGORY_ICONS[key as keyof typeof CATEGORY_ICONS]}
-              label={t("property_category." + category.name)}
-              onPress={() => handleCategoryPress(key)}
-            />
-          </View>
-        ))}
-      </View>
       <View className="mt-6 mb-4">
         <ThemedText className="text-xl font-semibold">{t('propertiesYouHaveSeen')}</ThemedText>
       </View>

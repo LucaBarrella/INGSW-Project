@@ -44,3 +44,6 @@ context.md
 
 # kilo config
 ./kilocode
+
+# vscode settings
+.vscode/
