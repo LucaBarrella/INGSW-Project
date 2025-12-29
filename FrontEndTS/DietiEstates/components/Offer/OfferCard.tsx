@@ -188,16 +188,9 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, onUpdate }) => {
         </View>
         
         {/* Financial and Date Details */}
-        <View className="flex-row justify-between items-center">
-          <View className="flex-row items-center gap-1.5">
-            <Ionicons name="cash-outline" size={16} color={colors.text} />
-            <ThemedText className="text-muted-foreground">{formatPrice(offer.price)}</ThemedText>
-          </View>
-          
-          <View className="flex-row items-center gap-1.5">
-            <Ionicons name="calendar-outline" size={16} color={colors.text} />
-            <ThemedText className="text-muted-foreground">{formatDate(offer.date)}</ThemedText>
-          </View>
+        <View className="flex-row items-center gap-1.5">
+          <Ionicons name="cash-outline" size={16} color={colors.text} />
+          <ThemedText className="text-muted-foreground">{formatPrice(offer.price)}</ThemedText>
         </View>
         
         {/* Description */}
