@@ -67,11 +67,16 @@ export function ArchivedOfferCard({ offer, onContactBuyer }: ArchivedOfferCardPr
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 8,
+    borderRadius: 20,
     borderWidth: 1,
-    marginVertical: 8,
+    marginVertical: 10,
     overflow: 'hidden',
     flexDirection: 'row',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
   },
   imageContainer: {
     width: '40%',
@@ -87,8 +92,8 @@ const styles = StyleSheet.create({
     top: 10,
     left: 10,
     paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 4,
+    paddingHorizontal: 10,
+    borderRadius: 20,
   },
   statusText: {
     color: 'white', // Assuming white text on colored badge
@@ -123,10 +128,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   contactButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 5,
-    marginTop: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 25,
+    marginTop: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   contactButtonText: {
     fontWeight: 'bold',

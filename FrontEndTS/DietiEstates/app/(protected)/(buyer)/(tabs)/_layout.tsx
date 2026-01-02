@@ -19,6 +19,7 @@ export default function BuyerTabLayout() {
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: true,
         tabBarButton: HapticTab,
+        tabBarBackground: () => null, // Rimuove lo spazio riservato
         headerTitleStyle: { fontFamily: 'Poppins', fontSize: 18 },
         headerStyle: { backgroundColor: headerBg },
         headerTintColor: tintColor,

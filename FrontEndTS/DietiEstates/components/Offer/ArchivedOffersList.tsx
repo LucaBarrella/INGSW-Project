@@ -1,7 +1,8 @@
 import React from 'react';
-import { FlatList, ActivityIndicator, StyleSheet, Linking } from 'react-native';
+import { FlatList, ActivityIndicator, StyleSheet, Linking, View } from 'react-native';
 import { ArchivedOfferCard } from './ArchivedOfferCard';
 import { ThemedText } from '@/components/ThemedText';
+import { Ionicons } from '@expo/vector-icons';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { useOffers } from '@/src/hooks/useOffers';
 import { t } from 'i18next';
@@ -19,7 +20,11 @@ function useGetArchivedOffers(status: 'accepted' | 'rejected') {
     fetchReceivedOffers();
   }, [status]);
 
-  return { receivedOffers: receivedOffers.filter(offer => offer.status.toLowerCase() === status), loading, error };
+  const filteredOffers = Array.isArray(receivedOffers)
+    ? receivedOffers.filter(offer => offer.status.toLowerCase() === status)
+    : [];
+
+  return { receivedOffers: filteredOffers, loading, error };
 }
 
 const handleContactBuyer = (email: string) => {
@@ -39,7 +44,21 @@ export function ArchivedOffersList({ filter }: ArchivedOffersListProps) {
   }
 
   if (!offers || offers.length === 0) {
-    return <ThemedText style={[styles.noOffersText, { color: textColor }]}>{t('noOffersFound', { status: t(`offer_status.${filter.toUpperCase()}`) })}</ThemedText>;
+    return (
+      <View style={styles.emptyContainer}>
+        <View style={styles.emptyIconContainer}>
+          <Ionicons
+            name={filter === 'accepted' ? "checkmark-done-circle-outline" : "close-circle-outline"}
+            size={64}
+            color={textColor}
+            style={{ opacity: 0.2 }}
+          />
+        </View>
+        <ThemedText style={[styles.noOffersText, { color: textColor }]}>
+          {t('noOffersFound', { status: t(`offer_status.${filter.toUpperCase()}`) })}
+        </ThemedText>
+      </View>
+    );
   }
 
   return (
@@ -66,8 +85,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   noOffersText: {
-    marginTop: 20,
+    marginTop: 16,
     textAlign: 'center',
     fontSize: 16,
+    opacity: 0.6,
+    paddingHorizontal: 40,
   },
+  emptyContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 100,
+  },
+  emptyIconContainer: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: 'rgba(0,0,0,0.03)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
 });

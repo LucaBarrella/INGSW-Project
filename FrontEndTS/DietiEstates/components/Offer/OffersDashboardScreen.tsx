@@ -40,11 +40,17 @@ const OffersDashboardScreen: React.FC<OffersDashboardScreenProps> = ({
   const secondaryColor = useThemeColor({}, 'propertyCardDetail');
 
   const renderEmptyState = () => (
-    <View className="flex-1 items-center justify-center p-8">
-      <ThemedText className="text-lg font-semibold mb-2" style={{ color: textColor }}>
+    <View className="flex-1 items-center justify-center p-10 mt-10">
+      <View
+        className="w-24 h-24 rounded-full items-center justify-center mb-6"
+        style={{ backgroundColor: 'rgba(0,0,0,0.03)' }}
+      >
+        <Ionicons name="document-text-outline" size={48} color={secondaryColor} />
+      </View>
+      <ThemedText className="text-xl font-bold mb-3 text-center" style={{ color: textColor }}>
         {t('noActiveOffers')}
       </ThemedText>
-      <ThemedText className="text-center text-sm" style={{ color: secondaryColor }}>
+      <ThemedText className="text-center text-base leading-6 opacity-70" style={{ color: secondaryColor }}>
         {t('noActiveOffersSubtitle')}
       </ThemedText>
     </View>

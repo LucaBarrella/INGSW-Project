@@ -132,7 +132,9 @@ module.exports = function (api) {
             'material-symbols:factory-outline',
             'material-symbols:garage-outline',
             'material-symbols:info',
-            'material-symbols:energy-savings-leaf-outline'
+            'material-symbols:energy-savings-leaf-outline',
+            'lucide:arrow-right',
+            'lucide:chevron-right'
           ],
         },
       ],

@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { TouchableOpacity, Image, View } from 'react-native';
+import { TouchableOpacity, Image, View, Animated } from 'react-native';
+import { useRef } from 'react';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { ThemedIcon } from '@/components/ThemedIcon';
 import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
 import { KeyStatsDisplay, mapPropertyDetailToCharacteristics } from '@/components/Property/PropertyCharacteristicsDisplay';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -56,6 +58,27 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
 
   const tintColor = useThemeColor({ light: lightColor, dark: darkColor }, 'tint');
 
+  // Animazione di pressione
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.97,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 10,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 10,
+    }).start();
+  };
+
   const handlePress = async () => {
     if (Haptics.impactAsync) {
       try {
@@ -83,20 +106,23 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
   const smartTitle = `${roomLabel} • ${address.city}`;
 
   return (
-    <TouchableOpacity
-      onPress={handlePress}
-      activeOpacity={0.9}
-      className="rounded-3xl shadow-lg overflow-hidden mb-6 mx-1 bg-white dark:bg-slate-900"
-      style={{
-        elevation: 5,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 12
-      }}
-      accessibilityRole="button"
-      accessibilityLabel={`Visualizza dettagli per ${smartTitle}`}
-    >
+    <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+      <TouchableOpacity
+        onPress={handlePress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        activeOpacity={1}
+        className="rounded-3xl overflow-hidden mb-6 mx-1 bg-white dark:bg-slate-900"
+        style={{
+          elevation: 10,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 8 },
+          shadowOpacity: 0.15,
+          shadowRadius: 20,
+        }}
+        accessibilityRole="button"
+        accessibilityLabel={`Visualizza dettagli per ${smartTitle}`}
+      >
       <View className="relative">
         <Image
           source={{ uri: getPropertyImage(property) }}
@@ -163,7 +189,27 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
              <KeyStatsDisplay property={mapPropertyDetailToCharacteristics(property)} isCompact />
           </View>
         )}
+
+        {/* Footer Action Button - Spostato in basso */}
+        <View
+          className="mt-5 flex-row items-center justify-center py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-700/50"
+        >
+          <ThemedText
+            className="text-sm font-bold mr-2"
+            style={{ color: tintColor }}
+          >
+            Visualizza Dettagli
+          </ThemedText>
+          <ThemedIcon
+            icon="lucide:chevron-right"
+            size={16}
+            lightColor={tintColor}
+            darkColor={tintColor}
+            accessibilityLabel="Vedi dettagli"
+          />
+        </View>
       </ThemedView>
     </TouchableOpacity>
+    </Animated.View>
   );
 };

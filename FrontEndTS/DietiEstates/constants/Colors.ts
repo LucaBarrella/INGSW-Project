@@ -15,7 +15,7 @@ export const Colors = {
     success: '#2E7D32', // Standard green
     info: '#0288D1',    // Standard blue
     tint: lightTertiary,
-    tabBarBackground: lightSecondary, // Sfondo TabBar light
+    tabBarBackground: '#FFFFFF', // Bianco puro per un effetto vetro più cristallino
     tabIconDefault: lightTertiary, // Icone non selezionate light
     tabIconSelected: lightTertiary, // Icone selezionate light
 
