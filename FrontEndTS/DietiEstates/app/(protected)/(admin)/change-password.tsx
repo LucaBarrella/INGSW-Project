@@ -1,9 +1,8 @@
 import React from 'react';
-import { SafeAreaView, ScrollView, Alert } from 'react-native';
+import { ScrollView, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { ThemedView } from '@/components/ThemedView';
 import ChangePasswordForm from '@/components/ChangePasswordForm';
-import { TabHeader } from '@/components/TabHeader';
 import { useManagerHook } from '@/src/hooks/useManagerHook';
 import { ManagerRepository } from '@/src/repositories/ManagerRepository';
 import { ManagerService } from '@/src/services/ManagerService';
@@ -34,12 +33,12 @@ export default function ChangePasswordScreen() {
 
   return (
     <ThemedView className="flex-1">
-      <SafeAreaView />
-      <TabHeader
-        title={t('admin.screens.changePassword.title')}
-        subtitle={t('admin.screens.changePassword.subtitle')}
-      />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="px-4">
+        <ThemedView className="px-2 pt-4">
+          <ThemedText className="text-gray-500 text-sm">
+            {t('admin.screens.changePassword.subtitle')}
+          </ThemedText>
+        </ThemedView>
         <ThemedView className="flex-1 justify-center items-center py-6">
           {error && <ThemedText className="text-red-500 mb-4">{error}</ThemedText>}
           <ChangePasswordForm
@@ -48,7 +47,6 @@ export default function ChangePasswordScreen() {
           />
         </ThemedView>
       </ScrollView>
-      <SafeAreaView />
     </ThemedView>
   );
 }

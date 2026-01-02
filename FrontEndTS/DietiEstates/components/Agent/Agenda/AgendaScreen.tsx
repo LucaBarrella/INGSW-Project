@@ -8,6 +8,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ThemedView } from '@/components/ThemedView';
 import { useVisits } from '@/src/hooks/useVisits';
 import { t } from 'i18next';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 // State and Reducer remain the same as before
 
@@ -102,6 +103,8 @@ const AgendaScreen = () => {
   const [isScheduleVisible, setScheduleVisible] = useState(false);
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const { getVisitsOfCurrentAgent, updateVisitStatus } = useVisits();
+  const backgroundColor = useThemeColor({}, 'background');
+  const textColor = useThemeColor({}, 'text');
 
   const toggleRequestsVisibility = () => setRequestsVisible(!isRequestsVisible);
   const toggleScheduleVisibility = () => setScheduleVisible(!isScheduleVisible);
@@ -123,7 +126,8 @@ const AgendaScreen = () => {
   }, [currentDate]);
 
   const dateChanged = (newDate: Date) => {
-    dispatch({ type: 'SET_INITIAL_DATA', payload: { appointments: [], visitRequests: [] } });
+    // Non resettare lo stato a vuoto, mantieni i dati precedenti durante il caricamento
+    // per evitare il flash bianco. Imposta solo il loading se necessario (opzionale se il fetch è veloce)
     setCurrentDate(newDate);
   }
 
@@ -171,33 +175,37 @@ const AgendaScreen = () => {
     });
   };
 
-  if (state.loading) {
-    return (
-      <View className="flex-1 justify-center items-center bg-gray-100">
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text className="mt-2 text-gray-600">{t('loadingAgenda')}</Text>
-      </View>
-    );
-  }
+  // Rimuoviamo il blocco di caricamento a schermo intero che causava il flash bianco
+  // Mostriamo invece l'interfaccia con un indicatore di caricamento meno invasivo se necessario,
+  // oppure lasciamo i dati precedenti finché i nuovi non arrivano (pattern "stale-while-revalidate")
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemedView className="flex-1 bg-gray-50">
+      <ThemedView style={{ flex: 1, backgroundColor }}>
         <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
           <AgendaHeader currentDate={currentDate} onCurrentDateChange={dateChanged} />
-          <PendingRequests
-            requests={state.visitRequests}
-            onAccept={handleAcceptRequest}
-            onDecline={handleRejectRequest}
-            isRequestsVisible={isRequestsVisible}
-            toggleRequestsVisibility={toggleRequestsVisibility}
-          />
-          <ConfirmedSchedule
-            appointments={state.appointments}
-            isScheduleVisible={isScheduleVisible}
-            toggleScheduleVisibility={toggleScheduleVisibility}
-            onDeleteAppointment={handleDeleteAppointment}
-          />
+          
+          {state.loading && state.visitRequests.length === 0 && state.appointments.length === 0 ? (
+             <View style={{ padding: 20, alignItems: 'center' }}>
+               <ActivityIndicator size="small" color={textColor} />
+             </View>
+          ) : (
+            <>
+              <PendingRequests
+                requests={state.visitRequests}
+                onAccept={handleAcceptRequest}
+                onDecline={handleRejectRequest}
+                isRequestsVisible={isRequestsVisible}
+                toggleRequestsVisibility={toggleRequestsVisibility}
+              />
+              <ConfirmedSchedule
+                appointments={state.appointments}
+                isScheduleVisible={isScheduleVisible}
+                toggleScheduleVisibility={toggleScheduleVisibility}
+                onDeleteAppointment={handleDeleteAppointment}
+              />
+            </>
+          )}
         </ScrollView>
       </ThemedView>
     </GestureHandlerRootView>

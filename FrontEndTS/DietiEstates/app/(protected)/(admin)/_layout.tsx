@@ -5,40 +5,36 @@ import { TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
-export default function AgentLayout() {
+export default function AdminLayout() {
   const { t } = useTranslation();
   const router = useRouter();
 
   const backgroundColor = useThemeColor({}, 'background');
   const tintColor = useThemeColor({}, 'text');
+
   return (
     <Stack
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
         headerTitleStyle: {
-          fontFamily: 'Poppins', // Suggerimento: 'Poppins' è un font moderno e minimale
+          fontFamily: 'Poppins',
           fontSize: 17,
           fontWeight: '600',
-          color: tintColor, // Usa il colore del tema per il titolo
+          color: tintColor,
         },
         headerStyle: {
-          backgroundColor: backgroundColor, // Usa il colore di sfondo del tema
+          backgroundColor: backgroundColor,
         },
-        headerTintColor: tintColor, // Usa il colore del tema per icone e back button
+        headerTintColor: tintColor,
+        headerShadowVisible: false,
       }}
     >
       <Stack.Screen
-        name="(tabs)"
-        options={{
-          headerShown: false
-        }}
-      />
-      <Stack.Screen
-        name="add-property"
+        name="change-password"
         options={{
           headerShown: true,
-          title: 'Nuova Proprietà',
+          title: t('admin.screens.changePassword.title'),
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={{ marginLeft: 10 }}>
               <Ionicons name="arrow-back" size={24} color={tintColor} />
@@ -47,30 +43,22 @@ export default function AgentLayout() {
         }}
       />
       <Stack.Screen
-        name="properties"
+        name="add-admin"
         options={{
           headerShown: true,
-          title: t('myProperties'),
+          title: t('admin.screens.addAdmin.title'),
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={{ marginLeft: 10 }}>
               <Ionicons name="arrow-back" size={24} color={tintColor} />
             </TouchableOpacity>
           ),
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => router.push('/add-property')}
-              style={{ marginRight: 15 }}
-            >
-              <Ionicons name="add" size={28} color={tintColor} />
-            </TouchableOpacity>
-          ),
         }}
       />
       <Stack.Screen
-        name="archive"
+        name="add-agent"
         options={{
           headerShown: true,
-          title: t('offersArchived.agent.archiveTitle'),
+          title: t('admin.screens.addAgent.title'),
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={{ marginLeft: 10 }}>
               <Ionicons name="arrow-back" size={24} color={tintColor} />

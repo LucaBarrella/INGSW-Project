@@ -131,6 +131,8 @@ module.exports = function (api) {
             'material-symbols:history-rounded',
             'material-symbols:factory-outline',
             'material-symbols:garage-outline',
+            'material-symbols:info',
+            'material-symbols:energy-savings-leaf-outline'
           ],
         },
       ],

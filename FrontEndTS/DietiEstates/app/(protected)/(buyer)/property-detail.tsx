@@ -331,7 +331,14 @@ const PropertyDetailScreen: React.FC = () => {
             <ThemedText style={styles.agentName}>{`${property.agent.firstName} ${property.agent.lastName}`}</ThemedText>
             <ThemedText style={styles.agentRole}>{property.agent.agency?.name}</ThemedText>
           </View>
-          <TouchableOpacity style={styles.contactButton} onPress={() => Linking.openURL(`mailto:${property.agent.email}`)}>
+          <TouchableOpacity
+            style={styles.contactButton}
+            onPress={() => {
+              const subject = t('property_detail') + ': ' + safeGetAddress(property.address).display;
+              const body = t('intro');
+              Linking.openURL(`mailto:${property.agent.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+            }}
+          >
             <ThemedText style={styles.contactButtonText}>{t('getInTouch')}</ThemedText>
           </TouchableOpacity>
         </View>

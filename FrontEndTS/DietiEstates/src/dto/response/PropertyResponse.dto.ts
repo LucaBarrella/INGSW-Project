@@ -34,6 +34,8 @@ export interface PropertyResponse {
   updatedAt: string; // LocalDateTime in backend, string in TS
   firstImageUrl: string;
   numberOfImages: number;
+  numberOfRooms?: number;
+  numberOfBathrooms?: number;
 }
 
 export interface PagedPropertyResponse {

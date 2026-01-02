@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface LoginValidation {
   email?: string;
@@ -8,6 +9,7 @@ export interface LoginValidation {
 export type LoginValidationErrors = LoginValidation;
 
 export const useLoginValidator = () => {
+  const { t } = useTranslation();
   const [errors, setErrors] = useState<LoginValidationErrors>({});
 
   const validateLogin = (credentials: { email: string; password: string }): { isValid: boolean; errors: LoginValidationErrors } => {
@@ -15,15 +17,15 @@ export const useLoginValidator = () => {
     let isValid = true;
 
     if (!credentials.email || credentials.email.trim().length === 0) {
-      newErrors.email = "L'email è obbligatoria";
+      newErrors.email = t('forms.errors.fillRequired');
       isValid = false;
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(credentials.email)) {
-      newErrors.email = 'Inserisci un indirizzo email valido';
+      newErrors.email = t('forms.errors.invalidEmail');
       isValid = false;
     }
 
     if (!credentials.password || credentials.password.length === 0) {
-      newErrors.password = 'La password è obbligatoria';
+      newErrors.password = t('forms.errors.fillRequired');
       isValid = false;
     }
 

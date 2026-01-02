@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { TouchableOpacity, Image } from 'react-native';
+import { TouchableOpacity, Image, View } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
-import { PropertyCharacteristicsDisplay, mapPropertyDetailToCharacteristics } from '@/components/Property/PropertyCharacteristicsDisplay';
+import { KeyStatsDisplay, mapPropertyDetailToCharacteristics } from '@/components/Property/PropertyCharacteristicsDisplay';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import * as Haptics from 'expo-haptics';
-import ThemedButton from '@/components/ThemedButton';
 import { useTranslation } from 'react-i18next';
 import { formatPrice, getPropertyImage, safeGetAddress } from '@/src/utils/uiHelpers';
 
@@ -17,6 +16,23 @@ interface PropertyCardProps {
   darkColor?: string;
   showCharacteristics?: boolean;
 }
+
+const getStatusBadgeStyle = (condition: string) => {
+  switch (condition) {
+    case 'NEW':
+      return { bg: '#E0F2FE', text: '#0369A1' };
+    case 'GOOD_CONDITION':
+    case 'RENOVATED':
+      return { bg: '#DCFCE7', text: '#15803D' };
+    case 'TO_BE_RENOVATED':
+    case 'POOR_CONDITION':
+      return { bg: '#FEF3C7', text: '#B45309' };
+    case 'UNDER_CONSTRUCTION':
+      return { bg: '#F3E8FF', text: '#7E22CE' };
+    default:
+      return { bg: '#F3F4F6', text: '#374151' };
+  }
+};
 
 export const PropertyCard: React.FC<PropertyCardProps> = ({
   property,
@@ -38,6 +54,8 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
     'propertyCardDetail'
   );
 
+  const tintColor = useThemeColor({ light: lightColor, dark: darkColor }, 'tint');
+
   const handlePress = async () => {
     if (Haptics.impactAsync) {
       try {
@@ -51,58 +69,100 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
 
   const { t } = useTranslation();
 
+  const statusStyle = getStatusBadgeStyle(property.condition);
+  const address = safeGetAddress(property.address);
+  
+  // Titolo Tecnico (Tipologia • Città): es. "Trilocale • Napoli"
+  const category = t('property_category.sub.' + property.propertyCategory) || property.propertyCategory;
+  const roomsCount = property.numberOfRooms || (property as any).rooms;
+  
+  let roomLabel = category;
+  if (roomsCount) {
+    roomLabel = roomsCount === 1 ? 'Monolocale' : roomsCount === 2 ? 'Bilocale' : roomsCount === 3 ? 'Trilocale' : `${roomsCount} Locali`;
+  }
+  const smartTitle = `${roomLabel} • ${address.city}`;
 
   return (
     <TouchableOpacity
       onPress={handlePress}
-      className="rounded-xl shadow-md overflow-hidden"
+      activeOpacity={0.9}
+      className="rounded-3xl shadow-lg overflow-hidden mb-6 mx-1 bg-white dark:bg-slate-900"
+      style={{
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 12
+      }}
       accessibilityRole="button"
-      accessibilityLabel={`Visualizza dettagli per ${t('property_category.'+property.propertyCategory)} in ${property.address?.city || 'N/A'}, ${t('property_status.'+property.condition)}`}
+      accessibilityLabel={`Visualizza dettagli per ${smartTitle}`}
     >
-      <Image
-        source={{ uri: getPropertyImage(property) }}
-        className="w-full h-48"
-        resizeMode="cover"
-      />
-      
-      <ThemedView className="p-4" style={{ backgroundColor }}>
-        <ThemedText 
-          type="subtitle" 
-          className="text-lg mb-2 leading-8"
-          lightColor={textColor}
-          darkColor={textColor}
-        >
-            {t('property_category.sub.'+property.propertyCategory)} in {safeGetAddress(property.address).display} - {t('property_status.'+property.condition)}
-        </ThemedText>
+      <View className="relative">
+        <Image
+          source={{ uri: getPropertyImage(property) }}
+          className="w-full h-64"
+          resizeMode="cover"
+        />
         
-        <ThemedText 
-          type="description"
-          className="text-sm mb-4"
+        {/* Badge Stato Overlay Soft */}
+        <View
+          className="absolute top-4 left-4 px-3 py-1.5 rounded-full border border-white/10"
+          style={{ backgroundColor: statusStyle.bg + 'E6' }} // 90% opacità
+        >
+          <ThemedText
+            className="text-[10px] font-medium capitalize"
+            style={{ color: statusStyle.text }}
+          >
+            {t('property_status.' + property.condition).toLowerCase()}
+          </ThemedText>
+        </View>
+      </View>
+      
+      <ThemedView className="p-5" style={{ backgroundColor }}>
+        
+        {/* Titolo e Prezzo (Legge della Vicinanza) - Allineamento alla Baseline & Overflow Patch */}
+        <View className="flex-row justify-between items-baseline mb-2">
+          <View className="flex-1 mr-4">
+            <ThemedText
+              className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white"
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+                {smartTitle}
+            </ThemedText>
+          </View>
+          
+          <View className="flex-row items-baseline flex-shrink-0">
+            <ThemedText
+                className="text-sm font-bold mr-0.5"
+                style={{ color: tintColor }}
+            >
+                €
+            </ThemedText>
+            <ThemedText
+                className="text-2xl font-black"
+                style={{ color: tintColor }}
+            >
+                {property.price.toLocaleString('it-IT')}
+            </ThemedText>
+          </View>
+        </View>
+
+        <ThemedText
+          className="text-sm opacity-50 font-medium mb-4"
           lightColor={detailColor}
           darkColor={detailColor}
+          numberOfLines={1}
         >
-          {property.description}
+            {address.display}
         </ThemedText>
 
+        {/* Griglia Icone Compatta con divisori verticali */}
         {showCharacteristics && (
-          <PropertyCharacteristicsDisplay property={mapPropertyDetailToCharacteristics(property)} />
+          <View className="flex-row items-center pt-4 border-t border-slate-100 dark:border-slate-800">
+             <KeyStatsDisplay property={mapPropertyDetailToCharacteristics(property)} isCompact />
+          </View>
         )}
-
-        <ThemedView className="flex-row justify-between items-center" style={{ backgroundColor }}>
-          <ThemedText
-            type="defaultSemiBold"
-            className="text-xl"
-            style={{ color: textColor }}
-          >
-            {formatPrice(property.price)}
-          </ThemedText>
-          <ThemedButton
-            title={t('home.detailsButton')}
-            onPress={handlePress}
-            borderRadius={10}
-            className="px-4 py-2 rounded-md"
-          />
-        </ThemedView>
       </ThemedView>
     </TouchableOpacity>
   );

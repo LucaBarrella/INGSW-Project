@@ -52,8 +52,8 @@ export default function useSearchProperties() {
 
     return {
       id: p.id as any,
-      description: (p as any).description,
-      price: (p as any).price,
+      description: p.description,
+      price: p.price,
       area: (p as any).area,
       yearBuilt: (p as any).yearBuilt,
       contractType: (p as any).contract?.toString?.().toLowerCase?.() as "rent" | "sale",
@@ -61,6 +61,8 @@ export default function useSearchProperties() {
       propertyCategory: (p as any).propertyCategory,
       condition: (p as any).condition as any,
       energyRating: (p as any).energyRating,
+      numberOfRooms: p.numberOfRooms,
+      numberOfBathrooms: p.numberOfBathrooms,
       address: {
         street: (p as any).address?.street,
         city: (p as any).address?.city,

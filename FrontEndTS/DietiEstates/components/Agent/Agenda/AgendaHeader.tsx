@@ -18,7 +18,8 @@ const AgendaHeader: React.FC<AgendaHeaderProps> = ({ currentDate: controlledDate
   const date = controlledDate ?? internalDate;
   const [isCalendarVisible, setCalendarVisible] = useState(false);
   const agendaHeaderTextColor = useThemeColor({}, 'text');
-  const agendaHeaderBackgroundColor = useThemeColor({}, 'backgroundMuted');
+  const agendaHeaderBackgroundColor = useThemeColor({}, 'background');
+  const iconColor = useThemeColor({}, 'tint');
  
   const updateDate = (newDate: Date) => {
     if (onCurrentDateChange) {
@@ -65,21 +66,21 @@ const AgendaHeader: React.FC<AgendaHeaderProps> = ({ currentDate: controlledDate
   };
  
   return (
-    <ThemedView className="p-4">
-      <ThemedView className="flex-row justify-between items-center mb-4">
-        <ThemedText type="title" style={{ color: agendaHeaderTextColor, lineHeight: 36}}>{t('agenda.title')}</ThemedText>
-        <TouchableOpacity onPress={() => setCalendarVisible(true)}>
-          <Ionicons name="calendar-outline" size={28} color={agendaHeaderTextColor} />
+    <ThemedView className="px-4 py-2">
+      <ThemedView className="flex-row justify-between items-center p-4 rounded-2xl shadow-sm" style={{ backgroundColor: agendaHeaderBackgroundColor }}>
+        <TouchableOpacity onPress={handlePrevDay} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+          <Ionicons name="chevron-back" size={24} color={iconColor} />
         </TouchableOpacity>
-      </ThemedView>
-      <ThemedView className="flex-row justify-between items-center p-3 rounded-xl" style={{ backgroundColor: agendaHeaderBackgroundColor }}>
-        <TouchableOpacity onPress={handlePrevDay}>
-          <Ionicons name="chevron-back" size={28} color={agendaHeaderTextColor} />
+        
+        <TouchableOpacity onPress={() => setCalendarVisible(true)} className="flex-row items-center">
+          <Ionicons name="calendar-outline" size={20} color={iconColor} style={{ marginRight: 8 }} />
+          <ThemedText type="subtitle" style={{ color: agendaHeaderTextColor, fontWeight: '600' }}>{formatDate(date)}</ThemedText>
         </TouchableOpacity>
-        <ThemedText type="defaultSemiBold" style={{ color: agendaHeaderTextColor }}>{formatDate(date)}</ThemedText>
-        <TouchableOpacity onPress={handleNextDay}>
-          <Ionicons name="chevron-forward" size={28} color={agendaHeaderTextColor} />
+
+        <TouchableOpacity onPress={handleNextDay} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+          <Ionicons name="chevron-forward" size={24} color={iconColor} />
         </TouchableOpacity>
+        
         <Modal
           animationType="slide"
           transparent={true}

@@ -32,30 +32,35 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
   const [currentEmail, setCurrentEmail] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [showConfirmation, setShowConfirmation] = useState(false);
 
-  const validateForm = () => {
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      Alert.alert('Error', t('forms.errors.fillRequired'));
-      return false;
+  const validateField = (field: string, value: string) => {
+    switch (field) {
+      case 'email':
+        if (!value) return t('forms.errors.fillRequired');
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return t('forms.errors.invalidEmail');
+        break;
+      case 'currentPassword':
+        if (!value) return t('forms.errors.fillRequired');
+        break;
+      case 'newPassword':
+        if (!value) return t('forms.errors.fillRequired');
+        if (value.length < 8) return t('forms.errors.passwordTooShort');
+        if (value === currentPassword) return t('forms.errors.passwordSame');
+        break;
+      case 'confirmPassword':
+        if (!value) return t('forms.errors.fillRequired');
+        if (value !== newPassword) return t('forms.errors.passwordsDontMatch');
+        break;
     }
+    return '';
+  };
 
-    if (newPassword !== confirmPassword) {
-      Alert.alert('Error', t('forms.errors.passwordsDontMatch'));
-      return false;
-    }
-
-    if (newPassword === currentPassword) {
-      Alert.alert('Error', t('forms.errors.passwordSame'));
-      return false;
-    }
-
-    if (newPassword.length < 8) {
-      Alert.alert('Error', t('forms.errors.passwordTooShort'));
-      return false;
-    }
-
-    return true;
+  const handleFieldChange = (field: string, value: string, setter: (v: string) => void) => {
+    setter(value);
+    const error = validateField(field, value);
+    setErrors(prev => ({ ...prev, [field]: error }));
   };
 
   const handleConfirm = async () => {
@@ -87,15 +92,32 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
   };
 
   const handleSubmit = () => {
-    if (validateForm()) {
+    const newErrors: Record<string, string> = {
+      email: validateField('email', currentEmail),
+      currentPassword: validateField('currentPassword', currentPassword),
+      newPassword: validateField('newPassword', newPassword),
+      confirmPassword: validateField('confirmPassword', confirmPassword),
+    };
+
+    setErrors(newErrors);
+    const hasErrors = Object.values(newErrors).some(error => error !== '');
+
+    if (!hasErrors) {
       setShowConfirmation(true);
     }
   };
 
   return (
-    <ThemedView 
-      className="transform scale-90 md:scale-100 max-w-md p-8 rounded-2xl w-10/12 shadow-lg"
-      style={{ backgroundColor: cardBackground }}
+    <ThemedView
+      className="max-w-md p-6 rounded-3xl w-full shadow-xl mb-10"
+      style={{
+        backgroundColor: cardBackground,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.1,
+        shadowRadius: 20,
+        elevation: 5
+      }}
       {...props}
     >
       <LabelInput
@@ -105,9 +127,10 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
         lightColor={cardBackground}
         darkColor={cardBackground}
         inputBackgroundColor={background}
-        className="mb-6"
         value={currentEmail}
-        onChangeText={setCurrentEmail}
+        onChangeText={(v) => handleFieldChange('email', v, setCurrentEmail)}
+        error={!!errors.email}
+        errorMessage={errors.email}
         placeholder={t('forms.placeholders.email')}
       />
       <LabelInput
@@ -117,9 +140,10 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
         lightColor={cardBackground}
         darkColor={cardBackground}
         inputBackgroundColor={background}
-        className="mb-6"
         value={currentPassword}
-        onChangeText={setCurrentPassword}
+        onChangeText={(v) => handleFieldChange('currentPassword', v, setCurrentPassword)}
+        error={!!errors.currentPassword}
+        errorMessage={errors.currentPassword}
         placeholder={t('forms.placeholders.currentPassword')}
       />
 
@@ -130,9 +154,10 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
         lightColor={cardBackground}
         darkColor={cardBackground}
         inputBackgroundColor={background}
-        className="mb-6"
         value={newPassword}
-        onChangeText={setNewPassword}
+        onChangeText={(v) => handleFieldChange('newPassword', v, setNewPassword)}
+        error={!!errors.newPassword}
+        errorMessage={errors.newPassword}
         placeholder={t('forms.placeholders.newPassword')}
       />
 
@@ -143,9 +168,10 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
         lightColor={cardBackground}
         darkColor={cardBackground}
         inputBackgroundColor={background}
-        className="mb-6"
         value={confirmPassword}
-        onChangeText={setConfirmPassword}
+        onChangeText={(v) => handleFieldChange('confirmPassword', v, setConfirmPassword)}
+        error={!!errors.confirmPassword}
+        errorMessage={errors.confirmPassword}
         placeholder={t('forms.placeholders.confirmPassword')}
       />
 

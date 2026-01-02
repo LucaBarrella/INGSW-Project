@@ -7,12 +7,11 @@ import { useOffers } from '@/src/hooks/useOffers';
 import { formatAddress } from '@/components/Agent/PropertyDashboard/types';
 import { useFocusEffect } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
-import { useTranslation } from 'react-i18next';
+import { t } from 'i18next';
 import { Alert, Platform, Modal, TextInput, View, TouchableOpacity, StyleSheet } from 'react-native';
 import OfferPanel from '@/components/Offer/OfferPanel';
 
-export default function ReceivedOffersTab() {
-  const { t } = useTranslation();
+export default function OffersTab() {
   const backgroundColor = useThemeColor({}, 'background');
   const [showCounterOfferModal, setShowCounterOfferModal] = useState(false);
   const [counterOfferPrice, setCounterOfferPrice] = useState('');
@@ -23,7 +22,7 @@ export default function ReceivedOffersTab() {
   const [offerPanelProps, setOfferPanelProps] = useState<{isVisible: boolean; propertyId: string; propertyAddress: string; askingPrice: string}>({isVisible: false, propertyId: '', propertyAddress: '', askingPrice: ''});
 
   useEffect(() => {
-    if (!receivedOffers || !Array.isArray(receivedOffers)) return;
+    if (!receivedOffers) return;
     const newPropertiesWithOffers: PropertyWithOffers[] = [];
     receivedOffers.forEach(offer => {
       const propertyIndex = newPropertiesWithOffers.findIndex(p => p.id === offer.property.id.toString());

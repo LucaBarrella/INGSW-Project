@@ -1,5 +1,5 @@
-import React from 'react';
-import { TextInput, NativeSyntheticEvent, TextInputFocusEventData, TextInputProps, StyleProp, ViewStyle, TextStyle } from 'react-native'; // Import necessary types
+import React, { useState } from 'react';
+import { TextInput, NativeSyntheticEvent, TextInputFocusEventData, TextInputProps, StyleProp, ViewStyle, TextStyle, Animated } from 'react-native';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -40,7 +40,7 @@ export function LabelInput({
   textColor,
   value,
   onChangeText,
-  onBlur, // Reintrodotto onBlur
+  onBlur,
   className = '',
   inputBackgroundColor,
   autoCapitalize = 'none',
@@ -48,21 +48,38 @@ export function LabelInput({
   required = false,
   multiline = false,
   numberOfLines,
-  style, // Destructure container style
+  style,
   inputStyle,
   error,
-  errorMessage, // Destructure errorMessage
+  errorMessage,
   ...rest
 }: LabelInputProps) {
+  const [isFocused, setIsFocused] = useState(false);
+  const focusAnim = React.useRef(new Animated.Value(0)).current;
+
+  React.useEffect(() => {
+    Animated.timing(focusAnim, {
+      toValue: isFocused ? 1 : 0,
+      duration: 200,
+      useNativeDriver: false,
+    }).start();
+  }, [isFocused]);
 
   const themeTextColor = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
   const textColors = textColor ?? themeTextColor;
   const themeBorderColor = useThemeColor({}, 'border');
-  const themeErrorColor = useThemeColor({}, 'error'); // Usa il colore di errore dal tema
-  const borderColor = error ? themeErrorColor : themeBorderColor; // Usa colore errore dal tema
+  const themeErrorColor = useThemeColor({}, 'error');
+  const themeTint = useThemeColor({}, 'tint');
+
+  const borderColor = error
+    ? themeErrorColor
+    : isFocused
+      ? themeTint
+      : themeBorderColor;
+
   const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
   const inputBackground = inputBackgroundColor ?? backgroundColor;
-  const placeholderColor = textColors + '80'; // Usa il colore del testo con opacità 50%
+  const placeholderColor = textColors + '60';
 
   let defaultLabel = '';
   let defaultPlaceholder = '';
@@ -88,41 +105,58 @@ export function LabelInput({
 
   return (
     // Ripristinato ThemedView e className come nella versione funzionante
-    <ThemedView className={`mb-8 ${className}`} style={style} lightColor={backgroundColor} darkColor={backgroundColor}>
-       <ThemedText lightColor={textColors} darkColor={textColors} className='mb-2'>
-         {/* Usiamo il template literal che dovrebbe essere sicuro */}
-         {`${finalLabel}${required ? ' *' : ''}`}
-       </ThemedText>
-       <TextInput
-         // Ripristinato className e stile combinato
-         className={`border p-2 rounded-md min-h-[40px] w-full`}
-         style={[
-           {
-             color: textColors,
-             borderColor: borderColor, // Applica bordo dinamico
-             backgroundColor: inputBackground
-           },
-           multiline && { textAlignVertical: 'top', height: numberOfLines ? undefined : 80 }, // Stili multiline
-           inputStyle // Applica inputStyle custom
-         ]}
-         placeholder={finalPlaceholder}
-         placeholderTextColor={placeholderColor}
-         value={value}
-         onChangeText={onChangeText}
-         onBlur={onBlur} // Reintrodotto onBlur
-         secureTextEntry={type === 'password'}
-         keyboardType={keyboardType}
-         autoCapitalize={autoCapitalize}
-         multiline={multiline}
-         numberOfLines={numberOfLines}
-         {...rest}
-       />
-       {/* Visualizza il messaggio di errore se presente */}
-       {error && errorMessage && (
-         <ThemedText style={{ color: themeErrorColor, marginTop: 4, fontSize: 12 }}>
-           {errorMessage}
-         </ThemedText>
-       )}
-     </ThemedView>
+    <ThemedView className={`mb-6 ${className}`} style={style} lightColor={backgroundColor} darkColor={backgroundColor}>
+      <ThemedText
+        style={{
+          color: error ? themeErrorColor : isFocused ? themeTint : textColors,
+          fontWeight: isFocused ? '600' : '400',
+          fontSize: 13,
+          marginBottom: 6,
+          marginLeft: 2
+        }}
+      >
+        {finalLabel}
+      </ThemedText>
+      <TextInput
+        className="border-2 p-3 rounded-xl w-full"
+        style={[
+          {
+            color: textColors,
+            borderColor: borderColor,
+            backgroundColor: inputBackground,
+            fontSize: 15,
+            shadowColor: isFocused ? themeTint : 'transparent',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+            elevation: isFocused ? 2 : 0,
+          },
+          multiline && { textAlignVertical: 'top', height: numberOfLines ? undefined : 100 },
+          inputStyle
+        ]}
+        placeholder={finalPlaceholder}
+        placeholderTextColor={placeholderColor}
+        value={value}
+        onChangeText={onChangeText}
+        onFocus={() => setIsFocused(true)}
+        onBlur={(e) => {
+          setIsFocused(false);
+          onBlur?.(e);
+        }}
+        secureTextEntry={type === 'password'}
+        keyboardType={keyboardType}
+        autoCapitalize={autoCapitalize}
+        multiline={multiline}
+        numberOfLines={numberOfLines}
+        {...rest}
+      />
+      {error && errorMessage && (
+        <Animated.View style={{ opacity: focusAnim.interpolate({ inputRange: [0, 1], outputRange: [1, 0.8] }) }}>
+          <ThemedText style={{ color: themeErrorColor, marginTop: 6, fontSize: 12, marginLeft: 4, fontWeight: '500' }}>
+            {`⚠️ ${errorMessage}`}
+          </ThemedText>
+        </Animated.View>
+      )}
+    </ThemedView>
  );
 }

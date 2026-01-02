@@ -34,12 +34,14 @@ export default function BuyerTabLayout() {
         name="visits"
         options={{
           title: t('buyer.tabs.visits'),
+          href: null,
         }}
       />
       <Tabs.Screen
         name="offers"
         options={{
           title: t('buyer.tabs.offers'),
+          href: null,
         }}
       />
       <Tabs.Screen

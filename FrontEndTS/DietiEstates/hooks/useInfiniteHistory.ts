@@ -37,7 +37,8 @@ export default function useInfiniteHistory(): UseInfiniteHistoryState {
       return {
         id: d.id,
         title: d.title || d.name || '',
-        address: d.address?.street ? `${d.address.street}, ${d.address.city}` : d.address,
+        address: d.address, // Mantieni l'oggetto indirizzo per safeGetAddress
+        description: d.description || '', // Mappa la descrizione
         price: d.price ?? 0,
         imageUrl: d.firstImageUrl || '',
         firstImageUrl: d.firstImageUrl || '', // Aggiunto per PropertyCard
@@ -51,6 +52,7 @@ export default function useInfiniteHistory(): UseInfiniteHistoryState {
         area: d.area,
         numberOfBathrooms: d.numberOfBathrooms,
         numberOfRooms: d.numberOfRooms,
+        energyRating: d.energyRating || d.energyClass,
       } as unknown as PropertyDetail;
     });
     return mapped;

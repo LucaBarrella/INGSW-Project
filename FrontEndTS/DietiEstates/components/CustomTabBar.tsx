@@ -10,7 +10,9 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 const iconMap: Record<string, React.ComponentProps<typeof MaterialIcons>['name']> = {
   home: 'home',
   visits: 'calendar-today',
+  activity: 'event-note',
   offers: 'receipt',
+  agentOffers: 'receipt',
   profile: 'person',
 };
 
@@ -32,6 +34,12 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
       <View style={styles.tabBarContent}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
+
+          // Skip routes that don't have a defined icon mapping
+          if (!iconMap[route.name as keyof typeof iconMap]) {
+            return null;
+          }
+
           const label =
             options.tabBarLabel !== undefined
               ? options.tabBarLabel

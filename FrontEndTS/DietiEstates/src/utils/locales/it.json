@@ -62,7 +62,7 @@
   "failedToRequestVisit": "Impossibile richiedere la visita",
   "pleaseTryAnotherTimeSlot": "Non è stato possibile richiedere una visita per l'orario specificato. Per favore prova un altro orario.",
   "noDescriptionAvailable": "Descrizione non disponibile",
-  "searchPlaceholder": "Cerca immobile...",
+  "searchPlaceholder": "Cerca in Zona...",
   "offers":"Offerte",
   "loadingOffers": "Caricamento offerte...",
   "confirm_withdraw_offer": "Conferma ritiro offerta",
@@ -206,7 +206,8 @@
     "parkingSpaces": "posti auto",
     "swimmingPool": "piscina",
     "hasDisabledAccess": "accesso per disabili",
-    "hasRoadAccess": "accesso stradale"
+    "hasRoadAccess": "accesso stradale",
+    "fireSystem": "sistema antincendio"
   },
 
   "property_category": {
@@ -327,10 +328,11 @@
       "home": "Home",
       "profile": "Profilo",
       "dashboard": "Dashboard",
-      "visits": "Visite",
-      "agenda": "Agenda",
-      "offers": "Offerte",
-      "receivedOffers": "Offerte Ricevute"
+      "visits": "Le mie Visite",
+      "agenda": "Calendario Agente",
+      "offers": "Le mie Offerte",
+      "receivedOffers": "Offerte Clienti",
+      "activity": "Attività"
     },
     "profile": {
       "title": "Profilo Agente",
@@ -401,7 +403,8 @@
     "buttons": {
       "changePassword": "Cambia Password",
       "createAdmin": "Crea amministratore",
-      "createAgent": "Crea agente immobiliare"
+      "createAgent": "Crea agente immobiliare",
+      "reset": "Reset"
     },
     "messages": {
       "creating": "Creazione in corso...",
@@ -561,6 +564,14 @@
     "generalFilters": "Filtri Generali",
     "maxPrice": "Prezzo massimo",
     "changeCategory": "Cambia Categoria",
-    "selectCategory": "Seleziona una categoria"
+    "selectCategory": "Seleziona una categoria",
+    "budgetAndTransaction": "Budget & Transazione",
+    "locationAndSpaces": "Localizzazione & Spazi",
+    "features": "Caratteristiche",
+    "subCategory": "Sottocategoria",
+    "specificDetails": "Dettagli Specifici",
+    "change": "Cambia",
+    "search": "Cerca",
+    "errorSearch": "Si è verificato un errore durante la ricerca. Riprova."
   }
 }

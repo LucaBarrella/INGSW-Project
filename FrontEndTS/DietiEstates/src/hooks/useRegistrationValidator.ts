@@ -9,8 +9,10 @@ export interface RegistrationValidation {
 export type ValidationErrors = RegistrationValidation;
  
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
  
 export const useRegistrationValidator = () => {
+  const { t } = useTranslation();
   const [errors, setErrors] = useState<ValidationErrors>({});
  
   const validateRegistration = (userData: RegistrationValidation): { isValid: boolean; errors: ValidationErrors } => {
@@ -18,49 +20,49 @@ export const useRegistrationValidator = () => {
     let isValid = true;
  
     if (!userData.name || userData.name.trim().length === 0) {
-      newErrors.name = 'Il nome è obbligatorio';
+      newErrors.name = t('forms.errors.fillRequired');
       isValid = false;
     }
 
     if (!userData.username || userData.username.trim().length === 0) {
-      newErrors.username = "L'username è obbligatorio";
+      newErrors.username = t('forms.errors.fillRequired');
       isValid = false;
     }
 
     if (!userData.surname || userData.surname.trim().length === 0) {
-      newErrors.surname = 'Il cognome è obbligatorio';
+      newErrors.surname = t('forms.errors.fillRequired');
       isValid = false;
     }
 
     if (!userData.email || userData.email.trim().length === 0) {
-      newErrors.email = "L'email è obbligatoria";
+      newErrors.email = t('forms.errors.fillRequired');
       isValid = false;
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userData.email)) {
-      newErrors.email = 'Inserisci un indirizzo email valido';
+      newErrors.email = t('forms.errors.invalidEmail');
       isValid = false;
     }
  
     if (!userData.password) {
-      newErrors.password = 'La password è obbligatoria';
+      newErrors.password = t('forms.errors.fillRequired');
       isValid = false;
     } else {
       const pw = userData.password;
       const pwErrors: string[] = [];
  
       if (pw.length < 8) {
-        pwErrors.push('La password deve essere di almeno 8 caratteri');
+        pwErrors.push(t('forms.errors.passwordTooShort'));
       }
       if (!/[A-Z]/.test(pw)) {
-        pwErrors.push('La password deve contenere almeno una lettera maiuscola');
+        pwErrors.push(t('forms.errors.invalid.password'));
       }
       if (!/[a-z]/.test(pw)) {
-        pwErrors.push('La password deve contenere almeno una lettera minuscola');
+        pwErrors.push(t('forms.errors.invalid.password'));
       }
       if (!/[0-9]/.test(pw)) {
-        pwErrors.push('La password deve contenere almeno un numero');
+        pwErrors.push(t('forms.errors.invalid.password'));
       }
       if (!/[@#$%^&+=]/.test(pw)) {
-        pwErrors.push('La password deve contenere almeno un carattere speciale (@#$%^&+=)');
+        pwErrors.push(t('forms.errors.invalid.password'));
       }
  
       if (pwErrors.length > 0) {

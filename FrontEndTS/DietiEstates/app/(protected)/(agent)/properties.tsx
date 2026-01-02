@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { ScrollView, View } from "react-native";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { AgentPropertyCard } from "@/components/Agent/PropertyListing/AgentPropertyCard";
@@ -47,20 +47,11 @@ export default function Properties() {
   }
 
   return (
-      <ThemedView className="flex-1">
-          <ScrollView contentContainerStyle={{}} className="flex-grow p-6 pb-20">
-            <ThemedView className="flex-row justify-between items-center mb-10">
-              <ThemedText type="title" className="text-2xl leading-none">
-                {t('myProperties')}
-              </ThemedText>
-              <ThemedButton
-                title={"+"}
-                onPress={handleAddProperty}
-                borderRadius={10}
-                className="px-4 py-2 rounded-md mb-0"
-              />
-            </ThemedView>
-            <ThemedView className="flex flex-col gap-8">
+    <ThemedView className="flex-1">
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="p-6 pb-20">
+        <ThemedView className="flex-1">
+          {properties.length > 0 ? (
+            <View className="flex flex-col gap-8">
               {properties.map((property) => (
                 <AgentPropertyCard
                   key={property.id}
@@ -68,14 +59,20 @@ export default function Properties() {
                   onPress={() => handlePropertyClick(property.id)}
                 />
               ))}
-              {properties.length === 0 && (
-                <ThemedText className="text-center text-gray-500 mt-8">
-                  {t('noPropertiesFound')}
-                </ThemedText>
-              )}
-            </ThemedView>
-          <SafeAreaView />
-        </ScrollView>
+            </View>
+          ) : (
+            <View className="flex-1 justify-center items-center py-20">
+              <Ionicons name="home-outline" size={80} color="#6b7280" />
+              <ThemedText className="text-center text-gray-500 mt-4 text-lg font-medium">
+                {t('noPropertiesFound')}
+              </ThemedText>
+              <ThemedText className="text-center text-gray-400 mt-2 px-10">
+                {t('noPropertiesFoundDescription')}
+              </ThemedText>
+            </View>
+          )}
+        </ThemedView>
+      </ScrollView>
     </ThemedView>
   );
 }

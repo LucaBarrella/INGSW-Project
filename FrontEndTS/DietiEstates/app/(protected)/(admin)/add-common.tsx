@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { Alert, SafeAreaView, ScrollView } from 'react-native';
+import { Alert, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useManagerHook } from '@/src/hooks/useManagerHook';
 import UserCreationForm from '@/components/UserCreationForm';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { TabHeader } from '@/components/TabHeader';
 import { ManagerService } from '@/src/services/ManagerService';
 import { ManagerRepository } from '@/src/repositories/ManagerRepository';
 import { CreateUserRequest } from '@/src/dto/request/CreateUserRequest.dto';
@@ -49,12 +48,14 @@ const AddUser: React.FC<AddUserProps> = ({ addingType }) => {
 
   return (
     <ThemedView className="flex-1">
-      <SafeAreaView />
-      <TabHeader 
-        title={t('admin.screens.addAdmin.title')}
-        subtitle={t('admin.screens.addAdmin.subtitle')}
-      />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="px-4">
+        <ThemedView className="px-2 pt-4">
+          <ThemedText className="text-gray-500 text-sm">
+            {addingType === 'admin'
+              ? t('admin.screens.addAdmin.subtitle')
+              : t('admin.screens.addAgent.subtitle')}
+          </ThemedText>
+        </ThemedView>
         <ThemedView className="flex-1 justify-center items-center py-6">
           {error || viewModelError ? (
             <ThemedText className="text-red-500 mb-4">{error || viewModelError}</ThemedText>
@@ -66,7 +67,6 @@ const AddUser: React.FC<AddUserProps> = ({ addingType }) => {
           />
         </ThemedView>
       </ScrollView>
-      <SafeAreaView />
     </ThemedView>
   );
 }

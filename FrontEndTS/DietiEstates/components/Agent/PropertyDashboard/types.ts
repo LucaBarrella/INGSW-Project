@@ -47,6 +47,7 @@ export interface PropertyDTO {
   
   contractType: 'rent' | 'sale';
   area: number;
+  numberOfRooms?: number;
   numberOfBedrooms?: number;
   numberOfBathrooms?: number;
   description?: string; // Aggiunta descrizione completa
@@ -91,6 +92,7 @@ export interface PropertyDetail extends PropertyDTO {
   propertyDetails?: {
     residential?: Partial<PropertyFilters['residential']>;
     commercial?: Partial<PropertyFilters['commercial']>;
+    garage?: Partial<PropertyFilters['garage']>;
     land?: Partial<PropertyFilters['land']>;
   };
 }

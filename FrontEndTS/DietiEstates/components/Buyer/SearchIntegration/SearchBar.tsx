@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { TextInput, TouchableOpacity, View, FlatList } from 'react-native';
-import { ThemedView } from '@/components/ThemedView';
-import { ThemedText } from '@/components/ThemedText';
+import React, { useEffect, useState, useRef } from 'react';
+import { TextInput, TouchableOpacity, View, Text, StyleSheet, Platform } from 'react-native';
 import { SearchBarProps, PhotonFeature } from './types';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -29,23 +27,20 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const textColor = useThemeColor({}, 'text');
   const backgroundColor = useThemeColor({}, 'propertyCardBackground');
   const accentColor = useThemeColor({}, 'buttonBackground');
+  const borderColor = useThemeColor({}, 'border');
+  const buttonTextColor = useThemeColor({}, 'buttonTextColor');
   const { t } = useTranslation();
 
   const { state, setGeolocation } = useSearch();
   
   const [suggestions, setSuggestions] = useState<PhotonFeature[]>([]);
-  const isSelectingRef = React.useRef(false);
-  const lastQueryRef = React.useRef<string>(''); // Per tracciare l'ultima query inviata a Photon
-  // Usa il repository/hook per suggerimenti persistenti e il conteggio filtri attivi
-  const { getSuggestions, saveSuggestions, activeFiltersCount: activeCountFromHook, updateFilter, search } = useSearchProperties();
-
-  // Suggestion persistence and caching delegated to SearchRepository via useSearchProperties.
-  // No local AsyncStorage management here to keep the UI component simple.
+  const isSelectingRef = useRef(false);
+  const lastQueryRef = useRef<string>('');
+  const { getSuggestions, activeFiltersCount: activeCountFromHook, updateFilter, search } = useSearchProperties();
 
   useEffect(() => {
-    // Skip fetching suggestions if we're currently selecting one
     if (isSelectingRef.current) {
-      isSelectingRef.current = false; // Reset after skipping
+      isSelectingRef.current = false;
       return;
     }
 
@@ -56,25 +51,14 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       return;
     }
 
-    if (!q) {
+    if (!q || q.length < 2) {
       setSuggestions([]);
       lastQueryRef.current = '';
       return;
     }
 
-    // Evita chiamate duplicate per la stessa query (cache a breve termine)
-    // Rimuovo questo blocco per permettere la modifica della località
-
-    // Evita chiamate per query troppo corte (meno di 2 caratteri)
-    if (q.length < 2) {
-      setSuggestions([]);
-      return;
-    }
-
     const timer = setTimeout(async () => {
       try {
-        // Il hook/useSearchProperties delega a SearchRepository che ora risolve
-        // sia la cache in-memory/AsyncStorage sia la chiamata remota a Photon su cache miss.
         const suggestionsFromRepo = await getSuggestions(q);
         setSuggestions(suggestionsFromRepo || []);
         lastQueryRef.current = q;
@@ -85,7 +69,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [value, getSuggestions]); // Rimuovo state.geolocation dalle dipendenze
+  }, [value, getSuggestions]);
 
   const handleSubmit = async () => {
     if (onSearchPress) {
@@ -94,8 +78,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     try {
       await search();
     } catch (e) {
-      // Non bloccare la UI se la ricerca fallisce; loggalo per debug
-      // eslint-disable-next-line no-console
       console.error('[SearchBar] search failed', e);
     }
   };
@@ -108,116 +90,216 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     const radiusKm = 5;
     if (Array.isArray(coords) && coords.length >= 2) {
       const [lon, lat] = coords;
-      // Aggiorna la geolocalizzazione visibile nel context (badge UI)
       setGeolocation({ lat, lon, label, radiusKm });
-      // Aggiorna i filter state usati per costruire il payload (radius in metri)
       try {
         updateFilter('general', {
           centerLatitude: lat,
           centerLongitude: lon,
-          // Non aggiorniamo più il raggio qui, lasciamo che il builder usi il default o il valore modificato dall'utente.
         });
       } catch (e) {
-        // fallback: set dispatch direttamente se updateFilter non funziona
         console.error('[SearchBar] updateFilter failed', e);
       }
     } else {
-      // Il suggerimento non ha coordinate: NON impostare lat/lon a 0 (causa payload con latitude=0).
-      // Rimuoviamo la geolocalizzazione corrente e non scriviamo valori numerici di fallback nei filtri.
       setGeolocation(null);
-      // Non aggiornare i filtri con centerLatitude/centerLongitude a 0:
-      // lasciamo che il FilterPayloadBuilder gestisca l'assenza di geolocalizzazione.
-      try {
-        // opzionalmente possiamo pulire i campi nel filtro se necessario, ma evitiamo di scrivere 0
-        // updateFilter('general', { centerLatitude: undefined, centerLongitude: undefined });
-      } catch (e) {
-        console.error('[SearchBar] updateFilter skipped/failed', e);
-      }
     }
     setSuggestions([]);
   };
 
-  return (
-    <ThemedView className="w-full px-6 py-4">
-      <ThemedView className="bg-white rounded-2xl shadow-sm py-6 px-4" style={{ backgroundColor }}>
-        <View className="flex-row items-center justify-between">
-          <ThemedView className="flex-row items-center flex-1 rounded-2xl bg-gray-100">
-            <TouchableOpacity
-              onPress={handleSubmit}
-              disabled={!value.trim()}
-              className="pl-5 pr-3 py-3"
-            >
-              <Ionicons
-                name="search"
-                size={20}
-                color={value.trim() ? accentColor : textColor}
-              />
-            </TouchableOpacity>
+  const hasSuggestions = suggestions.length > 0;
 
+  return (
+    <View className="w-full px-6 py-2">
+      <View
+        className={`rounded-[30px] overflow-hidden ${hasSuggestions ? 'rounded-b-[20px]' : ''}`}
+        style={[
+          styles.container,
+          {
+            backgroundColor,
+            borderColor: borderColor + '20',
+          }
+        ]}
+      >
+        <View style={styles.contentRow}>
+          <TouchableOpacity
+            onPress={handleSubmit}
+            disabled={!value.trim()}
+            style={styles.searchIconContainer}
+            activeOpacity={0.7}
+          >
+            <Ionicons
+              name="search-outline"
+              size={22}
+              color={value.trim() ? accentColor : textColor + '60'}
+            />
+          </TouchableOpacity>
+
+          <View style={styles.inputWrapper}>
             <TextInput
               value={value}
               onChangeText={onChangeText}
-              placeholder={state.geolocation ? `Cerca immobili a ${state.geolocation.label}...` : placeholder}
-              className="flex-1 text-base leading-5 h-5 p-0"
-              style={{ color: textColor }}
-              placeholderTextColor={textColor}
+              placeholder={state.geolocation ? `Cerca a ${state.geolocation.label}...` : placeholder}
+              style={[styles.input, { color: textColor }]}
+              placeholderTextColor={textColor + '60'}
               returnKeyType="search"
               onSubmitEditing={handleSubmit}
+              underlineColorAndroid="transparent"
+              textAlignVertical="center"
             />
 
-            {/* Badge per indicare che c'è una località selezionata */}
-            {state.geolocation && (
+            {(state.geolocation || value.length > 0) && (
               <TouchableOpacity
-                className="pr-3 pl-2"
+                style={styles.clearButton}
                 onPress={() => {
-                  // Permette di rimuovere la località selezionata
                   setGeolocation(null);
                   onChangeText('');
                 }}
+                activeOpacity={0.6}
               >
                 <Ionicons
                   name="close-circle-outline"
-                  size={16}
+                  size={20}
                   color={accentColor}
                 />
               </TouchableOpacity>
             )}
-          </ThemedView>
+          </View>
 
-          <View className="ml-4">
+          <View
+            style={[styles.divider, { backgroundColor: borderColor + '60' }]}
+          />
+
+          <View style={styles.filterContainer}>
             <TouchableOpacity
               onPress={onFilterPress}
-              className="relative flex-row items-center px-4 h-10 rounded-2xl"
-              style={{ backgroundColor: useThemeColor({}, 'buttonBackground') }}
+              style={styles.filterButton}
+              activeOpacity={0.7}
             >
-              <Ionicons
-                name="funnel"
-                size={16}
-                color={useThemeColor({}, 'buttonTextColor')}
-                className="mr-1"
-              />
-              <ThemedText
-                className="font-medium text-sm"
-                style={{ color: useThemeColor({}, 'buttonTextColor') }}
-              >
-                {t('Filters')}
-              </ThemedText>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Ionicons
+                  name="options"
+                  size={22}
+                  color={accentColor}
+                />
+                <Text style={{ color: accentColor, marginLeft: 6, fontWeight: '600', fontSize: 14 }}>
+                  {t('Filters')}
+                </Text>
+              </View>
 
               {activeCountFromHook > 0 && (
-                <ThemedView className="absolute -top-2 -right-2 min-w-[18px] h-5 bg-white rounded-full border border-gray-200 items-center justify-center px-1">
-                  <ThemedText className="text-xs font-bold leading-tight">
+                <View
+                  style={[styles.badge, { backgroundColor: accentColor }]}
+                >
+                  <Text
+                    style={[styles.badgeText, { color: buttonTextColor }]}
+                  >
                     {activeCountFromHook}
-                  </ThemedText>
-                </ThemedView>
+                  </Text>
+                </View>
               )}
             </TouchableOpacity>
           </View>
         </View>
 
-        <SuggestionsDisplayer onSelectSuggestion={handleSelectSuggestion} suggestions={suggestions} />
-
-      </ThemedView>
-    </ThemedView>
+        {hasSuggestions && (
+          <View
+            style={[styles.suggestionsContainer, { borderTopColor: borderColor + '20' }]}
+          >
+            <SuggestionsDisplayer onSelectSuggestion={handleSelectSuggestion} suggestions={suggestions} />
+          </View>
+        )}
+      </View>
+    </View>
   );
 };
 
+const styles = StyleSheet.create({
+  container: {
+    borderWidth: 0.5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 6,
+  },
+  contentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    height: 60,
+  },
+  searchIconContainer: {
+    marginRight: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
+  },
+  inputWrapper: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: '100%',
+  },
+  input: {
+    flex: 1,
+    fontSize: 16,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+    margin: 0,
+    height: '100%',
+    ...Platform.select({
+      android: {
+        includeFontPadding: false,
+      },
+    }),
+  },
+  clearButton: {
+    paddingHorizontal: 8,
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  divider: {
+    width: 2,
+    height: 28,
+    marginHorizontal: 8,
+    borderRadius: 1,
+  },
+  filterContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
+  },
+  filterButton: {
+    height: 40,
+    paddingHorizontal: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  badge: {
+    position: 'absolute',
+    top: 1,
+    right: 1,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: 'white',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1,
+    elevation: 2,
+  },
+  badgeText: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    lineHeight: 14,
+    textAlign: 'center',
+  },
+  suggestionsContainer: {
+    borderTopWidth: 1,
+  },
+});

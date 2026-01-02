@@ -298,10 +298,10 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
             <View style={[styles.header, { borderBottomColor: textColor + '10' }]}>
               <View style={styles.headerLeft}>
                 <View style={[styles.headerIcon, { backgroundColor: tintColor + '12' }]}>
-                  <Ionicons name="funnel" size={20} color={tintColor} />
+                  <Ionicons name="options" size={20} color={tintColor} />
                 </View>
                 <View style={styles.headerTextContainer}>
-                  <ThemedText type="defaultSemiBold" style={{ fontSize: 17 }}>Filtri</ThemedText>
+                  <ThemedText type="defaultSemiBold" style={{ fontSize: 17 }}>{t('Filters')}</ThemedText>
                   <ThemedText style={[styles.headerSubtitle, { color: textColor, opacity: 0.6 }]}>
                     {selectedMainCategoryInPanel ? t(`filters.category.${categoryStateToConfigMap[selectedMainCategoryInPanel as string]}`) : t('filterPanel.selectCategory')}
                   </ThemedText>
@@ -313,7 +313,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
                   onPress={() => handleReset(false)}
                   style={[styles.resetButton, { backgroundColor: useThemeColor({ light: 'rgba(0,0,0,0.05)', dark: 'rgba(255,255,255,0.15)' }, 'backgroundMuted') }]}
                 >
-                  <ThemedText style={{ color: useThemeColor({ light: tintColor, dark: textColor }, 'text'), fontWeight: '800', fontSize: 13 }}>Reset</ThemedText>
+                  <ThemedText style={{ color: useThemeColor({ light: tintColor, dark: textColor }, 'text'), fontWeight: '800', fontSize: 13 }}>{t('forms.buttons.reset') || 'Reset'}</ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={hidePanel}
@@ -329,7 +329,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
               <View style={[styles.card, { backgroundColor: backgroundMuted }]}>
                 <View className="flex-row items-center mb-5">
                   <Ionicons name="wallet-outline" size={14} color={textColor} style={{ opacity: 0.4, marginRight: 8 }} />
-                  <ThemedText style={styles.sectionTitle}>Budget & Transazione</ThemedText>
+                  <ThemedText style={styles.sectionTitle}>{t('filterPanel.budgetAndTransaction')}</ThemedText>
                 </View>
                 {renderControl(ALL_FILTERS.contract)}
                 {renderControl(ALL_FILTERS.priceRange)}
@@ -339,7 +339,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
               <View style={[styles.card, { backgroundColor: backgroundMuted }]}>
                 <View className="flex-row items-center mb-5">
                   <Ionicons name="location-outline" size={14} color={textColor} style={{ opacity: 0.4, marginRight: 8 }} />
-                  <ThemedText style={styles.sectionTitle}>Localizzazione & Spazi</ThemedText>
+                  <ThemedText style={styles.sectionTitle}>{t('filterPanel.locationAndSpaces')}</ThemedText>
                 </View>
                 {renderControl(ALL_FILTERS.searchRadiusKm)}
                 {renderControl(ALL_FILTERS.size)}
@@ -349,7 +349,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
               <View style={[styles.card, { backgroundColor: backgroundMuted }]}>
                 <View className="flex-row items-center mb-5">
                   <Ionicons name="options-outline" size={14} color={textColor} style={{ opacity: 0.4, marginRight: 8 }} />
-                  <ThemedText style={styles.sectionTitle}>Caratteristiche</ThemedText>
+                  <ThemedText style={styles.sectionTitle}>{t('filterPanel.features')}</ThemedText>
                 </View>
                 {renderControl(ALL_FILTERS.acceptedCondition)}
                 {renderControl(ALL_FILTERS.minEnergyRating)}
@@ -358,7 +358,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
 
               {!selectedMainCategoryInPanel ? (
                 <View style={styles.categorySection}>
-                  <ThemedText type="subtitle" style={styles.categoryTitle}>Tipologia</ThemedText>
+                  <ThemedText type="subtitle" style={styles.categoryTitle}>{t('propertyType')}</ThemedText>
                   <View style={styles.categoryGrid}>
                     {availableCategories.map((catKey) => {
                       const stateKey = Object.keys(categoryStateToConfigMap).find(k => categoryStateToConfigMap[k] === catKey) as keyof typeof categoryStateToConfigMap | undefined;
@@ -386,13 +386,13 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
               ) : (
                 <Animated.View style={{ opacity: detailsOpacity }}>
                   <View style={styles.categoryHeader}>
-                    <ThemedText type="subtitle" style={{ fontSize: 18 }}>Tipologia</ThemedText>
+                    <ThemedText type="subtitle" style={{ fontSize: 18 }}>{t('propertyType')}</ThemedText>
                     <TouchableOpacity
                       onPress={() => selectMainCategory(null)}
                       style={[styles.changeCategoryButton, { backgroundColor: textColor + '05' }]}
                     >
                       <Ionicons name="swap-horizontal" size={14} color={tintColor} />
-                      <ThemedText style={{ color: tintColor, marginLeft: 5, fontSize: 12, fontWeight: '700' }}>Cambia</ThemedText>
+                      <ThemedText style={{ color: tintColor, marginLeft: 5, fontSize: 12, fontWeight: '700' }}>{t('filterPanel.change')}</ThemedText>
                     </TouchableOpacity>
                   </View>
   
@@ -413,7 +413,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
                       <View style={[styles.card, { backgroundColor: backgroundMuted }]}>
                         <View className="flex-row items-center mb-5">
                           <Ionicons name="grid-outline" size={14} color={textColor} style={{ opacity: 0.4, marginRight: 8 }} />
-                          <ThemedText style={styles.sectionTitle}>Sottocategoria</ThemedText>
+                          <ThemedText style={styles.sectionTitle}>{t('filterPanel.subCategory')}</ThemedText>
                         </View>
                         <ThemedText style={[styles.controlLabel, { marginBottom: 16 }]}>
                           {t('filters.category.label')} ({t(`filters.category.${categoryStateToConfigMap[stateKey as string]}`)})
@@ -432,7 +432,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
                 <View style={[styles.card, { backgroundColor: backgroundMuted, marginBottom: 40 }]}>
                   <View className="flex-row items-center mb-5">
                     <Ionicons name="list-outline" size={14} color={textColor} style={{ opacity: 0.4, marginRight: 8 }} />
-                    <ThemedText style={styles.sectionTitle}>Dettagli Specifici</ThemedText>
+                    <ThemedText style={styles.sectionTitle}>{t('filterPanel.specificDetails')}</ThemedText>
                   </View>
                   {filtersToRender.map((key: string) => {
                       const def: FilterDefinition = (ALL_FILTERS as any)[key];
@@ -455,13 +455,13 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ isOpen, onClose, onA
                     try { forceSyncUrl(); } catch (e) {}
                     if (onApplyAndNavigate) onApplyAndNavigate();
                   } catch (err) {
-                    Alert.alert('Errore', 'Si è verificato un errore durante la ricerca. Riprova.');
+                    Alert.alert(t('error'), t('filterPanel.errorSearch'));
                   }
                 }}
                 style={[styles.applyButton, { backgroundColor: buttonBackground }]}
               >
                 <Ionicons name="search" size={20} color={buttonTextColor} style={{ marginRight: 8 }} />
-                <ThemedText style={[styles.applyButtonText, { color: buttonTextColor }]}>Cerca</ThemedText>
+                <ThemedText style={[styles.applyButtonText, { color: buttonTextColor }]}>{t('filterPanel.search')}</ThemedText>
               </TouchableOpacity>
             </View>
           </Animated.View>
