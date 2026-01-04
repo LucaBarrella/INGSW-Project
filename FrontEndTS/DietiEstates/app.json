@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.fabbest.dietiestates"
+      "bundleIdentifier": "it.unina.dietiestates"
     },
     "android": {
       "googleServicesFile": "google-services.json",
@@ -18,7 +18,7 @@
         "foregroundImage": "./assets/images/logo.jpeg",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.fabbest.dietiestates"
+      "package": "it.unina.dietiestates"
     },
     "web": {
       "bundler": "metro",
@@ -30,7 +30,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/logo.jpeg",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"

@@ -202,7 +202,7 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
                   backgroundColor: cardBackground,
                   borderColor: borderColor,
                   borderWidth: 2,
-                  borderRadius: 16,
+                  borderRadius: 0,
                   overflow: 'hidden'
                 }}
               />

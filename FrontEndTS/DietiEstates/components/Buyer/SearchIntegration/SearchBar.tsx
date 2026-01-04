@@ -110,7 +110,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   return (
     <View className="w-full px-6 py-2">
       <View
-        className={`rounded-[30px] overflow-hidden ${hasSuggestions ? 'rounded-b-[20px]' : ''}`}
+        className={`rounded-[30px] overflow-hidden`}
         style={[
           styles.container,
           {
@@ -202,7 +202,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
         {hasSuggestions && (
           <View
-            style={[styles.suggestionsContainer, { borderTopColor: borderColor + '20' }]}
+            style={[styles.suggestionsContainer, { borderTopWidth: 0 }]}
           >
             <SuggestionsDisplayer onSelectSuggestion={handleSelectSuggestion} suggestions={suggestions} />
           </View>

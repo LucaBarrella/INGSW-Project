@@ -28,7 +28,7 @@
         <key>CFBundleURLSchemes</key>
         <array>
           <string>dietiestates</string>
-          <string>com.fabbest.dietiestates</string>
+          <string>it.unina.dietiestates</string>
         </array>
       </dict>
     </array>

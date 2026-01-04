@@ -32,6 +32,8 @@ const OfferPanel: React.FC<OfferPanelProps> = ({
   // Theme colors
   const textColor = useThemeColor({}, 'text');
   const textSecondaryColor = useThemeColor({}, 'propertyCardDetail');
+  const backgroundColor = useThemeColor({}, 'background');
+  const cardBackground = useThemeColor({}, 'propertyCardBackground');
   const brandColor = useThemeColor({}, 'tint');
   const borderColor = useThemeColor({}, 'border');
   const buttonTextColor = useThemeColor({}, 'buttonTextColor');
@@ -135,6 +137,7 @@ const OfferPanel: React.FC<OfferPanelProps> = ({
       panelStyle={{
         borderTopLeftRadius: 24,
         borderTopRightRadius: 24,
+        backgroundColor: backgroundColor,
         shadowColor: textColor,
         shadowOffset: { width: 0, height: -10 },
         shadowOpacity: 0.1,
@@ -155,9 +158,9 @@ const OfferPanel: React.FC<OfferPanelProps> = ({
 
           {/* Property Info Card */}
           <ThemedView
-            className="mb-6 p-4 rounded-xl border"
+            className="mb-6 p-4 rounded-2xl border-2"
             style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              backgroundColor: cardBackground,
               borderColor: borderColor,
             }}
           >
@@ -198,16 +201,16 @@ const OfferPanel: React.FC<OfferPanelProps> = ({
                 </ThemedText>
               </View>
               <TextInput
-                className={`h-14 rounded-full border text-lg font-medium pr-4 ${
-                  isValidAmount ? 'border-gray-300' : 'border-red-500'
+                className={`h-14 rounded-full border-2 text-lg font-medium pr-4 ${
+                  isValidAmount ? '' : 'border-red-500'
                 }`}
                 style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  backgroundColor: cardBackground,
+                  borderColor: isValidAmount ? borderColor : errorColor,
                   color: textColor,
-                  paddingLeft: 40,
-                  paddingRight: 40,
+                  paddingLeft: 45,
+                  paddingRight: 45,
                   textAlign: 'center',
-                  lineHeight: 1,
                 }}
                 value={formatCurrency(offerAmount)}
                 onChangeText={handleAmountChange}

@@ -11,10 +11,12 @@ export const ServiceCard: React.FC<{ place: PlaceDTO; iconName: string }> = ({ p
 
         serviceCard: {
             width: '48%',
-            backgroundColor: themeColors.backgroundMuted,
+            backgroundColor: themeColors.propertyCardBackground,
             borderRadius: 12,
             padding: 16,
             alignItems: 'center',
+            borderWidth: 2,
+            borderColor: themeColors.border,
         },
         serviceName: {
             fontSize: 14,

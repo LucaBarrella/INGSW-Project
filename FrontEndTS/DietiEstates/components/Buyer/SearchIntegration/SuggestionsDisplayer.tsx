@@ -17,7 +17,7 @@ export const SuggestionsDisplayer: React.FC<SuggestionsDisplayerProps> = ({
   filterType = undefined,
   containerStyle
 }) => {
-  const backgroundColor = useThemeColor({}, 'background');
+  const backgroundColor = useThemeColor({}, 'propertyCardBackground');
   const borderColor = useThemeColor({}, 'border');
   const textColor = useThemeColor({}, 'text');
 
@@ -41,15 +41,15 @@ export const SuggestionsDisplayer: React.FC<SuggestionsDisplayerProps> = ({
         backgroundColor: backgroundColor,
         borderColor: borderColor,
       }, containerStyle]}
-      className="border-2 rounded-xl mt-1 overflow-hidden"
+      className="overflow-hidden"
     >
       <ScrollView keyboardShouldPersistTaps="always" nestedScrollEnabled={true}>
         {filteredSuggestions.map((item, index) => (
           <TouchableOpacity
             key={`${item.properties?.osm_id ?? item.label ?? 'suggestion'}-${index}`}
             onPress={() => onSelectSuggestion(item)}
-            className="py-4 px-4 border-b"
-            style={{ borderBottomColor: borderColor + '40' }}
+            className="py-4 px-4 border-t"
+            style={{ borderTopColor: borderColor }}
           >
             <ThemedText className="text-sm font-medium" style={{ color: textColor }}>
               {item.label}

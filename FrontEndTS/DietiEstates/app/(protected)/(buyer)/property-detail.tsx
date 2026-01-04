@@ -310,7 +310,7 @@ const PropertyDetailScreen: React.FC = () => {
         <View style={styles.mapContainer}>
           <ThemedText style={styles.sectionTitle}>{t('position')}</ThemedText>
           <MapView style={styles.map} region={{ latitudeDelta: 0.1, longitudeDelta:0.1, latitude: property.address.latitude, longitude: property.address.longitude }} >
-            <Marker coordinate={{latitude: property.address.latitude, longitude: property.address.longitude}} pinColor={ "#c7f4ffff" }/>
+            <Marker coordinate={{latitude: property.address.latitude, longitude: property.address.longitude}} pinColor={ themeColors.tint }/>
           </MapView>
         </View>)}
 
@@ -483,13 +483,15 @@ const createStyles = (themeColors: typeof Colors.light) => StyleSheet.create({
     lineHeight: 38,
   },
   detailsContainer: {
-    backgroundColor: themeColors.backgroundMuted,
+    backgroundColor: themeColors.propertyCardBackground,
     borderRadius: 16,
     padding: 16,
     marginHorizontal: 16,
     marginBottom: 16,
     flexDirection: 'row',
     justifyContent: 'space-around',
+    borderWidth: 2,
+    borderColor: themeColors.border,
   },
   detailItem: {
     alignItems: 'center',
@@ -506,12 +508,14 @@ const createStyles = (themeColors: typeof Colors.light) => StyleSheet.create({
     marginBottom: 16,
   },
   tag: {
-    backgroundColor: themeColors.tabBarBackground,
+    backgroundColor: themeColors.propertyCardBackground,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
     marginRight: 8,
     marginBottom: 8,
+    borderWidth: 2,
+    borderColor: themeColors.border,
   },
   tagText: {
     fontSize: 12,
@@ -534,17 +538,17 @@ const createStyles = (themeColors: typeof Colors.light) => StyleSheet.create({
     color: themeColors.buttonTextColor,
   },
   secondaryButton: {
-    backgroundColor: 'transparent',
+    backgroundColor: themeColors.propertyCardBackground,
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: themeColors.text,
+    borderWidth: 2,
+    borderColor: themeColors.buttonBackground,
   },
   secondaryButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: themeColors.text,
+    color: themeColors.buttonBackground,
   },
   descriptionContainer: {
     marginHorizontal: 16,
@@ -644,11 +648,13 @@ const createStyles = (themeColors: typeof Colors.light) => StyleSheet.create({
   agentCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: themeColors.backgroundMuted,
+    backgroundColor: themeColors.propertyCardBackground,
     borderRadius: 12,
     padding: 16,
     marginHorizontal: 16,
     marginBottom: 32,
+    borderWidth: 2,
+    borderColor: themeColors.border,
   },
   agentAvatar: {
     width: 64,
