@@ -110,10 +110,10 @@ const RipplePressable = ({ type, label, isSelected, onChange, colors, icon }: an
 export default function ListingTypeSelector({ control, name, rules, errors }: ListingTypeSelectorProps) {
   // Centralizzazione dei colori
   const colors = {
-    background: useThemeColor({}, 'background'),
+    background: useThemeColor({}, 'propertyCardBackground'),
     tint: useThemeColor({}, 'tint'), // Usiamo 'tint' come colore primario
     border: useThemeColor({}, 'border'),
-    text: useThemeColor({}, 'text'),
+    text: useThemeColor({}, 'propertyCardText'),
     // textPrimary: useThemeColor({}, 'tint'), // Usiamo 'tint' anche per il testo primario
     error: useThemeColor({ light: '#FF0000', dark: '#FF6B6B' }, 'error'), // Chiave 'error' valida
     // Usiamo valori specifici ma con una chiave valida ('tint') per useThemeColor
@@ -129,8 +129,8 @@ export default function ListingTypeSelector({ control, name, rules, errors }: Li
       rules={rules}
       render={({ field: { onChange, value, onBlur } }) => (
         // Usiamo NativeWind per il layout principale
-        <ThemedView className="mb-6 p-5 rounded-3xl border" style={{ backgroundColor: colors.background, borderColor: colors.border, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.03, shadowRadius: 8, elevation: 3 }}>
-          <ThemedText type="defaultSemiBold" className="mb-4 text-sm font-semibold opacity-50 uppercase tracking-wider ml-1">
+        <ThemedView className="mb-6 p-5 rounded-3xl border-2" style={{ backgroundColor: colors.background, borderColor: colors.border, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.03, shadowRadius: 8, elevation: 3 }}>
+          <ThemedText type="defaultSemiBold" className="mb-4 text-sm font-semibold opacity-50 uppercase tracking-wider ml-1" style={{ color: colors.text }}>
             {t('contractType')}
           </ThemedText>
           <View className="flex-row justify-between gap-4">

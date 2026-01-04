@@ -105,7 +105,7 @@ export function LabelInput({
 
   return (
     // Ripristinato ThemedView e className come nella versione funzionante
-    <ThemedView className={`mb-6 ${className}`} style={style} lightColor={backgroundColor} darkColor={backgroundColor}>
+    <ThemedView className={`mb-6 ${className}`} style={[{ backgroundColor: 'transparent' }, style]} lightColor="transparent" darkColor="transparent">
       <ThemedText
         style={{
           color: error ? themeErrorColor : isFocused ? themeTint : textColors,

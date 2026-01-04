@@ -25,6 +25,7 @@ const garageCategories = ['Single Garage', 'Double Garage', 'Parking Space'];
 export default function Step4_PropertyDetails({ control, errors, propertyType }: Step4PropertyDetailsProps) {
   const textColor = useThemeColor({}, 'text');
   const backgroundColor = useThemeColor({}, 'background');
+  const cardBackground = useThemeColor({}, 'propertyCardBackground');
   const borderColor = useThemeColor({}, 'border');
   const tint = useThemeColor({}, 'tint');
   const themeErrorColor = useThemeColor({}, 'error');
@@ -45,7 +46,7 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
         className="border-2 rounded-xl min-h-[50px] justify-center px-4"
         style={{
           borderColor: error ? themeErrorColor : borderColor,
-          backgroundColor: backgroundColor
+          backgroundColor: cardBackground
         }}
         onPress={onPress}
       >
@@ -101,12 +102,12 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
       <View className="flex-row gap-4">
         <View className="flex-1">
           <Controller control={control} name="numberOfRooms" render={({ field: { onChange, onBlur, value } }) => (
-            <LabelInput label={t('addProperty.labels.rooms')} placeholder={t('addProperty.placeholders.rooms')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.numberOfRooms} errorMessage={errors.numberOfRooms?.message as string} />
+            <LabelInput label={t('addProperty.labels.rooms')} placeholder={t('addProperty.placeholders.rooms')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.numberOfRooms} errorMessage={errors.numberOfRooms?.message as string} inputBackgroundColor={cardBackground} />
           )} />
         </View>
         <View className="flex-1">
           <Controller control={control} name="numberOfBathrooms" render={({ field: { onChange, onBlur, value } }) => (
-            <LabelInput label={t('addProperty.labels.bathrooms')} placeholder={t('addProperty.placeholders.bathrooms')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.numberOfBathrooms} errorMessage={errors.numberOfBathrooms?.message as string} />
+            <LabelInput label={t('addProperty.labels.bathrooms')} placeholder={t('addProperty.placeholders.bathrooms')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.numberOfBathrooms} errorMessage={errors.numberOfBathrooms?.message as string} inputBackgroundColor={cardBackground} />
           )} />
         </View>
       </View>
@@ -114,12 +115,12 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
       <View className="flex-row gap-4">
         <View className="flex-1">
           <Controller control={control} name="floor" render={({ field: { onChange, onBlur, value } }) => (
-            <LabelInput label={t('addProperty.labels.floor')} placeholder={t('addProperty.placeholders.floor')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.floor} errorMessage={errors.floor?.message as string} />
+            <LabelInput label={t('addProperty.labels.floor')} placeholder={t('addProperty.placeholders.floor')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.floor} errorMessage={errors.floor?.message as string} inputBackgroundColor={cardBackground} />
           )} />
         </View>
         <View className="flex-1">
           <Controller control={control} name="numberOfFloors" render={({ field: { onChange, onBlur, value } }) => (
-            <LabelInput label={t('addProperty.labels.totalFloors')} placeholder={t('addProperty.placeholders.totalFloors')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.numberOfFloors} errorMessage={errors.numberOfFloors?.message as string} />
+            <LabelInput label={t('addProperty.labels.totalFloors')} placeholder={t('addProperty.placeholders.totalFloors')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.numberOfFloors} errorMessage={errors.numberOfFloors?.message as string} inputBackgroundColor={cardBackground} />
           )} />
         </View>
       </View>
@@ -171,7 +172,7 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
         }}
       />
 
-      <View className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-2xl mt-2">
+      <View className="p-5 rounded-3xl border-2 mt-2" style={{ backgroundColor: cardBackground, borderColor: borderColor }}>
         <Controller control={control} name="hasElevator" render={({ field: { onChange, value } }) => (
           <CustomSwitch label={t('addProperty.labels.elevator')} value={value} onChange={onChange} />
         )} />
@@ -179,7 +180,7 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
           <CustomSwitch label={t('addProperty.labels.furnished')} value={value} onChange={onChange} />
         )} />
         <Controller control={control} name="yearBuilt" render={({ field: { onChange, onBlur, value } }) => (
-          <LabelInput label={t('addProperty.labels.yearBuilt')} placeholder={t('addProperty.placeholders.yearBuilt')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.yearBuilt} errorMessage={errors.yearBuilt?.message as string} />
+          <LabelInput label={t('addProperty.labels.yearBuilt')} placeholder={t('addProperty.placeholders.yearBuilt')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.yearBuilt} errorMessage={errors.yearBuilt?.message as string} inputBackgroundColor={cardBackground} />
         )} />
       </View>
     </>
@@ -213,12 +214,12 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
       <View className="flex-row gap-4">
         <View className="flex-1">
           <Controller control={control} name="numberOfRooms" render={({ field: { onChange, onBlur, value } }) => (
-            <LabelInput label={t('addProperty.labels.rooms')} placeholder={t('addProperty.placeholders.rooms')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.numberOfRooms} errorMessage={errors.numberOfRooms?.message as string} />
+            <LabelInput label={t('addProperty.labels.rooms')} placeholder={t('addProperty.placeholders.rooms')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.numberOfRooms} errorMessage={errors.numberOfRooms?.message as string} inputBackgroundColor={cardBackground} />
           )} />
         </View>
         <View className="flex-1">
           <Controller control={control} name="numberOfBathrooms" render={({ field: { onChange, onBlur, value } }) => (
-            <LabelInput label={t('addProperty.labels.bathrooms')} placeholder={t('addProperty.placeholders.bathrooms')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.numberOfBathrooms} errorMessage={errors.numberOfBathrooms?.message as string} />
+            <LabelInput label={t('addProperty.labels.bathrooms')} placeholder={t('addProperty.placeholders.bathrooms')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.numberOfBathrooms} errorMessage={errors.numberOfBathrooms?.message as string} inputBackgroundColor={cardBackground} />
           )} />
         </View>
       </View>
@@ -226,22 +227,22 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
       <View className="flex-row gap-4">
         <View className="flex-1">
           <Controller control={control} name="floor" render={({ field: { onChange, onBlur, value } }) => (
-            <LabelInput label={t('addProperty.labels.floor')} placeholder={t('addProperty.placeholders.floor')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.floor} errorMessage={errors.floor?.message as string} />
+            <LabelInput label={t('addProperty.labels.floor')} placeholder={t('addProperty.placeholders.floor')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.floor} errorMessage={errors.floor?.message as string} inputBackgroundColor={cardBackground} />
           )} />
         </View>
         <View className="flex-1">
           <Controller control={control} name="numberOfFloors" render={({ field: { onChange, onBlur, value } }) => (
-            <LabelInput label={t('addProperty.labels.totalFloors')} placeholder={t('addProperty.placeholders.totalFloors')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.numberOfFloors} errorMessage={errors.numberOfFloors?.message as string} />
+            <LabelInput label={t('addProperty.labels.totalFloors')} placeholder={t('addProperty.placeholders.totalFloors')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.numberOfFloors} errorMessage={errors.numberOfFloors?.message as string} inputBackgroundColor={cardBackground} />
           )} />
         </View>
       </View>
 
       <SectionHeader title={t('addProperty.headers.securityAndHistory')} icon="material-symbols:history-edu-outline" />
       <Controller control={control} name="yearBuilt" render={({ field: { onChange, onBlur, value } }) => (
-        <LabelInput label={t('addProperty.labels.yearBuilt')} placeholder={t('addProperty.placeholders.yearBuilt')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.yearBuilt} errorMessage={errors.yearBuilt?.message as string} />
+        <LabelInput label={t('addProperty.labels.yearBuilt')} placeholder={t('addProperty.placeholders.yearBuilt')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.yearBuilt} errorMessage={errors.yearBuilt?.message as string} inputBackgroundColor={cardBackground} />
       )} />
       
-      <View className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-2xl mt-2">
+      <View className="p-5 rounded-3xl border-2 mt-2" style={{ backgroundColor: cardBackground, borderColor: borderColor }}>
         <Controller control={control} name="hasDisabledAccess" render={({ field: { onChange, value } }) => (
           <CustomSwitch label={t('addProperty.labels.disabledAccess')} value={value} onChange={onChange} />
         )} />
@@ -277,22 +278,22 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
       <View className="flex-row gap-4">
         <View className="flex-1">
           <Controller control={control} name="floor" render={({ field: { onChange, onBlur, value } }) => (
-            <LabelInput label={t('addProperty.labels.floor')} placeholder={t('addProperty.placeholders.floor')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.floor} errorMessage={errors.floor?.message as string} />
+            <LabelInput label={t('addProperty.labels.floor')} placeholder={t('addProperty.placeholders.floor')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.floor} errorMessage={errors.floor?.message as string} inputBackgroundColor={cardBackground} />
           )} />
         </View>
         <View className="flex-1">
           <Controller control={control} name="numberOfFloors" render={({ field: { onChange, onBlur, value } }) => (
-            <LabelInput label={t('addProperty.labels.totalFloors')} placeholder={t('addProperty.placeholders.totalFloors')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.numberOfFloors} errorMessage={errors.numberOfFloors?.message as string} />
+            <LabelInput label={t('addProperty.labels.totalFloors')} placeholder={t('addProperty.placeholders.totalFloors')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.numberOfFloors} errorMessage={errors.numberOfFloors?.message as string} inputBackgroundColor={cardBackground} />
           )} />
         </View>
       </View>
 
-      <View className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-2xl mt-2">
+      <View className="p-5 rounded-3xl border-2 mt-2" style={{ backgroundColor: cardBackground, borderColor: borderColor }}>
         <Controller control={control} name="hasSurveillance" render={({ field: { onChange, value } }) => (
           <CustomSwitch label={t('addProperty.labels.surveillance')} value={value} onChange={onChange} />
         )} />
         <Controller control={control} name="yearBuilt" render={({ field: { onChange, onBlur, value } }) => (
-          <LabelInput label={t('addProperty.labels.yearBuilt')} placeholder={t('addProperty.placeholders.yearBuilt')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.yearBuilt} errorMessage={errors.yearBuilt?.message as string} />
+          <LabelInput label={t('addProperty.labels.yearBuilt')} placeholder={t('addProperty.placeholders.yearBuilt')} onBlur={onBlur} onChangeText={onChange} value={value} keyboardType="numeric" error={!!errors.yearBuilt} errorMessage={errors.yearBuilt?.message as string} inputBackgroundColor={cardBackground} />
         )} />
       </View>
     </>
@@ -323,7 +324,7 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
       />
 
       <SectionHeader title={t('addProperty.headers.accessibility')} icon="material-symbols:add-road-rounded" />
-      <View className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-2xl">
+      <View className="p-5 rounded-3xl border-2" style={{ backgroundColor: cardBackground, borderColor: borderColor }}>
         <Controller control={control} name="hasRoadAccess" render={({ field: { onChange, value } }) => (
           <CustomSwitch label={t('addProperty.labels.roadAccess')} value={value} onChange={onChange} />
         )} />
@@ -351,7 +352,7 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
       <ThemedView className="p-4 gap-4">
         {/* Header Section */}
         <View className="flex-row items-center gap-3 mb-2">
-          <View className="p-2.5 rounded-full shadow-sm" style={{ backgroundColor: backgroundColor, shadowColor: "#000", shadowOffset: {width: 0, height: 1}, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 }}>
+          <View className="p-2.5 rounded-full shadow-sm" style={{ backgroundColor: cardBackground, shadowColor: "#000", shadowOffset: {width: 0, height: 1}, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 }}>
             <ThemedIcon icon="material-symbols:assignment-turned-in" size={26} lightColor={tint} darkColor={tint} accessibilityLabel={t('addProperty.accessibility.details')} />
           </View>
           <View>
@@ -361,9 +362,9 @@ export default function Step4_PropertyDetails({ control, errors, propertyType }:
         </View>
 
         <View
-          className="p-5 rounded-3xl border"
+          className="p-5 rounded-3xl border-2"
           style={{
-            backgroundColor: backgroundColor,
+            backgroundColor: cardBackground,
             borderColor: borderColor,
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 2 },

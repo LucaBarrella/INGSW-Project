@@ -20,7 +20,7 @@ export const CategoryButton: React.FC<CategoryButtonProps> = ({
 }) => {
   // Colori per stato non selezionato
   const unselectedBackgroundColor = useThemeColor({}, 'tabBarBackground');
-  const unselectedBorderColor = useThemeColor({}, 'tabBarBackground');
+  const unselectedBorderColor = useThemeColor({}, 'border');
   const unselectedIconColor = useThemeColor({}, 'text');
   const unselectedTextColor = useThemeColor({}, 'text');
 
@@ -42,7 +42,7 @@ export const CategoryButton: React.FC<CategoryButtonProps> = ({
       onPress={onPress}
       // Manteniamo le classi di layout originali, ma aggiungiamo il bordo
       // Nota: Step1 usava w-[48%] aspect-square, qui usiamo p-4. Il layout potrebbe necessitare aggiustamenti nel componente padre.
-      className="items-center justify-center p-4 rounded-lg border active:opacity-80 active:scale-95"
+      className="items-center justify-center p-4 rounded-2xl border-2 active:opacity-80 active:scale-95"
       style={{
         backgroundColor: currentBackgroundColor,
         borderColor: currentBorderColor,

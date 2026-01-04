@@ -20,7 +20,7 @@ interface Step5PhotosProps {
 
 export default function Step5_Photos({ selectedImages, onImagesChange }: Step5PhotosProps) {
   const tint = useThemeColor({}, 'tint');
-  const backgroundColor = useThemeColor({}, 'background');
+  const cardBackground = useThemeColor({}, 'propertyCardBackground');
   const borderColor = useThemeColor({}, 'border');
   const secondaryTextColor = useThemeColor({}, 'tabIconDefault');
   const { showActionSheetWithOptions } = useActionSheet();
@@ -243,7 +243,7 @@ export default function Step5_Photos({ selectedImages, onImagesChange }: Step5Ph
       <ThemedView className="p-4 gap-4">
         {/* Header Section */}
         <View className="flex-row items-center gap-3 mb-2">
-          <View className="p-2.5 rounded-full shadow-sm" style={{ backgroundColor: backgroundColor, shadowColor: "#000", shadowOffset: {width: 0, height: 1}, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 }}>
+          <View className="p-2.5 rounded-full shadow-sm" style={{ backgroundColor: cardBackground, shadowColor: "#000", shadowOffset: {width: 0, height: 1}, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 }}>
             <ThemedIcon icon="material-symbols:add-a-photo" size={26} lightColor={tint} darkColor={tint} accessibilityLabel={t('addProperty.accessibility.location')} />
           </View>
           <View>
@@ -253,9 +253,9 @@ export default function Step5_Photos({ selectedImages, onImagesChange }: Step5Ph
         </View>
 
         <View
-          className="p-5 rounded-3xl border"
+          className="p-5 rounded-3xl border-2"
           style={{
-            backgroundColor: backgroundColor,
+            backgroundColor: cardBackground,
             borderColor: borderColor,
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 2 },
@@ -286,11 +286,11 @@ export default function Step5_Photos({ selectedImages, onImagesChange }: Step5Ph
             </Pressable>
           </View>
 
-          <View className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-2xl flex-row items-start gap-3 mt-6">
-          <ThemedIcon icon="material-symbols:info-outline" size={20} lightColor={secondaryTextColor} darkColor={secondaryTextColor} accessibilityLabel={t('addProperty.accessibility.info')} />
-          <ThemedText className="flex-1 text-xs leading-4" style={{ color: secondaryTextColor }}>
-            {t('addProperty.info.dragToReorder')}
-          </ThemedText>
+          <View className="p-5 rounded-3xl border-2 flex-row items-start gap-3 mt-6" style={{ backgroundColor: cardBackground, borderColor: borderColor }}>
+            <ThemedIcon icon="material-symbols:info-outline" size={20} lightColor={secondaryTextColor} darkColor={secondaryTextColor} accessibilityLabel={t('addProperty.accessibility.info')} />
+            <ThemedText className="flex-1 text-xs leading-4" style={{ color: secondaryTextColor }}>
+              {t('addProperty.info.dragToReorder')}
+            </ThemedText>
           </View>
         </View>
       </ThemedView>

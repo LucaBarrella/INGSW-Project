@@ -23,7 +23,8 @@ const energyClasses = ['A4', 'A3', 'A2', 'A1', 'B', 'C', 'D', 'E', 'F', 'G', 'NO
 
 export default function Step3_LocationStatus({ control, errors, setValue }: Step3LocationStatusProps) {
   const textColor = useThemeColor({}, 'text');
-  const backgroundColor = useThemeColor({}, 'background');
+  const cardBackground = useThemeColor({}, 'propertyCardBackground');
+  const cardText = useThemeColor({}, 'propertyCardText');
   const borderColor = useThemeColor({}, 'border');
   const themeErrorColor = useThemeColor({}, 'error');
   const tint = useThemeColor({}, 'tint');
@@ -117,7 +118,7 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
     <Animated.View entering={FadeInRight.duration(400)} className="flex-1">
       <ThemedView className="p-4 gap-6">
         <View className="flex-row items-center gap-3 mb-2">
-          <View className="p-2.5 rounded-full shadow-sm" style={{ backgroundColor: backgroundColor, shadowColor: "#000", shadowOffset: {width: 0, height: 1}, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 }}>
+          <View className="p-2.5 rounded-full shadow-sm" style={{ backgroundColor: cardBackground, shadowColor: "#000", shadowOffset: {width: 0, height: 1}, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 }}>
             <ThemedIcon icon="material-symbols:location-on" size={26} lightColor={tint} darkColor={tint} accessibilityLabel={t('addProperty.accessibility.location')} />
           </View>
           <View>
@@ -135,7 +136,7 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
               className={`flex-row items-center border-2 rounded-2xl px-4 h-[60px] shadow-sm ${isSelectionFromSuggestion ? 'bg-green-50/50 dark:bg-green-900/10' : ''}`}
               style={{
                 borderColor: isSelectionFromSuggestion ? '#34C759' : borderColor,
-                backgroundColor: isSelectionFromSuggestion ? undefined : backgroundColor,
+                backgroundColor: isSelectionFromSuggestion ? undefined : cardBackground,
                 shadowColor: "#000",
                 shadowOffset: { width: 0, height: 12 },
                 shadowOpacity: 0.08,
@@ -198,9 +199,9 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
                   shadowOffset: { width: 0, height: 4 },
                   shadowOpacity: 0.15,
                   shadowRadius: 12,
-                  backgroundColor: backgroundColor,
+                  backgroundColor: cardBackground,
                   borderColor: borderColor,
-                  borderWidth: 1,
+                  borderWidth: 2,
                   borderRadius: 16,
                   overflow: 'hidden'
                 }}
@@ -236,9 +237,9 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
         {(showManualDetails || !isSelectionFromSuggestion) && (
           <Animated.View
             entering={FadeInRight.duration(300)}
-            className="p-5 rounded-3xl border"
+            className="p-5 rounded-3xl border-2"
             style={{
-              backgroundColor: backgroundColor,
+              backgroundColor: cardBackground,
               borderColor: borderColor,
               shadowColor: "#000",
               shadowOffset: { width: 0, height: 2 },
@@ -247,7 +248,7 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
               elevation: 3
             }}
           >
-            <ThemedText className="mb-4 text-sm font-semibold opacity-50 uppercase tracking-wider ml-1">{t('addProperty.headers.addressDetails')}</ThemedText>
+            <ThemedText className="mb-4 text-sm font-semibold opacity-50 uppercase tracking-wider ml-1" style={{ color: cardText }}>{t('addProperty.headers.addressDetails')}</ThemedText>
             
             <View className="flex-row gap-4">
               <View className="flex-1">
@@ -264,6 +265,7 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
                       error={!!errors.addressRequest?.city}
                       errorMessage={errors.addressRequest?.city?.message as string}
                       className="mb-4"
+                      inputBackgroundColor={cardBackground}
                     />
                   )}
                 />
@@ -282,6 +284,7 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
                       error={!!errors.addressRequest?.province}
                       errorMessage={errors.addressRequest?.province?.message as string}
                       className="mb-4"
+                      inputBackgroundColor={cardBackground}
                     />
                   )}
                 />
@@ -301,6 +304,7 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
                   error={!!errors.addressRequest?.street}
                   errorMessage={errors.addressRequest?.street?.message as string}
                   className="mb-4"
+                  inputBackgroundColor={cardBackground}
                 />
               )}
             />
@@ -320,6 +324,7 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
                       error={!!errors.addressRequest?.streetNumber}
                       errorMessage={errors.addressRequest?.streetNumber?.message as string}
                       className="mb-4"
+                      inputBackgroundColor={cardBackground}
                     />
                   )}
                 />
@@ -338,6 +343,7 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
                       error={!!errors.addressRequest?.building}
                       errorMessage={errors.addressRequest?.building?.message as string}
                       className="mb-4"
+                      inputBackgroundColor={cardBackground}
                     />
                   )}
                 />
@@ -357,6 +363,7 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
                   error={!!errors.addressRequest?.country}
                   errorMessage={errors.addressRequest?.country?.message as string}
                   className="mb-0"
+                  inputBackgroundColor={cardBackground}
                 />
               )}
             />
@@ -376,8 +383,19 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
 
         <View className="h-[1px] bg-gray-200 dark:bg-gray-800 my-2" />
 
-        <View>
-          <ThemedText className="mb-4 text-lg font-bold">{t('addProperty.headers.propertyDetails')}</ThemedText>
+        <View
+          className="p-5 rounded-3xl border-2"
+          style={{
+            backgroundColor: cardBackground,
+            borderColor: borderColor,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.03,
+            shadowRadius: 8,
+            elevation: 3
+          }}
+        >
+          <ThemedText className="mb-4 text-sm font-semibold opacity-50 uppercase tracking-wider ml-1" style={{ color: cardText }}>{t('addProperty.headers.propertyDetails')}</ThemedText>
           
           <Controller
             control={control}
@@ -405,7 +423,7 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
                   <ThemedText className="mb-1.5 text-xs font-medium ml-1" style={{ color: textColor }}>{t('addProperty.labels.condition')}</ThemedText>
                   <Pressable
                     className="border-2 rounded-xl min-h-[50px] justify-center px-3"
-                    style={{ borderColor: errors.condition ? themeErrorColor : borderColor, backgroundColor: backgroundColor, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 3, elevation: 1 }}
+                    style={{ borderColor: errors.condition ? themeErrorColor : borderColor, backgroundColor: cardBackground, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 3, elevation: 1 }}
                     onPress={showConditionOptions}
                   >
                     <View className="flex-row justify-between items-center">
@@ -446,11 +464,11 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
               };
 
               return (
-                <View className="mb-4">
+                <View className="mb-0">
                   <ThemedText className="mb-1.5 text-xs font-medium ml-1" style={{ color: textColor }}>{t('addProperty.labels.energyClass')}</ThemedText>
                   <Pressable
                     className="border-2 rounded-xl min-h-[50px] justify-center px-3"
-                    style={{ borderColor: errors.energyRating ? themeErrorColor : borderColor, backgroundColor: backgroundColor, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 3, elevation: 1 }}
+                    style={{ borderColor: errors.energyRating ? themeErrorColor : borderColor, backgroundColor: cardBackground, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 3, elevation: 1 }}
                     onPress={showEnergyClassOptions}
                   >
                     <View className="flex-row justify-between items-center">

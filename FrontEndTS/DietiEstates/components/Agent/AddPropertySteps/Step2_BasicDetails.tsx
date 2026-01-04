@@ -16,13 +16,15 @@ interface Step2BasicDetailsProps {
 
 export default function Step2_BasicDetails({ control, errors }: Step2BasicDetailsProps) {
   const tint = useThemeColor({}, 'tint');
+  const cardBackground = useThemeColor({}, 'propertyCardBackground');
+  const cardText = useThemeColor({}, 'propertyCardText');
 
   return (
     <Animated.View entering={FadeInRight.duration(400)} className="flex-1">
       <ThemedView className="p-4 gap-6">
         {/* Header Section */}
         <View className="flex-row items-center gap-3 mb-2">
-          <View className="p-2.5 rounded-full shadow-sm" style={{ backgroundColor: useThemeColor({}, 'background'), shadowColor: "#000", shadowOffset: {width: 0, height: 1}, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 }}>
+          <View className="p-2.5 rounded-full shadow-sm" style={{ backgroundColor: cardBackground, shadowColor: "#000", shadowOffset: {width: 0, height: 1}, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 }}>
             <ThemedIcon icon="material-symbols:description" size={26} lightColor={tint} darkColor={tint} accessibilityLabel={t('addProperty.accessibility.details')} />
           </View>
           <View>
@@ -33,9 +35,9 @@ export default function Step2_BasicDetails({ control, errors }: Step2BasicDetail
 
         {/* Description Card */}
         <View
-          className="p-5 rounded-3xl border"
+          className="p-5 rounded-3xl border-2"
           style={{
-            backgroundColor: useThemeColor({}, 'background'),
+            backgroundColor: cardBackground,
             borderColor: useThemeColor({}, 'border'),
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 2 },
@@ -44,7 +46,7 @@ export default function Step2_BasicDetails({ control, errors }: Step2BasicDetail
             elevation: 3
           }}
         >
-          <ThemedText className="mb-4 text-sm font-semibold opacity-50 uppercase tracking-wider ml-1">{t('addProperty.labels.description')}</ThemedText>
+          <ThemedText className="mb-4 text-sm font-semibold opacity-50 uppercase tracking-wider ml-1" style={{ color: cardText }}>{t('addProperty.labels.description')}</ThemedText>
           <Controller
             control={control}
             name="description"
@@ -60,6 +62,7 @@ export default function Step2_BasicDetails({ control, errors }: Step2BasicDetail
                 error={!!errors.description}
                 errorMessage={errors.description?.message as string}
                 className="mb-0"
+                inputBackgroundColor={cardBackground}
               />
             )}
           />
@@ -67,9 +70,9 @@ export default function Step2_BasicDetails({ control, errors }: Step2BasicDetail
 
         {/* Price and Area Card */}
         <View
-          className="p-5 rounded-3xl border"
+          className="p-5 rounded-3xl border-2"
           style={{
-            backgroundColor: useThemeColor({}, 'background'),
+            backgroundColor: cardBackground,
             borderColor: useThemeColor({}, 'border'),
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 2 },
@@ -78,7 +81,7 @@ export default function Step2_BasicDetails({ control, errors }: Step2BasicDetail
             elevation: 3
           }}
         >
-          <ThemedText className="mb-4 text-sm font-semibold opacity-50 uppercase tracking-wider ml-1">{t('addProperty.headers.economicInfo')}</ThemedText>
+          <ThemedText className="mb-4 text-sm font-semibold opacity-50 uppercase tracking-wider ml-1" style={{ color: cardText }}>{t('addProperty.headers.economicInfo')}</ThemedText>
           <View className="flex-row gap-4">
             <View className="flex-1">
               <Controller
@@ -95,6 +98,7 @@ export default function Step2_BasicDetails({ control, errors }: Step2BasicDetail
                     error={!!errors.price}
                     errorMessage={errors.price?.message as string}
                     className="mb-0"
+                    inputBackgroundColor={cardBackground}
                   />
                 )}
               />
@@ -114,6 +118,7 @@ export default function Step2_BasicDetails({ control, errors }: Step2BasicDetail
                     error={!!errors.area}
                     errorMessage={errors.area?.message as string}
                     className="mb-0"
+                    inputBackgroundColor={cardBackground}
                   />
                 )}
               />
