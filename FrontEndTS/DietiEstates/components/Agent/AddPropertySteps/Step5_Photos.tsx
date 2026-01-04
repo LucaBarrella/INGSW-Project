@@ -1,22 +1,25 @@
-import React from 'react';
-import { View, Image, Pressable, ScrollView, Alert, Platform } from 'react-native';
+import React, { useCallback } from 'react';
+import { View, Image, Pressable, Alert, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import { useActionSheet } from '@expo/react-native-action-sheet';
-import * as ImageManipulator from 'expo-image-manipulator'; // Torniamo all'import standard
+import * as ImageManipulator from 'expo-image-manipulator';
+import Sortable, { SortableGridRenderItem, SortableGridDragEndParams } from 'react-native-sortables';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedIcon } from '@/components/ThemedIcon';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import Animated, { FadeInRight } from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
+import { t } from 'i18next';
 
 interface Step5PhotosProps {
-  selectedImages: string[]; // Array of image URIs
+  selectedImages: string[];
   onImagesChange: (uris: string[]) => void;
 }
 
 export default function Step5_Photos({ selectedImages, onImagesChange }: Step5PhotosProps) {
   const tint = useThemeColor({}, 'tint');
-  const iconColor = useThemeColor({}, 'iconColor');
   const backgroundColor = useThemeColor({}, 'background');
   const borderColor = useThemeColor({}, 'border');
   const secondaryTextColor = useThemeColor({}, 'tabIconDefault');
@@ -73,7 +76,7 @@ export default function Step5_Photos({ selectedImages, onImagesChange }: Step5Ph
     }
     if (processedUris.length < originalUris.length) {
       // Informa l'utente se alcune immagini non sono state processate
-      Alert.alert('Attenzione', 'Alcune immagini non sono state processate correttamente.');
+      Alert.alert(t('addProperty.alerts.attention'), t('addProperty.alerts.imagesNotProcessed'));
     }
   };
 
@@ -83,7 +86,7 @@ export default function Step5_Photos({ selectedImages, onImagesChange }: Step5Ph
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permesso necessario', 'È necessario concedere il permesso per accedere alla galleria.');
+        Alert.alert(t('addProperty.alerts.permissionRequired'), t('addProperty.alerts.galleryPermission'));
         return;
       }
 
@@ -98,7 +101,7 @@ export default function Step5_Photos({ selectedImages, onImagesChange }: Step5Ph
       }
     } catch (error) {
       console.error("Errore durante la selezione da libreria:", error);
-      Alert.alert('Errore', 'Impossibile selezionare immagini dalla galleria.');
+      Alert.alert(t('addProperty.alerts.error'), t('addProperty.alerts.galleryError'));
     }
   };
 
@@ -107,7 +110,7 @@ export default function Step5_Photos({ selectedImages, onImagesChange }: Step5Ph
     try {
       const { status } = await ImagePicker.requestCameraPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permesso necessario', 'È necessario concedere il permesso per accedere alla fotocamera.');
+        Alert.alert(t('addProperty.alerts.permissionRequired'), t('addProperty.alerts.cameraPermission'));
         return;
       }
 
@@ -122,7 +125,7 @@ export default function Step5_Photos({ selectedImages, onImagesChange }: Step5Ph
       }
     } catch (error) {
       console.error("Errore durante lo scatto della foto:", error);
-      Alert.alert('Errore', 'Impossibile utilizzare la fotocamera.');
+      Alert.alert(t('addProperty.alerts.error'), t('addProperty.alerts.cameraError'));
     }
   };
 
@@ -145,7 +148,7 @@ export default function Step5_Photos({ selectedImages, onImagesChange }: Step5Ph
 
     } catch (error) {
       console.error("Errore durante la selezione del documento:", error);
-      Alert.alert('Errore', 'Impossibile selezionare file.');
+      Alert.alert(t('addProperty.alerts.error'), t('addProperty.alerts.fileError'));
     }
   };
 
@@ -155,7 +158,7 @@ export default function Step5_Photos({ selectedImages, onImagesChange }: Step5Ph
 
   // --- Funzione per mostrare l'Action Sheet ---
   const showImageSourceOptions = () => {
-    const options = ['Libreria Foto', 'Scatta Foto', 'Scegli File', 'Annulla'];
+    const options = [t('addProperty.alerts.photoLibrary'), t('addProperty.alerts.takePhoto'), t('addProperty.alerts.chooseFile'), t('addProperty.actions.cancelTitle')];
     const cancelButtonIndex = 3;
     const icons = [
       <ThemedIcon key="library" icon="material-symbols:photo-library-outline-rounded" size={24} accessibilityLabel="Libreria" />,
@@ -168,7 +171,7 @@ export default function Step5_Photos({ selectedImages, onImagesChange }: Step5Ph
       {
         options,
         cancelButtonIndex,
-        title: 'Scegli la fonte dell\'immagine',
+        title: t('addProperty.alerts.chooseImageSource'),
         // Aggiungiamo icone per un aspetto migliore (opzionale)
         icons: Platform.OS === 'ios' ? icons : undefined, // Le icone sono più comuni su iOS
         // Stili (opzionali, per personalizzare)
@@ -196,39 +199,101 @@ export default function Step5_Photos({ selectedImages, onImagesChange }: Step5Ph
     );
   };
 
-  return (
-    <ThemedView className="p-2.5 gap-4">
-      <ThemedText type="subtitle" className="mb-2.5 text-center">Foto dell'Immobile</ThemedText>
+  const handleDragEnd = (params: SortableGridDragEndParams<string>) => {
+    onImagesChange(params.data);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  };
 
-      <ScrollView horizontal className="mb-4 p-2" >
-        {selectedImages.map((uri) => (
-          <View key={uri} className="relative mr-2.5">
-            <Image source={{ uri }} className="w-24 h-24 rounded-lg border" style={{ borderColor: borderColor }} />
-            <Pressable
-              className="absolute -top-1 -right-1 rounded-full w-6 h-6 justify-center items-center p-1"
+  const renderPhotoItem = useCallback<SortableGridRenderItem<string>>(({ item: uri, index }) => {
+    const isCover = index === 0;
+    return (
+      <View className="w-28 h-28">
+        <View
+          className="w-full h-full rounded-2xl border-2 overflow-hidden relative"
+          style={{ borderColor: isCover ? tint : borderColor }}
+        >
+          <Image
+            source={{ uri }}
+            className="w-full h-full"
+            resizeMode="cover"
+          />
+          {isCover && (
+            <View
+              className="absolute bottom-0 left-0 right-0 py-1 items-center"
               style={{ backgroundColor: tint }}
-              onPress={() => removeImage(uri)}
             >
-              <ThemedIcon icon="material-symbols:close-rounded" size={16} lightColor={iconColor} darkColor={iconColor} accessibilityLabel="Rimuovi immagine" />
+              <ThemedText className="text-[9px] font-bold text-white uppercase tracking-widest">{t('addProperty.labels.cover')}</ThemedText>
+            </View>
+          )}
+        </View>
+
+        <Pressable
+          className="absolute -top-1.5 -right-1.5 rounded-full w-6 h-6 justify-center items-center shadow-md z-50"
+          style={{ backgroundColor: '#FF3B30' }}
+          onPress={() => removeImage(uri)}
+        >
+          <ThemedIcon icon="material-symbols:close-rounded" size={16} lightColor="#FFFFFF" darkColor="#FFFFFF" accessibilityLabel="Rimuovi" />
+        </Pressable>
+      </View>
+    );
+  }, [tint, borderColor, removeImage]);
+
+  return (
+    <Animated.View entering={FadeInRight.duration(400)} className="flex-1">
+      <ThemedView className="p-4 gap-4">
+        {/* Header Section */}
+        <View className="flex-row items-center gap-3 mb-2">
+          <View className="p-2.5 rounded-full shadow-sm" style={{ backgroundColor: backgroundColor, shadowColor: "#000", shadowOffset: {width: 0, height: 1}, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 }}>
+            <ThemedIcon icon="material-symbols:add-a-photo" size={26} lightColor={tint} darkColor={tint} accessibilityLabel={t('addProperty.accessibility.location')} />
+          </View>
+          <View>
+            <ThemedText type="subtitle" className="text-xl font-bold">{t('addProperty.headers.propertyPhotos')}</ThemedText>
+            <ThemedText className="text-sm opacity-60">{t('addProperty.stepCounter', { current: 5, total: 5 })}</ThemedText>
+          </View>
+        </View>
+
+        <View
+          className="p-5 rounded-3xl border"
+          style={{
+            backgroundColor: backgroundColor,
+            borderColor: borderColor,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.03,
+            shadowRadius: 8,
+            elevation: 3
+          }}
+        >
+          <View className="flex-row flex-wrap gap-4 justify-center">
+            {selectedImages && selectedImages.length > 0 && (
+              <Sortable.Grid
+                columns={3}
+                data={selectedImages}
+                renderItem={renderPhotoItem}
+                onDragEnd={handleDragEnd}
+                columnGap={16}
+                rowGap={16}
+              />
+            )}
+            
+            <Pressable
+              className="w-28 h-28 rounded-2xl border-2 border-dashed justify-center items-center p-2 active:opacity-60"
+              style={{ borderColor: tint + '40', backgroundColor: tint + '05' }}
+              onPress={showImageSourceOptions}
+            >
+              <ThemedIcon icon="material-symbols:add-photo-alternate-outline-rounded" size={32} lightColor={tint} darkColor={tint} accessibilityLabel={t('addProperty.accessibility.addPhoto')} />
+              <ThemedText style={{ color: tint }} className="mt-1 text-xs font-bold text-center">{t('addProperty.labels.add')}</ThemedText>
             </Pressable>
           </View>
-        ))}
-        {/* Bottone Aggiungi Foto ora chiama showImageSourceOptions */}
-        <Pressable
-          className="w-24 h-24 rounded-lg border-2 border-dashed justify-center items-center p-2"
-          style={{ borderColor: borderColor, backgroundColor: backgroundColor }}
-          onPress={showImageSourceOptions}
-        >
-          <View className="flex-1 justify-center items-center">
-            <ThemedIcon icon="material-symbols:add-photo-alternate-outline-rounded" size={30} lightColor={tint} darkColor={tint} accessibilityLabel="Aggiungi foto" />
-            <ThemedText style={{ color: tint }} className="mt-1">Aggiungi Foto</ThemedText>
-          </View>
-        </Pressable>
-      </ScrollView>
 
-      <ThemedText className="text-center text-xs" style={{ color: secondaryTextColor }}>
-        Puoi aggiungere più foto. La prima foto sarà usata come copertina.
-      </ThemedText>
-    </ThemedView>
+          <View className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-2xl flex-row items-start gap-3 mt-6">
+          <ThemedIcon icon="material-symbols:info-outline" size={20} lightColor={secondaryTextColor} darkColor={secondaryTextColor} accessibilityLabel={t('addProperty.accessibility.info')} />
+          <ThemedText className="flex-1 text-xs leading-4" style={{ color: secondaryTextColor }}>
+            {t('addProperty.info.dragToReorder')}
+          </ThemedText>
+          </View>
+        </View>
+      </ThemedView>
+    </Animated.View>
   );
 }

@@ -14,6 +14,7 @@ import Animated, {
   useAnimatedRef,
 } from 'react-native-reanimated';
 import { t } from 'i18next';
+import { ThemedIcon } from '@/components/ThemedIcon';
 
 // Define ListingType
 export type ListingType = 'SALE' | 'RENT';
@@ -26,30 +27,30 @@ interface ListingTypeSelectorProps {
   errors: FieldErrors;
 }
 
-const listingTypes: { type: ListingType; label: string }[] = [
-  { type: 'SALE', label: 'In Vendita' },
-  { type: 'RENT', label: 'In Affitto' },
+const listingTypes: { type: ListingType; labelKey: string }[] = [
+  { type: 'SALE', labelKey: 'filters.contract.options.SALE' },
+  { type: 'RENT', labelKey: 'filters.contract.options.RENT' },
 ];
 
 // Componente Ripple Pressable con NativeWind
-const RipplePressable = ({ type, label, isSelected, onChange, colors }: any) => {
+const RipplePressable = ({ type, label, isSelected, onChange, colors, icon }: any) => {
   const rippleScale = useSharedValue(0);
   const rippleOpacity = useSharedValue(1);
   const rippleX = useSharedValue(0);
   const rippleY = useSharedValue(0);
-  const containerRef = useAnimatedRef<Animated.View>(); // Use Animated.View ref
+  const containerRef = useAnimatedRef<Animated.View>();
 
   const tapGesture = Gesture.Tap()
     .onStart((event) => {
       const measured = measure(containerRef);
       if (measured) {
-        const diameter = Math.max(measured.width, measured.height) * 1.5;
+        const diameter = Math.max(measured.width, measured.height) * 2;
         rippleX.value = event.x - diameter / 2;
         rippleY.value = event.y - diameter / 2;
         rippleScale.value = 0;
-        rippleOpacity.value = 0.5;
-        rippleScale.value = withTiming(1, { duration: 500 });
-        rippleOpacity.value = withTiming(0, { duration: 400 });
+        rippleOpacity.value = 0.3;
+        rippleScale.value = withTiming(1, { duration: 400 });
+        rippleOpacity.value = withTiming(0, { duration: 300 });
       }
     })
     .onEnd(() => {
@@ -57,7 +58,7 @@ const RipplePressable = ({ type, label, isSelected, onChange, colors }: any) => 
     });
 
   const rippleStyle = useAnimatedStyle(() => {
-    const diameter = 100; // Potrebbe essere calcolato dinamicamente se necessario
+    const diameter = 200;
     return {
       position: 'absolute',
       left: rippleX.value,
@@ -65,43 +66,40 @@ const RipplePressable = ({ type, label, isSelected, onChange, colors }: any) => 
       width: diameter,
       height: diameter,
       borderRadius: diameter / 2,
-      backgroundColor: colors.ripple, // Colore del ripple
+      backgroundColor: isSelected ? colors.text : colors.tint,
       opacity: rippleOpacity.value,
       transform: [{ scale: rippleScale.value }],
     };
   });
 
-  // Classi NativeWind per il contenitore
-  const containerClasses = `
-    flex-1 py-3 px-4 rounded-xl border-2 items-center justify-center
-    active:scale-98 active:opacity-80 transition-all duration-150
-  `;
-  // Classi NativeWind per il testo
-  const textClasses = `
-    text-center font-medium text-base z-10
-  `; // zIndex per tenere il testo sopra il ripple
+  const animatedContainerStyle = useAnimatedStyle(() => {
+    return {
+      backgroundColor: withTiming(isSelected ? colors.tint : colors.background, { duration: 200 }),
+      borderColor: withTiming(isSelected ? colors.tint : colors.border, { duration: 200 }),
+      transform: [{ scale: withTiming(isSelected ? 1.02 : 1, { duration: 200 }) }],
+    };
+  });
 
   return (
     <GestureDetector gesture={tapGesture}>
-      {/* Usiamo Animated.View per poter misurare con measure */}
       <Animated.View
         ref={containerRef}
-        className={containerClasses}
-        // Applichiamo colori e overflow con lo stile inline
-        style={[
-          {
-            backgroundColor: isSelected ? colors.cardSelected : colors.background,
-            borderColor: isSelected ? colors.cardBorderSelected : colors.border,
-          },
-          styles.overflowHidden // Stile per overflow: 'hidden'
-        ]}
+        className="flex-1 py-4 px-4 rounded-2xl border-2 items-center justify-center shadow-sm"
+        style={[animatedContainerStyle, styles.overflowHidden]}
       >
-        <ThemedText
-          className={textClasses}
-          style={{ color: isSelected ? colors.tint : colors.text }} // Usa colors.tint per il testo selezionato
-        >
-          {label}
-        </ThemedText>
+        <View className="flex-row items-center gap-2 z-10">
+          <ThemedIcon
+            icon={icon}
+            size={20}
+            lightColor={isSelected ? colors.background : colors.text}
+            darkColor={isSelected ? colors.background : colors.text} accessibilityLabel={''}          />
+          <ThemedText
+            className="text-center font-bold text-base"
+            style={{ color: isSelected ? colors.background : colors.text }}
+          >
+            {label}
+          </ThemedText>
+        </View>
         <Animated.View style={rippleStyle} />
       </Animated.View>
     </GestureDetector>
@@ -129,10 +127,10 @@ export default function ListingTypeSelector({ control, name, rules, errors }: Li
       control={control}
       name={name}
       rules={rules}
-      render={({ field: { onChange, value } }) => (
+      render={({ field: { onChange, value, onBlur } }) => (
         // Usiamo NativeWind per il layout principale
-        <ThemedView className="mb-6">
-          <ThemedText type="defaultSemiBold" className="mb-3 text-base">
+        <ThemedView className="mb-6 p-5 rounded-3xl border" style={{ backgroundColor: colors.background, borderColor: colors.border, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.03, shadowRadius: 8, elevation: 3 }}>
+          <ThemedText type="defaultSemiBold" className="mb-4 text-sm font-semibold opacity-50 uppercase tracking-wider ml-1">
             {t('contractType')}
           </ThemedText>
           <View className="flex-row justify-between gap-4">
@@ -142,10 +140,14 @@ export default function ListingTypeSelector({ control, name, rules, errors }: Li
                 <RipplePressable
                   key={item.type}
                   type={item.type}
-                  label={item.label}
+                  label={t(item.labelKey)}
                   isSelected={isSelected}
-                  onChange={onChange}
+                  onChange={(val: any) => {
+                    onChange(val);
+                    onBlur(); // Notifica RHF del cambiamento
+                  }}
                   colors={colors}
+                  icon={item.type === 'SALE' ? 'material-symbols:sell' : 'material-symbols:key'}
                 />
               );
             })}

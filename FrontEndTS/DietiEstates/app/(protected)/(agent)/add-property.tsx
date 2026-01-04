@@ -1,8 +1,9 @@
 import React from 'react';
 import { ScrollView, View, ActivityIndicator, Alert } from 'react-native'; // Aggiunto ActivityIndicator
-import { useForm, SubmitHandler, FieldName } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod'; // Importa il resolver
 import { ThemedView } from '@/components/ThemedView';
+import { ThemedText } from '@/components/ThemedText';
 
 import ListingTypeSelector from '@/components/Agent/AddPropertySteps/ListingTypeSelector';
 import Step1_PropertyType from '@/components/Agent/AddPropertySteps/Step1_PropertyType';
@@ -20,22 +21,24 @@ import httpClient from '@/src/core/httpClient';
 import { t } from 'i18next';
 
 // Mapping dei campi per step per la validazione
-const fieldsByStep: Record<number, FieldName<PropertyFormData>[]> = {
+const fieldsByStep: Record<number, any[]> = {
   1: ['contractType', 'propertyType'],
   2: ['description', 'price', 'area'],
-  3: ['addressRequest', 'energyClass', 'condition'],
+  3: ['addressRequest', 'energyRating', 'condition'],
   4: [
-      'residentialCategory', 'rooms', 'bathrooms', 'floor', 'elevator', 'pool',
-      'commercialCategory', 'commercialBathrooms', 'emergencyExit', 'constructionDate',
-      'garageCategory', 'numberOfFloors', 'parkingSpaces',
-      'landCategory', 'garden', 'numberOfBathrooms', 'numberOfRooms', 'isFurnished', 'heatingType', 'hasRoadAccess'
-     ] as any[],
+      'residentialCategory', 'numberOfRooms', 'numberOfBathrooms', 'floor', 'hasElevator',
+      'commercialCategory', 'hasDisabledAccess', 'yearBuilt',
+      'garageCategory', 'hasSurveillance', 'numberOfFloors', 'parkingSpaces',
+      'landCategory', 'garden', 'isFurnished', 'heatingType', 'hasRoadAccess'
+     ],
   5: [],
 };
 
 export default function AddPropertyScreen() {
   const backgroundColor = useThemeColor({}, 'background');
-  const buttonTextColor = useThemeColor({}, 'buttonTextColor'); // Ottieni il colore qui
+  const buttonTextColor = useThemeColor({}, 'buttonTextColor');
+  const borderColor = useThemeColor({}, 'border');
+  const textColor = useThemeColor({}, 'text');
   const [currentStep, setCurrentStep] = React.useState(1);
   const [selectedImages, setSelectedImages] = React.useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -43,11 +46,25 @@ export default function AddPropertyScreen() {
   const createProperty = async (data: any, images: string[]) => {
     const formData = new FormData();
     
-    // Add the property data as a JSON string directly
-    // Spring Boot's @RequestPart will parse this automatically
+    // Per risolvere l'errore 500 sui residenziali, dobbiamo assicurarci che la parte 'property'
+    // venga inviata con Content-Type 'application/json'.
+    // In React Native, il modo più affidabile per forzare il Content-Type di una parte
+    // JSON in un FormData multipart è usare un Blob (se supportato) o un file virtuale.
+    // Dato che il server è in sola lettura e non accetta 'application/octet-stream',
+    // usiamo un trucco per forzare il tipo.
+    
+    const jsonString = JSON.stringify(data);
+    
+    // In React Native, l'invio di JSON in un FormData multipart è problematico.
+    // Se inviamo solo la stringa, il Content-Type diventa 'text/plain' o 'application/octet-stream'.
+    // Il backend (Spring Boot) richiede 'application/json' per mappare correttamente il DTO residenziale.
+    // Per forzare il Content-Type corretto senza dipendere dal supporto Blob del motore JS,
+    // usiamo un file virtuale.
+    
     formData.append('property', {
-      string: JSON.stringify(data),
-      type: 'application/json'
+      uri: 'data:application/json;base64,' + btoa(unescape(encodeURIComponent(jsonString))),
+      name: 'property.json',
+      type: 'application/json',
     } as any);
     
     // Add each image file
@@ -77,7 +94,7 @@ export default function AddPropertyScreen() {
   };
 
   const { control, handleSubmit, watch, setValue, trigger, formState: { errors } } = useForm<PropertyFormData>({
-    resolver: zodResolver(propertySchema, { errorMap: customErrorMap }), // Applica il resolver con customErrorMap
+    resolver: zodResolver(propertySchema, { errorMap: customErrorMap }) as any, // Applica il resolver con customErrorMap
     defaultValues: {
       contractType: undefined,
       propertyType: undefined,
@@ -95,15 +112,19 @@ export default function AddPropertyScreen() {
         longitude: undefined,
       },
       condition: undefined,
-      energyClass: 'NOT_APPLIABLE', // Potrebbe richiedere un valore di default valido per l'enum/picker
-      elevator: false,
-      pool: false,
-      emergencyExit: false,
+      energyRating: 'NOT_APPLIABLE',
+      hasElevator: false,
+      hasDisabledAccess: false,
       hasSurveillance: false,
       garden: 'ABSENT',
       isFurnished: false,
-      heatingType: 'Absent', // not all caps
+      heatingType: 'Absent',
       hasRoadAccess: false,
+      parkingSpaces: '0',
+      numberOfRooms: '1',
+      numberOfBathrooms: '1',
+      floor: '0',
+      numberOfFloors: '1',
     },
     mode: 'onBlur', // Valida quando l'utente lascia il campo per un feedback migliore
   });
@@ -120,8 +141,8 @@ export default function AddPropertyScreen() {
       case 1:
         return (
           <>
-            <ListingTypeSelector control={control} name="contractType" rules={{ required: 'Seleziona un tipo di annuncio' }} errors={errors} />
-            <Step1_PropertyType control={control} name="propertyType" rules={{ required: 'Seleziona un tipo di proprietà' }} errors={errors} />
+            <ListingTypeSelector control={control} name="contractType" rules={{ required: t('addProperty.alerts.selectListingType') }} errors={errors} />
+            <Step1_PropertyType control={control} name="propertyType" rules={{ required: t('addProperty.alerts.selectPropertyType') }} errors={errors} />
             <PropertyTypeDescription selectedType={watchedPropertyType} />
           </>
         );
@@ -175,50 +196,57 @@ export default function AddPropertyScreen() {
 
     try {
       // 1. Preparazione Dati
+      const getCategoryName = (d: PropertyFormData) => {
+        switch (d.propertyType) {
+          case 'RESIDENTIAL': return d.residentialCategory;
+          case 'COMMERCIAL': return d.commercialCategory;
+          case 'GARAGE': return d.garageCategory;
+          case 'LAND': return d.landCategory;
+          default: return '';
+        }
+      };
+
       const propertyData: any = {
-        propertyCategory: {propertyType: data.propertyType, name: data.residentialCategory || data.commercialCategory || data.garageCategory || data.landCategory},
-        contractType: data.contractType,
         propertyType: data.propertyType,
         description: data.description,
         price: parseFloat(data.price),
         area: parseInt(data.area),
+        contractType: data.contractType,
+        propertyCategoryName: getCategoryName(data),
+        condition: data.condition,
+        energyRating: data.energyRating,
         addressRequest: data.addressRequest,
-        energyRating: data.energyClass,
-        condition: data.condition
       };
 
       // Aggiungi campi specifici in base al tipo
       switch (data.propertyType) {
         case 'RESIDENTIAL':
-          propertyData.propertyCategoryName = data.residentialCategory;
-          propertyData.floor = data.floor;
-          propertyData.elevator = data.elevator;
-          propertyData.pool = data.pool;
-          propertyData.numberOfFloors = data.numberOfFloors;
-          propertyData.numberOfRooms = data.numberOfRooms;
-          propertyData.numberOfBathrooms = data.numberOfBathrooms;
+          propertyData.numberOfRooms = parseInt(data.numberOfRooms);
+          propertyData.numberOfBathrooms = parseInt(data.numberOfBathrooms);
+          propertyData.floor = parseInt(data.floor);
+          propertyData.numberOfFloors = parseInt(data.numberOfFloors);
           propertyData.garden = data.garden;
-          propertyData.isFurnished = data.isFurnished;
           propertyData.heatingType = data.heatingType;
-          propertyData.parkingSpaces = data.parkingSpaces;
+          propertyData.parkingSpaces = data.parkingSpaces ? parseInt(data.parkingSpaces) : 0;
+          propertyData.isFurnished = data.isFurnished;
+          propertyData.hasElevator = data.hasElevator;
+          propertyData.yearBuilt = data.yearBuilt ? parseInt(data.yearBuilt) : undefined;
           break;
         case 'COMMERCIAL':
-          propertyData.propertyCategoryName = data.commercialCategory;
-          propertyData.numberOfBathrooms = data.numberOfBathrooms;
-          propertyData.floor = data.floor;
-          propertyData.numberOfFloors = data.numberOfFloors;
-          propertyData.numberOfRooms = data.numberOfRooms;
-          propertyData.emergencyExit = data.emergencyExit;
-          propertyData.constructionDate = data.constructionDate;
+          propertyData.numberOfRooms = parseInt(data.numberOfRooms);
+          propertyData.numberOfBathrooms = parseInt(data.numberOfBathrooms);
+          propertyData.floor = parseInt(data.floor);
+          propertyData.numberOfFloors = parseInt(data.numberOfFloors);
+          propertyData.hasDisabledAccess = data.hasDisabledAccess;
+          propertyData.yearBuilt = data.yearBuilt ? parseInt(data.yearBuilt) : undefined;
           break;
         case 'GARAGE':
-          propertyData.propertyCategoryName = data.garageCategory;
+          propertyData.floor = parseInt(data.floor);
+          propertyData.numberOfFloors = parseInt(data.numberOfFloors);
           propertyData.hasSurveillance = data.hasSurveillance;
-          propertyData.numberOfFloors = data.numberOfFloors;
-          propertyData.floor = data.floor;
+          propertyData.yearBuilt = data.yearBuilt ? parseInt(data.yearBuilt) : undefined;
           break;
         case 'LAND':
-          propertyData.propertyCategoryName = data.landCategory;
           propertyData.hasRoadAccess = data.hasRoadAccess;
           break;
       }
@@ -236,9 +264,9 @@ export default function AddPropertyScreen() {
           pathname: '/feedback',
           params: {
             status: 'success',
-            title: 'Successo!',
-            message: 'Il tuo immobile è stato aggiunto correttamente.',
-            buttonLabel: 'Torna alla Home',
+            title: t('addProperty.alerts.success'),
+            message: t('addProperty.alerts.propertyAdded'),
+            buttonLabel: t('addProperty.alerts.backToHome'),
             buttonAction: '/(protected)/(agent)/(tabs)/home', // Reindirizza alla home dell'agente
           },
         });
@@ -255,9 +283,9 @@ export default function AddPropertyScreen() {
         pathname: '/feedback',
         params: {
           status: 'error',
-          title: 'Errore Salvataggio',
-          message: error.message || 'Si è verificato un errore imprevisto durante il salvataggio. Riprova.',
-          buttonLabel: 'Torna al Form',
+          title: t('addProperty.alerts.saveError'),
+          message: error.message || t('addProperty.alerts.unexpectedError'),
+          buttonLabel: t('addProperty.alerts.backToForm'),
           buttonAction: 'back', // Permette di tornare indietro
         },
       });
@@ -268,43 +296,89 @@ export default function AddPropertyScreen() {
   };
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: backgroundColor }} contentContainerStyle={{ paddingBottom: 50 }}>
-      <ThemedView className="p-4 gap-4">
-        <View className="h-16 items-center justify-center">
-          <StepIndicator currentStep={currentStep} totalSteps={5} />
-        </View>
-        {renderStepContent()}
-
-        <ThemedView className="flex-row justify-between items-center mt-5 gap-x-6">
-          {currentStep > 1 && (
-            <ThemedButton
-              title="Indietro"
-              onPress={prevStep}
-              disabled={isSubmitting}
-              className="py-3 px-4" // Padding e nessuna flessibilità specifica qui
+    <ThemedView style={{ flex: 1 }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 120 }}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        <ThemedView className="p-4">
+          <View className="mb-6 items-center">
+            <ThemedText className="opacity-60 text-xs uppercase font-bold tracking-widest mb-2">
+              {t('addProperty.stepCounter', { current: currentStep, total: 5 })}
+            </ThemedText>
+            <StepIndicator
+              currentStep={currentStep}
+              totalSteps={5}
+              size="medium"
+              onStepPress={async (step) => {
+                if (step < currentStep) {
+                  setCurrentStep(step);
+                  return;
+                }
+                
+                let canGoToStep = true;
+                for (let i = currentStep; i < step; i++) {
+                  const fieldsToValidate = fieldsByStep[i];
+                  if (fieldsToValidate && fieldsToValidate.length > 0) {
+                    const isValid = await trigger(fieldsToValidate);
+                    if (!isValid) {
+                      canGoToStep = false;
+                      setCurrentStep(i);
+                      break;
+                    }
+                  }
+                }
+                
+                if (canGoToStep) {
+                  setCurrentStep(step);
+                }
+              }}
             />
-          )}
+          </View>
 
-          {currentStep < 5 && (
-            <ThemedButton
-              title="Avanti"
-              onPress={nextStep}
-              disabled={isSubmitting}
-              className={`py-3 px-4 flex-grow ${currentStep === 1 ? 'ml-auto' : ''}`} // flex-grow sempre, ml-auto per step 1
-            />
-          )}
-          {currentStep === 5 && (
-            <ThemedButton
-              title={isSubmitting || loading ? "Salvataggio..." : "Salva Immobile"}
-              onPress={handleSubmit(onSubmit)}
-              disabled={isSubmitting || loading}
-              className="py-3 px-4 flex-grow"
-            >
-              {(isSubmitting || loading) && <ActivityIndicator color={buttonTextColor} style={{ marginLeft: 8 }} />}
-            </ThemedButton>
-          )}
+          {renderStepContent()}
         </ThemedView>
-      </ThemedView>
-    </ScrollView>
+      </ScrollView>
+
+      {/* Floating Action Buttons Container */}
+      <View
+        className="absolute bottom-0 left-0 right-0 p-6 flex-row gap-4 border-t"
+        style={{
+          backgroundColor: backgroundColor,
+          borderColor: borderColor + '20'
+        }}
+      >
+        {currentStep > 1 && (
+          <ThemedButton
+            title={t('addProperty.buttons.back')}
+            onPress={prevStep}
+            disabled={isSubmitting}
+            className="flex-1 py-4 mb-0"
+            style={{ backgroundColor: borderColor + '20' }}
+            textColor={textColor}
+          />
+        )}
+
+        {currentStep < 5 ? (
+          <ThemedButton
+            title={t('addProperty.buttons.next')}
+            onPress={nextStep}
+            disabled={isSubmitting}
+            className="flex-[2] py-4 mb-0 shadow-lg shadow-blue-500/30"
+          />
+        ) : (
+          <ThemedButton
+            title={isSubmitting || loading ? t('addProperty.buttons.saving') : t('addProperty.buttons.publish')}
+            onPress={handleSubmit(onSubmit)}
+            disabled={isSubmitting || loading}
+            className="flex-[2] py-4 mb-0 shadow-lg shadow-green-500/30"
+          >
+            {(isSubmitting || loading) && <ActivityIndicator color={buttonTextColor} style={{ marginLeft: 8 }} />}
+          </ThemedButton>
+        )}
+      </View>
+    </ThemedView>
   );
 }

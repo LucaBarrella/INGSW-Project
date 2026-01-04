@@ -3,6 +3,7 @@ import { TouchableOpacity } from 'react-native';
 import { ThemedIcon } from '@/components/ThemedIcon';
 import { ThemedText } from '@/components/ThemedText';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { t } from 'i18next';
 
 interface CategoryButtonProps {
   icon: string;
@@ -47,7 +48,7 @@ export const CategoryButton: React.FC<CategoryButtonProps> = ({
         borderColor: currentBorderColor,
         borderWidth: currentBorderWidth,
       }}
-      accessibilityLabel={`Seleziona tipo ${label}`} // Aggiornato accessibilityLabel
+      accessibilityLabel={t('addProperty.accessibility.selectType', { type: label })} // Aggiornato accessibilityLabel
       accessibilityState={{ selected: isSelected }} // Aggiunto accessibilityState
       accessibilityRole="button"
     >

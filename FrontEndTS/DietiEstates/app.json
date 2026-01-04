@@ -9,7 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.fabbest.dietiestates"
     },
     "android": {
       "googleServicesFile": "google-services.json",
@@ -45,8 +46,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "b4a11941-2cf6-436b-9d1f-b9d5a4afe477"
+        "projectId": "4cd742cb-7c0e-4e08-abd4-9f9c90b506d6"
       }
-    }
+    },
+    "owner": "lucabarrella"
   }
 }

@@ -7,101 +7,79 @@ export const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
   return { message: ctx.defaultError };
 };
 
-// Tipi di base che saranno utilizzati in più schemi
+// Tipi di base
 const stringRequired = z.string().min(1, 'Campo richiesto');
 const positiveNumber = z.string().regex(/^\d+$/, 'Deve essere un numero positivo');
 const numberRequired = z.number({ required_error: 'Campo richiesto' });
 const positiveNumberGreaterThanZero = z.string().regex(/^[1-9]\d*$/, 'Deve essere un numero positivo maggiore di zero');
+const yearSchema = z.string().regex(/^\d{4}$/, 'Anno non valido');
 
-// Schema per i dettagli residenziali
-const residentialDetailsSchema = z.object({
-  residentialCategory: stringRequired,
-  floor: positiveNumber,
-  elevator: z.boolean(),
-  pool: z.boolean(),
-  numberOfRooms: positiveNumberGreaterThanZero,
-  numberOfFloors: positiveNumberGreaterThanZero,
-  numberOfBathrooms: positiveNumberGreaterThanZero,
-  heatingType: z.enum(['Absent', 'Autonomous', 'Centralized'], { required_error: 'Seleziona il tipo di riscaldamento' }),
-  garden: z.enum(['ABSENT', 'PRIVATE', 'SHARED'], { required_error: 'Seleziona il tipo di giardino' }),
-  isFurnished: z.boolean(),
-  parkingSpaces: positiveNumber,
-});
-
-// Schema per i dettagli commerciali
-const commercialDetailsSchema = z.object({
-  commercialCategory: stringRequired,
-  emergencyExit: z.boolean(),
-  floor: positiveNumber,
-  numberOfFloors: positiveNumberGreaterThanZero,
-  numberOfBathrooms: positiveNumberGreaterThanZero,
-  numberOfRooms: positiveNumberGreaterThanZero,
-  constructionDate: z.string().regex(/^\d{4}$/, 'Anno non valido'),
-});
-
-// Schema per i dettagli garage
-const garageDetailsSchema = z.object({
-  garageCategory: stringRequired,
-  hasSurveillance: z.boolean(),
-  numberOfFloors: positiveNumberGreaterThanZero,
-  floor: positiveNumber
-});
-
-// Schema per i dettagli del terreno
-const landDetailsSchema = z.object({
-  landCategory: stringRequired,
-  hasRoadAccess: z.boolean(),
-});
-
-// Schema base comune a tutti i tipi di proprietà
+// Schema base comune
 const basePropertySchema = z.object({
   contractType: z.enum(['SALE', 'RENT'], { required_error: 'Seleziona il tipo di annuncio' }),
-  propertyCategory: z.object({
-    propertyType: z.enum(['RESIDENTIAL', 'COMMERCIAL', 'GARAGE', 'LAND'], { required_error: 'Seleziona il tipo di immobile' }),
-    name: z.enum(['Apartment', 'Villa', 'Penthouse', 'Townhouse', 'Office', 'Shop', 'Warehouse', 'Restaurant', 'Single Garage', 'Double Garage', 'Parking Space', 'Building Plot', 'Agricultural Land', 'Industrial Land'], { required_error: 'Seleziona la categoria della proprietà' }),
-  }),
   description: stringRequired.min(20, 'La descrizione deve essere di almeno 20 caratteri'),
   price: positiveNumber,
   area: positiveNumber,
-  energyClass: z.enum(['A4', 'A3', 'A2', 'A1', 'B', 'C', 'D', 'E', 'F', 'G', 'NOT_APPLIABLE'], { required_error: 'Seleziona la classe energetica' }),
-  condition: z.enum(["UNDER_CONSTRUCTION", "NEW", "RENOVATED", "GOOD_CONDITION", "TO_BE_RENOVATED", "POOR_CONDITION"], { required_error: 'Seleziona la condizione della proprietà' }),
+  energyRating: z.enum(['A4', 'A3', 'A2', 'A1', 'B', 'C', 'D', 'E', 'F', 'G', 'NOT_APPLIABLE'], { required_error: 'Seleziona la classe energetica' }),
+  condition: z.enum(["NEW", "GOOD_CONDITION", "RENOVATED", "TO_BE_RENOVATED", "POOR_CONDITION", "UNDER_CONSTRUCTION"], { required_error: 'Seleziona la condizione' }),
   addressRequest: z.object({
     country: stringRequired,
     province: stringRequired,
     city: stringRequired,
     street: stringRequired,
     streetNumber: stringRequired,
-    building: z.string(),
+    building: z.string().nullable(),
     latitude: numberRequired,
     longitude: numberRequired,
   })
 });
 
-// Schema completo che discrimina in base al tipo di proprietà
+// Schema completo (Allineato al componente add-property.tsx e al DB)
 export const propertySchema = z.discriminatedUnion('propertyType', [
-  // Schema per proprietà residenziali
+  // RESIDENTIAL
   z.object({
     propertyType: z.literal('RESIDENTIAL'),
-    ...basePropertySchema.omit({ propertyCategory: true }).shape, // Ometti propertyType dal base
-    ...residentialDetailsSchema.shape,
+    ...basePropertySchema.shape,
+    residentialCategory: z.enum(['Apartment', 'Villa', 'Penthouse', 'Townhouse'], { required_error: 'Seleziona la categoria' }),
+    yearBuilt: yearSchema.optional(),
+    floor: positiveNumber,
+    hasElevator: z.boolean(),
+    numberOfRooms: positiveNumberGreaterThanZero,
+    numberOfFloors: positiveNumberGreaterThanZero,
+    numberOfBathrooms: positiveNumberGreaterThanZero,
+    heatingType: z.enum(['Centralized', 'Autonomous', 'Absent'], { required_error: 'Seleziona il riscaldamento' }),
+    garden: z.enum(['PRIVATE', 'SHARED', 'ABSENT'], { required_error: 'Seleziona il giardino' }),
+    isFurnished: z.boolean(),
+    parkingSpaces: positiveNumber,
   }),
-  // Schema per proprietà commerciali
+  // COMMERCIAL
   z.object({
     propertyType: z.literal('COMMERCIAL'),
-    ...basePropertySchema.omit({ propertyCategory: true }).shape, // Ometti propertyType dal base
-    ...commercialDetailsSchema.shape,
+    ...basePropertySchema.shape,
+    commercialCategory: z.enum(['Office', 'Shop', 'Warehouse', 'Restaurant'], { required_error: 'Seleziona la categoria' }),
+    yearBuilt: yearSchema,
+    hasDisabledAccess: z.boolean(),
+    floor: positiveNumber,
+    numberOfFloors: positiveNumberGreaterThanZero,
+    numberOfBathrooms: positiveNumberGreaterThanZero,
+    numberOfRooms: positiveNumberGreaterThanZero,
   }),
-  // Schema per garage
+  // GARAGE
   z.object({
     propertyType: z.literal('GARAGE'),
-    ...basePropertySchema.omit({ propertyCategory: true }).shape, // Ometti propertyType dal base
-    ...garageDetailsSchema.shape,
+    ...basePropertySchema.shape,
+    garageCategory: z.enum(['Single Garage', 'Double Garage', 'Parking Space'], { required_error: 'Seleziona la categoria' }),
+    yearBuilt: yearSchema,
+    hasSurveillance: z.boolean(),
+    numberOfFloors: positiveNumberGreaterThanZero,
+    floor: positiveNumber
   }),
-  // Schema per terreni
+  // LAND
   z.object({
     propertyType: z.literal('LAND'),
-    ...basePropertySchema.omit({ propertyCategory: true }).shape, // Ometti propertyType dal base
-    ...landDetailsSchema.shape,
+    ...basePropertySchema.shape,
+    landCategory: z.enum(['Building Plot', 'Agricultural Land', 'Industrial Land'], { required_error: 'Seleziona la categoria' }),
+    hasRoadAccess: z.boolean(),
   }),
 ]);
 

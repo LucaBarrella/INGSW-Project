@@ -41,6 +41,16 @@
   "forRent": "in affitto",
   "getInTouch": "Contatta",
   "contractType": "Tipo di Contratto",
+  "A4": "A4",
+  "A3": "A3",
+  "A2": "A2",
+  "A1": "A1",
+  "B": "B",
+  "C": "C",
+  "D": "D",
+  "E": "E",
+  "F": "F",
+  "G": "G",
   "NOT_APPLIABLE": "Non Applicabile",
   "myProperties": "I miei Immobili",
   "propertyLocationAndStatus": "Posizione e Stato dell'Immobile",
@@ -49,6 +59,8 @@
   "settings": "Impostazioni",
   "selectGardenType": "Seleziona tipo di giardino...",
   "selectHeatingType": "Seleziona tipo di riscaldamento...",
+  "selectCondition": "Seleziona condizione...",
+  "selectEnergyClass": "Seleziona classe...",
   "Absent": "Assente",
   "Autonomous": "Autonomo",
   "Centralized": "Centralizzato",
@@ -63,7 +75,7 @@
   "pleaseTryAnotherTimeSlot": "Non è stato possibile richiedere una visita per l'orario specificato. Per favore prova un altro orario.",
   "noDescriptionAvailable": "Descrizione non disponibile",
   "searchPlaceholder": "Cerca in Zona...",
-  "offers":"Offerte",
+  "offers": "Offerte",
   "loadingOffers": "Caricamento offerte...",
   "confirm_withdraw_offer": "Conferma ritiro offerta",
   "noActiveOffers": "Nessuna offerta attiva",
@@ -85,7 +97,6 @@
   "accept": "Accetta",
   "counter": "Controfferta",
   "withdraw": "Ritira",
-
   "offersArchived": {
     "agent": {
       "archiveTitle": "Archivio Offerte",
@@ -144,11 +155,9 @@
   "failedToAcceptCounteredOffer": "Impossibile accettare la controfferta.",
   "noPropertiesFound": "Nessuna proprietà trovata.",
   "propertyType": "Tipo di Proprietà",
-  
   "setting": {
     "language": "Lingua"
   },
-
   "visit_status": {
     "PENDING": "in attesa",
     "CONFIRMED": "confermata",
@@ -156,7 +165,6 @@
     "REJECTED": "rifiutata",
     "CANCELLED": "annullata"
   },
-
   "offer_status": {
     "PENDING": "in attesa",
     "ACCEPTED": "accettata",
@@ -165,30 +173,26 @@
     "WITHDRAWN": "ritirata",
     "UNKNOWN": "sconosciuto"
   },
-
   "property_status": {
-    "UNDER_CONSTRUCTION": "in costruzione",
-    "POOR_CONDITION": "cattive condizioni",
-    "TO_BE_RENOVATED": "da ristrutturare",
-    "RENOVATED": "ristrutturato",
-    "GOOD_CONDITION": "buone condizioni",
-    "NEW": "nuovo"
+    "NEW": "Nuovo",
+    "GOOD_CONDITION": "Buone condizioni",
+    "RENOVATED": "Ristrutturato",
+    "TO_BE_RENOVATED": "Da ristrutturare",
+    "POOR_CONDITION": "Cattive condizioni",
+    "UNDER_CONSTRUCTION": "In costruzione"
   },
-
   "property_state": {
     "active": "Attivo",
     "sold": "Venduto",
     "rented": "Affittato",
     "inactive": "Inattivo"
   },
-
   "statusLabel": "Stato",
   "agentLabel": "Agente",
   "priceLabel": "Prezzo",
   "notSpecified": "Non specificato",
   "planVisit": "Pianifica una visita",
   "makeOffer": "Fai un'offerta",
-
   "property_details": {
     "area": "superficie",
     "numberOfBedrooms": "numero di camere da letto",
@@ -199,7 +203,7 @@
     "totalFloors": "numero di piani",
     "yearBuilt": "anno di costruzione",
     "heating": "tipo di riscaldamento",
-    "energyClass": "classe energetica",
+    "energyRating": "classe energetica",
     "furnished": "è arredato",
     "hasElevator": "ascensore",
     "garden": "giardino",
@@ -209,12 +213,11 @@
     "hasRoadAccess": "accesso stradale",
     "fireSystem": "sistema antincendio"
   },
-
   "property_category": {
     "commercial_property": "Commerciale",
     "residential_property": "Residenziale",
-    "land": "Terreno",
-    "garage": "Autorimessa",
+    "land_property": "Terreno",
+    "garage_property": "Autorimessa",
     "sub": {
       "Apartment": "Appartamento",
       "Villa": "Villa",
@@ -242,17 +245,14 @@
     "emptyState": "...",
     "pendingRequests": "Richieste in attesa"
   },
-
   "history_placeholder": {
     "no_viewed_properties": "Non hai ancora visualizzato immobili.",
     "when_you_do": "Quando lo farai, compariranno qui."
   },
-
   "feedback": {
     "missingParams": "Errore: Parametri mancanti per la schermata di feedback.",
     "backButton": "Indietro"
   },
-
   "auth": {
     "screens": {
       "login": {
@@ -268,7 +268,6 @@
       }
     }
   },
-  
   "admin": {
     "welcome": "Benvenuto nell'Area Amministratore",
     "changePassword": "Cambia Password",
@@ -322,7 +321,6 @@
     "logoutError": "Errore Logout",
     "logoutErrorMessage": "Impossibile completare il logout. Riprova."
   },
-
   "agent": {
     "tabs": {
       "home": "Home",
@@ -346,7 +344,6 @@
       "office": "Ufficio"
     }
   },
-
   "buyer": {
     "tabs": {
       "home": "Home",
@@ -367,7 +364,6 @@
   "home": {
     "detailsButton": "Dettagli"
   },
-
   "forms": {
     "confirmation": {
       "title": "Conferma Azione",
@@ -432,8 +428,7 @@
         "birthDate": "Data di nascita non valida"
       }
     }
-  }
-,
+  },
   "filters": {
     "contract": {
       "label": "Tipo di Transazione",
@@ -531,35 +526,34 @@
       "label": "Accesso stradale"
     },
     "category": {
-        "label": "Categoria",
-        "RESIDENTIAL": "Residenziale",
-        "COMMERCIAL": "Commerciale",
-        "GARAGE": "Garage",
-        "LAND": "Terreno",
-        "options": {
-            "Apartment": "Appartamento",
-            "Villa": "Villa",
-            "Studio": "Monolocale",
-            "Penthouse": "Attico",
-            "Townhouse": "Casa a schiera",
-            "Office": "Ufficio",
-            "Shop": "Negozio",
-            "Restaurant": "Ristorante",
-            "Warehouse": "Magazzino",
-            "Building Plot": "Lotto Edificabile",
-            "Agricultural Land": "Terreno Agricolo",
-            "Industrial Land": "Terreno Industriale",
-            "Single Garage": "Garage Singolo",
-            "Double Garage": "Garage Doppio",
-            "Parking Space": "Posto Auto"
-        }
+      "label": "Categoria",
+      "RESIDENTIAL": "Residenziale",
+      "COMMERCIAL": "Commerciale",
+      "GARAGE": "Garage",
+      "LAND": "Terreno",
+      "options": {
+        "Apartment": "Appartamento",
+        "Villa": "Villa",
+        "Studio": "Monolocale",
+        "Penthouse": "Attico",
+        "Townhouse": "Casa a schiera",
+        "Office": "Ufficio",
+        "Shop": "Negozio",
+        "Restaurant": "Ristorante",
+        "Warehouse": "Magazzino",
+        "Building Plot": "Lotto Edificabile",
+        "Agricultural Land": "Terreno Agricolo",
+        "Industrial Land": "Terreno Industriale",
+        "Single Garage": "Garage Singolo",
+        "Double Garage": "Garage Doppio",
+        "Parking Space": "Posto Auto"
+      }
     }
   },
   "units": {
     "squareMeters": "m²",
     "kilometers": "km"
-  }
-,
+  },
   "filterPanel": {
     "generalFilters": "Filtri Generali",
     "maxPrice": "Prezzo massimo",
@@ -573,5 +567,170 @@
     "change": "Cambia",
     "search": "Cerca",
     "errorSearch": "Si è verificato un errore durante la ricerca. Riprova."
+  },
+  "addProperty": {
+    "title": "Nuova Proprietà",
+    "steps": {
+      "step1": "Tipologia",
+      "step2": "Dettagli Base",
+      "step3": "Posizione",
+      "step4": "Caratteristiche",
+      "step5": "Foto"
+    },
+    "stepCounter": "Passaggio {{current}} di {{total}}",
+    "buttons": {
+      "back": "Indietro",
+      "next": "Avanti",
+      "publish": "Pubblica Annuncio",
+      "saving": "Salvataggio..."
+    },
+    "headers": {
+      "basicDetails": "Dettagli Base",
+      "economicInfo": "Informazioni Economiche",
+      "locationAndStatus": "Posizione e Stato",
+      "addressDetails": "Dettagli Indirizzo",
+      "propertyDetails": "Dettagli Immobile",
+      "spacesAndSurfaces": "Spazi e Superfici",
+      "featuresAndComfort": "Caratteristiche e Comfort",
+      "spacesAndStructure": "Spazi e Struttura",
+      "securityAndHistory": "Sicurezza e Storia",
+      "accessibility": "Accessibilità",
+      "structureDetails": "Dettagli Struttura",
+      "propertyPhotos": "Foto dell'Immobile"
+    },
+    "labels": {
+      "description": "Descrizione",
+      "propertyDescription": "Descrizione dell'immobile",
+      "price": "Prezzo",
+      "area": "Superficie",
+      "searchAddress": "Cerca Indirizzo",
+      "city": "Città",
+      "province": "Provincia",
+      "street": "Via / Piazza",
+      "streetNumber": "Civico",
+      "building": "Edificio / Scala",
+      "country": "Paese",
+      "condition": "Condizione della Proprietà",
+      "energyClass": "Classe Energetica",
+      "residentialCategory": "Categoria Residenziale",
+      "commercialCategory": "Categoria Commerciale",
+      "garageCategory": "Categoria Garage",
+      "landCategory": "Categoria Terreno",
+      "rooms": "Locali",
+      "bathrooms": "Bagni",
+      "floor": "Piano",
+      "totalFloors": "Tot. Piani",
+      "gardenType": "Tipo di Giardino",
+      "heatingType": "Riscaldamento",
+      "elevator": "Ascensore",
+      "furnished": "Arredato",
+      "yearBuilt": "Anno di Costruzione",
+      "disabledAccess": "Accesso Disabili",
+      "surveillance": "Impianto Sorveglianza",
+      "roadAccess": "Accesso Stradale",
+      "cover": "Copertina",
+      "add": "Aggiungi"
+    },
+    "alerts": {
+      "attention": "Attenzione",
+      "imagesNotProcessed": "Alcune immagini non sono state processate correttamente.",
+      "permissionRequired": "Permesso necessario",
+      "galleryPermission": "È necessario concedere il permesso per accedere alla galleria.",
+      "cameraPermission": "È necessario concedere il permesso per accedere alla fotocamera.",
+      "error": "Errore",
+      "galleryError": "Impossibile selezionare immagini dalla galleria.",
+      "cameraError": "Impossibile utilizzare la fotocamera.",
+      "fileError": "Impossibile selezionare file.",
+      "chooseImageSource": "Scegli la fonte dell'immagine",
+      "photoLibrary": "Libreria Foto",
+      "takePhoto": "Scatta Foto",
+      "chooseFile": "Scegli File",
+      "success": "Successo!",
+      "saveError": "Errore Salvataggio",
+      "propertyAdded": "Il tuo immobile è stato aggiunto correttamente.",
+      "unexpectedError": "Si è verificato un errore imprevisto durante il salvataggio. Riprova.",
+      "backToHome": "Torna alla Home",
+      "backToForm": "Torna al Form",
+      "selectListingType": "Seleziona un tipo di annuncio",
+      "selectPropertyType": "Seleziona un tipo di proprietà"
+    },
+    "placeholders": {
+      "description": "Racconta i punti di forza della proprietà...",
+      "price": "Es. 250.000",
+      "area": "mq",
+      "searchLocation": "Cerca la posizione del tuo immobile...",
+      "city": "Es. Napoli",
+      "province": "Es. NA",
+      "street": "Es. Via Roma",
+      "streetNumber": "N°",
+      "building": "Es. Scala A",
+      "country": "Es. Italia",
+      "selectCondition": "Seleziona condizione...",
+      "selectEnergyClass": "Seleziona classe...",
+      "selectCategory": "Seleziona categoria...",
+      "rooms": "Es. 3",
+      "bathrooms": "Es. 2",
+      "floor": "Es. 2",
+      "totalFloors": "Es. 3",
+      "selectGardenType": "Seleziona tipo di giardino...",
+      "selectHeatingType": "Seleziona tipo...",
+      "yearBuilt": "Es. 1995"
+    },
+    "actions": {
+      "hideDetails": "NASCONDI DETTAGLI",
+      "editDetails": "MODIFICA DETTAGLI",
+      "cancel": "ANNULLA",
+      "cancelTitle": "Annulla",
+      "select": "Seleziona..."
+    },
+    "info": {
+      "dragToReorder": "Trascina le foto per cambiare l'ordine. La prima foto in alto a sinistra sarà la copertina del tuo annuncio."
+    },
+    "enums": {
+      "garden": {
+        "PRIVATE": "Privato",
+        "SHARED": "Condominiale",
+        "ABSENT": "Nessuno"
+      },
+      "heating": {
+        "Absent": "Nessuno",
+        "Autonomous": "Autonomo",
+        "Centralized": "Centralizzato"
+      }
+    },
+    "typeDescriptions": {
+      "RESIDENTIAL": {
+        "title": "Residenziale",
+        "desc": "Case, appartamenti e ville. Perfetto per chi cerca una nuova dimora."
+      },
+      "COMMERCIAL": {
+        "title": "Commerciale",
+        "desc": "Uffici, negozi e capannoni. Ideale per attività professionali e business."
+      },
+      "GARAGE": {
+        "title": "Autorimessa",
+        "desc": "Box auto, posti auto e garage. La soluzione per il parcheggio sicuro."
+      },
+      "LAND": {
+        "title": "Terreno",
+        "desc": "Terreni agricoli o edificabili. Spazio aperto per nuovi progetti."
+      }
+    },
+    "accessibility": {
+      "details": "Dettagli",
+      "location": "Posizione",
+      "search": "Cerca",
+      "check": "Selezionato",
+      "close": "Chiudi",
+      "open": "Apri",
+      "info": "Informazioni",
+      "remove": "Rimuovi",
+      "addPhoto": "Aggiungi foto",
+      "camera": "Camera",
+      "gallery": "Galleria",
+      "file": "File",
+      "cancel": "Annulla",
+      "selectType": "Seleziona tipo {{type}}"
+    }
   }
 }

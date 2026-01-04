@@ -1,35 +1,62 @@
-import { FlatList, TouchableOpacity } from "react-native";
+import React from 'react';
+import { View, TouchableOpacity, ScrollView, Platform } from "react-native";
 import { PhotonFeature } from "./types";
 import { ThemedText } from "@/components/ThemedText";
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 interface SuggestionsDisplayerProps {
-    suggestions: PhotonFeature[];
-    onSelectSuggestion: (suggestion: PhotonFeature) => void;
-    filterType?: "house" | "city" | "country" | "street" | "state";
+  suggestions: PhotonFeature[];
+  onSelectSuggestion: (suggestion: PhotonFeature) => void;
+  filterType?: "house" | "city" | "country" | "street" | "state";
+  containerStyle?: any;
 }
 
 export const SuggestionsDisplayer: React.FC<SuggestionsDisplayerProps> = ({
-    suggestions,
-    onSelectSuggestion,
-    filterType = undefined
+  suggestions,
+  onSelectSuggestion,
+  filterType = undefined,
+  containerStyle
 }) => {
-    return (
-        <FlatList
-            data={suggestions.filter(suggestion => {
-                if (!filterType) return true;
-                return suggestion.properties?.type === filterType;
-            })}
-            keyboardShouldPersistTaps="handled"
-            keyExtractor={(item, index) => `${item.properties?.osm_id ?? item.label ?? 'suggestion'}-${index}`}
-            renderItem={({ item }) => (
-                <TouchableOpacity
-                    onPress={() => onSelectSuggestion(item)}
-                    className="py-2 px-3 border-b border-gray-100"
-                >
-                    <ThemedText className="text-sm">{item.label}</ThemedText>
-                </TouchableOpacity>
-            )}
-            style={{ maxHeight: 200 }}
-        />
-    );
-}
+  const backgroundColor = useThemeColor({}, 'background');
+  const borderColor = useThemeColor({}, 'border');
+  const textColor = useThemeColor({}, 'text');
+
+  // Rimuoviamo il filtraggio troppo stringente per permettere una ricerca più libera
+  const filteredSuggestions = suggestions;
+
+  if (filteredSuggestions.length === 0) {
+    return null;
+  }
+
+  return (
+    <View
+      style={[{
+        maxHeight: 250,
+        zIndex: 1000,
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        backgroundColor: backgroundColor,
+        borderColor: borderColor,
+      }, containerStyle]}
+      className="border-2 rounded-xl mt-1 overflow-hidden"
+    >
+      <ScrollView keyboardShouldPersistTaps="always" nestedScrollEnabled={true}>
+        {filteredSuggestions.map((item, index) => (
+          <TouchableOpacity
+            key={`${item.properties?.osm_id ?? item.label ?? 'suggestion'}-${index}`}
+            onPress={() => onSelectSuggestion(item)}
+            className="py-4 px-4 border-b"
+            style={{ borderBottomColor: borderColor + '40' }}
+          >
+            <ThemedText className="text-sm font-medium" style={{ color: textColor }}>
+              {item.label}
+            </ThemedText>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    </View>
+  );
+};

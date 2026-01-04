@@ -38,7 +38,7 @@ export default function AgentLayout() {
         name="add-property"
         options={{
           headerShown: true,
-          title: 'Nuova Proprietà',
+          title: t('addProperty.title'),
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={{ marginLeft: 10 }}>
               <Ionicons name="arrow-back" size={24} color={tintColor} />

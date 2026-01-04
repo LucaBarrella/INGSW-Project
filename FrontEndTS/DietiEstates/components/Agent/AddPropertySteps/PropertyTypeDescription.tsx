@@ -1,45 +1,54 @@
 import React from 'react';
+import { View } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
-import { PropertyType } from './Step1_PropertyType'; // Importa il tipo
+import { ThemedIcon } from '@/components/ThemedIcon';
+import { PropertyType } from './Step1_PropertyType';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
 interface PropertyTypeDescriptionProps {
   selectedType: PropertyType | null;
 }
 
-// Definisci le descrizioni per ogni tipo
-const descriptions: Record<PropertyType, string> = {
-  RESIDENTIAL: 'Ideale per case, appartamenti e spazi abitativi. Include caratteristiche come stanze, bagni e servizi.',
-  COMMERCIAL: 'Adatto per negozi, uffici e attività commerciali. Considera aspetti come visibilità, accessibilità e spazi comuni.',
-  GARAGE: 'Per parcheggi ad uso personale e posti auto.',
-  LAND: 'Terreni edificabili o agricoli. Specificare tipo di suolo, pendenza e potenzialità di sviluppo.',
+const icons: Record<PropertyType, string> = {
+  RESIDENTIAL: 'material-symbols:home-outline',
+  COMMERCIAL: 'material-symbols:business-center-outline',
+  GARAGE: 'material-symbols:garage-outline',
+  LAND: 'material-symbols:landscape-outline',
 };
 
+import { t } from 'i18next';
+
 export default function PropertyTypeDescription({ selectedType }: PropertyTypeDescriptionProps) {
-  const cardBackgroundColor = useThemeColor({ light: '#F3F4F6', dark: '#2C2C2E' }, 'background'); // Grigio chiaro/scuro
+  const cardBg = useThemeColor({ light: '#FFFFFF', dark: '#1E293B' }, 'background');
+  const tint = useThemeColor({}, 'tint');
   const textColor = useThemeColor({}, 'text');
 
-  if (!selectedType) {
-    return null; // Non mostrare nulla se nessun tipo è selezionato
-  }
+  if (!selectedType) return null;
+
+  const title = t(`addProperty.typeDescriptions.${selectedType}.title`);
+  const desc = t(`addProperty.typeDescriptions.${selectedType}.desc`);
+  const icon = icons[selectedType];
 
   return (
-    <ThemedView
-      className="mt-6 p-4 rounded-lg"
-      style={{ backgroundColor: cardBackgroundColor }}
-    >
-      <ThemedText type="defaultSemiBold" className="mb-2">
-        {/* Mappa il tipo selezionato a un titolo più leggibile */}
-        {selectedType === 'RESIDENTIAL' ? 'Proprietà Residenziale' :
-         selectedType === 'COMMERCIAL' ? 'Proprietà Commerciale' :
-         selectedType === 'GARAGE' ? 'Autorimessa' :
-         'Terreno'}
-      </ThemedText>
-      <ThemedText type="default" style={{ color: textColor }}>
-        {descriptions[selectedType]}
-      </ThemedText>
-      {/* Potremmo aggiungere qui i punti elenco del mockup se necessario */}
-    </ThemedView>
+    <Animated.View entering={FadeInDown.duration(400)}>
+      <ThemedView
+        className="mt-8 p-5 rounded-3xl border-2 shadow-sm flex-row items-center gap-4"
+        style={{ backgroundColor: cardBg, borderColor: tint + '20' }}
+      >
+        <View className="p-3 rounded-2xl" style={{ backgroundColor: tint + '15' }}>
+          <ThemedIcon icon={icon} size={28} lightColor={tint} darkColor={tint} accessibilityLabel={title} />
+        </View>
+        <View className="flex-1">
+          <ThemedText type="defaultSemiBold" className="text-lg" style={{ color: tint }}>
+            {title}
+          </ThemedText>
+          <ThemedText className="text-sm opacity-70" style={{ color: textColor }}>
+            {desc}
+          </ThemedText>
+        </View>
+      </ThemedView>
+    </Animated.View>
   );
 }

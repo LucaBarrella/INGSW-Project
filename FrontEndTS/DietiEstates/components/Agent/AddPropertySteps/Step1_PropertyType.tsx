@@ -1,24 +1,22 @@
 import React from 'react';
-import { View } from 'react-native'; // Rimosso Pressable
+import { View } from 'react-native';
 import { Controller, Control, FieldErrors, RegisterOptions } from 'react-hook-form';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { CategoryButton } from '@/components/Buyer/CategoryButton'; // Importato CategoryButton
+import { CategoryButton } from '@/components/Buyer/CategoryButton';
 import { t } from 'i18next';
+import Animated, { FadeInRight } from 'react-native-reanimated';
 
-// Define PropertyType based on current file
 export type PropertyType = 'RESIDENTIAL' | 'COMMERCIAL' | 'GARAGE' | 'LAND';
 
-// Define props for react-hook-form integration
 interface Step1PropertyTypeProps {
-  control: Control<any>; // Control object from useForm
-  name: string; // Name of the field in the form
-  rules?: RegisterOptions; // Validation rules
-  errors: FieldErrors; // Errors object from useForm
+  control: Control<any>;
+  name: string;
+  rules?: RegisterOptions;
+  errors: FieldErrors;
 }
 
-// Define property types based on current file
 const propertyTypes: { type: PropertyType; label: string; icon: string }[] = [
   { type: 'RESIDENTIAL', label: 'Residenziale', icon: 'material-symbols:home-outline' },
   { type: 'COMMERCIAL', label: 'Commerciale', icon: 'material-symbols:business-center-outline' },
@@ -27,43 +25,44 @@ const propertyTypes: { type: PropertyType; label: string; icon: string }[] = [
 ];
 
 export default function Step1_PropertyType({ control, name, rules, errors }: Step1PropertyTypeProps) {
-  // Colore per il messaggio di errore
   const errorColor = useThemeColor({ light: '#FF0000', dark: '#FF6B6B' }, 'error');
 
   return (
-    <Controller
-      control={control}
-      name={name}
-      rules={rules}
-      render={({ field: { onChange, value } }) => (
-        <ThemedView className="p-6">
-          <ThemedText type="defaultSemiBold" className="mb-3 text-base">
-            {t('propertyType')}
-          </ThemedText>
-          
-          <View className="flex-row flex-wrap justify-between gap-y-4">
-            {propertyTypes.map(({ type, label, icon }) => {
-              const isSelected = value === type;
-              return (
-                <View key={type} className="w-[48%]">
-                  <CategoryButton
-                    icon={icon}
-                    label={label}
-                    onPress={() => onChange(type)}
-                    isSelected={isSelected}
-                  />
-                </View>
-              );
-            })}
-          </View>
-          
-          {errors[name] && (
-            <ThemedText className="mt-2 text-sm" style={{ color: errorColor }}>
-              {errors[name]?.message as string}
+    <Animated.View entering={FadeInRight.duration(400)} className="flex-1">
+      <Controller
+        control={control}
+        name={name}
+        rules={rules}
+        render={({ field: { onChange, value } }) => (
+          <ThemedView className="p-5 rounded-3xl border mx-4" style={{ backgroundColor: useThemeColor({}, 'background'), borderColor: useThemeColor({}, 'border'), shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.03, shadowRadius: 8, elevation: 3 }}>
+            <ThemedText type="defaultSemiBold" className="mb-4 text-sm font-semibold opacity-50 uppercase tracking-wider ml-1">
+              {t('addProperty.steps.step1')}
             </ThemedText>
-          )}
-        </ThemedView>
-      )}
-    />
+            
+            <View className="flex-row flex-wrap justify-between gap-y-4">
+              {propertyTypes.map(({ type, label, icon }) => {
+                const isSelected = value === type;
+                return (
+                  <View key={type} className="w-[48%]">
+                    <CategoryButton
+                      icon={icon}
+                      label={t(`property_category.${type.toLowerCase()}_property`)}
+                      onPress={() => onChange(type)}
+                      isSelected={isSelected}
+                    />
+                  </View>
+                );
+              })}
+            </View>
+            
+            {errors[name] && (
+              <ThemedText className="mt-4 text-sm font-medium" style={{ color: errorColor }}>
+                ⚠️ {errors[name]?.message as string}
+              </ThemedText>
+            )}
+          </ThemedView>
+        )}
+      />
+    </Animated.View>
   );
 }

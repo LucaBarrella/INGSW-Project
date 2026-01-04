@@ -60,7 +60,7 @@ const initialFilters = {
       category: RESIDENTIAL_CATEGORIES[0], rooms: "", bathrooms: "", floor: "", elevator: false, pool: false,
     },
     commercial: {
-      category: COMMERCIAL_CATEGORIES[0], bathrooms: "", emergencyExit: false, constructionDate: "",
+      category: COMMERCIAL_CATEGORIES[0], bathrooms: "", emergencyExit: false, yearBuilt: "",
     },
     industrial: {
       category: INDUSTRIAL_CATEGORIES[0], ceilingHeight: "", fireSystem: false, floorLoad: "", offices: "", structure: "",
