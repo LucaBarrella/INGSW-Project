@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { View, Pressable, TextInput, Platform } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Pressable, TextInput, Platform, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { Controller, Control, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
@@ -28,6 +29,7 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
   const borderColor = useThemeColor({}, 'border');
   const themeErrorColor = useThemeColor({}, 'error');
   const tint = useThemeColor({}, 'tint');
+  const accentColor = useThemeColor({}, 'buttonBackground');
 
   const { getSuggestions } = useSearchProperties();
   const [query, setQuery] = useState<string>('');
@@ -35,8 +37,14 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const [isSelectionFromSuggestion, setIsSelectionFromSuggestion] = useState<boolean>(false);
   const [showManualDetails, setShowManualDetails] = useState<boolean>(false);
+  const isSelectingRef = useRef(false);
 
   useEffect(() => {
+    if (isSelectingRef.current) {
+      isSelectingRef.current = false;
+      return;
+    }
+
     if (query.length < 2 || isSelectionFromSuggestion) {
       if (!isSelectionFromSuggestion) {
         setSuggestions([]);
@@ -66,6 +74,7 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
    * @param item Il suggerimento selezionato
    */
   const handleSelectSuggestion = (item: any) => {
+    isSelectingRef.current = true;
     const { properties = {}, geometry = {} } = item;
     const {
       province,
@@ -80,6 +89,7 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
 
     setIsSelectionFromSuggestion(isAddressComplete);
     setQuery(item.label || '');
+    setSuggestions([]);
     setShowSuggestions(false);
     setShowManualDetails(!isAddressComplete);
 
@@ -131,19 +141,45 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
           <ThemedText className="mb-2 text-sm font-semibold ml-1" style={{ color: textColor }}>
             {t('addProperty.labels.searchAddress')}
           </ThemedText>
-          <View className="relative">
-            <View
-              className={`flex-row items-center border-2 rounded-2xl px-4 h-[60px] shadow-sm ${isSelectionFromSuggestion ? 'bg-green-50/50 dark:bg-green-900/10' : ''}`}
-              style={{
-                borderColor: isSelectionFromSuggestion ? '#34C759' : borderColor,
-                backgroundColor: isSelectionFromSuggestion ? undefined : cardBackground,
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 12 },
-                shadowOpacity: 0.08,
-                shadowRadius: 16,
-                elevation: 6
-              }}
-            >
+          <View
+            className={`rounded-[30px] overflow-hidden border shadow-sm ${isSelectionFromSuggestion ? 'bg-green-50/50 dark:bg-green-900/10' : ''}`}
+            style={{
+              borderColor: isSelectionFromSuggestion ? '#34C759' : borderColor + '40',
+              backgroundColor: isSelectionFromSuggestion ? undefined : cardBackground,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.05,
+              shadowRadius: 8,
+              elevation: 3
+            }}
+          >
+            <View className="flex-row items-center px-5 h-[60px]">
+              {isSelectionFromSuggestion ? (
+                <View className="mr-3 justify-center h-full">
+                  <ThemedIcon
+                    icon="material-symbols:check-rounded"
+                    size={22}
+                    lightColor="#34C759"
+                    darkColor="#34C759"
+                    accessibilityLabel={''}
+                  />
+                </View>
+              ) : (
+                <View className="mr-3 justify-center h-full">
+                  <TouchableOpacity
+                    onPress={() => {
+                      // TODO: Implement current position logic if needed
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <Ionicons
+                      name="location-outline"
+                      size={22}
+                      color={tint}
+                    />
+                  </TouchableOpacity>
+                </View>
+              )}
               <TextInput
                 value={query}
                 onChangeText={(text) => {
@@ -151,19 +187,18 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
                   setIsSelectionFromSuggestion(false);
                 }}
                 placeholder={t('addProperty.placeholders.searchLocation')}
-                className="flex-1 text-base mr-2 font-medium"
+                className="flex-1 text-base font-medium"
                 style={{
                   color: textColor,
                   paddingVertical: 0,
                   paddingHorizontal: 0,
                   margin: 0,
+                  flex: 1,
                   height: '100%',
-                  textAlignVertical: 'center',
+                  fontSize: 16,
                   ...Platform.select({
-                    ios: {
-                      lineHeight: 20,
-                    },
                     android: {
+                      textAlignVertical: 'center',
                       includeFontPadding: false,
                     },
                   })
@@ -171,41 +206,45 @@ export default function Step3_LocationStatus({ control, errors, setValue }: Step
                 placeholderTextColor={textColor + '60'}
                 returnKeyType="search"
                 multiline={false}
+                underlineColorAndroid="transparent"
+                textAlignVertical="center"
               />
-              <View className={`p-1.5 rounded-full ${isSelectionFromSuggestion ? 'bg-green-100 dark:bg-green-900/30' : 'bg-gray-100 dark:bg-gray-800'}`}>
-                <ThemedIcon
-                  icon={isSelectionFromSuggestion ? "material-symbols:check-rounded" : "material-symbols:search-rounded"}
-                  size={20}
-                  lightColor={isSelectionFromSuggestion ? '#34C759' : textColor + '80'}
-                  darkColor={isSelectionFromSuggestion ? '#34C759' : textColor + '80'}
-                  accessibilityLabel={t('addProperty.accessibility.search')}
+              {query.length > 0 && (
+                <TouchableOpacity
+                  onPress={() => {
+                    setQuery('');
+                    setIsSelectionFromSuggestion(false);
+                  }}
+                  style={{
+                    paddingHorizontal: 8,
+                    height: '100%',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                  activeOpacity={0.6}
+                >
+                  <Ionicons
+                    name="close-circle-outline"
+                    size={20}
+                    color={accentColor}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+
+            {showSuggestions && suggestions.length > 0 && !isSelectionFromSuggestion && (
+              <View style={{ borderTopWidth: 1, borderTopColor: borderColor + '20' }}>
+                <SuggestionsDisplayer
+                  onSelectSuggestion={handleSelectSuggestion}
+                  suggestions={suggestions}
+                  containerStyle={{
+                    backgroundColor: 'transparent',
+                    borderWidth: 0,
+                    elevation: 0,
+                    shadowOpacity: 0,
+                  }}
                 />
               </View>
-            </View>
-            
-            {showSuggestions && suggestions.length > 0 && !isSelectionFromSuggestion && (
-              <SuggestionsDisplayer
-                onSelectSuggestion={handleSelectSuggestion}
-                suggestions={suggestions}
-                containerStyle={{
-                  position: 'absolute',
-                  top: '100%',
-                  left: 0,
-                  right: 0,
-                  marginTop: 8,
-                  zIndex: 9999,
-                  elevation: 10,
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.15,
-                  shadowRadius: 12,
-                  backgroundColor: cardBackground,
-                  borderColor: borderColor,
-                  borderWidth: 2,
-                  borderRadius: 0,
-                  overflow: 'hidden'
-                }}
-              />
             )}
           </View>
           {isSelectionFromSuggestion && (

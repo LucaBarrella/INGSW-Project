@@ -171,6 +171,10 @@ module.exports = function (api) {
             'material-symbols:history-edu-outline',
             'material-symbols:add-a-photo',
             'material-symbols:add-road-rounded',
+            'material-symbols:check-rounded',
+            'material-symbols:search-rounded',
+
+
           ],
         },
       ],
