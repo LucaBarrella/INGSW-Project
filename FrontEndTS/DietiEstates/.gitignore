@@ -49,3 +49,5 @@ context.md
 .vscode/
 
 AndroidManifest.xml
+
+ios/
