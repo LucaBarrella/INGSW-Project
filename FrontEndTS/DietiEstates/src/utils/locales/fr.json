@@ -155,6 +155,10 @@
   "failedToAcceptCounteredOffer": "Impossible d'accepter la contre-offre.",
   "noPropertiesFound": "Aucun bien trouvé.",
   "propertyType": "Type de Bien",
+  "scheduleYourVisit": "Planifiez votre visite",
+  "selectATimeSlot": "Sélectionnez un créneau horaire",
+  "confirmVisitFor": "Confirmez la visite pour {{time}}",
+  "availableTimes": "Heures Disponibles",
   "setting": {
     "language": "Langue"
   },

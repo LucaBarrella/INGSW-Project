@@ -155,6 +155,11 @@
   "failedToAcceptCounteredOffer": "Unable to accept counteroffer.",
   "noPropertiesFound": "No properties found.",
   "propertyType": "Property Type",
+  "scheduleYourVisit": "Schedule Your Visit",
+  "selectATimeSlot": "Select a time slot",
+  "confirmVisitFor": "Confirm Visit for {{time}}",
+  "availableTimes": "Available Times",
+
   "setting": {
     "language": "Language"
   },

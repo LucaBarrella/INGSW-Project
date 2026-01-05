@@ -224,7 +224,7 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
       {isAgentAvailable ? (
         <>
           <ScrollView showsVerticalScrollIndicator={false} className="flex-1 p-4 pb-0">
-            <Text style={{ color: textColor }} className="text-2xl font-bold text-center mb-4">Schedule Your Visit</Text>
+            <Text style={{ color: textColor }} className="text-2xl font-bold text-center mb-4">{t('scheduleYourVisit')}</Text>
 
             {/* Month Selector */}
             <View className="flex-row items-center justify-between px-2 py-2">
@@ -275,7 +275,7 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
             {/* Time Selector */}
             {selectedDay && (
               <>
-                <Text style={{ color: textColor }} className="text-base font-semibold px-4 pt-6 pb-3">Available Times</Text>
+                <Text style={{ color: textColor }} className="text-base font-semibold px-4 pt-6 pb-3">{t('availableTimes')}</Text>
                 <View className="flex-row flex-wrap justify-between px-4 pb-4">
                   {availableTimes().map(time => {
                     const isSelected = selectedTime === time;
@@ -312,7 +312,7 @@ const VisitSchedulerPanel: React.FC<VisitSchedulerPanelProps> = ({
               onPress={handleVisitConfirmation}
             >
               <Text style={{ color: buttonTextColor }} className="text-base font-bold">
-                {selectedTime ? `Confirm Visit for ${selectedTime}` : 'Select a time slot'}
+                {selectedTime ? t('confirmVisitFor', { time: selectedTime }) : t('selectATimeSlot')}
               </Text>
             </TouchableOpacity>
           </View>

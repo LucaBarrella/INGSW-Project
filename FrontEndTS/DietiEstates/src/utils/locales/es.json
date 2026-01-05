@@ -155,6 +155,10 @@
   "failedToAcceptCounteredOffer": "No se pudo aceptar la contraoferta.",
   "noPropertiesFound": "No se encontraron propiedades.",
   "propertyType": "Tipo de Propiedad",
+  "scheduleYourVisit": "Programa tu visita",
+  "selectATimeSlot": "Selecciona un horario",
+  "confirmVisitFor": "Confirma la visita para {{time}}",
+  "availableTimes": "Horarios Disponibles",
   "setting": {
     "language": "Idioma"
   },

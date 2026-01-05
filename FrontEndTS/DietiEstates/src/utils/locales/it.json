@@ -155,6 +155,10 @@
   "failedToAcceptCounteredOffer": "Impossibile accettare la controfferta.",
   "noPropertiesFound": "Nessuna proprietà trovata.",
   "propertyType": "Tipo di Proprietà",
+  "scheduleYourVisit": "Pianifica la tua visita",
+  "selectATimeSlot": "Seleziona una fascia oraria",
+  "confirmVisitFor": "Conferma visita per {{time}}",
+  "availableTimes": "Orari Disponibili",
   "setting": {
     "language": "Lingua"
   },
