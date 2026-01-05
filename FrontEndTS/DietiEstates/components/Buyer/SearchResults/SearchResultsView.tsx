@@ -7,7 +7,7 @@ import { SearchAndFilter } from '../SearchIntegration/SearchAndFilter';
 import { PropertyCard } from '@/components/Agent/PropertyListing/PropertyCard';
 import { PropertyDetail } from '@/components/Agent/PropertyDashboard/types';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { t } from 'i18next';
 import { useRouter } from 'expo-router';
 import useSearchProperties from '@/src/hooks/useSearchProperties';
@@ -158,7 +158,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({
         />
       ) : (
         <View style={styles.container}>
-          <MapView style={styles.map} region={center? { latitudeDelta: 0.1, longitudeDelta:0.1, ...center } : undefined} onLongPress={event => {onChangeCenter(event.nativeEvent.coordinate.latitude, event.nativeEvent.coordinate.longitude)}} >
+          <MapView provider={PROVIDER_GOOGLE} style={styles.map} region={center? { latitudeDelta: 0.1, longitudeDelta:0.1, ...center } : undefined} onLongPress={event => {onChangeCenter(event.nativeEvent.coordinate.latitude, event.nativeEvent.coordinate.longitude)}} >
             {propertiesToRender.map((property, index) => (
               property.address.latitude && property.address.longitude && <Marker
                 key={index}

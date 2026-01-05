@@ -14,7 +14,7 @@ import OfferPanel from '../../../components/Offer/OfferPanel';
 import httpClient from '@/src/core/httpClient';
 import { PlaceDTO } from '@/src/dto/response/PlaceDTO';
 import { ServiceCard } from '@/components/Property/ServiceCard';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { generatePropertyImageUrls } from '@/src/utils/imageUtils';
 import VisitApiService from '@/src/api/VisitApi';
 import { AvailabilityDTO } from '@/src/dto/response/AvailabilityDTO';
@@ -309,7 +309,7 @@ const PropertyDetailScreen: React.FC = () => {
         {property.address.latitude && property.address.longitude && (
         <View style={styles.mapContainer}>
           <ThemedText style={styles.sectionTitle}>{t('position')}</ThemedText>
-          <MapView style={styles.map} region={{ latitudeDelta: 0.1, longitudeDelta:0.1, latitude: property.address.latitude, longitude: property.address.longitude }} >
+          <MapView provider={PROVIDER_GOOGLE} style={styles.map} region={{ latitudeDelta: 0.1, longitudeDelta:0.1, latitude: property.address.latitude, longitude: property.address.longitude }} >
             <Marker coordinate={{latitude: property.address.latitude, longitude: property.address.longitude}} pinColor={ themeColors.tint }/>
           </MapView>
         </View>)}
