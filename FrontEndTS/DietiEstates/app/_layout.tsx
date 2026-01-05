@@ -6,6 +6,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import { Platform } from 'react-native';
 import 'react-native-reanimated';
 import "../global.css";
 import '@/src/utils/i18n';
@@ -60,7 +61,11 @@ export default function RootLayout() {
                   />
                 ))}
               </Stack>
-              <StatusBar style="auto" />
+              <StatusBar 
+                style={colorScheme === 'dark' ? 'light' : 'dark'} 
+                translucent={false}
+                backgroundColor={colorScheme === 'dark' ? '#050A16' : '#EBF2FA'}
+              />
             </AuthProvider>
           </SearchProvider>
         </ThemeProvider>

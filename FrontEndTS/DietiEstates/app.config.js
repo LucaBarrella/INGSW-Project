@@ -10,6 +10,9 @@ module.exports = {
     scheme: "dietiestates",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
+    androidStatusBar: {
+      translucent: false 
+    },
     ios: {
       supportsTablet: true,
       bundleIdentifier: "com.fabbest.dietiestates",
