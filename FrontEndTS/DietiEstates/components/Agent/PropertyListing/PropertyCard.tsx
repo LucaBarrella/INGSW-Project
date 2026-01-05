@@ -101,7 +101,8 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
   
   let roomLabel = category;
   if (roomsCount) {
-    roomLabel = roomsCount === 1 ? 'Monolocale' : roomsCount === 2 ? 'Bilocale' : roomsCount === 3 ? 'Trilocale' : `${roomsCount} Locali`;
+    const key = roomsCount === 1 ? 'one' : roomsCount === 2 ? 'two' : roomsCount === 3 ? 'three' : 'other';
+    roomLabel = t(`addProperty.rooms_count.${key}`, { count: roomsCount });
   }
   const smartTitle = `${roomLabel} • ${address.city}`;
 

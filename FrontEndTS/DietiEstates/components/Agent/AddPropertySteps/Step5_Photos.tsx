@@ -3,7 +3,6 @@ import { View, Image, Pressable, Alert, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import { useActionSheet } from '@expo/react-native-action-sheet';
-import * as ImageManipulator from 'expo-image-manipulator';
 import Sortable, { SortableGridRenderItem, SortableGridDragEndParams } from 'react-native-sortables';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
@@ -25,58 +24,24 @@ export default function Step5_Photos({ selectedImages, onImagesChange }: Step5Ph
   const secondaryTextColor = useThemeColor({}, 'tabIconDefault');
   const { showActionSheetWithOptions } = useActionSheet();
 
-  // --- Helper per ridimensionare e comprimere usando ImageManipulator ---
-  const resizeAndCompressImage = async (originalUri: string): Promise<string | null> => {
-    try {
-      // Definiamo la dimensione massima (il lato più lungo non deve superare 1440)
-      // Per mantenere le proporzioni, ridimensioniamo solo se necessario
-      // Nota: ImageManipulator usa resize basato su width o height.
-      // Per cappare a 1440p mantenendo le proporzioni, potremmo dover fare un check preliminare
-      // delle dimensioni o semplicemente impostare una delle due dimensioni massime.
-      // Scegliamo di impostare l'altezza massima a 1440, le proporzioni verranno mantenute.
-      // Se l'immagine è più larga che alta, la larghezza risultante potrebbe essere > 1440.
-      // Se vuoi *esattamente* max 1440 sul lato lungo, la logica andrebbe affinata
-      // leggendo prima le dimensioni originali (non supportato direttamente da ImageManipulator).
-      // Ripristinato: Torniamo a manipulateAsync. La nuova API object-oriented
-      // (ImageManipulator.manipulate) causa errori TS ("does not exist"),
-      // nonostante sia nella documentazione. Usiamo l'API deprecata e ignoriamo
-      // l'avviso TS finché la situazione non sarà più chiara.
-      // Cappiamo entrambi i lati a 2048 per assicurare max 2048 sul lato lungo.
-      // Mantiene l'aspect ratio.
-
-      // @ts-ignore // - Ignoriamo l'avviso di deprecazione per manipulateAsync (Ripristinato)
-      const manipResult = await ImageManipulator.manipulateAsync(
-        originalUri,
-        // Manteniamo il ridimensionamento a 2048x2048 per preservare una buona qualità
-        [{ resize: { width: 2048, height: 2048 } }],
-        {
-          compress: 0.8, // Aumentiamo leggermente la qualità per WebP che ha una migliore compressione
-          format: ImageManipulator.SaveFormat.WEBP, // Usiamo il formato WebP
-          base64: false,
-        }
-      );
-      return manipResult.uri;
-    } catch (error) {
-      console.error(`Errore durante la manipolazione di ${originalUri}:`, error);
-      return null;
-    }
-  };
-
   // --- Funzione per processare e aggiungere URI ---
   const processAndAddUris = async (originalUris: string[]) => {
-    const processedUris: string[] = [];
-    for (const uri of originalUris) {
-      const newUri = await resizeAndCompressImage(uri);
-      if (newUri) {
-        processedUris.push(newUri);
-      }
+    const MAX_PHOTOS = 20;
+    const remainingSlots = MAX_PHOTOS - selectedImages.length;
+
+    if (remainingSlots <= 0) {
+      Alert.alert(t('addProperty.alerts.attention'), t('addProperty.alerts.maxPhotosReached', { max: MAX_PHOTOS }));
+      return;
     }
-    if (processedUris.length > 0) {
-      onImagesChange([...selectedImages, ...processedUris]);
+
+    const urisToAdd = originalUris.slice(0, remainingSlots);
+    
+    if (urisToAdd.length > 0) {
+      onImagesChange([...selectedImages, ...urisToAdd]);
     }
-    if (processedUris.length < originalUris.length) {
-      // Informa l'utente se alcune immagini non sono state processate
-      Alert.alert(t('addProperty.alerts.attention'), t('addProperty.alerts.imagesNotProcessed'));
+
+    if (originalUris.length > remainingSlots) {
+      Alert.alert(t('addProperty.alerts.attention'), t('addProperty.alerts.someImagesSkipped', { max: MAX_PHOTOS }));
     }
   };
 

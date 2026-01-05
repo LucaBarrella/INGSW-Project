@@ -634,6 +634,8 @@
     "alerts": {
       "attention": "Attenzione",
       "imagesNotProcessed": "Alcune immagini non sono state processate correttamente.",
+      "maxPhotosReached": "Hai raggiunto il limite massimo di {{max}} foto.",
+      "someImagesSkipped": "Puoi aggiungere al massimo {{max}} foto. Alcune immagini sono state escluse.",
       "permissionRequired": "Permesso necessario",
       "galleryPermission": "È necessario concedere il permesso per accedere alla galleria.",
       "cameraPermission": "È necessario concedere il permesso per accedere alla fotocamera.",
@@ -731,6 +733,12 @@
       "file": "File",
       "cancel": "Annulla",
       "selectType": "Seleziona tipo {{type}}"
+    },
+    "rooms_count": {
+      "one": "Monolocale",
+      "two": "Bilocale",
+      "three": "Trilocale",
+      "other": "{{count}} Locali"
     }
   }
 }

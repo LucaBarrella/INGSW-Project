@@ -2,14 +2,14 @@
   "welcome": "¡Bienvenido!",
   "intro": "Te ayudaremos a encontrar el camino adecuado para ti",
   "userTitle": "Buscar Casa",
-  "userDescription": "Explora y encuentra tu hogar ideal",
+  "userDescription": "Explora y encuentra tu casa ideal",
   "agentTitle": "Agente Inmobiliario",
   "agentDescription": "Gestiona anuncios y clientes",
   "adminTitle": "Administrador",
-  "adminDescription": "Gestiona agentes y configura el sistema",
-  "selectUserRole": "Selecciona rol de usuario para buscar casa",
-  "selectAgentRole": "Selecciona rol de agente inmobiliario",
-  "selectAdminRole": "Selecciona rol de administrador",
+  "adminDescription": "Gestiona agentes inmobiliarios y configura el sistema",
+  "selectUserRole": "Selecciona el rol de usuario para buscar casa",
+  "selectAgentRole": "Selecciona el rol de agente inmobiliario",
+  "selectAdminRole": "Selecciona el rol de administrador",
   "propertiesYouHaveSeen": "Propiedades que has visto",
   "Filters": "Filtros",
   "logout": "Cerrar sesión",
@@ -28,26 +28,39 @@
   "address": "Dirección",
   "loadingAgenda": "Cargando agenda...",
   "errorAcceptingRequest": "Error al aceptar la solicitud de visita.",
-  "errorAcceptingRequestConflict": "No puedes aceptar esta solicitud de visita porque ya tienes una cita confirmada a esta hora.",
-  "errorDeletingAppointment": "Error al cancelar la cita.",
+  "errorAcceptingRequestConflict": "No puedes aceptar esta solicitud de visita porque ya tienes una cita confirmada en este horario.",
+  "errorDeletingAppointment": "Error al eliminar la cita.",
   "error": "Error",
-  "noSearchResults": "Sin resultados de búsqueda",
+  "noSearchResults": "No hay resultados de búsqueda",
   "features": "Características",
   "details": "Detalles",
+  "property_detail": "Detalle de la Propiedad",
   "nearbyServices": "Servicios cercanos",
-  "position": "Ubicación",
+  "position": "Posición",
   "forSale": "en venta",
   "forRent": "en alquiler",
   "getInTouch": "Contactar",
   "contractType": "Tipo de Contrato",
+  "A4": "A4",
+  "A3": "A3",
+  "A2": "A2",
+  "A1": "A1",
+  "B": "B",
+  "C": "C",
+  "D": "D",
+  "E": "E",
+  "F": "F",
+  "G": "G",
   "NOT_APPLIABLE": "No Aplicable",
   "myProperties": "Mis Propiedades",
   "propertyLocationAndStatus": "Ubicación y Estado de la Propiedad",
   "searchAddress": "Buscar Dirección",
   "searchYourPropertyLocation": "Busca la ubicación de tu propiedad",
-  "settings": "Configuración",
+  "settings": "Ajustes",
   "selectGardenType": "Selecciona tipo de jardín...",
   "selectHeatingType": "Selecciona tipo de calefacción...",
+  "selectCondition": "Selecciona condición...",
+  "selectEnergyClass": "Selecciona clase...",
   "Absent": "Ausente",
   "Autonomous": "Autónomo",
   "Centralized": "Centralizado",
@@ -55,25 +68,35 @@
   "PRIVATE": "privado",
   "SHARED": "compartido",
   "agentHasNoAvailability": "El agente no está disponible para visitas en este momento.",
-  "pleaseTryAgainLaterOrContactAgent": "Por favor, inténtalo de nuevo más tarde o contacta al agente para más información.",
+  "pleaseTryAgainLaterOrContactAgent": "Por favor, inténtalo de nuevo más tarde o contacta con el agente para más información.",
   "visitRequestedSuccessfully": "¡Visita solicitada con éxito!",
-  "visitRequestedMessage": "Tu solicitud de visita ha sido enviada al agente. Recibirás una confirmación por correo electrónico una vez que el agente apruebe tu solicitud.",
+  "visitRequestedMessage": "Tu solicitud de visita ha sido enviada al agente. Recibirás una confirmación por correo electrónico una vez que el agente haya aprobado tu solicitud.",
   "failedToRequestVisit": "No se pudo solicitar la visita",
-  "pleaseTryAnotherTimeSlot": "No fue posible solicitar una visita para el horario seleccionado. Por favor, prueba otro horario.",
+  "pleaseTryAnotherTimeSlot": "No fue posible solicitar una visita para el horario especificado. Por favor, intenta con otro horario.",
   "noDescriptionAvailable": "Descripción no disponible",
-  "searchPlaceholder": "Buscar propiedad...",
+  "searchPlaceholder": "Buscar en la Zona...",
+  "offers": "Ofertas",
   "loadingOffers": "Cargando ofertas...",
-  "noActiveOffers": "Sin ofertas activas",
-  "noActiveOffersSubtitle": "Actualmente no hay propiedades con ofertas activas. Cuando lleguen nuevas ofertas, aparecerán aquí.",
+  "confirm_withdraw_offer": "Confirmar retiro de oferta",
+  "noActiveOffers": "No hay ofertas activas",
+  "noActiveOffersSubtitle": "No hay propiedades con ofertas activas en este momento. Cuando lleguen nuevas ofertas, aparecerán aquí.",
   "offersDashboardTitle": "Gestión de Ofertas",
-  "offersDashboardSubtitle": "Gestiona las ofertas activas para tus propiedades",
-  "confirmAcceptHighestOfferTitle": "Confirmación de Aceptación de la Oferta Más Alta",
-  "confirmAcceptHighestOfferMessage": "¿Estás seguro de que quieres aceptar la oferta más alta para esta propiedad (de {{amount}}€)? Todas las demás ofertas pendientes serán rechazadas automáticamente.",
+  "offersDashboardSubtitle": "Gestiona las ofertas activas de tus propiedades",
+  "confirmAcceptHighestOfferTitle": "Confirmar Aceptación de la Oferta más Alta",
+  "confirmAcceptHighestOfferMessage": "¿Estás seguro de que quieres aceptar la oferta más alta para esta propiedad (de {{amount}}€)? Todas las demás ofertas pendientes se rechazarán automáticamente.",
   "confirmRejectOfferMessage": "¿Estás seguro de que quieres rechazar esta oferta?",
   "offerAcceptedSuccess": "Oferta Aceptada",
   "noOffersFound": "No se encontraron ofertas {{status}}",
   "errorLoadingOffers": "Error al cargar las ofertas",
   "yourOffer": "Tu oferta",
+  "resolveConflict": "Resolver Conflicto",
+  "counterOffer": "Contraoferta",
+  "enterCounterOfferPrice": "Introduce el importe de la contraoferta",
+  "submit": "Enviar",
+  "reject": "Rechazar",
+  "accept": "Aceptar",
+  "counter": "Contraoferta",
+  "withdraw": "Retirar",
   "offersArchived": {
     "agent": {
       "archiveTitle": "Archivo de Ofertas",
@@ -82,21 +105,21 @@
       "offerAmount": "Oferta: €{{amount}}",
       "buyerLabel": "Comprador: {{name}}",
       "contactBuyer": "Contactar Comprador",
-      "rejectionLogTitle": "Registro de Rechazo:",
-      "offererLabel": "Oferente: {{name}}",
+      "rejectionLogTitle": "Log de Rechazo:",
+      "offererLabel": "Ofertante: {{name}}",
       "proposalAmount": "Propuesta: €{{amount}}"
     }
   },
   "askingPrice": "Precio solicitado",
   "propertyAddress": "Dirección de la propiedad",
-  "makeAnOffer": "Hacer una oferta",
+  "makeAnOffer": "Haz tu oferta",
   "enterAnAmountBelow": "Tu oferta debe ser inferior al precio solicitado de {{price}}.",
   "invalidOfferAmount": "Por favor, introduce un importe válido inferior al precio solicitado.",
-  "bySubmittingOfferYouAgreeToOurTerms": "Al enviar tu oferta, aceptas nuestros términos y condiciones. Esta no es una oferta legalmente vinculante hasta que ambas partes la acepten.",
+  "bySubmittingOfferYouAgreeToOurTerms": "Al enviar tu oferta, aceptas nuestros términos y condiciones. Esta no es una oferta legalmente vinculante hasta que ambas partes la hayan aceptado.",
   "submitOffer": "Enviar Oferta",
   "enterAnAmount": "Introduce un importe",
   "areYouSure": "¿Estás seguro?",
-  "confirmSubmitOffer": "¿Confirmas que quieres enviar una oferta de {{amount}} para la propiedad en {{address}}?",
+  "confirmSubmitOffer": "¿Confirmas que quieres enviar una oferta de {{amount}} por la propiedad en {{address}}?",
   "cancel": "Cancelar",
   "confirm": "Confirmar",
   "offerSubmitted": "Oferta Enviada",
@@ -104,63 +127,72 @@
   "accept_countered_offer": "Aceptar Contraoferta",
   "withdraw_offer": "Retirar Oferta",
   "yourOfferHasBeenSubmittedSuccessfully": "Tu oferta ha sido enviada con éxito.",
-  "failedToSubmitOffer": "Error al enviar la oferta",
+  "failedToSubmitOffer": "No se pudo enviar la oferta, ¿ya has aceptado una oferta para esta propiedad?",
   "yes": "Sí",
   "no": "No",
   "hideOptionalDetails": "Ocultar Detalles Opcionales",
   "showOptionalDetails": "Mostrar Detalles Opcionales",
   "insertExternalOfferButton": "Insertar Oferta Externa",
-  "acceptHighestRejectOthersButton": "Aceptar Oferta Más Alta y Rechazar Otras",
+  "acceptHighestRejectOthersButton": "Aceptar Oferta más Alta y Rechazar Otras",
   "noActiveOffersForThisProperty": "No hay ofertas activas para esta propiedad.",
   "validationError": "Error de Validación",
-  "pleaseSelectValidAddressFromSuggestions": "Por favor, asegúrate de haber seleccionado una dirección válida de las sugerencias de arriba para permitirnos geolocalizar tu propiedad.",
-  "ok": "OK",
+  "pleaseSelectValidAddressFromSuggestions": "Por favor, asegúrate de haber seleccionado una dirección válida de las sugerencias anteriores para permitirnos geolocalizar tu propiedad.",
+  "ok": "Aceptar",
   "warning": "Atención",
   "pleaseAddAtLeastOnePropertyImage": "Por favor, añade al menos una imagen de la propiedad.",
-
+  "CONFLICT": "CONFLICTO",
+  "Single Visit": "Visita Individual",
+  "Group Visit": "Visita de Grupo",
+  "cancelVisit": "Cancelar Visita",
+  "selectVisitsToCancel": "Selecciona las visitas a cancelar",
+  "offerDate": "Oferta del: ",
+  "offerAccepted": "Oferta Aceptada",
+  "offerRejected": "Oferta Rechazada",
+  "offerWithdrawn": "Oferta Retirada",
+  "youHaveWithdrawnTheOfferSuccessfully": "Has retirado la oferta con éxito.",
+  "failedToWithdrawOffer": "No se pudo retirar la oferta.",
+  "youHaveAcceptedTheCounteredOfferSuccessfully": "Has aceptado la contraoferta con éxito.",
+  "failedToAcceptCounteredOffer": "No se pudo aceptar la contraoferta.",
+  "noPropertiesFound": "No se encontraron propiedades.",
+  "propertyType": "Tipo de Propiedad",
   "setting": {
     "language": "Idioma"
   },
-
   "visit_status": {
-    "PENDING": "pendiente",
+    "PENDING": "en espera",
     "CONFIRMED": "confirmada",
     "COMPLETED": "completada",
-    "REJECTED": "rechazada"
+    "REJECTED": "rechazada",
+    "CANCELLED": "cancelada"
   },
-
   "offer_status": {
-    "PENDING": "pendiente",
+    "PENDING": "en espera",
     "ACCEPTED": "aceptada",
     "REJECTED": "rechazada",
     "COUNTERED": "contraoferta",
     "WITHDRAWN": "retirada",
     "UNKNOWN": "desconocido"
   },
-
   "property_status": {
-    "UNDER_CONSTRUCTION": "en construcción",
-    "POOR_CONDITION": "mal estado",
-    "TO_BE_RENOVATED": "para reformar",
-    "RENOVATED": "reformado",
-    "GOOD_CONDITION": "buen estado",
-    "NEW": "nuevo"
+    "NEW": "Nuevo",
+    "GOOD_CONDITION": "Buenas condiciones",
+    "RENOVATED": "Reformado",
+    "TO_BE_RENOVATED": "A reformar",
+    "POOR_CONDITION": "Malas condiciones",
+    "UNDER_CONSTRUCTION": "En construcción"
   },
-
   "property_state": {
     "active": "Activo",
     "sold": "Vendido",
     "rented": "Alquilado",
     "inactive": "Inactivo"
   },
-
   "statusLabel": "Estado",
   "agentLabel": "Agente",
   "priceLabel": "Precio",
   "notSpecified": "No especificado",
-  "planVisit": "Programar una visita",
+  "planVisit": "Planificar una visita",
   "makeOffer": "Hacer una oferta",
-
   "property_details": {
     "area": "superficie",
     "numberOfBedrooms": "número de dormitorios",
@@ -171,21 +203,21 @@
     "totalFloors": "número de plantas",
     "yearBuilt": "año de construcción",
     "heating": "tipo de calefacción",
-    "energyClass": "clase energética",
-    "furnished": "amueblado",
+    "energyRating": "clase energética",
+    "furnished": "está amueblado",
     "hasElevator": "ascensor",
     "garden": "jardín",
     "parkingSpaces": "plazas de aparcamiento",
     "swimmingPool": "piscina",
     "hasDisabledAccess": "acceso para discapacitados",
-    "hasRoadAccess": "acceso por carretera"
+    "hasRoadAccess": "acceso por carretera",
+    "fireSystem": "sistema contra incendios"
   },
-
   "property_category": {
     "commercial_property": "Comercial",
     "residential_property": "Residencial",
-    "land": "Terreno",
-    "garage": "Garaje",
+    "land_property": "Terreno",
+    "garage_property": "Garaje",
     "sub": {
       "Apartment": "Apartamento",
       "Villa": "Villa",
@@ -196,7 +228,7 @@
       "Shop": "Tienda",
       "Restaurant": "Restaurante",
       "Warehouse": "Almacén",
-      "Building Plot": "Terreno Edificable",
+      "Building Plot": "Parcela Edificable",
       "Agricultural Land": "Terreno Agrícola",
       "Industrial Land": "Terreno Industrial",
       "Single Garage": "Garaje Individual",
@@ -208,26 +240,23 @@
     "title": "Agenda",
     "today": "Hoy, {{date}}",
     "dateShort": "{{date}}",
-    "confirmedSchedule": "Horario confirmado",
-    "noAppointments": "Sin citas",
+    "confirmedSchedule": "Programa confirmado",
+    "noAppointments": "No hay citas",
     "emptyState": "...",
     "pendingRequests": "Solicitudes pendientes"
   },
-
   "history_placeholder": {
     "no_viewed_properties": "Aún no has visto ninguna propiedad.",
     "when_you_do": "Cuando lo hagas, aparecerán aquí."
   },
-
   "feedback": {
-    "missingParams": "Error: Faltan parámetros para la pantalla de comentarios.",
-    "backButton": "Atrás"
+    "missingParams": "Error: Faltan parámetros para la pantalla de feedback.",
+    "backButton": "Volver"
   },
-
   "auth": {
     "screens": {
       "login": {
-        "title": "Iniciar sesión",
+        "title": "Iniciar Sesión",
         "subtitle": "Bienvenido — inicia sesión para continuar",
         "orContinueWith": "o continúa con",
         "noAccount": "¿No tienes una cuenta? ",
@@ -239,15 +268,14 @@
       }
     }
   },
-  
   "admin": {
-    "welcome": "Bienvenido al Área de Administración",
+    "welcome": "Bienvenido al Área de Administrador",
     "changePassword": "Cambiar Contraseña",
     "changePasswordDesc": "Modifica la contraseña de tu cuenta",
     "addAdmin": "Añadir Administrador",
-    "addAdminDesc": "Crear una nueva cuenta de administrador",
+    "addAdminDesc": "Crea una nueva cuenta de administrador",
     "addAgent": "Añadir Agente",
-    "addAgentDesc": "Registrar un nuevo agente inmobiliario",
+    "addAgentDesc": "Registra un nuevo agente inmobiliario",
     "tabs": {
       "changePassword": "Cambiar Contraseña",
       "newAdmin": "Nuevo Admin",
@@ -256,20 +284,20 @@
     "screens": {
       "changePassword": {
         "title": "Cambiar Contraseña",
-        "subtitle": "Actualiza las credenciales de tu cuenta de forma segura",
+        "subtitle": "Actualiza tus credenciales de forma segura",
         "error": "No se pudo cambiar la contraseña",
         "success": "Contraseña cambiada con éxito",
         "successMessage": "Tu contraseña ha sido actualizada con éxito."
       },
       "addAdmin": {
         "title": "Añadir Nuevo Administrador",
-        "subtitle": "Crear una nueva cuenta de administrador con acceso completo al sistema",
-        "error": "No se pudo añadir el administrador"
+        "subtitle": "Crea una nueva cuenta de administrador con acceso total al sistema",
+        "error": "No se pudo añadir al administrador"
       },
       "addAgent": {
         "title": "Añadir Nuevo Agente",
-        "subtitle": "Registrar un nuevo agente inmobiliario en la plataforma",
-        "error": "No se pudo añadir el agente",
+        "subtitle": "Registra un nuevo agente inmobiliario en la plataforma",
+        "error": "No se pudo añadir al agente",
         "successTitle": "Operación Exitosa",
         "successMessageAgentCreation": "El agente ha sido creado con éxito.",
         "successMessageAdminCreation": "El administrador ha sido creado con éxito."
@@ -277,10 +305,10 @@
     },
     "profile": {
       "title": "Perfil",
-      "description": "Gestiona tu perfil y configuración"
+      "description": "Gestiona tu perfil y ajustes"
     },
     "settings": {
-      "title": "Configuración",
+      "title": "Ajustes",
       "language": "Idioma",
       "theme": {
         "title": "Tema",
@@ -290,22 +318,22 @@
       }
     },
     "logout": "Cerrar sesión",
-    "logoutError": "Error al cerrar sesión",
+    "logoutError": "Error al Cerrar Sesión",
     "logoutErrorMessage": "No se pudo completar el cierre de sesión. Por favor, inténtalo de nuevo."
   },
-
   "agent": {
     "tabs": {
       "home": "Inicio",
       "profile": "Perfil",
       "dashboard": "Panel",
-      "visits": "Visitas",
-      "agenda": "Agenda",
-      "offers": "Ofertas",
-      "receivedOffers": "Ofertas Recibidas"
+      "visits": "Mis Visitas",
+      "agenda": "Calendario Agente",
+      "offers": "Mis Ofertas",
+      "receivedOffers": "Ofertas Clientes",
+      "activity": "Actividad"
     },
     "profile": {
-      "title": "Perfil Agente",
+      "title": "Perfil del Agente",
       "subtitle": "Gestiona tu información personal",
       "fullName": "Nombre Completo",
       "email": "Correo electrónico",
@@ -316,7 +344,6 @@
       "office": "Oficina"
     }
   },
-
   "buyer": {
     "tabs": {
       "home": "Inicio",
@@ -327,17 +354,16 @@
   },
   "profile": {
     "addAgent": "Añadir Agente",
-    "addManager": "Añadir Gerente",
+    "addManager": "Añadir Manager",
     "changePassword": "Cambiar Contraseña",
     "chevronRight": "Ir",
     "userProfile": "Perfil de usuario",
-    "logoutError": "Error al cerrar sesión",
+    "logoutError": "Error al Cerrar Sesión",
     "logoutErrorMessage": "No se pudo completar el cierre de sesión. Por favor, inténtalo de nuevo."
   },
   "home": {
     "detailsButton": "Detalles"
   },
-
   "forms": {
     "confirmation": {
       "title": "Confirmar Acción",
@@ -373,16 +399,17 @@
     "buttons": {
       "changePassword": "Cambiar Contraseña",
       "createAdmin": "Crear administrador",
-      "createAgent": "Crear agente inmobiliario"
+      "createAgent": "Crear agente inmobiliario",
+      "reset": "Restablecer"
     },
     "messages": {
       "creating": "Creando...",
       "passwordChanged": "Contraseña modificada con éxito"
     },
     "errors": {
-      "generic": "Revisa todos los campos e inténtalo de nuevo.",
+      "generic": "Por favor, revisa todos los campos e inténtalo de nuevo.",
       "fillRequired": "Rellena todos los campos obligatorios",
-      "invalidEmail": "Dirección de correo electrónico no válida",
+      "invalidEmail": "Dirección de correo no válida",
       "agentRequiredFields": "El teléfono y el número de licencia son obligatorios para los agentes",
       "errorCreatingAdmin": "Error al crear el administrador",
       "errorCreatingAgent": "Error al crear el agente",
@@ -391,8 +418,8 @@
       "passwordSame": "La nueva contraseña debe ser diferente de la actual",
       "passwordTooShort": "La contraseña debe tener al menos 8 caracteres",
       "invalid": {
-        "password": "La contraseña debe contener al menos 8 caracteres, incluyendo una mayúscula, una minúscula, un número y un carácter especial",
-        "email": "Formato de correo electrónico no válido",
+        "password": "La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, una minúscula, un número y un carácter especial",
+        "email": "Formato de correo no válido",
         "phone": "Formato de número de teléfono no válido",
         "licenseNumber": "Formato de número de licencia no válido",
         "firstName": "El nombre no parece válido",
@@ -401,8 +428,7 @@
         "birthDate": "Fecha de nacimiento no válida"
       }
     }
-  }
-,
+  },
   "filters": {
     "contract": {
       "label": "Tipo de Transacción",
@@ -435,33 +461,33 @@
       "label": "Número mínimo de baños"
     },
     "floor": {
-      "label": "Piso"
+      "label": "Planta"
     },
     "minNumberOfFloors": {
-      "label": "Número mínimo de pisos"
+      "label": "Número mínimo de plantas"
     },
     "mustHaveElevator": {
       "label": "Con ascensor"
     },
     "minYearBuilt": {
-      "label": "Año mínimo de construcción"
+      "label": "Año de construcción mínimo"
     },
     "minParkingSpaces": {
-      "label": "Plazas de aparcamiento mínimas"
+      "label": "Mínimo de plazas de aparcamiento"
     },
     "acceptedCondition": {
       "label": "Condición aceptada",
       "options": {
         "NEW": "Nuevo",
-        "GOOD_CONDITION": "Buen estado",
-        "RENOVATED": "Renovado",
+        "GOOD_CONDITION": "Buenas condiciones",
+        "RENOVATED": "Reformado",
         "TO_BE_RENOVATED": "A reformar",
-        "POOR_CONDITION": "Mal estado",
+        "POOR_CONDITION": "Malas condiciones",
         "UNDER_CONSTRUCTION": "En construcción"
       }
     },
     "minEnergyRating": {
-      "label": "Calificación energética mínima",
+      "label": "Clase energética mínima",
       "options": {
         "A4": "A4",
         "A3": "A3",
@@ -488,7 +514,7 @@
       "label": "Amueblado"
     },
     "mustHaveWheelchairAccess": {
-      "label": "Acceso para sillas de ruedas"
+      "label": "Acceso para discapacitados"
     },
     "mustHaveSurveillance": {
       "label": "Sistema de vigilancia"
@@ -500,38 +526,219 @@
       "label": "Acceso desde la calle"
     },
     "category": {
-        "label": "Categoría",
-        "RESIDENTIAL": "Residencial",
-        "COMMERCIAL": "Comercial",
-        "GARAGE": "Garaje",
-        "LAND": "Terreno",
-        "options": {
-            "Apartment": "Apartamento",
-            "Villa": "Villa",
-            "Studio": "Estudio",
-            "Penthouse": "Ático",
-            "Townhouse": "Casa adosada",
-            "Office": "Oficina",
-            "Shop": "Tienda",
-            "Restaurant": "Restaurante",
-            "Warehouse": "Almacén",
-            "Building Plot": "Terreno edificable",
-            "Agricultural Land": "Terreno agrícola",
-            "Industrial Land": "Terreno industrial",
-            "Single Garage": "Garaje individual",
-            "Double Garage": "Garaje doble",
-            "Parking Space": "Plaza de aparcamiento"
-        }
+      "label": "Categoría",
+      "RESIDENTIAL": "Residencial",
+      "COMMERCIAL": "Comercial",
+      "GARAGE": "Garaje",
+      "LAND": "Terreno",
+      "options": {
+        "Apartment": "Apartamento",
+        "Villa": "Villa",
+        "Studio": "Estudio",
+        "Penthouse": "Ático",
+        "Townhouse": "Casa adosada",
+        "Office": "Oficina",
+        "Shop": "Tienda",
+        "Restaurant": "Restaurante",
+        "Warehouse": "Almacén",
+        "Building Plot": "Parcela Edificable",
+        "Agricultural Land": "Terreno Agrícola",
+        "Industrial Land": "Terreno Industrial",
+        "Single Garage": "Garaje Individual",
+        "Double Garage": "Garaje Doble",
+        "Parking Space": "Plaza de Aparcamiento"
+      }
     }
   },
   "units": {
     "squareMeters": "m²",
     "kilometers": "km"
-  }
-,
+  },
   "filterPanel": {
     "generalFilters": "Filtros Generales",
     "maxPrice": "Precio máximo",
-    "changeCategory": "Cambiar Categoría"
+    "changeCategory": "Cambiar Categoría",
+    "selectCategory": "Selecciona una categoría",
+    "budgetAndTransaction": "Presupuesto & Transacción",
+    "locationAndSpaces": "Ubicación & Espacios",
+    "features": "Características",
+    "subCategory": "Subcategoría",
+    "specificDetails": "Detalles Específicos",
+    "change": "Cambiar",
+    "search": "Buscar",
+    "errorSearch": "Se ha producido un error durante la búsqueda. Por favor, inténtalo de nuevo."
+  },
+  "addProperty": {
+    "title": "Nueva Propiedad",
+    "steps": {
+      "step1": "Tipología",
+      "step2": "Detalles Base",
+      "step3": "Ubicación",
+      "step4": "Características",
+      "step5": "Fotos"
+    },
+    "stepCounter": "Paso {{current}} de {{total}}",
+    "buttons": {
+      "back": "Atrás",
+      "next": "Siguiente",
+      "publish": "Publicar Anuncio",
+      "saving": "Guardando..."
+    },
+    "headers": {
+      "basicDetails": "Detalles Base",
+      "economicInfo": "Información Económica",
+      "locationAndStatus": "Ubicación y Estado",
+      "addressDetails": "Detalles de la Dirección",
+      "propertyDetails": "Detalles de la Propiedad",
+      "spacesAndSurfaces": "Espacios y Superficies",
+      "featuresAndComfort": "Características y Confort",
+      "spacesAndStructure": "Espacios y Estructura",
+      "securityAndHistory": "Seguridad e Historia",
+      "accessibility": "Accesibilidad",
+      "structureDetails": "Detalles de la Estructura",
+      "propertyPhotos": "Fotos de la Propiedad"
+    },
+    "labels": {
+      "description": "Descripción",
+      "propertyDescription": "Descripción de la propiedad",
+      "price": "Precio",
+      "area": "Superficie",
+      "searchAddress": "Buscar Dirección",
+      "city": "Ciudad",
+      "province": "Provincia",
+      "street": "Vía / Plaza",
+      "streetNumber": "Número",
+      "building": "Edificio / Escalera",
+      "country": "País",
+      "condition": "Condición de la Propiedad",
+      "energyClass": "Clase Energética",
+      "residentialCategory": "Categoría Residencial",
+      "commercialCategory": "Categoría Comercial",
+      "garageCategory": "Categoría Garaje",
+      "landCategory": "Categoría Terreno",
+      "rooms": "Habitaciones",
+      "bathrooms": "Baños",
+      "floor": "Planta",
+      "totalFloors": "Total Plantas",
+      "gardenType": "Tipo de Jardín",
+      "heatingType": "Calefacción",
+      "elevator": "Ascensor",
+      "furnished": "Amueblado",
+      "yearBuilt": "Año de Construcción",
+      "disabledAccess": "Acceso Discapacitados",
+      "surveillance": "Sistema de Vigilancia",
+      "roadAccess": "Acceso por Carretera",
+      "cover": "Portada",
+      "add": "Añadir"
+    },
+    "alerts": {
+      "attention": "Atención",
+      "imagesNotProcessed": "Algunas imágenes no se procesaron correctamente.",
+      "maxPhotosReached": "Has alcanzado el límite máximo de {{max}} fotos.",
+      "someImagesSkipped": "Puedes añadir un máximo de {{max}} fotos. Algunas imágenes han sido excluidas.",
+      "permissionRequired": "Permiso necesario",
+      "galleryPermission": "Es necesario conceder permiso para acceder a la galería.",
+      "cameraPermission": "Es necesario conceder permiso para acceder a la cámara.",
+      "error": "Error",
+      "galleryError": "No se pudieron seleccionar imágenes de la galería.",
+      "cameraError": "No se pudo utilizar la cámara.",
+      "fileError": "No se pudieron seleccionar archivos.",
+      "chooseImageSource": "Elige la fuente de la imagen",
+      "photoLibrary": "Biblioteca de Fotos",
+      "takePhoto": "Hacer Foto",
+      "chooseFile": "Elegir Archivo",
+      "success": "¡Éxito!",
+      "saveError": "Error al Guardar",
+      "propertyAdded": "Tu propiedad se ha añadido correctamente.",
+      "unexpectedError": "Se ha producido un error inesperado al guardar. Por favor, inténtalo de nuevo.",
+      "backToHome": "Volver al Inicio",
+      "backToForm": "Volver al Formulario",
+      "selectListingType": "Selecciona un tipo de anuncio",
+      "selectPropertyType": "Selecciona un tipo de propiedad"
+    },
+    "placeholders": {
+      "description": "Cuéntanos los puntos fuertes de la propiedad...",
+      "price": "Ej. 250.000",
+      "area": "m²",
+      "searchLocation": "Busca la ubicación de tu propiedad...",
+      "city": "Ej. Madrid",
+      "province": "Ej. M",
+      "street": "Ej. Calle Mayor",
+      "streetNumber": "N°",
+      "building": "Ej. Escalera A",
+      "country": "Ej. España",
+      "selectCondition": "Selecciona condición...",
+      "selectEnergyClass": "Selecciona clase...",
+      "selectCategory": "Selecciona categoría...",
+      "rooms": "Ej. 3",
+      "bathrooms": "Ej. 2",
+      "floor": "Ej. 2",
+      "totalFloors": "Ej. 3",
+      "selectGardenType": "Selecciona tipo de jardín...",
+      "selectHeatingType": "Selecciona tipo...",
+      "yearBuilt": "Ej. 1995"
+    },
+    "actions": {
+      "hideDetails": "OCULTAR DETALLES",
+      "editDetails": "MODIFICAR DETALLES",
+      "cancel": "CANCELAR",
+      "cancelTitle": "Cancelar",
+      "select": "Seleccionar..."
+    },
+    "info": {
+      "dragToReorder": "Arrastra las fotos para cambiar el orden. La primera foto arriba a la izquierda será la portada de tu anuncio."
+    },
+    "enums": {
+      "garden": {
+        "PRIVATE": "Privado",
+        "SHARED": "Comunitario",
+        "ABSENT": "Ninguno"
+      },
+      "heating": {
+        "Absent": "Ninguno",
+        "Autonomous": "Autónomo",
+        "Centralized": "Centralizado"
+      }
+    },
+    "typeDescriptions": {
+      "RESIDENTIAL": {
+        "title": "Residencial",
+        "desc": "Casas, apartamentos y villas. Perfecto para quienes buscan un nuevo hogar."
+      },
+      "COMMERCIAL": {
+        "title": "Comercial",
+        "desc": "Oficinas, tiendas y almacenes. Ideal para actividades profesionales y negocios."
+      },
+      "GARAGE": {
+        "title": "Garaje",
+        "desc": "Garajes, plazas de aparcamiento y boxes. La solución para un aparcamiento seguro."
+      },
+      "LAND": {
+        "title": "Terreno",
+        "desc": "Terrenos agrícolas o edificables. Espacio abierto para nuevos proyectos."
+      }
+    },
+    "accessibility": {
+      "details": "Detalles",
+      "location": "Ubicación",
+      "search": "Buscar",
+      "check": "Seleccionado",
+      "close": "Cerrar",
+      "open": "Abrir",
+      "info": "Información",
+      "remove": "Eliminar",
+      "addPhoto": "Añadir foto",
+      "camera": "Cámara",
+      "gallery": "Galería",
+      "file": "Archivo",
+      "cancel": "Cancelar",
+      "selectType": "Seleccionar tipo {{type}}"
+    },
+    "rooms_count": {
+      "one": "Estudio",
+      "two": "Dos habitaciones",
+      "three": "Tres habitaciones",
+      "other": "{{count}} Habitaciones"
+    }
   }
 }

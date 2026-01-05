@@ -4,7 +4,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod'; // Importa il resolver
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
-
+import * as ImageManipulator from 'expo-image-manipulator';
 import ListingTypeSelector from '@/components/Agent/AddPropertySteps/ListingTypeSelector';
 import Step1_PropertyType from '@/components/Agent/AddPropertySteps/Step1_PropertyType';
 import Step2_BasicDetails from '@/components/Agent/AddPropertySteps/Step2_BasicDetails';
@@ -45,38 +45,47 @@ export default function AddPropertyScreen() {
   const loading = false;
   const createProperty = async (data: any, images: string[]) => {
     const formData = new FormData();
-    
-    // Per risolvere l'errore 500 sui residenziali, dobbiamo assicurarci che la parte 'property'
-    // venga inviata con Content-Type 'application/json'.
-    // In React Native, il modo più affidabile per forzare il Content-Type di una parte
-    // JSON in un FormData multipart è usare un Blob (se supportato) o un file virtuale.
-    // Dato che il server è in sola lettura e non accetta 'application/octet-stream',
-    // usiamo un trucco per forzare il tipo.
-    
+
     const jsonString = JSON.stringify(data);
-    
-    // In React Native, l'invio di JSON in un FormData multipart è problematico.
-    // Se inviamo solo la stringa, il Content-Type diventa 'text/plain' o 'application/octet-stream'.
-    // Il backend (Spring Boot) richiede 'application/json' per mappare correttamente il DTO residenziale.
-    // Per forzare il Content-Type corretto senza dipendere dal supporto Blob del motore JS,
-    // usiamo un file virtuale.
-    
+
     formData.append('property', {
       uri: 'data:application/json;base64,' + btoa(unescape(encodeURIComponent(jsonString))),
       name: 'property.json',
       type: 'application/json',
     } as any);
-    
-    // Add each image file
+
     for (let i = 0; i < images.length; i++) {
       const uri = images[i];
-      const filename = uri.split('/').pop() || `image_${i}.webp`;
       
-      formData.append('images', {
-        uri: uri,
-        type: 'image/webp',
-        name: filename,
-      } as any);
+      try {
+        // @ts-ignore
+        const manipResult = await ImageManipulator.manipulateAsync(
+          uri,
+          [{ resize: { width: 2048, height: 2048 } }],
+          {
+            compress: 0.8,
+            format: ImageManipulator.SaveFormat.WEBP,
+            base64: false,
+          }
+        );
+
+        const filename = manipResult.uri.split('/').pop() || `image_${i}.webp`;
+
+        formData.append('images', {
+          uri: manipResult.uri,
+          type: 'image/webp',
+          name: filename,
+        } as any);
+      } catch (error) {
+        console.error(`Errore durante la manipolazione di ${uri}:`, error);
+        // Fallback all'immagine originale se la manipolazione fallisce
+        const filename = uri.split('/').pop() || `image_${i}.webp`;
+        formData.append('images', {
+          uri: uri,
+          type: 'image/webp',
+          name: filename,
+        } as any);
+      }
     }
     
     try {
