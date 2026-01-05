@@ -6,8 +6,6 @@ import { AvailabilityDTO } from '../dto/response/AvailabilityDTO';
 // NOTA: Gli endpoint per le visite non erano presenti nel file api.service.ts originale.
 // Vengono aggiunti qui come esempio. Sarà necessario definirli correttamente con il backend.
 const visitEndpoints = {
-  // Esempi di endpoint per le visite, da adattare
-  scheduleVisit: '/visits/schedule',
   getVisitsByProperty: '/properties/{propertyId}/visits',
   getVisitsByAgent: '/visits/agent/me',
   getVisitsByBuyer: '/visits/me/',
@@ -18,17 +16,6 @@ const visitEndpoints = {
   updateVisitStatus: '/visits/{visitId}/status',
   createVisit: '/visits',
 } as const;
-
-/**
- * Pianifica una nuova visita per un immobile.
- * @param visitData - Dati della visita da pianificare.
- * @returns La risposta dell'API (es. successo e ID della nuova visita).
- */
-export const scheduleVisit = async (visitData: Partial<VisitDTO>): Promise<{ success: boolean; message?: string; id?: string | number }> => {
-  console.log('[VisitApiService] scheduleVisit:', visitData);
-  const response = await httpClient.post(visitEndpoints.scheduleVisit, visitData);
-  return response.data;
-};
 
 /**
  * Recupera tutte le visite per un immobile specifico.
@@ -140,7 +127,6 @@ export const confirmVisit = async (visitId: string | number): Promise<{ success:
 };
 
 export default {
-  scheduleVisit,
   getVisitsByProperty,
   getVisitsOfCurrentAgent,
   getVisitsByBuyer,
