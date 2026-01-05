@@ -1,6 +1,5 @@
 import { PhotonFeature } from '@/components/Buyer/SearchIntegration/types';
 import axios from 'axios';
-import i18n from '../utils/i18n';
 import { IGeocodingService } from './interfaces/IGeocodingService';
 
 const PHOTON_BASE = 'https://photon.komoot.io/api/';
@@ -21,7 +20,7 @@ export default class PhotonApi implements IGeocodingService {
     if (!query || !query.trim()) return [];
 
     const q = query.trim();
-    const lang = (i18n.language || 'en').split('-')[0];
+    const lang = 'en';
     const url = `${PHOTON_BASE}?q=${encodeURIComponent(q)}&limit=${limit}&lang=${lang}`;
 
     // Un singolo retry per Photon per gestire glitch temporanei prima di attivare il fallback

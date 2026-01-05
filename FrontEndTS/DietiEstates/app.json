@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "it.unina.dietiestates"
+      "bundleIdentifier": "com.fabbest.dietiestates"
     },
     "android": {
       "googleServicesFile": "google-services.json",
@@ -18,7 +18,7 @@
         "foregroundImage": "./assets/images/logo.jpeg",
         "backgroundColor": "#ffffff"
       },
-      "package": "it.unina.dietiestates"
+      "package": "com.fabbest.dietiestates"
     },
     "web": {
       "bundler": "metro",

@@ -1,5 +1,5 @@
 import React, { useReducer, useEffect, useState } from 'react';
-import { View, ActivityIndicator, Text, ScrollView, Alert } from 'react-native';
+import { View, ActivityIndicator, ScrollView, Alert } from 'react-native';
 import { VisitRequest } from '../../../src/dto/agenda';
 import AgendaHeader from './AgendaHeader';
 import ConfirmedSchedule from './ConfirmedSchedule';
