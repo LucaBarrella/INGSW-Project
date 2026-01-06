@@ -27,8 +27,8 @@ export const useOffers = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = (await offerService.getReceivedOffers());
-      setReceivedOffers(data);
+      const data = await offerService.getReceivedOffers();
+      setReceivedOffers(data.content);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch received offers');
     } finally {
