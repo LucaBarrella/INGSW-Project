@@ -292,6 +292,7 @@
         "subtitle": "Securely update your account credentials",
         "error": "Unable to change password",
         "success": "Password changed successfully",
+        "successTitle": "Operation Successful",
         "successMessage": "Your password has been updated successfully."
       },
       "addAdmin": {

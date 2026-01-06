@@ -14,7 +14,7 @@ export class ManagerRepository implements IManagerRepository {
 
     handleError(error: any): { success: boolean; message?: string } {
         const err = error as ApiError | any;
-        const fields : string[] =  err.details.fields;
+        const fields : string[] =  err.details?.fields || [];
         let message = "";
         for (const field of fields) {
             message += `${t(`forms.errors.invalid.${field}`)}\n`;

@@ -291,6 +291,7 @@
         "subtitle": "Aggiorna le credenziali del tuo account in modo sicuro",
         "error": "Impossibile cambiare la password",
         "success": "Password cambiata con successo",
+        "successTitle": "Operazione Riuscita",
         "successMessage": "La tua password è stata aggiornata con successo."
       },
       "addAdmin": {

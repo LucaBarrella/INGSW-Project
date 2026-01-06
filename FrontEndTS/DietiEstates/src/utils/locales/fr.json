@@ -291,6 +291,7 @@
         "subtitle": "Mettez à jour vos identifiants en toute sécurité",
         "error": "Impossible de changer le mot de passe",
         "success": "Mot de passe changé avec succès",
+        "successTitle": "Opération Réussie",
         "successMessage": "Votre mot de passe a été mis à jour avec succès."
       },
       "addAdmin": {

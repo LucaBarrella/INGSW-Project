@@ -291,6 +291,7 @@
         "subtitle": "Actualiza tus credenciales de forma segura",
         "error": "No se pudo cambiar la contraseña",
         "success": "Contraseña cambiada con éxito",
+        "successTitle": "Operación Exitosa",
         "successMessage": "Tu contraseña ha sido actualizada con éxito."
       },
       "addAdmin": {
