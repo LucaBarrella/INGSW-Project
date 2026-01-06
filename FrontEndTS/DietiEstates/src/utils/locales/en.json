@@ -154,6 +154,7 @@
   "youHaveAcceptedTheCounteredOfferSuccessfully": "You have accepted the counteroffer successfully.",
   "failedToAcceptCounteredOffer": "Unable to accept counteroffer.",
   "noPropertiesFound": "No properties found.",
+  "noPropertiesFoundDescription": "You have not added any properties yet. Once you add properties, they will appear here.",
   "propertyType": "Property Type",
   "scheduleYourVisit": "Schedule Your Visit",
   "selectATimeSlot": "Select a time slot",

@@ -154,6 +154,7 @@
   "youHaveAcceptedTheCounteredOfferSuccessfully": "Vous avez accepté la contre-offre avec succès.",
   "failedToAcceptCounteredOffer": "Impossible d'accepter la contre-offre.",
   "noPropertiesFound": "Aucun bien trouvé.",
+  "noPropertiesFoundDescription": "Vous n'avez pas encore ajouté de biens. Une fois que vous en ajouterez, ils apparaîtront ici.",
   "propertyType": "Type de Bien",
   "scheduleYourVisit": "Planifiez votre visite",
   "selectATimeSlot": "Sélectionnez un créneau horaire",

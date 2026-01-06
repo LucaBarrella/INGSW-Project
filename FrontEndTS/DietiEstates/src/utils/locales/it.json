@@ -154,6 +154,7 @@
   "youHaveAcceptedTheCounteredOfferSuccessfully": "Hai accettato la controfferta con successo.",
   "failedToAcceptCounteredOffer": "Impossibile accettare la controfferta.",
   "noPropertiesFound": "Nessuna proprietà trovata.",
+  "noPropertiesFoundDescription": "Non hai ancora aggiunto nessuna proprietà. Una volta aggiunte, appariranno qui.",
   "propertyType": "Tipo di Proprietà",
   "scheduleYourVisit": "Pianifica la tua visita",
   "selectATimeSlot": "Seleziona una fascia oraria",
