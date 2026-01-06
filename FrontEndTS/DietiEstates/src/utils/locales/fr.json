@@ -297,7 +297,9 @@
       "addAdmin": {
         "title": "Ajouter un Nouvel Administrateur",
         "subtitle": "Créer un nouveau compte administrateur avec un accès complet au système",
-        "error": "Impossible d'ajouter l'administrateur"
+        "error": "Impossible d'ajouter l'administrateur",
+        "successTitle": "Opération Réussie",
+        "successMessage": "L'administrateur a été créé avec succès."
       },
       "addAgent": {
         "title": "Ajouter un Nouvel Agent",

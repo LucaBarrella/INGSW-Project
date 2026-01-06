@@ -298,7 +298,9 @@
       "addAdmin": {
         "title": "Add New Administrator",
         "subtitle": "Create a new administrator account with full system access",
-        "error": "Unable to add administrator"
+        "error": "Unable to add administrator",
+        "successTitle": "Operation Successful",
+        "successMessageAdminCreation": "The administrator has been created successfully."
       },
       "addAgent": {
         "title": "Add New Agent",
