@@ -72,7 +72,7 @@ function agendaReducer(state: AgendaState, action: AgendaAction): AgendaState {
         const newAppointment: VisitRequest = {
           id: requestToAccept.id,
           property: requestToAccept.property,
-          userInfo: requestToAccept.potentialClients[0],
+          userInfo: requestToAccept.potentialClients[0] || requestToAccept.userInfo,
           startTime: requestToAccept.startTime,
           endTime: requestToAccept.endTime,
           potentialClients: requestToAccept.potentialClients,

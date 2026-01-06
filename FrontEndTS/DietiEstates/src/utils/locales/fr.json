@@ -160,6 +160,8 @@
   "selectATimeSlot": "Sélectionnez un créneau horaire",
   "confirmVisitFor": "Confirmez la visite pour {{time}}",
   "availableTimes": "Heures Disponibles",
+  "chooseAppointmentToCancel": "Choisissez le rendez-vous à annuler",
+
   "setting": {
     "language": "Langue"
   },

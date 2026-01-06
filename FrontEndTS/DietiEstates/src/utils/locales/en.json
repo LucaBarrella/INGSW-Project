@@ -160,6 +160,7 @@
   "selectATimeSlot": "Select a time slot",
   "confirmVisitFor": "Confirm Visit for {{time}}",
   "availableTimes": "Available Times",
+  "chooseAppointmentToCancel": "Choose appointment to cancel",
 
   "setting": {
     "language": "Language"

@@ -160,6 +160,8 @@
   "selectATimeSlot": "Seleziona una fascia oraria",
   "confirmVisitFor": "Conferma visita per {{time}}",
   "availableTimes": "Orari Disponibili",
+  "chooseAppointmentToCancel": "Scegli l'appuntamento da cancellare",
+
   "setting": {
     "language": "Lingua"
   },

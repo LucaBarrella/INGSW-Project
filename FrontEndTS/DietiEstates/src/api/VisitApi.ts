@@ -36,16 +36,36 @@ export const getVisitsByProperty = async (propertyId: string | number): Promise<
  */
 export const getVisitsOfCurrentAgent = async (): Promise<PagedVisitsDTO> => {
   console.log('[VisitApiService] getVisitsOfCurrentAgent:');
-  const url = visitEndpoints.getVisitsByAgent;
-  const response = await httpClient.get(url);
-  console.log('[VisitApiService] getVisitsOfCurrentAgent response:', response.data);
-  // multiply by 1000 to convert from seconds to milliseconds
-  response.data.content = response.data.content.map((visit: any) => {
-    visit.visit.startTime *= 1000;
-    visit.visit.endTime *= 1000;
-    return visit;
-  });
-  return response.data;
+  
+  try {
+    const url = visitEndpoints.getVisitsByAgent;
+    const response = await httpClient.get(url);
+    console.log('[VisitApiService] getVisitsOfCurrentAgent response:', response.data);
+    
+    // Add defensive check
+    if (response.data?.content && Array.isArray(response.data.content)) {
+      response.data.content = response.data.content.map((visit: any) => {
+        // Check if visit structure exists before accessing nested properties
+        if (visit?.visit) {
+          visit.visit.startTime *= 1000;
+          visit.visit.endTime *= 1000;
+        }
+        else {
+          visit.startTime *= 1000;
+          visit.endTime *= 1000;
+          visit.visit = visit;
+        }
+        return visit;
+      });
+    } else {
+      console.warn('[VisitApiService] No content array found in response');
+    }
+    
+    return response.data;
+  } catch (error) {
+    console.error('[VisitApiService] Error in getVisitsOfCurrentAgent:', error);
+    throw error;
+  }
 };
 
 /**

@@ -160,6 +160,8 @@
   "selectATimeSlot": "Selecciona un horario",
   "confirmVisitFor": "Confirma la visita para {{time}}",
   "availableTimes": "Horarios Disponibles",
+  "chooseAppointmentToCancel": "Elige la cita a cancelar",
+
   "setting": {
     "language": "Idioma"
   },
