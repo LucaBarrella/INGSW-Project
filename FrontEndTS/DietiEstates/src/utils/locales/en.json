@@ -161,6 +161,10 @@
   "confirmVisitFor": "Confirm Visit for {{time}}",
   "availableTimes": "Available Times",
   "chooseAppointmentToCancel": "Choose appointment to cancel",
+  "confirm_accept_countered_offer": "Confirm Accept Counteroffer",
+  "counterOfferSubmitted": "Counteroffer Submitted",
+  "yourCounterOfferHasBeenSubmittedSuccessfully": "Your counteroffer has been submitted successfully.",
+  "failedToSubmitCounterOffer": "Unable to submit counteroffer.",
 
   "setting": {
     "language": "Language"

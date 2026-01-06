@@ -161,6 +161,10 @@
   "confirmVisitFor": "Confirma la visita para {{time}}",
   "availableTimes": "Horarios Disponibles",
   "chooseAppointmentToCancel": "Elige la cita a cancelar",
+  "confirm_accept_countered_offer": "Confirmar Aceptación de la Contraoferta",
+  "counterOfferSubmitted": "Contraoferta Enviada",
+  "yourCounterOfferHasBeenSubmittedSuccessfully": "Tu contraoferta ha sido enviada con éxito.",
+  "failedToSubmitCounterOffer": "No se pudo enviar la contraoferta.",
 
   "setting": {
     "language": "Idioma"
